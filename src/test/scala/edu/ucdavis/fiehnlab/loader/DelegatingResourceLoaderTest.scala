@@ -22,6 +22,9 @@ class DelegatingResourceLoaderTest extends WordSpec {
 
   "DelegatingResourceLoaderTest" should {
 
+    "has enough loaders defined" in{
+      assert(loader.loaders.size() >= 3)
+    }
 
     "fail loading this resource" in {
       assert(loader.load("/test2.txt").isEmpty)
