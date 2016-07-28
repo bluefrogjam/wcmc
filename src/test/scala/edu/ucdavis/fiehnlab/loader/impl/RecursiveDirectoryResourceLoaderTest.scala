@@ -49,5 +49,5 @@ class RecursiveDirectoryResourceLoaderTest extends WordSpec {
 class RecursiveDirectoryResourceLoaderTestConfiguration{
 
   @Bean
-  def directoryLoader:RecursiveDirectoryResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
+  def recursiveDirectoryLoader:RecursiveDirectoryResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
 }
