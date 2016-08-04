@@ -16,7 +16,12 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Res
     * @return
     */
   override def load(name: String): Option[InputStream] = {
-    file(directory, name)
+    if(directory.exists()) {
+      file(directory, name)
+    }
+    else{
+      None
+    }
   }
 
   /**
@@ -45,4 +50,6 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Res
       }
     }
   }
+
+  override def toString = s"RecursiveDirectoryResourceLoader(directory: ${directory})"
 }

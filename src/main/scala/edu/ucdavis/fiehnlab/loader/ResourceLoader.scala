@@ -50,4 +50,6 @@ class DelegatingResourceLoader extends ResourceLoader {
     * @return
     */
   override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.load(name).isDefined => loader.load(name) }.getOrElse(None)
+
+  override def toString = s"DelegatingResourceLoader($sortedLoader)"
 }
