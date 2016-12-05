@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.loader.impl
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.TestConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -13,12 +14,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringApplicationConfiguration(classes = Array(classOf[TestConfiguration]))
-class ClasspathResourceLoaderTest extends WordSpec {
+class ClasspathResourceLoaderTest extends WordSpec with LazyLogging {
 
   @Autowired
   val loader: ClasspathResourceLoader = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "ClasspathResourceLoaderTest" should {
 
@@ -32,6 +33,19 @@ class ClasspathResourceLoaderTest extends WordSpec {
 
     "succeed loading this resource and going to the root" in {
       assert(loader.load("test.txt").isDefined)
+    }
+
+    "succeed finding file in subfolder" in {
+      assert(loader.fileExists("sub/test3.txt"))
+    }
+    "succeed finding file in subfolder from root" in {
+      assert(loader.fileExists("/sub/test3.txt"))
+    }
+    "fail finding file @ root" in {
+      assert(!loader.fileExists("/test3.txt"))
+    }
+    "fail finding file without subfolder" in {
+      assert(!loader.fileExists("test3.txt"))
     }
   }
 }

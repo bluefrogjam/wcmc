@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired
   * searches directories recursivly to find resources and returns the input stream to them, if found
   */
 class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends ResourceLoader {
+  logger.debug(s"lookup folder: ${directory.getAbsolutePath}")
+
   /**
     * returns the related resource or none
     *
@@ -51,5 +53,14 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Res
     }
   }
 
-  override def toString = s"RecursiveDirectoryResourceLoader(directory: ${directory})"
+  override def toString = s"RecursiveDirectoryResourceLoader(directory: $directory)"
+
+  override def fileExists(name: String): Boolean = walkTree(directory).exists(p => p.getAbsolutePath.contains(name))
+
+  private final def walkTree(file: File): Iterable[File] = {
+    val children = new Iterable[File] {
+      def iterator: Iterator[File] = if (file.isDirectory) file.listFiles.iterator else Iterator.empty
+    }
+    Seq(file) ++: children.flatMap(walkTree)
+  }
 }

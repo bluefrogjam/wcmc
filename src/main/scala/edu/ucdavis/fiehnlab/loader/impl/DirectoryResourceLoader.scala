@@ -20,4 +20,12 @@ class DirectoryResourceLoader @Autowired()(val directory: File) extends Resource
 
     if (toLoad.exists()) Some(new FileInputStream(toLoad)) else None
   }
+
+  override def fileExists(name: String): Boolean = {
+    new File(directory, cleanName(name)).exists()
+  }
+
+  private def cleanName(name: String): String = {
+    if(name.startsWith("/")) { name.substring(1) } else { name }
+  }
 }

@@ -2,13 +2,15 @@ package edu.ucdavis.fiehnlab.loader
 
 import java.io.InputStream
 
+import com.typesafe.scalalogging.LazyLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+
 import scala.collection.JavaConverters._
 /**
   * Interface for loading resources dynamically independent of actual representation
   */
-trait ResourceLoader {
+trait ResourceLoader extends LazyLogging {
 
   /**
     * returns the related resource or none
@@ -24,6 +26,8 @@ trait ResourceLoader {
     * @return
     */
   def priority: Int = 0
+
+  def fileExists(name: String): Boolean
 }
 
 /**
@@ -52,4 +56,6 @@ class DelegatingResourceLoader extends ResourceLoader {
   override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.load(name).isDefined => loader.load(name) }.getOrElse(None)
 
   override def toString = s"DelegatingResourceLoader($sortedLoader)"
+
+  override def fileExists(name: String): Boolean = sortedLoader.collectFirst { case loader if loader.fileExists(name) => true }.getOrElse(false)
 }

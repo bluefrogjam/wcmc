@@ -22,7 +22,7 @@ class RecursiveDirectoryResourceLoaderTest extends WordSpec {
   @Autowired
   val loader: RecursiveDirectoryResourceLoader = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "RecursiveDirectoryResourceLoaderTest" should {
 
@@ -40,6 +40,18 @@ class RecursiveDirectoryResourceLoaderTest extends WordSpec {
 
     "succeed loading this resource and going to the root" in {
       assert(loader.load("test.txt").isDefined)
+    }
+
+    "succeed checking file" in {
+      assert(loader.fileExists("test.txt"))
+    }
+
+    "succeed checking file @ subfolder" in {
+      assert(loader.fileExists("test3.txt"))
+    }
+
+    "fail checking file @ root" in {
+      assert(!loader.fileExists("/test3.txt"))
     }
 
   }
