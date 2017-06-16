@@ -4,8 +4,6 @@ This is the umbrella project for all of the West Coast Metabolomics Center API a
 
 ### What is this repository for? ###
 
-* Quick summary
-
 This repository provides a central access point to all publically released west coast metabolomics center projects, or references to the repositories as linked git modules
 
 ### How do I get set up? ###
@@ -17,6 +15,9 @@ Software required to build:
 * Docker 1.13+
 * git with lfs extension
 
+### Software modules
+
+* msdialrest4j
 
 ### Who do I talk to? ###
 
