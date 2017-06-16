@@ -12,5 +12,6 @@
     <groupId>edu.ucdavis.fiehnlab.wcms.api.rest</groupId>
     <artifactId>msdialrest4j</artifactId>
 
+    <description>This contains the Client API for the MSDial REST service.</description>
 
 </project>
