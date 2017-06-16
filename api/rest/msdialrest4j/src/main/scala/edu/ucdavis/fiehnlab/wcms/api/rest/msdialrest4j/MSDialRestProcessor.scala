@@ -37,29 +37,32 @@ class MSDialRestProcessor extends LazyLogging {
   def process(input: File): File = {
 
     //if directory and ends with .d zip file
-    val toUpload = if (input.isDirectory && input.getName.endsWith(".d")) {
+    val (toUpload, temp) = if (input.isDirectory && input.getName.endsWith(".d")) {
 
       val temp = File.createTempFile("wcms", ".zip")
-      logger.debug(s"compressing to local file: ${temp} prior to upload")
-      temp.deleteOnExit()
-      val out = new ZipOutputStream(new FileOutputStream(temp))
-      ZipUtil.zip(input, out)
-      out.flush()
-      out.close()
-      temp
+      ZipUtil.zipDir(input.getAbsolutePath, temp.getAbsolutePath, s"${input.getName}")
+      (temp, true)
     }
     else {
-      input
+      (input, false)
     }
 
-    //upload
-    val uploadId = upload(toUpload)
+    try {
+      //upload
+      val uploadId = upload(toUpload)
 
-    //schedule
-    val scheduleId = schedule(uploadId)
+      //schedule
+      val scheduleId = schedule(uploadId)
 
-    //download processed id
-    download(scheduleId)
+      //download processed id
+      download(scheduleId)
+    }
+    finally {
+      if (temp) {
+        logger.debug(s"removing temp file: ${temp}")
+        toUpload.delete()
+      }
+    }
   }
 
   /**

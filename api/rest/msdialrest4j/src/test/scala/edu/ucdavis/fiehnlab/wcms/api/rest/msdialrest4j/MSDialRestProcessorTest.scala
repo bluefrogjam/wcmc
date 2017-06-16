@@ -50,7 +50,7 @@ class MSDialRestProcessorTest extends WordSpec with ShouldMatchers{
       }
 
       //fails currently with a 500 error, need to wait till diego is back from vacation to fix this
-      "process a .abf file" ignore {
+      "process a .abf file" in {
 
         val input = new File(getClass.getResource("/test.abf").toURI)
 
