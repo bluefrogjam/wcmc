@@ -5,25 +5,19 @@ This is the umbrella project for all of the West Coast Metabolomics Center API a
 ### What is this repository for? ###
 
 * Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+
+This repository provides a central access point to all publically released west coast metabolomics center projects, or references to the repositories as linked git modules
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+Software required to build:
 
-### Contribution guidelines ###
+* maven 3.3.9+
+* Java 1.8+
+* Docker 1.13+
+* git with lfs extension
 
-* Writing tests
-* Code review
-* Other guidelines
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+For question or help, please contact the Lead Software Developer of the Westcoast Metatbolomics Center at wohlgemuth@ucdavis.edu
