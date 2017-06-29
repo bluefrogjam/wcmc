@@ -17,7 +17,10 @@ Software required to build:
 
 ### Software modules
 
+## Rest Clients ##
 * msdialrest4j
+* ossa4j
+
 
 ### Who do I talk to? ###
 
