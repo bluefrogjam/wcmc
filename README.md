@@ -15,6 +15,10 @@ Software required to build:
 * Docker 1.13+
 * git with lfs extension
 
+## Building everything ##
+
+please execute mvn clean install, which will build all the modules, executables and docker images
+
 ## Software modules
 
 ### Rest Clients ###
