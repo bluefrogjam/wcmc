@@ -61,7 +61,7 @@ class MSDialRestProcessorTest extends WordSpec with ShouldMatchers{
         resultLines.head.split("\t") should contain ("Name")
         resultLines.head.split("\t") should contain ("ScanAtLeft")
 
-        resultLines.size should be (679)
+        resultLines.size should be (12)
       }
 
     }
@@ -70,7 +70,7 @@ class MSDialRestProcessorTest extends WordSpec with ShouldMatchers{
 }
 
 @SpringBootApplication
-class MSDialRestProcessorConfig{
+class MSDialRestProcessorConfig {
 
   @Bean
   def objectMapper: ObjectMapper = {

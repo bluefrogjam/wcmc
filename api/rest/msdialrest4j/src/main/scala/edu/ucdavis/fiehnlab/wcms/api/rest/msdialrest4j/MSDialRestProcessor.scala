@@ -1,13 +1,12 @@
 package edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j
 
 import java.io._
-import java.util.zip.ZipOutputStream
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcms.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
-import org.springframework.http.{HttpStatus, ResponseEntity}
+import org.springframework.http._
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 
@@ -19,14 +18,16 @@ import org.springframework.web.client.RestOperations
 @Component
 class MSDialRestProcessor extends LazyLogging {
 
-  @Value("${wcms.api.rest.msdialrest4j.host:128.120.143.101}")
-  val host: String = ""
+  @Value("${wcms.api.rest.msdialrest4j.host}")
+  val host: String = "128.120.143.101"
 
-  @Value("${wcms.api.rest.msdialrest4j.port:80}")
+  @Value("${wcms.api.rest.msdialrest4j.port}")
   val port: Int = 80
 
   @Autowired
   val restTemplate: RestOperations = null
+
+	protected def url = s"http://${host}:${port}"
 
   /**
     * processes the input file and
@@ -49,13 +50,14 @@ class MSDialRestProcessor extends LazyLogging {
 
     try {
       //upload
-      val uploadId = upload(toUpload)
+      val (uploadId, token) = upload(toUpload)
+      logger.debug(s"Got sample ID $uploadId for $toUpload")
 
       //schedule
-      val scheduleId = schedule(uploadId)
+      val scheduleId = schedule(uploadId, token)
 
       //download processed id
-      download(scheduleId)
+      download(scheduleId, token)
     }
     finally {
       if (temp) {
@@ -71,7 +73,7 @@ class MSDialRestProcessor extends LazyLogging {
     * @param file
     * @return
     */
-  protected def upload(file: File): String = {
+  protected def upload(file: File): (String, String) = {
 
     import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
     import org.springframework.util.LinkedMultiValueMap
@@ -84,14 +86,16 @@ class MSDialRestProcessor extends LazyLogging {
     val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
     val result = restTemplate.exchange(s"$url/rest/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
 
+	  val token = result.getBody.filename
+	  logger.info(s"filename = $token")
+
     if (result.getStatusCode == HttpStatus.OK) {
       if (result.getBody.link.contains("/conversion/")) {
-        logger.debug("upload result requires conversion of data")
-        convert(result.getBody.link.split("/").last)
-      }
-      else {
+        logger.debug(s"upload result requires conversion of data")
+	      (convert(result.getBody.link.split("/").last, token), token)
+      } else {
         logger.debug("upload succeeded, not conversion required")
-        result.getBody.link.split("/").last
+	      (result.getBody.link.split("/").last, token)
       }
     }
     else {
@@ -103,15 +107,16 @@ class MSDialRestProcessor extends LazyLogging {
     * was this process finished
     *
     * @param id
+	  * @param token
     * @return
     */
-  protected def download(id: String): File = {
-    val result = restTemplate.getForEntity(s"$url/rest/deconvolution/status/${id}", classOf[ServerResponse])
+  protected def download(id: String, token: String): File = {
+    val result = restTemplate.exchange(s"$url/rest/deconvolution/status/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       val resultId = result.getBody.link.split("/").last
 
-      val download = restTemplate.getForEntity(s"$url/rest/deconvolution/result/${id}", classOf[String])
+      val download = restTemplate.exchange(s"$url/rest/deconvolution/result/${id}",HttpMethod.GET, createAuthRequest(token), classOf[String])
 
       if (download.getStatusCode == HttpStatus.OK) {
 
@@ -137,13 +142,14 @@ class MSDialRestProcessor extends LazyLogging {
     * convert the given file, if it was a .d file or so to an abf file
     *
     * @param id
+	  * @param token
     */
-  protected def convert(id: String): String = {
-    val result = restTemplate.getForEntity(s"$url/rest/conversion/convert/${id}", classOf[ServerResponse])
+  protected def convert(id: String, token: String): String = {
+    val result = restTemplate.exchange(s"$url/rest/conversion/convert/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
-      logger.debug("conversion succeeded, not conversion required")
-      result.getBody.link.split("/").last
+      logger.debug("conversion succeeded")
+	    result.getBody.link.split("/").last
     }
     else {
       throw new MSDialException(result)
@@ -156,10 +162,11 @@ class MSDialRestProcessor extends LazyLogging {
     * for deconvolution
     *
     * @param id
+    * @param token
     * @return
     */
-  protected def schedule(id: String): String = {
-    val result = restTemplate.getForEntity(s"$url/rest/deconvolution/schedule/${id}", classOf[ServerResponse])
+  protected def schedule(id: String, token: String): String = {
+    val result = restTemplate.exchange(s"$url/rest/deconvolution/schedule/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       logger.debug("conversion succeeded, not conversion required")
@@ -170,16 +177,19 @@ class MSDialRestProcessor extends LazyLogging {
     }
   }
 
-  protected def url = s"http://${host}:${port}"
+	/**
+		* Creates an HttpEntity with an Authorization header to call the rest server
+		* @param token authorization token returned by the upload endpoint
+		* @return
+		*/
+	protected def createAuthRequest(token: String): HttpEntity[String] = {
+		// creating authorized request
+		val headers: HttpHeaders = new HttpHeaders()
+		headers.add("Authorization", s"Bearer $token")
 
-  /**
-    * defined server response
-    *
-    * @param filename
-    * @param link
-    * @param message
-    * @param error
-    */
+		val request: HttpEntity[String] = new HttpEntity("parameters", headers)
+		request
+	}
 
 }
 
