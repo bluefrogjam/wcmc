@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>io</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.ms.carrot.core</groupId>
+        <groupId>edu.ucdavis.fiehnlab.wcmc.workflow.core</groupId>
         <version>1.0.16-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -18,7 +18,7 @@
             <version>1.3-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.ms.carrot.core.io</groupId>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.workflow.core.io</groupId>
             <artifactId>scanner</artifactId>
             <version>1.0.16-SNAPSHOT</version>
         </dependency>

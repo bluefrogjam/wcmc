@@ -6,11 +6,11 @@
 
     <parent>
         <artifactId>api</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.wcms</groupId>
+        <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    
-    <groupId>edu.ucdavis.fiehnlab.wcms.api</groupId>
+
+    <groupId>edu.ucdavis.fiehnlab.wcmc.api</groupId>
     <artifactId>rest</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
