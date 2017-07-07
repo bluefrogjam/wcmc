@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
-import com.sun.org.apache.xalan.internal.utils.FeatureManager.Feature
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedMSSpectra, Feature, MSLibrarySpectra, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSpectra, Target}

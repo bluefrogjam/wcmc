@@ -17,7 +17,7 @@
         <module>msdk</module>
         <module>msdial</module>
         <module>scanner</module>
-        <module>loader</module>
+        <module>sampleloader</module>
     </modules>
 
 </project>

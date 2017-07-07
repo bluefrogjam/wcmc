@@ -10,7 +10,10 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{WorkflowConfig, WorkflowProperties}
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation._
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -20,10 +23,12 @@ import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, T
   * Created by wohlgemuth on 6/26/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringBootTest
-@ContextConfiguration(classes = Array(classOf[PurityTestConfiguration]))
+@SpringBootTest(classes = Array(classOf[PurityTestConfiguration]))
 @ActiveProfiles(Array("common", "msdial"))
 class PurityProcessingTest extends WordSpec {
+
+	@Value("${storage.directory:src/test/resources}")
+	var directory: String = ""
 
   @Autowired
   val process: PurityProcessing = null
@@ -63,6 +68,7 @@ class PurityProcessingTest extends WordSpec {
 }
 
 @Configuration
+@EnableAutoConfiguration(exclude=Array(classOf[DataSourceAutoConfiguration], classOf[HibernateJpaAutoConfiguration]))
 @Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration]))
 @Profile(Array("common", "msdial"))
 class PurityTestConfiguration {
