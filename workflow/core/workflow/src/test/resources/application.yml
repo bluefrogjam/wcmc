@@ -1,0 +1,20 @@
+hystrix.command.default.execution.timeout.enabled: false
+
+feign.hystrix.enable: false
+
+msdial:
+  connectTimeoutMillis: 250
+  readTimeoutMillis: 250000
+  proxyUrl: http://128.120.143.238:8080
+
+msdialrest.file.source: "G:/Data/P20 Study processing/CSH pos ABF"
+
+workflow.correction.massAccuracy: 15
+workflow.files.targets: "/targets_full.txt"
+
+#experiment.txt.reader.source: "G:/Data/P20 Study processing/CSH pos ABF"
+
+#wcms.api.rest.msdialrest4j.host: localhost
+wcms.api.rest.msdialrest4j.host: localhost
+#wcms.api.rest.msdialrest4j.host: 128.120.143.101
+wcms.api.rest.msdialrest4j.port: 80

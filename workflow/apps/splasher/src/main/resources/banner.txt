@@ -1,0 +1,7 @@
+ _______  _____         _______ _______ _     _ _______  ______
+ |______ |_____] |      |_____| |______ |_____| |______ |_____/
+ ______| |       |_____ |     | ______| |     | |______ |    \_
+
+
+Splashing all files in this directory and sub directories to the file splashed.txt
+

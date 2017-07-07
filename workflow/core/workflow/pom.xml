@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>core</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.ms.carrot</groupId>
+        <version>1.0.16-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.ms.carrot.core</groupId>
+    <artifactId>workflow</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-integration</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-http</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-stream</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-file</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-event</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.ms.carrot.core</groupId>
+            <artifactId>annotation</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.ms.carrot.core</groupId>
+            <artifactId>preprocess</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.2.4.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.ms.carrot.core</groupId>
+            <artifactId>loader</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+	    <dependency>
+		    <groupId>edu.ucdavis.fiehnlab.wcms.api.rest</groupId>
+		    <artifactId>msdialrest4j</artifactId>
+		    <version>1.0-SNAPSHOT</version>
+	    </dependency>
+
+        <dependency>
+            <groupId>gov.nist.math</groupId>
+            <artifactId>jama</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
+	    <dependency>
+		    <groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-netflix-core</artifactId>
+		    <version>1.2.4.RELEASE</version>
+	    </dependency>
+
+	    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-scala_2.11 -->
+	    <dependency>
+		    <groupId>com.fasterxml.jackson.module</groupId>
+		    <artifactId>jackson-module-scala_2.11</artifactId>
+		    <version>2.8.7</version>
+	    </dependency>
+
+	    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+	    <dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.8.7</version>
+	    </dependency>
+
+    </dependencies>
+
+</project>
