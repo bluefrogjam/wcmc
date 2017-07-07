@@ -5,7 +5,7 @@ import java.util.zip.GZIPInputStream
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, PositiveMode, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
 
 import scala.io.Source
 import scala.util.Try
@@ -87,8 +87,8 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
       lines.collect {
         case line: String if line nonEmpty =>
-          val contents = line.split("\t").toList.filter(_.trim != "-1")
-          val map = (headers zipAll(contents, "", "")).toMap
+	        val contents = line.split("\t").toList
+	        val map = (headers zip contents).toMap
 
             buildSpectra(map)
       }.filter(_ != null).toSeq
@@ -105,11 +105,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
     */
   def buildSpectra(dataMap: Map[String, String]): Feature = {
 
-    dataMap.keys.foreach{ x=>
-      logger.info(s"${x} -> ${dataMap(x)}")
-    }
-
-    if (dataMap(spectraIdentifier).isEmpty){
+	  if (!dataMap.keySet.contains(spectraIdentifier)) {
       /**
         * no spectra available so it's just a feature
         */
@@ -123,10 +119,9 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
           */
         override val scanNumber: Int = dataMap(scanIdentifier).toInt
 
-        override val accurateMass: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
+	      override val accurateMass: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
       }
-    }
-    else{
+	  } else {
 
       /**
         * complete spectra available
