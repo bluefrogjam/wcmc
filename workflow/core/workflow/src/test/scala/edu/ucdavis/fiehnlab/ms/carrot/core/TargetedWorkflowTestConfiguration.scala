@@ -9,11 +9,13 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarge
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{WorkflowConfig, WorkflowProperties}
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation._
 
 /**
   * Test configuration of a LCMS target workflow
   */
+@SpringBootApplication
 @Configuration
 @Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration]))
 @Profile(Array("common", "msdial"))

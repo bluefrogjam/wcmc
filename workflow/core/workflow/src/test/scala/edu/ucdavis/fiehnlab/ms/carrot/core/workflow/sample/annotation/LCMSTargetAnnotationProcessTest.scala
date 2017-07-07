@@ -15,11 +15,12 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.scalatest._
 import Matchers._
+import org.springframework.boot.test.context.SpringBootTest
 /**
   * Created by wohlgemuth on 6/27/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("common"))
 class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging{
 

@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.ExperimentTXTReader
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -19,7 +20,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   * might be remove at a later time
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("msdial"))
 class PositiveModeTargetedWorkflowMSDialSmallTest extends PositiveModeTargetedWorkflowTest {
 	@Autowired

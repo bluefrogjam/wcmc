@@ -4,7 +4,7 @@ import java.io.InputStream
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import org.junit.runner.RunWith
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by diego on 12/1/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TargetedWorkflowTestConfiguration], classOf[PositiveModeTargetedWorkflowTestConfiguration]))
+@SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration], classOf[PositiveModeTargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("common"))
 class PositiveModeTargetedWorkflowMzXMLTest extends PositiveModeTargetedWorkflowTest {
   new TestContextManager(this.getClass).prepareTestInstance(this)

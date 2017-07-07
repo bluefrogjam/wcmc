@@ -20,11 +20,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import scala.io.Source
 import org.scalatest.Matchers._
 import org.scalatest.{WordSpec, _}
+import org.springframework.boot.test.context.SpringBootTest
 /**
   * Created by wohlg on 7/9/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("common"))
 class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 

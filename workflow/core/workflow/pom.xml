@@ -70,9 +70,9 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc.utilities</groupId>
+            <groupId>edu.ucdavis.fiehnlab</groupId>
             <artifactId>loader</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.3-SNAPSHOT</version>
         </dependency>
 
 	    <dependency>

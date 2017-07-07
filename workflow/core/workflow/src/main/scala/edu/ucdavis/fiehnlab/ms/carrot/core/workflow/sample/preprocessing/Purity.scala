@@ -58,7 +58,7 @@ class PurityProcessing @Autowired()(val properties: WorkflowProperties, val puri
     }
 
     new ProcessedSample {
-      override val spectra: Seq[_ <: MSSpectra] = scaled
+      override val spectra: Seq[_ <: Feature] = scaled
       override val fileName: String = input.fileName
     }
 
