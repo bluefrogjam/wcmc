@@ -1,0 +1,10 @@
+logging.level.edu.ucdavis.fiehnlab.ms.carrot.core.preprocess: DEBUG
+
+msdial:
+  connectTimeoutMillis: 1000
+  readTimeoutMillis: 250000
+  proxyUrl: http://localhost
+
+
+input_path: g:\\data\\carrot\\tmp
+
