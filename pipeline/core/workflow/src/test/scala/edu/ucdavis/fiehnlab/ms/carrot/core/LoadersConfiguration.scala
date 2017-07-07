@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core
 
 import java.io.File
-import edu.ucdavis.fiehnlab.loader._
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import org.springframework.context.annotation.{Bean, Configuration}
