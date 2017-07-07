@@ -15,6 +15,7 @@
     <modules>
         <module>compress</module>
         <module>casetojson</module>
+        <module>loader</module>
     </modules>
 
 
