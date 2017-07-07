@@ -14,10 +14,9 @@
     </modules>
 
     <parent>
-        <groupId>edu.ucdavis.fiehnlab</groupId>
-        <artifactId>fiehnlab-pom</artifactId>
-        <version>1.0.18-SNAPSHOT</version>
-        <relativePath/>
+	    <groupId>edu.ucdavis.fiehnlab</groupId>
+	    <artifactId>wcms</artifactId>
+	    <version>1.0-SNAPSHOT</version>
     </parent>
 
 </project>

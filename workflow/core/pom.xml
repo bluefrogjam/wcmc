@@ -19,7 +19,5 @@
         <module>annotation</module>
         <module>preprocess</module>
 	    <module>workflow</module>
-	    <module>workflow_api</module>
-	    <module>metadataextraction</module>
     </modules>
 </project>
