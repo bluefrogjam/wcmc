@@ -28,11 +28,10 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
 
   //our defined filters to find possible matches are registered in here
   lazy val filters: SequentialAnnotate = new SequentialAnnotate(
-
     new AccurateMassAnnotation(lcmsProperties.massAccuracy / 1000, lcmsProperties.massIntensity) ::
-      new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow) ::
-      List())
-
+    new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow) ::
+    List()
+  )
 
   /**
     * finds a match between the target and the sequence of spectra
