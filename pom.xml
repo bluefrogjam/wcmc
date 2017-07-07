@@ -10,6 +10,7 @@
     <modules>
         <module>utilities</module>
         <module>api</module>
+        <module>workflow</module>
     </modules>
 
     <parent>
