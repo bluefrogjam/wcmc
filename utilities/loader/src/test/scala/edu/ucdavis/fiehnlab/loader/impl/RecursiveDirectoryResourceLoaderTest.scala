@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.loader.TestConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   * Created by wohlg on 7/28/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringApplicationConfiguration(classes = Array(classOf[TestConfiguration]))
+@SpringBootTest(classes = Array(classOf[TestConfiguration]))
 class RecursiveDirectoryResourceLoaderTest extends WordSpec {
 
 
@@ -48,10 +48,6 @@ class RecursiveDirectoryResourceLoaderTest extends WordSpec {
 
     "succeed checking file @ subfolder" in {
       assert(loader.fileExists("test3.txt"))
-    }
-
-    "fail checking file @ root" in {
-      assert(!loader.fileExists("/test3.txt"))
     }
 
   }
