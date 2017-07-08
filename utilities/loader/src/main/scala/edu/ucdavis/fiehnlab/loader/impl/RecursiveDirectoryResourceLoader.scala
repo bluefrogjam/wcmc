@@ -34,6 +34,7 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Res
     * @return
     */
   def file(dir: File, name: String): Option[InputStream] = {
+    logger.info(s"looking for ${name} in ${dir.getAbsolutePath}")
     val toLoad = new File(dir, name)
 
     if (toLoad.exists()) {

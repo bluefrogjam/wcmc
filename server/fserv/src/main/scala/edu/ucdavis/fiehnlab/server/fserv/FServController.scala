@@ -1,44 +1,55 @@
 package edu.ucdavis.fiehnlab.server.fserv
 
 
-import java.io.{File, FileInputStream, FileOutputStream, IOException}
+import java.io._
+import javax.annotation.PostConstruct
 import javax.servlet.annotation.MultipartConfig
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.{HttpHeaders, MediaType, ResponseEntity}
-import org.springframework.web.bind.annotation.{RequestMapping, RequestMethod, RequestParam, RestController}
+import org.springframework.web.bind.annotation._
 import org.springframework.web.multipart.MultipartFile
+
 import scala.collection.JavaConverters._
 
 /**
+  * provides an easy way to upload and download files from/to a central location.
   * Created by wohlgemuth on 7/7/17.
   */
-
-
 @RestController
 @RequestMapping(value = Array("/rest")) //Max uploaded file size (here it is ~2GB)
 @MultipartConfig(fileSizeThreshold = 2097152000)
 class FServController extends LazyLogging {
 
+  @Value("${wcms.server.fserv.directory:storage}")
+  val directory: String = null
+
   @Autowired
   val resourceLoader: java.util.List[ResourceLoader] = null
 
+  @PostConstruct
+  def init = {
+    logger.info("configurating...")
+    val location = new File(directory)
+    location.mkdirs()
+    logger.info(s"storing data at location: ${location}")
+  }
+
   @RequestMapping(value = Array("/upload"))
-  def upload(@RequestParam("uploadedFile") uploadedFileRef: MultipartFile): String = {
+  def upload(@RequestParam("file") uploadedFileRef: MultipartFile): String = {
 
     val fileName = uploadedFileRef.getOriginalFilename
 
     // Path where the uploaded file will be stored.
-    val path = generateFilePath(fileName)
     // This buffer will store the data read from 'uploadedFileRef'
     val buffer = new Array[Byte](1000)
     // Now create the output file on the server.
-    val outputFile = new File(path)
-    var reader: FileInputStream = null
-    var writer: FileOutputStream = null
+    val outputFile = new File(generateFilePath(fileName))
+    var reader: InputStream = null
+    var writer: OutputStream = null
     var totalBytes = 0
 
     try {
@@ -47,16 +58,17 @@ class FServController extends LazyLogging {
       reader = uploadedFileRef.getInputStream.asInstanceOf[FileInputStream]
       // Create writer for 'outputFile' to write data read from
       // 'uploadedFileRef'
-      writer = new FileOutputStream(outputFile)
-      // Iteratively read data from 'uploadedFileRef' and write to
-      // 'outputFile';
-      var bytesRead: Int = 0
-      while ( {
-        (bytesRead = reader.read(buffer)) != -1
-      }) {
-        writer.write(buffer)
-        totalBytes += bytesRead
-      }
+      writer = new BufferedOutputStream(new FileOutputStream(outputFile,false))
+
+      Iterator
+        .continually (reader.read)
+        .takeWhile (-1 !=)
+        .foreach { x =>
+          writer.write(x)
+          totalBytes = totalBytes + 1
+        }
+
+      writer.flush()
 
       s"""{ "message" : "File uploaded successfully", "TotalBytesRead" : ${totalBytes}}"""
 
@@ -77,9 +89,9 @@ class FServController extends LazyLogging {
     }
   }
 
-  @RequestMapping(path = Array("/download"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/download/{file:.+}"), method = Array(RequestMethod.GET))
   @throws[IOException]
-  def download(param: String): ResponseEntity[InputStreamResource] = {
+  def download(@PathVariable("file") param: String): ResponseEntity[InputStreamResource] = {
     for (loader: ResourceLoader <- resourceLoader.asScala) {
       val file = loader.load(param)
 
@@ -106,6 +118,6 @@ class FServController extends LazyLogging {
     * @return
     */
   private def generateFilePath(fileName: String) = {
-    new File("storage/" + fileName).getAbsolutePath
+    new File(s"${directory}/${fileName}").getAbsolutePath
   }
 }
