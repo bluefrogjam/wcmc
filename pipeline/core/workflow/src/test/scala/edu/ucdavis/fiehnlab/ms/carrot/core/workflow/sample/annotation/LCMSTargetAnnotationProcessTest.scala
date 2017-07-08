@@ -8,14 +8,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTarget
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PurityProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.Matchers._
+import org.scalatest.{WordSpec, _}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.scalatest._
-import Matchers._
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 /**
   * Created by wohlgemuth on 6/27/16.
   */
