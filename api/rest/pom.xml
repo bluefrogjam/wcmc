@@ -17,6 +17,7 @@
     <modules>
         <module>msdialrest4j</module>
         <module>ossa4j</module>
+        <module>fserv4j</module>
     </modules>
 
 

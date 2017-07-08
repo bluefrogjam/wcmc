@@ -58,11 +58,11 @@ class FServController extends LazyLogging {
       reader = uploadedFileRef.getInputStream.asInstanceOf[FileInputStream]
       // Create writer for 'outputFile' to write data read from
       // 'uploadedFileRef'
-      writer = new BufferedOutputStream(new FileOutputStream(outputFile,false))
+      writer = new BufferedOutputStream(new FileOutputStream(outputFile, false))
 
       Iterator
-        .continually (reader.read)
-        .takeWhile (-1 !=)
+        .continually(reader.read)
+        .takeWhile(-1 !=)
         .foreach { x =>
           writer.write(x)
           totalBytes = totalBytes + 1
@@ -110,6 +110,19 @@ class FServController extends LazyLogging {
     ResponseEntity.notFound().build()
 
   }
+
+  @RequestMapping(path = Array("/exists/{file:.+}"), method = Array(RequestMethod.GET))
+  @throws[IOException]
+  def exists(@PathVariable("file") param: String): ResponseEntity[String] = {
+    for (loader: ResourceLoader <- resourceLoader.asScala) {
+      if (loader.fileExists(param)) {
+        return ResponseEntity.ok.body(s"""{ "exist":true, "file":"${param} }""")
+      }
+    }
+    ResponseEntity.notFound().build()
+
+  }
+
 
   /**
     * generates the path where the given file should be stored
