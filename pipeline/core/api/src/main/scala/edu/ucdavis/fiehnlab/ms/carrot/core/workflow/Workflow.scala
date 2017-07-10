@@ -16,7 +16,7 @@ import scala.collection.JavaConverters._
 /**
   * Implementations of this class, will provide us with detailed workflows how to process and annotate data, depending on platform, etc
   */
-abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sample], reader: Reader[Experiment], val eventListeners: java.util.List[WorkflowEventListener] = List().asJava) extends ItemProcessor[InputStream, InputStream] with LazyLogging {
+abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sample], reader: Reader[Experiment], val eventListeners: java.util.List[WorkflowEventListener] = List[WorkflowEventListener]().asJava) extends ItemProcessor[InputStream, InputStream] with LazyLogging {
 
   /**
     * executes required pre processing steps, if applicable
