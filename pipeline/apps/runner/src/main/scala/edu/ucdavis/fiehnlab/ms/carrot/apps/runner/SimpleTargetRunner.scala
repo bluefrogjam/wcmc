@@ -35,7 +35,7 @@ class SimpleTargetRunnerConfig {
     * @return
     */
   @Bean
-  def retentionIndexTargets(workflowProperties: WorkflowRunnerProperties): LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](new FileInputStream(workflowProperties.correction), workflowProperties.separator)
+  def retentionIndexTargets(workflowProperties: WorkflowRunnerProperties): LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](workflowProperties.correction, workflowProperties.separator)
 
   /**
     * our targets to be identified
@@ -43,7 +43,7 @@ class SimpleTargetRunnerConfig {
     * @return
     */
   @Bean
-  def targets(workflowProperties: WorkflowRunnerProperties): LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](new FileInputStream(workflowProperties.library), workflowProperties.separator)
+  def targets(workflowProperties: WorkflowRunnerProperties): LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](workflowProperties.library, workflowProperties.separator)
 
   /**
     * how do we want to quantify our result

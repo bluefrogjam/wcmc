@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing
 
+import java.io.File
+
 import edu.ucdavis.fiehnlab.ms.carrot.core.LoadersConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
@@ -79,10 +81,10 @@ class PurityTestConfiguration {
   }
 
   @Bean
-  def correctionStandardList: LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](getClass.getResourceAsStream("/retentionIndexStandards.txt"), "\t")
+  def correctionStandardList: LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](new File("src/test/resources/retentionIndexStandards.txt"), "\t")
 
   @Bean
-  def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](getClass.getResourceAsStream("/targets.txt"), "\t")
+  def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](new File("src/test/resources/targets.txt"), "\t")
 
   @Bean(name = Array("quantification"))
   def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)

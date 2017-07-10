@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
-import java.io.{BufferedInputStream, IOException, InputStream}
+import java.io._
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Target}
 
@@ -18,15 +18,30 @@ trait LibraryAccess[T <: Target] {
     * @return
     */
   def load: Iterable[T]
+
+  /**
+    * adds a new target to the internal list of targets
+    *
+    * @param target
+    */
+  def add(target: T): Unit = {
+    add(Seq(target))
+  }
+
+  /**
+    * adds a list of targets
+    *
+    * @param targets
+    */
+  def add(targets: Iterable[T])
 }
 
 /**
   * it's a simple file based reader to get access to targets in a stream
   *
-  * @param stream
+  * @param file
   */
-class TxtStreamLibraryAccess[T<: Target](stream: InputStream, val seperator: String = "\t") extends LibraryAccess[T] {
-  val input = new BufferedInputStream(stream)
+class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\t") extends LibraryAccess[T] {
 
   /**
     * loads all the spectra from the library
@@ -34,8 +49,7 @@ class TxtStreamLibraryAccess[T<: Target](stream: InputStream, val seperator: Str
     * @return
     */
   override def load: Iterable[T] = {
-    input.mark(input.available()+1)
-    val result = Source.fromInputStream(input).getLines().collect {
+    val result = Source.fromFile(file).getLines().collect {
 
       case x: String =>
         if (!x.startsWith("#")) {
@@ -46,7 +60,7 @@ class TxtStreamLibraryAccess[T<: Target](stream: InputStream, val seperator: Str
             new RetentionIndexTarget {
               override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
-              override val retentionTimeInSeconds: Double = temp(0).toDouble*60
+              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
               override val required: Boolean = false
             }
@@ -55,7 +69,7 @@ class TxtStreamLibraryAccess[T<: Target](stream: InputStream, val seperator: Str
             new RetentionIndexTarget {
               override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = None
-              override val retentionTimeInSeconds: Double = temp(0).toDouble*60
+              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
               override val required: Boolean = false
             }
@@ -64,7 +78,7 @@ class TxtStreamLibraryAccess[T<: Target](stream: InputStream, val seperator: Str
             new RetentionIndexTarget {
               override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
-              override val retentionTimeInSeconds: Double = temp(0).toDouble*60
+              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
               override val required: Boolean = temp(3).toBoolean
             }
@@ -73,10 +87,9 @@ class TxtStreamLibraryAccess[T<: Target](stream: InputStream, val seperator: Str
             new RetentionIndexTarget {
               override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
-              override val retentionTimeInSeconds: Double = temp(0).toDouble*60
+              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val required: Boolean = temp(3).toBoolean
               override val inchiKey: Option[String] = Some(temp(4))
-
             }
           }
 
@@ -84,11 +97,44 @@ class TxtStreamLibraryAccess[T<: Target](stream: InputStream, val seperator: Str
             throw new IOException("unsupported file format discovered!")
           }
         }
-    }.collect{
-      case x:T=> x
+    }.collect {
+      case x: T => x
     }.toList
 
-    input.reset()
     result
+  }
+
+  /**
+    * adds a new target to the internal list of targets
+    *
+    * @param targets
+    */
+  override def add(targets: Iterable[T]): Unit = {
+
+    val out = new FileWriter(file, true)
+
+    targets.foreach { target =>
+
+      val required = target match {
+        case x: RetentionIndexTarget => x.required
+        case _ => ""
+      }
+
+
+      out.write(
+        s"""|${target.retentionTimeInSeconds}
+               |$seperator
+               |${target.monoIsotopicMass}
+               |$seperator${target.name.getOrElse("unknown")}
+               |$seperator
+               |$required
+               |$seperator
+               |${target.inchiKey.getOrElse("")}
+               |\n""".stripMargin
+      )
+    }
+
+    out.flush()
+    out.close()
   }
 }

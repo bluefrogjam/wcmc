@@ -16,6 +16,9 @@ trait Target {
     */
   def retentionTimeInMinutes: Double = retentionTimeInSeconds / 60
 
+  /**
+    * retention time in seconds of this target
+    */
   val retentionTimeInSeconds:Double
 
   /**
@@ -28,6 +31,10 @@ trait Target {
     */
   val monoIsotopicMass: Option[Double]
 
+  /**
+    * is this a confirmed target
+    */
+  val confirmedTarget:Boolean = true
 
   override def toString = f"Target(name=${name.getOrElse("None")}, retentionTime=$retentionTimeInMinutes (min), retentionTime=$retentionTimeInSeconds (s), inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${monoIsotopicMass.getOrElse("None")})"
 
