@@ -21,7 +21,6 @@ import scala.collection.JavaConverters._
   */
 @RestController
 @RequestMapping(value = Array("/rest")) //Max uploaded file size (here it is ~2GB)
-@MultipartConfig(fileSizeThreshold = 2097152000)
 class FServController extends LazyLogging {
 
   @Value("${wcms.server.fserv.directory:storage}")
