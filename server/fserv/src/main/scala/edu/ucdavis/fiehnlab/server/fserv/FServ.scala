@@ -1,8 +1,14 @@
 package edu.ucdavis.fiehnlab.server.fserv
 
+import java.io.File
+
+import edu.ucdavis.fiehnlab.loader.LocalLoader
+import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
+import org.springframework.context.annotation.Bean
 
 /**
   * Created by wohlgemuth on 7/7/17.
@@ -11,13 +17,18 @@ import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBo
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class FServ {
 
+  @Value("${wcms.server.fserv.directory:storage}")
+  val directory: String = null
+
+  @Bean
+  def resourceLoader: LocalLoader = new RecursiveDirectoryResourceLoader(new File(directory))
 }
 
 
-object FServ extends App{
+object FServ extends App {
 
   val app = new SpringApplication(classOf[FServ])
-  app.setWebEnvironment(false)
+  app.setWebEnvironment(true)
   val context = app.run(args: _*)
 
 }
