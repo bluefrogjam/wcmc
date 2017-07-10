@@ -9,11 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired
   * searches directories recursivly to find resources and returns the input stream to them, if found
   */
 class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends LocalLoader {
-  logger.debug(s"lookup folder: ${directory.getAbsolutePath}")
 
   if(!directory.exists()){
+    logger.info(s"making directory: ${directory.getAbsolutePath}")
     directory.mkdirs()
   }
+  else{
+    logger.debug(s"lookup folder is: ${directory.getAbsolutePath}")
+  }
+
   /**
     * returns the related resource or none
     *
