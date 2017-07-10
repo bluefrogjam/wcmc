@@ -35,7 +35,7 @@ class FServController extends LazyLogging {
     logger.info(s"defined ${resourceLoader.size()} loaders")
     val location = new File(directory)
     location.mkdirs()
-    logger.info(s"storing data at location: ${location}")
+    logger.info(s"storing data at location: ${location.getAbsolutePath}")
   }
 
   @RequestMapping(value = Array("/upload"))
