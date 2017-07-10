@@ -47,7 +47,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
   "FServControllerTest" should {
 
-    "upload and download" must {
+    "upload and download a simple file" must {
 
       "upload" in {
         val map = new LinkedMultiValueMap[String, AnyRef]
@@ -68,7 +68,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
       }
       "exists" in {
 
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test.txt",classOf[String])
+        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test.txt", classOf[String])
 
         response.getStatusCode should be(HttpStatus.OK)
 
@@ -77,7 +77,13 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
       }
       "not exists" in {
 
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test123.txt",classOf[Boolean])
+        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test123.txt", classOf[Boolean])
+        response.getStatusCode should be(HttpStatus.NOT_FOUND)
+
+      }
+      "not exists a complicated file name" in {
+
+        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test_withUnder_and2extesnions.mzXML.gz", classOf[Boolean])
         response.getStatusCode should be(HttpStatus.NOT_FOUND)
 
       }

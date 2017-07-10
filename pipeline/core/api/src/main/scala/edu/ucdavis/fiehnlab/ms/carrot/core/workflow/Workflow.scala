@@ -18,9 +18,6 @@ import scala.collection.JavaConverters._
   */
 abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sample], reader: Reader[Experiment], val eventListeners: java.util.List[WorkflowEventListener] = List().asJava) extends ItemProcessor[InputStream, InputStream] with LazyLogging {
 
-//  @Autowired(required = false)
-//  val eventListeners: java.util.List[WorkflowEventListener] = List().asJava
-
   /**
     * executes required pre processing steps, if applicable
     */
