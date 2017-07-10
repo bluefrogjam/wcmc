@@ -67,7 +67,7 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Loc
 
   private final def walkTree(file: File): Iterable[File] = {
     val children = new Iterable[File] {
-      def iterator: Iterator[File] = if (file.isDirectory) file.listFiles.iterator else Iterator.empty
+      def iterator: Iterator[File] = if (file.isDirectory && file.listFiles().length > 0) file.listFiles.iterator else Iterator.empty
     }
     Seq(file) ++: children.flatMap(walkTree)
   }
