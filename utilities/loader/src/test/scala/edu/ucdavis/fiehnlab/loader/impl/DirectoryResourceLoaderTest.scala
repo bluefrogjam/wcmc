@@ -39,27 +39,27 @@ class DirectoryResourceLoaderTest extends WordSpec with LazyLogging {
     }
 
     "succeed finding file" in {
-      assert(loader.fileExists("test.txt"))
+      assert(loader.exists("test.txt"))
     }
 
     "fail finding file 3" in {
-      assert(!loader.fileExists("test3.txt"))
+      assert(!loader.exists("test3.txt"))
     }
 
     "fail finding file @ root" in {
-      assert(!loader.fileExists("/test3.txt"))
+      assert(!loader.exists("/test3.txt"))
     }
 
     "fail finding missing file" in {
-      assert(!loader.fileExists("sub/test2.txt"))
+      assert(!loader.exists("sub/test2.txt"))
     }
 
     "succeed finding file in subdir" in {
-      assert(loader.fileExists("sub/test3.txt"))
+      assert(loader.exists("sub/test3.txt"))
     }
 
     "succeed finding file in subdir from root" in {
-      assert(loader.fileExists("/sub/test3.txt"))
+      assert(loader.exists("/sub/test3.txt"))
     }
 
   }

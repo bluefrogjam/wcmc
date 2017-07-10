@@ -6,7 +6,7 @@ import javax.annotation.PostConstruct
 import javax.servlet.annotation.MultipartConfig
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.{HttpHeaders, MediaType, ResponseEntity}
@@ -28,11 +28,11 @@ class FServController extends LazyLogging {
   val directory: String = null
 
   @Autowired
-  val resourceLoader: java.util.List[ResourceLoader] = null
+  val resourceLoader: java.util.List[LocalLoader] = null
 
   @PostConstruct
   def init = {
-    logger.info("configurating...")
+    logger.info(s"defined ${resourceLoader.size()} loaders")
     val location = new File(directory)
     location.mkdirs()
     logger.info(s"storing data at location: ${location}")
@@ -43,9 +43,9 @@ class FServController extends LazyLogging {
 
     val fileName = uploadedFileRef.getOriginalFilename
 
-    // Path where the uploaded file will be stored.
-    // This buffer will store the data read from 'uploadedFileRef'
-    val buffer = new Array[Byte](1000)
+    logger.info(s"uploaded file name is: ${fileName}")
+    logger.info(s"content size is: ${uploadedFileRef.getSize}")
+
     // Now create the output file on the server.
     val outputFile = new File(generateFilePath(fileName))
     var reader: InputStream = null
@@ -55,7 +55,7 @@ class FServController extends LazyLogging {
     try {
       outputFile.createNewFile
       // Create the input stream to uploaded file to read data from it.
-      reader = uploadedFileRef.getInputStream.asInstanceOf[FileInputStream]
+      reader = uploadedFileRef.getInputStream
       // Create writer for 'outputFile' to write data read from
       // 'uploadedFileRef'
       writer = new BufferedOutputStream(new FileOutputStream(outputFile, false))
@@ -68,6 +68,7 @@ class FServController extends LazyLogging {
           totalBytes = totalBytes + 1
         }
 
+      logger.info(s"wrote ${totalBytes} bytes")
       writer.flush()
 
       s"""{ "message" : "File uploaded successfully", "TotalBytesRead" : ${totalBytes}}"""
@@ -115,10 +116,13 @@ class FServController extends LazyLogging {
   @throws[IOException]
   def exists(@PathVariable("file") param: String): ResponseEntity[String] = {
     for (loader: ResourceLoader <- resourceLoader.asScala) {
-      if (loader.fileExists(param)) {
+      logger.info(s"checking loader: ${loader}")
+      if (loader.exists(param)) {
+        logger.info("found file!")
         return ResponseEntity.ok.body(s"""{ "exist":true, "file":"${param} }""")
       }
     }
+    logger.info("resource was not found")
     ResponseEntity.notFound().build()
 
   }
@@ -131,6 +135,15 @@ class FServController extends LazyLogging {
     * @return
     */
   private def generateFilePath(fileName: String) = {
-    new File(s"${directory}/${fileName}").getAbsolutePath
+    val fileDir = new File(directory)
+
+    if(!fileDir.exists()){
+      fileDir.mkdirs()
+    }
+
+    val location = new File(s"${directory}/${fileName}").getAbsolutePath
+
+    logger.info(s"storing data at: ${location}")
+    location
   }
 }

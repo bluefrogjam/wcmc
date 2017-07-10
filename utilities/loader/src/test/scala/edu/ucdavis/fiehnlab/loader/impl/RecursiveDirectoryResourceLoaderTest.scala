@@ -43,11 +43,11 @@ class RecursiveDirectoryResourceLoaderTest extends WordSpec {
     }
 
     "succeed checking file" in {
-      assert(loader.fileExists("test.txt"))
+      assert(loader.exists("test.txt"))
     }
 
     "succeed checking file @ subfolder" in {
-      assert(loader.fileExists("test3.txt"))
+      assert(loader.exists("test3.txt"))
     }
 
   }

@@ -36,16 +36,16 @@ class ClasspathResourceLoaderTest extends WordSpec with LazyLogging {
     }
 
     "succeed finding file in subfolder" in {
-      assert(loader.fileExists("sub/test3.txt"))
+      assert(loader.exists("sub/test3.txt"))
     }
     "succeed finding file in subfolder from root" in {
-      assert(loader.fileExists("/sub/test3.txt"))
+      assert(loader.exists("/sub/test3.txt"))
     }
     "fail finding file @ root" in {
-      assert(!loader.fileExists("/test3.txt"))
+      assert(!loader.exists("/test3.txt"))
     }
     "fail finding file without subfolder" in {
-      assert(!loader.fileExists("test3.txt"))
+      assert(!loader.exists("test3.txt"))
     }
   }
 }

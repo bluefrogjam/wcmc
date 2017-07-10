@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.loader.impl
 
 import java.io.{File, InputStream}
 
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
 import org.springframework.stereotype.Component
 
 import scala.util.{Failure, Success, Try}
@@ -11,7 +11,7 @@ import scala.util.{Failure, Success, Try}
   * loads the resource from the classpath
   */
 @Component
-class ClasspathResourceLoader extends ResourceLoader {
+class ClasspathResourceLoader extends LocalLoader {
   /**
     * returns the related resource or none
     *
@@ -24,7 +24,7 @@ class ClasspathResourceLoader extends ResourceLoader {
     Option(getClass.getResourceAsStream(s"/$name"))
   }
 
-  override def fileExists(name: String): Boolean = {
+  override def exists(name: String): Boolean = {
     val file = if (name.startsWith("/")) {
       getClass.getResource(name)
     } else {

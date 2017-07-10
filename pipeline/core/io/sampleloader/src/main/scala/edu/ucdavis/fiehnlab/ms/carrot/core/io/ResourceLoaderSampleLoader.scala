@@ -57,6 +57,6 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     * @return
     */
   override def sampleExists(name: String): Boolean = {
-    resourceLoader.fileExists(name)
+    resourceLoader.exists(name)
   }
 }

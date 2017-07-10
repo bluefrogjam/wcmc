@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.server.fserv
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -107,5 +107,5 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 class TestConfiguration {
 
   @Bean
-  def resourceLoader: ResourceLoader = new RecursiveDirectoryResourceLoader(new File("target"))
+  def resourceLoader: LocalLoader = new RecursiveDirectoryResourceLoader(new File("target"))
 }

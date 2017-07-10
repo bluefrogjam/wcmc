@@ -2,13 +2,13 @@ package edu.ucdavis.fiehnlab.loader.impl
 
 import java.io.{File, FileInputStream, InputStream}
 
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
   * searches directories recursivly to find resources and returns the input stream to them, if found
   */
-class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends ResourceLoader {
+class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends LocalLoader {
   logger.debug(s"lookup folder: ${directory.getAbsolutePath}")
 
   /**
@@ -54,9 +54,9 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Res
     }
   }
 
-  override def toString = s"RecursiveDirectoryResourceLoader(directory: $directory)"
+  override def toString = s"RecursiveDirectoryResourceLoader(directory: ${directory.getAbsolutePath})"
 
-  override def fileExists(name: String): Boolean = walkTree(directory).exists(p => p.getAbsolutePath.contains(name))
+  override def exists(name: String): Boolean = walkTree(directory).exists(p => p.getAbsolutePath.contains(name))
 
   private final def walkTree(file: File): Iterable[File] = {
     val children = new Iterable[File] {

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
+
 /**
   * Interface for loading resources dynamically independent of actual representation
   */
@@ -27,7 +28,12 @@ trait ResourceLoader extends LazyLogging {
     */
   def priority: Int = 0
 
-  def fileExists(name: String): Boolean
+  /**
+    * does the given resource exists
+    * @param name
+    * @return
+    */
+  def exists(name: String): Boolean
 }
 
 /**
@@ -57,5 +63,9 @@ class DelegatingResourceLoader extends ResourceLoader {
 
   override def toString = s"DelegatingResourceLoader($sortedLoader)"
 
-  override def fileExists(name: String): Boolean = sortedLoader.collectFirst { case loader if loader.fileExists(name) => true }.getOrElse(false)
+  override def exists(name: String): Boolean = sortedLoader.collectFirst { case loader if loader.exists(name) => true }.getOrElse(false)
 }
+
+trait LocalLoader extends ResourceLoader
+
+trait RemoteLoader extends ResourceLoader
