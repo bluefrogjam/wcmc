@@ -7,7 +7,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.RetentionIndexCorrectionProperties
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
@@ -31,9 +30,6 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
   val properties: WorkflowProperties = null
 
   @Autowired
-  val lcmsProperties: RetentionIndexCorrectionProperties = null
-
-  @Autowired
   val listener: TestWorkflowEventListener = null
 
   @Autowired
@@ -48,10 +44,6 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
   val sampleName = "Pos_QC005.mzXML"
 
   "LCMSPositiveModeTargetWorkflowTest" when {
-
-    "configure out settings " in {
-      lcmsProperties.minimumFoundStandards = 15
-    }
 
     "ensure our targets are defined" in {
       assert(targetLibrary.load.nonEmpty)

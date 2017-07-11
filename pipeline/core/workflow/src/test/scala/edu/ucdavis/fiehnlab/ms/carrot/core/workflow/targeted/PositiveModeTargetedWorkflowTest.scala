@@ -9,7 +9,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event.{PreProcessingBeginEvent, QuantificationFinishedEvent, WorkflowEvent, WorkflowEventListener}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentReaderTxTProperties, ExperimentTXTReader, QuantifiedSampleTxtWriter}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.RetentionIndexCorrectionProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{Workflow, WorkflowProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
 import org.scalatest.{Matchers, WordSpec}
@@ -34,9 +33,6 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
   @Autowired
   val listener: TestWorkflowEventListener = null
 
-  @Autowired
-  val lcmsProperties: RetentionIndexCorrectionProperties = null
-
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   /**
@@ -55,10 +51,6 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
   def expectedValidationDelta(): Double
 
   "LCMSPositiveModeTargetWorkflowTest" must {
-
-    "configure out settings " in {
-      lcmsProperties.minimumFoundStandards = 15
-    }
 
     "process an experiment" when {
 

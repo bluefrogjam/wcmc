@@ -6,13 +6,15 @@ import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j.FServ4jClient
-import org.springframework.context.annotation.{Bean, Configuration}
+import edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j.MSDialRestProcessor
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.web.client.RestTemplate
 
 /**
   * Created by wohlgemuth on 11/29/16.
   */
 @Configuration
+@ComponentScan(basePackageClasses = Array(classOf[MSDialRestProcessor]))
 class LoadersConfiguration {
 
 

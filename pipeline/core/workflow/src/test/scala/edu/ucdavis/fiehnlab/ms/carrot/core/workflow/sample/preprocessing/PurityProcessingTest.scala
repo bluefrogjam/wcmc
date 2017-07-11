@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{WorkflowConfig, WorkflowProperties}
@@ -26,14 +27,17 @@ import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, T
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[PurityTestConfiguration]))
-@ActiveProfiles(Array("common","msdial"))
+@ActiveProfiles(Array("common"))
 class PurityProcessingTest extends WordSpec {
 
 	@Value("${storage.directory:src/test/resources}")
-	var directory: String = ""
+	val directory: String = ""
 
 	@Value("${workflow.correction.massAccuracy:15}")
-	var massAccuracy: Int = 0
+	val massAccuracy: Int = 0
+
+  @Autowired
+  val sampleLoader:ResourceLoaderSampleLoader = null
 
   @Autowired
   val process: PurityProcessing = null
@@ -42,13 +46,7 @@ class PurityProcessingTest extends WordSpec {
 
   "PurityProcessingTest" should {
 
-    val samples: List[_ <: Sample] =
-      new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_Blank000.msdial"), "B5_P20Lipids_Pos_Blank000.msdial") ::
-        new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_NIST02.msdial"), "B5_P20Lipids_Pos_NIST02.msdial") ::
-        new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_QC000.msdial"), "B5_P20Lipids_Pos_QC000.msdial") ::
-        new MSDialSample(getClass.getResourceAsStream("/lipids/B5_SA0001_P20Lipids_Pos_1FL_1004.msdial"), "B5_SA0001_P20Lipids_Pos_1FL_1004.msdial") ::
-        new MSDialSample(getClass.getResourceAsStream("/lipids/B5_SA0002_P20Lipids_Pos_1FL_1006.msdial"), "B5_SA0002_P20Lipids_Pos_1FL_1006.msdial") ::
-        List()
+    val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_Blank000.abf","B5_P20Lipids_Pos_NIST02.abf","B5_P20Lipids_Pos_QC000.abf","B5_SA0001_P20Lipids_Pos_1FL_1004.abf","B5_SA0002_P20Lipids_Pos_1FL_1006.abf"))
 
     samples.foreach { sample =>
       s"process $sample" in {

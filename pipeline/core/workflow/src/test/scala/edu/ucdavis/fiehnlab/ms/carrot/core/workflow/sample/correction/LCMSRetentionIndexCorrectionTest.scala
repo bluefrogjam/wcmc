@@ -34,10 +34,6 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec {
 
     assert(correction != null)
 
-    "configure out settings " in {
-      correction.correctionSettings.minimumFoundStandards = 16
-    }
-
     "process will fail" must {
 
 

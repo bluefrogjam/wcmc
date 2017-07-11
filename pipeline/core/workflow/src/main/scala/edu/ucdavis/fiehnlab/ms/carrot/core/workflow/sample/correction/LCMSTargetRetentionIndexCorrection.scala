@@ -20,22 +20,66 @@ import org.springframework.stereotype.Component
 @Component
 class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[RetentionIndexTarget], properties: WorkflowProperties) extends AnnotationProcess[RetentionIndexTarget, Sample, CorrectedSample](libraryAccess, properties.trackChanges) with LazyLogging {
 
-  @Autowired
-  val correctionSettings: RetentionIndexCorrectionProperties = null
+  @Value("${wcms.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
+  val massAccuracySetting: Double = 0.015
+
+  /**
+    * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
+    * and will depend on inject volume for thes e reasons
+    */
+  @Value("${wcms.pipeline.workflow.config.correction.peak.intensity:10000}")
+  val minPeakIntensity: Float =10000
+
+  /**
+    * minimum amount of standards, which have to be defined for this method to work
+    */
+  @Value("${wcms.pipeline.workflow.config.correction.regression.polynom:5}")
+  var minimumDefinedStandard: Int = 5
+
+  /**
+    * this defines how many standards we need to find on minimum
+    * for a retention index correction method to be successful
+    */
+  @Value("${wcms.pipeline.workflow.config.correction.regression.polynom:5}")
+  var minimumFoundStandards: Int = 16
+
+  /**
+    * we are utilizing the setting to group close by retention targets. This is mostly required, since we can't guarantee the order
+    * if markers, if they come at the same time, but have different ionization and so we rather drop them
+    * and only use one ionization product.
+    *
+    * This step happens after the required attribute was checked and so should not cause any issues with the required standards
+    *
+    * This setting needs to be provided in seconds
+    */
+  @Value("${wcms.pipeline.workflow.config.correction.groupStandard:10}")
+  var groupCloseByRetentionIndexStandardDifference: Int = 10
+  /**
+    * how many data points are required for the linear regression at the beginning and the end of the curve
+    */
+  @Value("${wcms.pipeline.workflow.config.correction.regression.linear:2}")
+  val linearSamples: Int = 2
+
+  /**
+    * what order is the polynomial regression
+    */
+  @Value("${wcms.pipeline.workflow.config.correction.regression.polynom:5}")
+  val polynomialOrder: Int = 5
+
   /**
     * needs to be lazily loaded, since the correction settings need to be set first by spring
     */
-  lazy val massAccuracy = new AccurateMassAnnotation(correctionSettings.massAccuracy / 1000, 0)
+  lazy val massAccuracy = new AccurateMassAnnotation(massAccuracySetting, 0)
 
   /**
     * allows us to filter the data by the height of the ion
     */
-  lazy val massIntensity = new MassIsHighEnoughAnnotation(correctionSettings.massAccuracy / 1000, correctionSettings.peakMinIntensity)
+  lazy val massIntensity = new MassIsHighEnoughAnnotation(massAccuracySetting, minPeakIntensity)
 
   /**
     * this defines our regression curve, which is supposed to be utilized during the correction. Lazy loading is required to avoid null pointer exception of the configuration settings
     */
-  lazy val regression: Regression = new CombinedRegression(correctionSettings.regressionProperties.linearSamples, correctionSettings.regressionProperties.polynomialOrder)
+  lazy val regression: Regression = new CombinedRegression(linearSamples, polynomialOrder)
 
   /**
     * attmeps to find a Seq of possible matching spectra
@@ -85,8 +129,8 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
           target
         }
         else {
-          val min = target.target.retentionTimeInSeconds - correctionSettings.groupCloseByRetentionIndexStandardDifference
-          val max = target.target.retentionTimeInSeconds + correctionSettings.groupCloseByRetentionIndexStandardDifference
+          val min = target.target.retentionTimeInSeconds - groupCloseByRetentionIndexStandardDifference
+          val max = target.target.retentionTimeInSeconds + groupCloseByRetentionIndexStandardDifference
           val previousTarget = matches(position - 1)
           val previousTime = previousTarget.target.retentionTimeInSeconds
           val result = previousTime >= min && previousTime <= max
@@ -144,8 +188,8 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
 
     logger.debug(s"correction sample: ${input}")
 
-    if (targets.size < correctionSettings.minimumDefinedStandard) {
-      throw new NotEnoughStandardsDefinedException(s"we require a defined minimum of ${correctionSettings.minimumDefinedStandard} retention index standard for this correction to work. But only ${targets.size} standards were provided")
+    if (targets.size < minimumDefinedStandard) {
+      throw new NotEnoughStandardsDefinedException(s"we require a defined minimum of ${minimumDefinedStandard} retention index standard for this correction to work. But only ${targets.size} standards were provided")
     }
     else {
       logger.debug(s"${targets.size} standards were defined")
@@ -217,8 +261,8 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     */
   def verifyCount(possibleHits: Seq[TargetAnnotation[RetentionIndexTarget, MSSpectra]], input: Sample) = {
     //ensure we found enough standards
-    if (possibleHits.size < correctionSettings.minimumFoundStandards) {
-      throw new NotEnoughStandardsFoundException(s"sorry we did not find enough standards in this sample: ${input.fileName} for a successful correction. We only found ${possibleHits.size}, but require ${correctionSettings.minimumFoundStandards}")
+    if (possibleHits.size < minimumFoundStandards) {
+      throw new NotEnoughStandardsFoundException(s"sorry we did not find enough standards in this sample: ${input.fileName} for a successful correction. We only found ${possibleHits.size}, but require ${minimumFoundStandards}")
     }
   }
 
@@ -281,67 +325,4 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
       throw new StandardsNotInOrderException(s"one or more standards where not annotated in ascending order of there retention times! Sample was ${input.fileName}")
     }
   }
-}
-
-/**
-  * defines all our requried lcms retention index correction settings
-  */
-@Component
-@ConfigurationProperties(prefix = "correction")
-class RetentionIndexCorrectionProperties {
-
-  /**
-    * defines the used mass accuracy in milli dalton
-    */
-  @Value("${workflow.correction.massAccuracy}")
-  var massAccuracy: Double = 15
-
-  /**
-    * minimum amount of standards, which have to be defined for this method to work
-    */
-  var minimumDefinedStandard: Int = 5
-
-  /**
-    * this defines how many standards we need to find on minimum
-    * for a retention index correction method to be successful
-    */
-  var minimumFoundStandards: Int = 16
-  /**
-    * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
-    * and will depend on inject volume for thes e reasons
-    */
-  var peakMinIntensity: Float = 10000
-
-  /**
-    * properties for the actual regression
-    */
-  @Autowired
-  val regressionProperties: RegressionProperties = null
-
-  /**
-    * we are utilizing the setting to group close by retention targets. This is mostly required, since we can't guarantee the order
-    * if markers, if they come at the same time, but have different ionization and so we rather drop them
-    * and only use one ionization product.
-    *
-    * This step happens after the required attribute was checked and so should not cause any issues with the required standards
-    *
-    * This setting needs to be provided in seconds
-    */
-  var groupCloseByRetentionIndexStandardDifference: Int = 10
-
-}
-
-@Component
-@ConfigurationProperties(prefix = "regression")
-class RegressionProperties {
-
-  /**
-    * how many data points are required for the linear regression at the beginning and the end of the curve
-    */
-  val linearSamples: Int = 2
-
-  /**
-    * what order is the polynomial regression
-    */
-  val polynomialOrder: Int = 5
 }

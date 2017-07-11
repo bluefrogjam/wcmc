@@ -19,7 +19,7 @@ import org.springframework.context.annotation._
   */
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration],classOf[MSDialRestProcessor]))
+@Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration]))
 @Profile(Array("common"))
 class TargetedWorkflowTestConfiguration extends LazyLogging {
 
