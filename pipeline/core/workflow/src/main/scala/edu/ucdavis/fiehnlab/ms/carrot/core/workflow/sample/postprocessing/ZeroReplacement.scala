@@ -114,7 +114,7 @@ class ZeroReplacementProperties {
   /**
     * extension of our rawdata files, to be used for replacement
     */
-  var fileExtension: List[String] = "mzXML.gz" :: "mzXML"  :: "mzML" :: "mzML.gz" :: List()
+  var fileExtension: List[String] = "mzXML"  :: "mzML" :: List()
 }
 
 /**
