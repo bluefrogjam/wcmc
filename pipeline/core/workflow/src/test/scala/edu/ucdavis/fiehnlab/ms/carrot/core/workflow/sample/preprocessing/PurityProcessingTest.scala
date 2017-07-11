@@ -25,12 +25,15 @@ import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, T
   * Created by wohlgemuth on 6/26/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringBootTest(classes = Array(classOf[PurityTestConfiguration]))
-@ActiveProfiles(Array("common", "msdial"))
+@ContextConfiguration(classes = Array(classOf[PurityTestConfiguration]))
+@ActiveProfiles(Array("common","msdial"))
 class PurityProcessingTest extends WordSpec {
 
 	@Value("${storage.directory:src/test/resources}")
 	var directory: String = ""
+
+	@Value("${workflow.correction.massAccuracy:15}")
+	var massAccuracy: Int = 0
 
   @Autowired
   val process: PurityProcessing = null
@@ -70,9 +73,8 @@ class PurityProcessingTest extends WordSpec {
 }
 
 @Configuration
-@EnableAutoConfiguration(exclude=Array(classOf[DataSourceAutoConfiguration], classOf[HibernateJpaAutoConfiguration]))
 @Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration]))
-@Profile(Array("common", "msdial"))
+@EnableAutoConfiguration(exclude=Array(classOf[DataSourceAutoConfiguration]))
 class PurityTestConfiguration {
 
   @Bean
