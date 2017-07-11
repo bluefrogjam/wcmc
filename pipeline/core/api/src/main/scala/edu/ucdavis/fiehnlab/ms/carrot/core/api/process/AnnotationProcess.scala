@@ -50,4 +50,10 @@ abstract class Process[I <: Sample, O <: Sample]() extends ItemProcessor[I, O] {
     * @return
     */
   def doProcess(item:I) :O
+
+  /**
+    * the priority of the process
+    * @return
+    */
+  def priortiy:Int = 0
 }

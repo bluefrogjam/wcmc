@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted
 
+import java.util
+
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{Reader, Writer}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
@@ -11,6 +13,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PreProc
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantificationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{LCMSProperties, Workflow, WorkflowProperties}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import scala.collection.JavaConverters._
 
 /**
   * a postive mode based LCMS target workflow
@@ -28,7 +31,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
   val quantificationProcess: QuantificationProcess[T] = null
 
   @Autowired(required = false)
-  val preProcessor: PreProcessor = null
+  val preProcessor: java.util.List[PreProcessor] = new util.ArrayList[PreProcessor]()
 
   @Autowired
   val annotate: LCMSTargetAnnotationProcess = null
@@ -113,7 +116,22 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
     * @param experiment
     * @return
     */
-  override protected def preProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Sample = if (preProcessor != null) preProcessor.process(sample) else sample
+  override protected def preProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Sample = {
+    if(preProcessor.isEmpty){
+      sample
+    }
+    else{
+      //TODO could be done more elegant with a fold, but no time to play with it
+      val iterator = preProcessor.asScala.sortBy(_.priortiy).reverseIterator
+      var temp = iterator.next().process(sample)
+
+      while(iterator.hasNext){
+        temp = iterator.next().process(temp)
+      }
+
+      temp
+    }
+  }
 
   /**
     * corrects the given sample

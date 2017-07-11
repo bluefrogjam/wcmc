@@ -31,6 +31,10 @@ class ClasspathResourceLoaderTest extends WordSpec with LazyLogging {
       assert(loader.load("/test.txt").isDefined)
     }
 
+    "succeed loading this resource as file" in {
+      assert(loader.loadAsFile("/test.txt").isDefined)
+    }
+
     "succeed loading this resource and going to the root" in {
       assert(loader.load("test.txt").isDefined)
     }

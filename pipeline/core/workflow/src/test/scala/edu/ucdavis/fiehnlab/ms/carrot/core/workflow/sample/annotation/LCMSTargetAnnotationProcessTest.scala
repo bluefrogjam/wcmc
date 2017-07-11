@@ -14,13 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+
 /**
   * Created by wohlgemuth on 6/27/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("common"))
-class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging{
+@ActiveProfiles(Array("common", "msdial"))
+class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrection = null
@@ -35,7 +36,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging{
     * used to verify picked scans are correct
     */
   @Autowired
-  val quantify:QuantifyByScanProcess = null
+  val quantify: QuantifyByScanProcess = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -45,10 +46,10 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging{
       assert(annotation.targets != null)
     }
 
-    val samples: List[_ <: Sample] =        new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_NIST02.msdial"), "B5_P20Lipids_Pos_NIST02.msdial")  :: List()
+    val samples: List[_ <: Sample] = new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_NIST02.msdial"), "B5_P20Lipids_Pos_NIST02.msdial") :: List()
 
     //compute purity values
-    val purityComputed = samples//.map(purity.process)
+    val purityComputed = samples //.map(purity.process)
 
     //correct the data
     val correctedSample = purityComputed.map(correction.process)
@@ -61,7 +62,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging{
 
         val result = annotation.process(sample)
 
-        assert(result!=null)
+        assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)
         assert((result.noneAnnotated.size + result.spectra.size) == result.correctedWith.spectra.size)
 
@@ -73,7 +74,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging{
           logger.debug(f"\t\t rt (s):        ${spectra.target.retentionTimeInSeconds}%1.3f")
           logger.debug(f"\t\t rt (m):        ${spectra.target.retentionTimeInMinutes}%1.3f")
           logger.debug(f"\tannotation data:")
-          logger.debug(f"\t\t ri (m):        ${spectra.retentionIndex/60}%1.3f")
+          logger.debug(f"\t\t ri (m):        ${spectra.retentionIndex / 60}%1.3f")
           logger.debug(f"\t\t ri (s):        ${spectra.retentionIndex}%1.3f")
           logger.debug(f"\t\t rt (s):        ${spectra.retentionTimeInSeconds}%1.3f")
           logger.debug(f"\t\t rt (m):        ${spectra.retentionTimeInMinutes}%1.3f")
@@ -112,7 +113,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging{
 
         val result = annotation.process(sample)
 
-        assert(result!=null)
+        assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)
         assert((result.noneAnnotated.size + result.spectra.size) == result.correctedWith.spectra.size)
 
@@ -124,7 +125,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging{
           logger.debug(f"\t\t rt (s):        ${spectra.target.retentionTimeInSeconds}%1.3f")
           logger.debug(f"\t\t rt (m):        ${spectra.target.retentionTimeInMinutes}%1.3f")
           logger.debug(f"\tannotation data:")
-          logger.debug(f"\t\t ri (m):        ${spectra.retentionIndex/60}%1.3f")
+          logger.debug(f"\t\t ri (m):        ${spectra.retentionIndex / 60}%1.3f")
           logger.debug(f"\t\t ri (s):        ${spectra.retentionIndex}%1.3f")
           logger.debug(f"\t\t rt (s):        ${spectra.retentionTimeInSeconds}%1.3f")
           logger.debug(f"\t\t rt (m):        ${spectra.retentionTimeInMinutes}%1.3f")

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.loader
 
-import java.io.InputStream
+import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,6 +22,47 @@ trait ResourceLoader extends LazyLogging {
   def load(name: String): Option[InputStream]
 
   /**
+    * will load the resource as file, by utilizing a TEMP directory
+    * should be avoided due to uneccesaery performance overhead, but some tools
+    * sadly require files and can't handle streams
+    *
+    * @param name
+    * @return
+    */
+  def loadAsFile(name: String): Option[File] = {
+    val loaded = load(name)
+
+    if (loaded.isDefined) {
+      val fName = if(name.startsWith("/")){
+        name.substring(1)
+      }
+      else{
+        name
+      }
+
+      val tempFile = File.createTempFile("loader-temp", s"$fName")
+      tempFile.deleteOnExit()
+
+      val outStream = new FileWriter(tempFile)
+      val stream = new InputStreamReader(loaded.get)
+      Iterator
+        .continually(stream.read)
+        .takeWhile(-1 !=)
+        .foreach { x =>
+          outStream.write(x)
+        }
+
+      outStream.flush()
+      outStream.close()
+      stream.close()
+      Option(tempFile)
+    }
+    else {
+      None
+    }
+  }
+
+  /**
     * priority of the loader
     *
     * @return
@@ -30,6 +71,7 @@ trait ResourceLoader extends LazyLogging {
 
   /**
     * does the given resource exists
+    *
     * @param name
     * @return
     */

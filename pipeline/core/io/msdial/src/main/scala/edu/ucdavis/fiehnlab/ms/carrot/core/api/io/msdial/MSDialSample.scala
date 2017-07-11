@@ -14,12 +14,12 @@ import scala.util.Try
   * creates a new msdial sample from the given file
   */
 object MSDialSample {
-  def apply(file: File): MSDialSample = {
+  def apply(name:String,file: File): MSDialSample = {
     if(file.getName.endsWith("gz")){
-      new MSDialSample(new GZIPInputStream(new FileInputStream(file)), file.getName)
+      new MSDialSample(new GZIPInputStream(new FileInputStream(file)), name)
     }
     else {
-      new MSDialSample(new FileInputStream(file), file.getName)
+      new MSDialSample(new FileInputStream(file), name)
     }
   }
 }
@@ -31,44 +31,44 @@ object MSDialSample {
   */
 class MSDialSample(inputStream: InputStream, override val fileName: String) extends Sample with LazyLogging {
 
-  val nameIdentifier: String = "name"
-  val scanLeftIdentifier: String = "scanatleft"
-  val scanIdentifier: String = "scanattop"
-  val scanRightIdentifier: String = "scanatright"
-  val retentionTimeLeftMinutesIdentifier: String = "rtatleft(min)"
-  val retentionTimeMinutesIdentifier: String = "rtattop(min)"
-  val retentionTimeRightMinutesIdentifier: String = "rtatright(min)"
-  val intensityAtLeftIdentifier: String ="heightatleft"
-  val intensityIdentifier: String = "heightattop"
-  val intensityAtRightIdentifier: String = "heightatright"
-  val areaAboveZeroIdentifier: String = "areaabovezero"
-  val areaAboveBaselineIdentifier: String = "areaabovecaseline"
-  val normalizedValueIdentifier: String = "normalizednalue"
-  val mPlus1IonIntensityIdentifier: String = "ms1_m+1intensity"
-  val mPlus2IonIntensityIdentifier: String = "ms1_m+2intensity"
-  val purityIdentifier: String = "peakpurevalue"
-  val sharpnessIdentifier: String = "sharpness"
-  val gaussianSimilarityIdentifier: String = "gaussiansimylarity"
-  val idealSlopeIdentifier: String = "idealslope"
-  val modelMassesIdentifier: String = "modelmasses"
-  val uniquemassIdentifier: String = "uniquemass"
-  val basePeakIdentifir: String = "basepeakvalue"
-  val symmetryIdentifier: String = "symmetry"
-  val amplitudeScoreIdentifier: String = "amplitudescore"
-  val amplitudOrderIdentifier: String = "amplitudorder"
-  val adductIonNameIdentifier: String = "adductionname"
-  val adductParentIdentifier: String = "adductparent"
-  val adductIonAccurateMassIdentifier: String = "adductionaccuratemass"
-  val adductIonXmerIdentifier: String = "adductionxmer"
-  val adductIonChargeIdentifier: String = "adductionchargenumber"
-  val accurateMassIdentifier: String = "accuratemass"
-  val accurateMassSimilarityIdentifier: String = "accuratemasssimilarity"
-  val isotopeIdentifier: String = "isotope"
-  val dotProductIdentifier: String = "dot product"
-  val reverseDotProductIdentifier: String = "reverse dot product"
-  val fragmentPrecensePercentIdentifier: String = "fragment presence %"
-  val totalScoreIdentifier: String = "total score"
-  val spectraIdentifier: String = "spectra"
+  protected val nameIdentifier: String = "name"
+  protected val scanLeftIdentifier: String = "scanatleft"
+  protected val scanIdentifier: String = "scanattop"
+  protected val scanRightIdentifier: String = "scanatright"
+  protected val retentionTimeLeftMinutesIdentifier: String = "rtatleft(min)"
+  protected val retentionTimeMinutesIdentifier: String = "rtattop(min)"
+  protected val retentionTimeRightMinutesIdentifier: String = "rtatright(min)"
+  protected val intensityAtLeftIdentifier: String ="heightatleft"
+  protected val intensityIdentifier: String = "heightattop"
+  protected val intensityAtRightIdentifier: String = "heightatright"
+  protected val areaAboveZeroIdentifier: String = "areaabovezero"
+  protected val areaAboveBaselineIdentifier: String = "areaabovecaseline"
+  protected val normalizedValueIdentifier: String = "normalizednalue"
+  protected val mPlus1IonIntensityIdentifier: String = "ms1_m+1intensity"
+  protected val mPlus2IonIntensityIdentifier: String = "ms1_m+2intensity"
+  protected val purityIdentifier: String = "peakpurevalue"
+  protected val sharpnessIdentifier: String = "sharpness"
+  protected val gaussianSimilarityIdentifier: String = "gaussiansimylarity"
+  protected val idealSlopeIdentifier: String = "idealslope"
+  protected val modelMassesIdentifier: String = "modelmasses"
+  protected val uniquemassIdentifier: String = "uniquemass"
+  protected val basePeakIdentifir: String = "basepeakvalue"
+  protected val symmetryIdentifier: String = "symmetry"
+  protected val amplitudeScoreIdentifier: String = "amplitudescore"
+  protected val amplitudOrderIdentifier: String = "amplitudorder"
+  protected val adductIonNameIdentifier: String = "adductionname"
+  protected val adductParentIdentifier: String = "adductparent"
+  protected val adductIonAccurateMassIdentifier: String = "adductionaccuratemass"
+  protected val adductIonXmerIdentifier: String = "adductionxmer"
+  protected val adductIonChargeIdentifier: String = "adductionchargenumber"
+  protected val accurateMassIdentifier: String = "accuratemass"
+  protected val accurateMassSimilarityIdentifier: String = "accuratemasssimilarity"
+  protected val isotopeIdentifier: String = "isotope"
+  protected val dotProductIdentifier: String = "dot product"
+  protected val reverseDotProductIdentifier: String = "reverse dot product"
+  protected val fragmentPrecensePercentIdentifier: String = "fragment presence %"
+  protected val totalScoreIdentifier: String = "total score"
+  protected val spectraIdentifier: String = "spectra"
 
   override val spectra: Seq[Feature] = readFile(inputStream)
 
@@ -134,11 +134,6 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
         override val scanNumber: Int = dataMap(scanIdentifier).toInt
 
-        /**
-          * if no spectra is defined, we have the cxurrent peak mz:intensity
-          * to have a spectrum for correction
-          * BUG
-          */
         override val ions: Seq[Ion] = dataMap(spectraIdentifier).split(" ").filter(_.nonEmpty).collect {
             case x: String if x.nonEmpty =>
               val values = x.split(":")
@@ -152,8 +147,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
         override val msLevel: Short = 1
 
-        //TODO resolve into something, purity should be calculated across scans, not on a single spectrum
-        override val purity: Option[Double] = Some(Try(dataMap(purityIdentifier).toDouble).getOrElse(-1.0))
+        override val purity: Option[Double] = None
 
       }
     }

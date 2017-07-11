@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 class DeconvolutedSampleTxtWriterTest extends WordSpec with Matchers with LazyLogging {
   val sample: MSDialSample = new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_Blank000.msdial"), "B5_P20Lipids_Pos_Blank000.msdial") with DeconvolutedSample
 
-  val writer: DeconvolutedSampleTxtWriter = new DeconvolutedSampleTxtWriter()
+  val writer: SampleTXTWriter = new SampleTXTWriter()
 
   /*val os: OutputStream = */
 

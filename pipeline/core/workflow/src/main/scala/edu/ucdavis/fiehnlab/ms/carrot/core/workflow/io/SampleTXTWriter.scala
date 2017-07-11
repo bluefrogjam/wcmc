@@ -12,7 +12,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
   * Created by diego on 11/9/2016.
   */
 
-class DeconvolutedSampleTxtWriter(separator: String = "\t", noneReplacements: String = "NA") extends Writer[Sample] with LazyLogging {
+class SampleTXTWriter(separator: String = "\t", noneReplacements: String = "NA") extends Writer[Sample] with LazyLogging {
   var lineCounter: Int = 0
 
   override def write(outputStream: OutputStream, sample: Sample): Unit = {
@@ -22,7 +22,7 @@ class DeconvolutedSampleTxtWriter(separator: String = "\t", noneReplacements: St
 
     sample match {
 //      case data: MSDialSample =>
-      case data: DeconvolutedSample =>
+      case data: Sample =>
 
         def sortedSpectra = data.spectra.sortBy(p => p.retentionTimeInSeconds)
 
@@ -32,14 +32,12 @@ class DeconvolutedSampleTxtWriter(separator: String = "\t", noneReplacements: St
         out.write("Scan#\tRT(min)\tBase Peak MZ\tBase Peak Int\tPurity\tSpectrum")
         out.write("\n")
 
-        sortedSpectra.foreach { x =>
-          x match {
-            case decSpec:MSSpectra =>
-              val line = f"${decSpec.scanNumber}%d\t${decSpec.retentionTimeInMinutes}%1.5f\t${decSpec.basePeak.mass}%1.5f\t${decSpec.basePeak.intensity}%1.5f\t${decSpec.purity.getOrElse(-1.0)}%1.5f\t${decSpec.ions.mkString(" ")}%s\n"
-              out.write(line)
-            case _ =>
-          }
-
+        sortedSpectra.foreach {
+          case decSpec: MSSpectra =>
+            val line = f"${decSpec.scanNumber}%d\t${decSpec.retentionTimeInMinutes}%1.5f\t${decSpec.basePeak.mass}%1.5f\t${decSpec.basePeak.intensity}%1.5f\t${decSpec.purity.getOrElse(-1.0)}%1.5f\t${decSpec.ions.mkString(" ")}%s\n"
+            out.write(line)
+          case _ =>
+            logger.debug("not a spectra, was a feature!")
         }
 
         out.flush()

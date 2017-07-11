@@ -14,7 +14,7 @@ class MSDKSampleTest extends WordSpec {
 
     "support mzml" should {
 
-      val delegate:MSDKSample =  MSDKSample(new File("src/test/resources/test.mzML"))
+      val delegate:MSDKSample =  MSDKSample("test.mzML",new File("src/test/resources/test.mzML"))
 
       "unknownSpectra" in {
         assert(delegate.spectra.size == 7)
@@ -28,7 +28,7 @@ class MSDKSampleTest extends WordSpec {
 
     "support cdf" should {
 
-      val delegate:MSDKSample =  MSDKSample(new File("src/test/resources/test.CDF"))
+      val delegate:MSDKSample =  MSDKSample("test.cdf",new File("src/test/resources/test.CDF"))
 
       "unknownSpectra" in {
         assert(delegate.spectra.size == 1278)
@@ -41,7 +41,7 @@ class MSDKSampleTest extends WordSpec {
 
     "support mzdata" should {
 
-      val delegate:MSDKSample =  MSDKSample(new File("src/test/resources/test.mzdata"))
+      val delegate:MSDKSample =  MSDKSample("test.mzdata",new File("src/test/resources/test.mzdata"))
 
       "unknownSpectra" in {
         assert(delegate.spectra.size == 112)
@@ -55,7 +55,7 @@ class MSDKSampleTest extends WordSpec {
 
     "support mzxml" should {
 
-      val delegate:MSDKSample =  MSDKSample(new File("src/test/resources/test.mzXML"))
+      val delegate:MSDKSample =  MSDKSample("test.mzXML",new File("src/test/resources/test.mzXML"))
 
       "unknownSpectra" in {
         assert(delegate.spectra.size == 1)

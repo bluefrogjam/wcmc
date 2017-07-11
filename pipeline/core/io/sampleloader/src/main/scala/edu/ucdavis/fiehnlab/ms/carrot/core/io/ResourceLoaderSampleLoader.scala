@@ -7,9 +7,11 @@ import java.nio.file.Paths
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.abf.ABFSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j.MSDialRestProcessor
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired
   */
 class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) extends SampleLoader with LazyLogging {
 
+  @Autowired
+  val client: MSDialRestProcessor = null
   /**
     * loads a sample
     *
@@ -43,7 +47,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
 	    copy(new BufferedInputStream(file.get), path)
 
       //return
-      Some(build(output))
+      Some(build(name,output))
     }
     else {
       None
@@ -60,17 +64,21 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     resourceLoader.exists(name)
   }
 
-  def build(file: File): Sample = {
+  def build(name:String,file: File): Sample = {
     //    println(s"file: ${file}")
     if (file.getName.toLowerCase().matches(".*.txt[.gz]*")) {
       //leco
       null
     }
     else if (file.getName.toLowerCase().matches(".*.msdial[.gz]*")) {
-      MSDialSample(file)
+      MSDialSample(name,file)
     }
+    else if (file.getName.toLowerCase().matches(".*.abf")) {
+      new ABFSample(name,file,client)
+    }
+
     else {
-      MSDKSample(file)
+      MSDKSample(name,file)
 
     }
   }

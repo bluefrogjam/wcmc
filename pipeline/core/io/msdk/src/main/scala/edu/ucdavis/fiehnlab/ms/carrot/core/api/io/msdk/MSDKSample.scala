@@ -21,7 +21,7 @@ import scala.collection.JavaConverters._
 /**
   * this provides us with an easy way to utilized MSDK based data classes in our simplified schema
   */
-class MSDKSample(delegate: RawDataFile) extends Sample with LazyLogging {
+class MSDKSample(name:String,delegate: RawDataFile) extends Sample with LazyLogging {
 
 
   /**
@@ -73,7 +73,7 @@ class MSDKSample(delegate: RawDataFile) extends Sample with LazyLogging {
   /**
     * the unique file name of the sample
     */
-  override val fileName: String = delegate.getName
+  override val fileName: String = name
 
   /**
     * disposing of the delegate
@@ -88,7 +88,7 @@ object MSDKSample extends LazyLogging {
     * @param rawDataFile
     * @return
     */
-  def apply(rawDataFile: RawDataFile): MSDKSample = new MSDKSample(rawDataFile)
+  def apply(name:String,rawDataFile: RawDataFile): MSDKSample = new MSDKSample(name,rawDataFile)
 
   /**
     * simple factory to find the rawdata delegate for us
@@ -96,7 +96,7 @@ object MSDKSample extends LazyLogging {
     * @param file
     * @return
     */
-  def apply(file: File): MSDKSample = {
+  def apply(originalName:String,file: File): MSDKSample = {
 
 
     var output = file
@@ -118,6 +118,7 @@ object MSDKSample extends LazyLogging {
     val name = output.getName.toLowerCase.substring(file.getName.indexOf(".") + 1)
 
     new MSDKSample(
+      originalName,
 
       //find our internal implementation
       name match {
