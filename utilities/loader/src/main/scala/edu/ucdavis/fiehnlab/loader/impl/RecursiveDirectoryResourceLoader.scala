@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired
   */
 class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends LocalLoader {
 
-  if(!directory.exists()){
+  if (!directory.exists()) {
     logger.info(s"making directory: ${directory.getAbsolutePath}")
     directory.mkdirs()
   }
-  else{
+  else {
     logger.debug(s"lookup folder is: ${directory.getAbsolutePath}")
   }
 
@@ -25,45 +25,32 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Loc
     * @return
     */
   override def load(name: String): Option[InputStream] = {
-    if(directory.exists()) {
-      file(directory, name)
+    val result = loadAsFile(name)
+
+    if (result.isDefined) {
+      Option(new FileInputStream(result.get))
     }
-    else{
+    else {
       None
     }
   }
 
   /**
-    * recursively load files
+    * will load the resource as file, by utilizing a TEMP directory
+    * should be avoided due to uneccesaery performance overhead, but some tools
+    * sadly require files and can't handle streams
     *
-    * @param dir
     * @param name
     * @return
     */
-  def file(dir: File, name: String): Option[InputStream] = {
-    logger.debug(s"looking for ${name} in ${dir.getAbsolutePath}")
-    val toLoad = new File(dir, name)
-
-    if (toLoad.exists()) {
-      Some(new FileInputStream(toLoad))
-    }
-    else {
-      val sub = dir.listFiles().filter(_.isDirectory).collect {
-        case currentDir: File => file(currentDir, name)
-      }.filter(_.isDefined)
-
-      if (sub.isEmpty) {
-        None
-      }
-      else {
-        sub.head
-      }
-    }
+  override def loadAsFile(name: String): Option[File] = {
+    val files = walkTree(directory).filter(p => p.getAbsolutePath.endsWith(name))
+    files.headOption
   }
 
   override def toString = s"RecursiveDirectoryResourceLoader(directory: ${directory.getAbsolutePath})"
 
-  override def exists(name: String): Boolean = walkTree(directory).exists(p => p.getAbsolutePath.contains(name))
+  override def exists(name: String): Boolean = walkTree(directory).exists(p => p.getAbsolutePath.endsWith(name))
 
   private final def walkTree(file: File): Iterable[File] = {
     val children = new Iterable[File] {
