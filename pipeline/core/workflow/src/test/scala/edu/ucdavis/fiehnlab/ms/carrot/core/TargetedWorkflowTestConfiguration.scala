@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarge
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{WorkflowConfig, WorkflowProperties}
+import edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j.MSDialRestProcessor
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.context.annotation._
@@ -18,7 +19,7 @@ import org.springframework.context.annotation._
   */
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration]))
+@Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration],classOf[MSDialRestProcessor]))
 @Profile(Array("common"))
 class TargetedWorkflowTestConfiguration extends LazyLogging {
 
