@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{WorkflowConfig, WorkflowProperties}
+import edu.ucdavis.fiehnlab.wcms.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -26,15 +27,9 @@ import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, T
   * Created by wohlgemuth on 6/26/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[PurityTestConfiguration]))
+@ContextConfiguration(classes = Array(classOf[PurityTestConfiguration],classOf[CaseClassToJSONSerializationConfiguration]))
 @ActiveProfiles(Array("common"))
 class PurityProcessingTest extends WordSpec {
-
-	@Value("${storage.directory:src/test/resources}")
-	val directory: String = ""
-
-	@Value("${workflow.correction.massAccuracy:15}")
-	val massAccuracy: Int = 0
 
   @Autowired
   val sampleLoader:ResourceLoaderSampleLoader = null

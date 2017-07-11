@@ -226,7 +226,7 @@ class ProxySample(fName: String, loader: SampleLoader) extends Sample with LazyL
     */
   lazy override val spectra: Seq[_ <: Feature] = {
     logger.debug(s"loading spectra from ${fName}...")
-    loader.loadSample(fName).get.spectra
+    loader.getSample(fName).spectra
   }
 
   /**

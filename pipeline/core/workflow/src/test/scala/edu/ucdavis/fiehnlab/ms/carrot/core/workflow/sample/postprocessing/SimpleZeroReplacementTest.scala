@@ -18,7 +18,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("common","msdial"))
+@ActiveProfiles(Array("common"))
 class SimpleZeroReplacementTest extends WordSpec {
 
   @Autowired
@@ -45,7 +45,7 @@ class SimpleZeroReplacementTest extends WordSpec {
       quantify.process(
         annotation.process(
           correction.process(
-            loader.loadSample("B5_P20Lipids_Pos_QC000.msdial").get
+            loader.getSample("B5_P20Lipids_Pos_QC000.abf")
           )
         )
       )

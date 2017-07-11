@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
@@ -26,6 +27,9 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging{
   val correction: LCMSTargetRetentionIndexCorrection = null
 
   @Autowired
+  val loader:SampleLoader = null
+
+  @Autowired
   val purity: PurityProcessing = null
 
   @Autowired
@@ -39,7 +43,7 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging{
 
   "QuantifyByHeightProcessTest" should {
 
-    val samples: List[_ <: Sample] = new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_NIST02.msdial"), "B5_P20Lipids_Pos_NIST02.msdial") :: new MSDialSample(getClass.getResourceAsStream("/lipids/B5_SA0002_P20Lipids_Pos_1FL_1006.msdial"), "B5_SA0002_P20Lipids_Pos_1FL_1006.msdial") :: List()
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq(  "B5_P20Lipids_Pos_NIST02.abf","B5_SA0002_P20Lipids_Pos_1FL_1006.abf"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)

@@ -26,7 +26,7 @@ class FServ4jClient extends RemoteLoader {
   @Value("${wcms.api.rest.fserv4j.host:127.0.0.1}")
   val host: String = ""
 
-  @Value("${wcms.api.rest.fserv4j.port:80}")
+  @Value("${wcms.api.rest.fserv4j.port:8080}")
   val port: Int = 80
 
   @Value("${wcms.api.rest.fserv4j.root:rest}")
@@ -53,7 +53,9 @@ class FServ4jClient extends RemoteLoader {
 
       val entity = new HttpEntity[String](headers)
 
-      val response = template.exchange(s"$url/download/test.txt", HttpMethod.GET, entity, classOf[Array[Byte]])
+      val myUrl = s"$url/download/$name"
+      logger.info(s"download resource from: ${myUrl}")
+      val response = template.exchange(myUrl, HttpMethod.GET, entity, classOf[Array[Byte]])
 
       if (response.getStatusCode == HttpStatus.OK) {
         Option(new ByteArrayInputStream(response.getBody))
@@ -85,9 +87,9 @@ class FServ4jClient extends RemoteLoader {
   @Cacheable
   override def exists(name: String): Boolean = {
     val location = s"$url/exists/$name"
-    logger.debug(s"looking for location: ${location}")
+    logger.info(s"looking for location: ${location}")
     try {
-      val response = template.getForEntity(location, classOf[String])
+      val response = template.getForEntity(location, classOf[Any])
       response.getStatusCode == HttpStatus.OK
     }
     catch {

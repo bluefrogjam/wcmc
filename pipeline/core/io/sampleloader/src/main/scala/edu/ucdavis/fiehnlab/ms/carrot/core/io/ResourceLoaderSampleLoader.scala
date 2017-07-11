@@ -23,6 +23,8 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
 
   @Autowired
   val client: MSDialRestProcessor = null
+
+  logger.info(s"using loader: ${resourceLoader}")
   /**
     * loads a sample
     *

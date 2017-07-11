@@ -118,7 +118,7 @@ class FServController extends LazyLogging {
       logger.info(s"checking loader: ${loader}")
       if (loader.exists(param)) {
         logger.info("found file!")
-        return ResponseEntity.ok.body(s"""{ "exist":true, "file":"${param} }""")
+        return ResponseEntity.ok.body(s"""{ "exist":true, "file":"${param}" }""")
       }
     }
     logger.info("resource was not found")

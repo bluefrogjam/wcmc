@@ -61,9 +61,7 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
         val result = workflow.process(
           Experiment(
             classes = ExperimentClass(
-              samples = new Sample {override val spectra: Seq[_ <: MSSpectra] = Seq.empty
-                override val fileName: String = sampleName
-              } :: List()) :: List(), None))
+              samples = loader.getSample(sampleName) :: List()) :: List(), None))
         assert(result.available() > 10)
       }
 

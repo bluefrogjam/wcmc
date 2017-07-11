@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
+import java.io.FileNotFoundException
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
@@ -80,8 +82,7 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
     //toss exception
     else {
       logger.warn(s"sorry we were not able to load the rawdata file for ${sample.name} using the loader ${sampleLoader}")
-      sample
-      //      throw new FileNotFoundException(s"sorry we were not able to load the rawdata file for ${sample.name} using the loader ${sampleLoader}")
+      throw new FileNotFoundException(s"sorry we were not able to load the rawdata file for ${sample.name} using the loader ${sampleLoader}")
     }
   }
 }
@@ -113,7 +114,7 @@ class ZeroReplacementProperties {
   /**
     * extension of our rawdata files, to be used for replacement
     */
-  var fileExtension: List[String] = "mzXML.gz" :: "mzXML" :: List()
+  var fileExtension: List[String] = "mzXML.gz" :: "mzXML"  :: "mzML" :: "mzML.gz" :: List()
 }
 
 /**

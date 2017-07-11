@@ -18,16 +18,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("msdial"))
 class PositiveModeTargetedWorkflowMSDialMSMSTest extends PositiveModeTargetedWorkflowTest {
-	@Autowired
-	val loader: SampleLoader = null
-
-	@Autowired
-	val targetLibrary: LibraryAccess[Target] = null
-
-	@Autowired
-	val reader: ExperimentTXTReader = null
 
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 

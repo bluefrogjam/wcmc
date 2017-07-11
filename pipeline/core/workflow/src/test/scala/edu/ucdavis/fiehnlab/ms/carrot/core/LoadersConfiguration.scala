@@ -32,6 +32,4 @@ class LoadersConfiguration {
   @Bean
   def remoteLoader:FServ4jClient = new FServ4jClient
 
-  @Bean
-  def restTemplate:RestTemplate = new RestTemplate()
 }

@@ -41,7 +41,7 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Loc
     * @return
     */
   def file(dir: File, name: String): Option[InputStream] = {
-    logger.info(s"looking for ${name} in ${dir.getAbsolutePath}")
+    logger.debug(s"looking for ${name} in ${dir.getAbsolutePath}")
     val toLoad = new File(dir, name)
 
     if (toLoad.exists()) {
@@ -66,10 +66,8 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Loc
   override def exists(name: String): Boolean = walkTree(directory).exists(p => p.getAbsolutePath.contains(name))
 
   private final def walkTree(file: File): Iterable[File] = {
-    logger.debug(s"walking tree for file: ${file.getAbsolutePath}")
     val children = new Iterable[File] {
       def iterator: Iterator[File] = if (file.isDirectory && file.listFiles().length > 0) {
-        logger.debug(s"trying to find children for file: ${file.getAbsolutePath}")
         file.listFiles.iterator
       } else Iterator.empty
     }

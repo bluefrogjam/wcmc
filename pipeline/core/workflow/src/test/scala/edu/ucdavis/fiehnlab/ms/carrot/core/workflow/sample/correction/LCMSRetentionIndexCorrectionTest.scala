@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception.NotEnoughStandardsFoundException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PurityProcessing
@@ -23,14 +24,17 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec {
   val correction: LCMSTargetRetentionIndexCorrection = null
 
   @Autowired
+  val loader:SampleLoader = null
+
+  @Autowired
   val purity: PurityProcessing = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "LCMSRetentionIndexCorrectionTest" should {
 
-    val sample2 = new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_NIST02.msdial"), "B5_P20Lipids_Pos_NIST02.msdial")
-    val sample3 = new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_QC000.msdial"), "B5_P20Lipids_Pos_QC000.msdial")
+    val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.abf")
+    val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.msdial")
 
     assert(correction != null)
 

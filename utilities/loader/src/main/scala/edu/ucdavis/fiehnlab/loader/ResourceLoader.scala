@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.loader
 
 import java.io._
+import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -106,6 +107,11 @@ class DelegatingResourceLoader extends ResourceLoader {
   override def toString = s"DelegatingResourceLoader($sortedLoader)"
 
   override def exists(name: String): Boolean = sortedLoader.collectFirst { case loader if loader.exists(name) => true }.getOrElse(false)
+
+  @PostConstruct
+  def init(): Unit ={
+    logger.info(s"configured with the following resource loaders: ${loaders}")
+  }
 }
 
 trait LocalLoader extends ResourceLoader
