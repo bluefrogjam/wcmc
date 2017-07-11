@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation._
 import org.springframework.web.multipart.MultipartFile
 
 import scala.collection.JavaConverters._
+import scala.collection.JavaConverters._
 
 /**
   * provides an easy way to upload and download files from/to a central location.
   * Created by wohlgemuth on 7/7/17.
   */
 @RestController
-@RequestMapping(value = Array("/rest")) //Max uploaded file size (here it is ~2GB)
+@RequestMapping(value = Array("/rest"))
 class FServController extends LazyLogging {
 
   @Value("${wcms.server.fserv.directory:storage}")
@@ -37,8 +38,8 @@ class FServController extends LazyLogging {
     logger.info(s"storing data at location: ${location.getAbsolutePath}")
   }
 
-  @RequestMapping(value = Array("/upload"))
-  def upload(@RequestParam("file") uploadedFileRef: MultipartFile): String = {
+  @RequestMapping(value = Array("/upload"), produces = Array(MediaType.APPLICATION_JSON_VALUE))
+  def upload(@RequestParam("file") uploadedFileRef: MultipartFile): java.util.Map[String, _ <: Any] = {
 
     val fileName = uploadedFileRef.getOriginalFilename
 
@@ -70,13 +71,13 @@ class FServController extends LazyLogging {
       logger.info(s"wrote ${totalBytes} bytes")
       writer.flush()
 
-      s"""{ "message" : "File uploaded successfully", "TotalBytesRead" : ${totalBytes}}"""
+      Map("message" -> "File successfully uploaded", "TotalBytesRead" -> totalBytes).asJava
 
     } catch {
-      case e: IOException =>
+      case e: Exception =>
         logger.error(e.getMessage, e)
 
-        s"""{ "message" : "File upload failed", "error" : ${e.getMessage}}"""
+        Map("message" -> "File upload failed", "error" -> e.getMessage).asJava
 
     } finally try {
       reader.close()
@@ -85,7 +86,7 @@ class FServController extends LazyLogging {
       case e: IOException =>
         logger.error(e.getMessage, e)
 
-        s"""{ "message" : "File upload failed", "error" : ${e.getMessage}}"""
+        Map("message" -> "File upload failed", "error" -> e.getMessage).asJava
     }
   }
 
@@ -111,14 +112,15 @@ class FServController extends LazyLogging {
 
   }
 
-  @RequestMapping(path = Array("/exists/{file:.+}"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/exists/{file:.+}"), method = Array(RequestMethod.GET), produces = Array(MediaType.APPLICATION_JSON_VALUE))
   @throws[IOException]
-  def exists(@PathVariable("file") param: String): ResponseEntity[String] = {
+  def exists(@PathVariable("file") param: String): ResponseEntity[java.util.Map[String, _ <: Any]] = {
+    logger.info(s"checking if file exists: ${param}")
     for (loader: ResourceLoader <- resourceLoader.asScala) {
       logger.info(s"checking loader: ${loader}")
       if (loader.exists(param)) {
         logger.info("found file!")
-        return ResponseEntity.ok.body(s"""{ "exist":true, "file":"${param}" }""")
+        return ResponseEntity.ok.body(Map("exist" -> true, "file" -> param).asJava)
       }
     }
     logger.info("resource was not found")
@@ -136,7 +138,7 @@ class FServController extends LazyLogging {
   private def generateFilePath(fileName: String) = {
     val fileDir = new File(directory)
 
-    if(!fileDir.exists()){
+    if (!fileDir.exists()) {
       fileDir.mkdirs()
     }
 

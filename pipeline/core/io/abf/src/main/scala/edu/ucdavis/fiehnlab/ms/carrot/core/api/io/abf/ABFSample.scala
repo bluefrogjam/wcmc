@@ -16,5 +16,5 @@ class ABFSample(override val fileName:String,file:File, val client:MSDialRestPro
     * all the deconvolution spectra for this file. Defined as lazy to reduce memory usage
     * and only do this operation once it's required
     */
-  lazy override val spectra: Seq[_ <: Feature] = MSDialSample(fileName,client.process(file)).spectra
+   override val spectra: Seq[_ <: Feature] = MSDialSample(fileName,client.process(file)).spectra
 }

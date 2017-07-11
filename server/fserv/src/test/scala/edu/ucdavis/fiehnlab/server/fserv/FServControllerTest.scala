@@ -56,11 +56,11 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
         headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
         val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-        val result = template.exchange(s"http://localhost:${port}/rest/upload", HttpMethod.POST, requestEntity, classOf[String])
+        val result = template.exchange(s"http://localhost:${port}/rest/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String,_  <: Any]])
 
         result.getStatusCode should be(HttpStatus.OK)
 
-        result.getBody.toLowerCase.contains("file uploaded successfully") should be(true)
+        result.getBody.get("TotalBytesRead").toString.toInt should be(9)
 
         //ensure the file was created
         new File(s"${directory}/test.txt").exists() should be(true)
@@ -77,13 +77,14 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
       }
       "not exists" in {
 
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test123.txt", classOf[Boolean])
+        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test123.txt", classOf[Any])
         response.getStatusCode should be(HttpStatus.NOT_FOUND)
 
       }
       "not exists a complicated file name" in {
 
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test_withUnder_and2extesnions.mzXML.gz", classOf[Boolean])
+        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test_withUnder_and2extesnions.mzXML.gz", classOf[Any])
+        println(response)
         response.getStatusCode should be(HttpStatus.NOT_FOUND)
 
       }
