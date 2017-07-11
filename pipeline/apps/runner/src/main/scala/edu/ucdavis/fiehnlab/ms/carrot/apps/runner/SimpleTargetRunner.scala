@@ -10,7 +10,6 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.io.{LocalDirectorySampleLoader, LocalDirectorySampleLoaderProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{PostProcessing, SimpleZeroReplacement}
@@ -76,18 +75,6 @@ class SimpleTargetRunnerConfig {
     else{
       List()
     }
-  }
-
-  /**
-    * how to get access of our data
-    *
-    * @param properties
-    * @return
-    */
-  @Primary
-  @Bean
-  def loader(properties: LocalDirectorySampleLoaderProperties): SampleLoader = {
-    new LocalDirectorySampleLoader(properties)
   }
 
   /**

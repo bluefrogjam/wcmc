@@ -76,11 +76,6 @@ class PurityProcessingTest extends WordSpec {
 class PurityTestConfiguration {
 
   @Bean
-  def process(properties: WorkflowProperties, puritySettings: PuritySettings): PurityProcessing = {
-    new PurityProcessing(properties, puritySettings)
-  }
-
-  @Bean
   def correctionStandardList: LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](new File("src/test/resources/retentionIndexStandards.txt"), "\t")
 
   @Bean

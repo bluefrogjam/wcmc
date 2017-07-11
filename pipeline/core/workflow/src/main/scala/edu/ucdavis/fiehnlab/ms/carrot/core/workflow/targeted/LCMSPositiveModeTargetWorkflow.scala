@@ -27,7 +27,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
   @Qualifier("quantification")
   val quantificationProcess: QuantificationProcess[T] = null
 
-  @Autowired
+  @Autowired(required = false)
   val preProcessor: PreProcessor = null
 
   @Autowired
@@ -113,7 +113,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
     * @param experiment
     * @return
     */
-  override protected def preProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Sample = preProcessor.process(sample)
+  override protected def preProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Sample = if (preProcessor != null) preProcessor.process(sample) else sample
 
   /**
     * corrects the given sample

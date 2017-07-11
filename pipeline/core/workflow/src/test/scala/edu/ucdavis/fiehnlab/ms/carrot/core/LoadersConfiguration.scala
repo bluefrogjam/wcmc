@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j.FServ4jClient
 import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.web.client.RestTemplate
 
 /**
   * Created by wohlgemuth on 11/29/16.
@@ -28,4 +29,7 @@ class LoadersConfiguration {
 
   @Bean
   def remoteLoader:FServ4jClient = new FServ4jClient
+
+  @Bean
+  def restTemplate:RestTemplate = new RestTemplate()
 }

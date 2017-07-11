@@ -10,7 +10,7 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
-import org.springframework.web.client.{HttpClientErrorException, HttpServerErrorException, RestTemplate}
+import org.springframework.web.client.{HttpClientErrorException, HttpServerErrorException, ResourceAccessException, RestTemplate}
 
 /**
   * Provides a simple access service to the remote FServ Server. Which provides shared resources over
@@ -98,6 +98,11 @@ class FServ4jClient extends RemoteLoader {
         else {
           throw x
         }
+
+      //in case the server is offline
+      case x: ResourceAccessException =>
+        logger.debug(s"this can be ignored: ${x.getMessage}", x)
+        false
     }
   }
 
@@ -121,7 +126,7 @@ class FServ4jClient extends RemoteLoader {
         throw new HttpServerErrorException(result.getStatusCode)
       }
 
-    }else{
+    } else {
       throw new FileNotFoundException(file.getAbsolutePath)
     }
   }

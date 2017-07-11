@@ -16,7 +16,6 @@
         <module>leco</module>
         <module>msdk</module>
         <module>msdial</module>
-        <module>scanner</module>
         <module>sampleloader</module>
     </modules>
 

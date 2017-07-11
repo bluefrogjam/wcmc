@@ -9,16 +9,18 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarge
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{WorkflowConfig, WorkflowProperties}
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.context.annotation._
 
 /**
   * Test configuration of a LCMS target workflow
   */
 @SpringBootApplication
+@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 @Configuration
 @Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration]))
-@Profile(Array("common", "msdial"))
+@Profile(Array("common"))
 class TargetedWorkflowTestConfiguration extends LazyLogging {
 
   /**

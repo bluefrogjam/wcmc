@@ -7,7 +7,8 @@ import java.nio.file.Paths
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.scanner.SampleFactory
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired
   * which allows us to load files remotely
   * or from other locations
   */
-//@Component
 class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) extends SampleLoader with LazyLogging {
 
   /**
@@ -43,7 +43,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
 	    copy(new BufferedInputStream(file.get), path)
 
       //return
-      Some(SampleFactory.build(output))
+      Some(build(output))
     }
     else {
       None
@@ -58,5 +58,20 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     */
   override def sampleExists(name: String): Boolean = {
     resourceLoader.exists(name)
+  }
+
+  def build(file: File): Sample = {
+    //    println(s"file: ${file}")
+    if (file.getName.toLowerCase().matches(".*.txt[.gz]*")) {
+      //leco
+      null
+    }
+    else if (file.getName.toLowerCase().matches(".*.msdial[.gz]*")) {
+      MSDialSample(file)
+    }
+    else {
+      MSDKSample(file)
+
+    }
   }
 }
