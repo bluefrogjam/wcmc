@@ -4,19 +4,19 @@ import java.io.File
 
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
+import edu.ucdavis.fiehnlab.wcms.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
-import org.springframework.test.context.TestContextManager
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 
 /**
   * Created by wohlg on 7/28/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringBootTest(classes = Array(classOf[ResourceLoaderSampleLoaderTestConfiguration]))
+@ContextConfiguration(classes = Array(classOf[ResourceLoaderSampleLoaderTestConfiguration]))
 class ResourceLoaderSampleLoaderTest extends WordSpec {
 
   @Autowired
@@ -50,7 +50,8 @@ class ResourceLoaderSampleLoaderTest extends WordSpec {
 }
 
 @Configuration
-@ComponentScan
+@ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j"))
+@Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
 class ResourceLoaderSampleLoaderTestConfiguration {
 
   @Bean
