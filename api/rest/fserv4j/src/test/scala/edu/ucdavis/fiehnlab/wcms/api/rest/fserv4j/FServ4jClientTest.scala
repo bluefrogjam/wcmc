@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j
 
 import java.io.{File, FileWriter}
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.server.fserv.FServ
@@ -23,7 +24,7 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT,classes = Array(classOf[FServ],classOf[FServ4jClientConfiguration]))
-class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach{
+class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging{
 
   override protected def beforeEach(): Unit = {
     new File(s"$directory/test.txt").delete()
@@ -51,9 +52,25 @@ class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfter
 
       res.isDefined should be(true)
 
-      Source.fromFile(new File(s"${directory}/test.txt")).getLines().toSeq.size should be(Source.fromFile(new File("src/test/resources/test.txt")).getLines().toSeq.size)
+      Source.fromInputStream(res.get).getLines().toSeq.size should be(Source.fromFile(new File("src/test/resources/test.txt")).getLines().toSeq.size)
 
     }
+
+    "upload. exist and download as file" in {
+
+      fserv.upload(new File("src/test/resources/test.txt"))
+
+      fserv.exists("test.txt") should be(true)
+
+      val res = fserv.loadAsFile("test.txt")
+
+      res.isDefined should be(true)
+
+      logger.info(s"file is stored at: ${res.get.getAbsolutePath}")
+      Source.fromFile(res.get).getLines().toSeq.size should be(Source.fromFile(new File("src/test/resources/test.txt")).getLines().toSeq.size)
+
+    }
+
 
     "test some other file extensions" should {
 

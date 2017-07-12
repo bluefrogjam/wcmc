@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.server.fserv
 
 import java.io._
 import javax.annotation.PostConstruct
-import javax.servlet.annotation.MultipartConfig
 import javax.servlet.http.HttpServletResponse
 
 import com.typesafe.scalalogging.LazyLogging
@@ -15,7 +14,6 @@ import org.springframework.http.{HttpHeaders, MediaType, ResponseEntity}
 import org.springframework.web.bind.annotation._
 import org.springframework.web.multipart.MultipartFile
 
-import scala.collection.JavaConverters._
 import scala.collection.JavaConverters._
 
 /**
@@ -101,7 +99,7 @@ class FServController extends LazyLogging {
 
         val resource = new InputStreamResource(file.get)
 
-        return ResponseEntity.ok.headers(headers).contentLength(file.get.available()).contentType(MediaType.parseMediaType("application/octet-stream")).body(resource)
+        return ResponseEntity.ok.headers(headers).contentType(MediaType.parseMediaType("application/octet-stream")).body(resource)
       }
     }
     ResponseEntity.notFound().build()
