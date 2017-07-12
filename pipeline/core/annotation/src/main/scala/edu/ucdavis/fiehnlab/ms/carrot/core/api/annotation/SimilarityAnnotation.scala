@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.Spectrum
 import edu.ucdavis.fiehnlab.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.math.spectrum.BinByRoundingMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedMSSpectra, Feature, MSLibrarySpectra, MSSpectra}
-import edu.ucdavis.fiehnlab.Spectrum
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSLibrarySpectra, MSSpectra}
 import edu.ucdavis.fiehnlab.util.Utilities
 
 /**

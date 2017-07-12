@@ -1,9 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedMSSpectra, Feature, MSLibrarySpectra, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
-import org.springframework.beans.factory.annotation.Autowired
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 
 /**
   * Simple class to help us with annotations

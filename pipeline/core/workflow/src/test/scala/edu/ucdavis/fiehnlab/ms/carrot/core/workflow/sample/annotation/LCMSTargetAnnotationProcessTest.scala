@@ -5,11 +5,10 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PurityProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
-import org.scalatest.{WordSpec, _}
+import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -25,9 +24,6 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrection = null
-
-  @Autowired
-  val purity: PurityProcessing = null
 
   @Autowired
   val annotation: LCMSTargetAnnotationProcess = null

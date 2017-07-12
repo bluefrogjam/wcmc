@@ -38,6 +38,10 @@ class MassAccuracyTest extends WordSpec {
             override val modelIons: Option[Seq[Double]] = None
             override val msLevel: Short = 0
             override val retentionTimeInSeconds: Double = 0
+            /**
+              * accurate mass of this feature, if applicable
+              */
+            override val accurateMass: Option[Ion] = Option(Ion(100.3241,100))
           }, new Target {
             override val monoIsotopicMass: Option[Double] = Some(100.3242)
             override val name: Option[String] = None
@@ -58,6 +62,7 @@ class MassAccuracyTest extends WordSpec {
             override val modelIons: Option[Seq[Double]] = None
             override val msLevel: Short = 0
             override val retentionTimeInSeconds: Double = 0
+            override val accurateMass: Option[Ion] = Option(Ion(100.3241,100))
           }, new Target {
             override val monoIsotopicMass: Option[Double] = Some(100.3242)
             override val name: Option[String] = None
@@ -78,6 +83,7 @@ class MassAccuracyTest extends WordSpec {
             override val modelIons: Option[Seq[Double]] = None
             override val msLevel: Short = 0
             override val retentionTimeInSeconds: Double = 0
+            override val accurateMass: Option[Ion] = Option(Ion(100.3241,100))
           }, new Target {
             override val monoIsotopicMass: Option[Double] = Some(100.3242)
             override val name: Option[String] = None
@@ -97,6 +103,7 @@ class MassAccuracyTest extends WordSpec {
             override val modelIons: Option[Seq[Double]] = None
             override val msLevel: Short = 0
             override val retentionTimeInSeconds: Double = 0
+            override val accurateMass: Option[Ion] = Option(Ion(1567.6401,100))
           }, new Target {
             override val monoIsotopicMass: Option[Double] = Some(1567.59330)
             override val name: Option[String] = None
@@ -116,6 +123,7 @@ class MassAccuracyTest extends WordSpec {
             override val modelIons: Option[Seq[Double]] = None
             override val msLevel: Short = 0
             override val retentionTimeInSeconds: Double = 0
+            override val accurateMass: Option[Ion] = Option(Ion(1567.5459,100))
           }, new Target {
             override val monoIsotopicMass: Option[Double] = Some(1567.59330)
             override val name: Option[String] = None
@@ -135,6 +143,7 @@ class MassAccuracyTest extends WordSpec {
             override val modelIons: Option[Seq[Double]] = None
             override val msLevel: Short = 0
             override val retentionTimeInSeconds: Double = 0
+            override val accurateMass: Option[Ion] = Option(Ion(1567.5459,100))
           }, new Target {
             override val monoIsotopicMass: Option[Double] = Some(1567.59330)
             override val name: Option[String] = None

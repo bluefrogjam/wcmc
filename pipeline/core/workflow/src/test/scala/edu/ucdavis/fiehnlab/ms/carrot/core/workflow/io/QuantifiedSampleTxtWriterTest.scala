@@ -8,7 +8,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PurityProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
@@ -30,9 +29,6 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrection = null
-
-  @Autowired
-  val purity: PurityProcessing = null
 
   @Autowired
   val annotation: LCMSTargetAnnotationProcess = null

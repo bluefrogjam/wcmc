@@ -40,3 +40,5 @@ sealed trait IonMode
 case class PositiveMode() extends IonMode
 
 case class NegativeMode() extends IonMode
+
+case class Unknown() extends IonMode

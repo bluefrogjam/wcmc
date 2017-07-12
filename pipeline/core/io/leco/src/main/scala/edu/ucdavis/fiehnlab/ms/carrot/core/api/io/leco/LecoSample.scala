@@ -65,10 +65,14 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
       case x: String =>
         val values = x.split(":")
 
-        new Ion(values(0).toDouble, values(1).toFloat)
+         Ion(values(0).toDouble, values(1).toFloat)
 
     }.filter(_.intensity > 0).toList
     override val retentionTimeInSeconds: Double = map.get(retentionTimeSecondsIdentifier).get.toDouble
     override val msLevel: Short = 1
+    /**
+      * accurate mass of this feature, if applicable
+      */
+    override val accurateMass: Option[Ion] = None
   }
 }
