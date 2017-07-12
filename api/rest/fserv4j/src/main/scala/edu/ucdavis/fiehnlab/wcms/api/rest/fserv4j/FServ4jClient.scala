@@ -8,9 +8,10 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
+import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
-import org.springframework.web.client.{HttpClientErrorException, HttpServerErrorException, ResourceAccessException, RestTemplate}
+import org.springframework.web.client._
 
 /**
   * Provides a simple access service to the remote FServ Server. Which provides shared resources over
@@ -21,7 +22,8 @@ import org.springframework.web.client.{HttpClientErrorException, HttpServerError
 class FServ4jClient extends RemoteLoader {
 
   @Autowired
-  val template: RestTemplate = null
+  val template: RestOperations = null
+
 
   @Value("${wcms.api.rest.fserv4j.host:127.0.0.1}")
   val host: String = ""
@@ -57,6 +59,7 @@ class FServ4jClient extends RemoteLoader {
       logger.debug(s"download resource from: ${myUrl}")
       val response = template.exchange(myUrl, HttpMethod.GET, entity, classOf[Array[Byte]])
 
+      logger.debug(s"size:${response.getBody.size}")
       if (response.getStatusCode == HttpStatus.OK) {
         Option(new ByteArrayInputStream(response.getBody))
       }

@@ -7,8 +7,9 @@ import edu.ucdavis.fiehnlab.wcms.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
+import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.{RestOperations, RestTemplate}
 
 /**
   * Created by wohlgemuth on 6/16/17.
@@ -27,7 +28,7 @@ class MSDialRestProcessor extends LazyLogging {
   @Autowired
   val restTemplate: RestOperations = null
 
-	protected def url = s"http://${host}:${port}"
+  protected def url = s"http://${host}:${port}"
 
   /**
     * processes the input file and
@@ -37,6 +38,7 @@ class MSDialRestProcessor extends LazyLogging {
     */
   def process(input: File): File = {
 
+    logger.debug(s"processing file: ${input}")
     //if directory and ends with .d zip file
     val (toUpload, temp) = if (input.isDirectory && input.getName.endsWith(".d")) {
 
@@ -74,6 +76,7 @@ class MSDialRestProcessor extends LazyLogging {
     * @return
     */
   protected def upload(file: File): (String, String) = {
+    logger.debug(s"uploading file: ${file} to ${url}")
 
     import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
     import org.springframework.util.LinkedMultiValueMap
@@ -86,19 +89,25 @@ class MSDialRestProcessor extends LazyLogging {
     val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
     val result = restTemplate.exchange(s"$url/rest/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
 
-	  val token = result.getBody.filename
-	  logger.info(s"filename = $token")
+    if(result.getStatusCode == HttpStatus.OK) {
+      val token = result.getBody.filename
+      logger.info(s"filename = $token")
 
-    if (result.getStatusCode == HttpStatus.OK) {
-      if (result.getBody.link.contains("/conversion/")) {
-        logger.debug(s"upload result requires conversion of data")
-	      (convert(result.getBody.link.split("/").last, token), token)
-      } else {
-        logger.debug("upload succeeded, not conversion required")
-	      (result.getBody.link.split("/").last, token)
+      if (result.getStatusCode == HttpStatus.OK) {
+        if (result.getBody.link.contains("/conversion/")) {
+          logger.debug(s"upload result requires conversion of data")
+          (convert(result.getBody.link.split("/").last, token), token)
+        } else {
+          logger.debug("upload succeeded, not conversion required")
+          (result.getBody.link.split("/").last, token)
+        }
+      }
+      else {
+        throw new MSDialException(result)
       }
     }
-    else {
+    else{
+      logger.warn(s"received result was: ${result}")
       throw new MSDialException(result)
     }
   }

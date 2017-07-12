@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by wohlgemuth on 7/12/17.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[ABFSampleTestConfig], classOf[CaseClassToJSONSerializationConfiguration],classOf[WorkflowConfig]))
+@SpringBootTest(classes = Array(classOf[ABFSampleTestConfig],classOf[WorkflowConfig]))
 class ABFSampleTest extends WordSpec with ShouldMatchers {
 
   @Autowired
@@ -45,12 +45,11 @@ class ABFSampleTest extends WordSpec with ShouldMatchers {
       sample.spectra should not be empty
     }
 
-
   }
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@ComponentScan(basePackageClasses = Array(classOf[MSDialRestProcessor],classOf[FServ4jClient]))
+@ComponentScan(basePackageClasses = Array(classOf[MSDialRestProcessor],classOf[FServ4jClient],classOf[CaseClassToJSONSerializationConfiguration]))
 class ABFSampleTestConfig {
 
 }
