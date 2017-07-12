@@ -74,7 +74,7 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
         override val quantifiedTargets: Seq[QuantifiedSpectra[Double]] = replacedSpectra
         override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = sample.noneAnnotated
         override val correctedWith: Sample = sample.correctedWith
-        override val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, MSSpectra]] = sample.annotationsUsedForCorrection
+        override val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = sample.annotationsUsedForCorrection
         override val regressionCurve: Regression = sample.regressionCurve
         override val fileName: String = sample.fileName
       }

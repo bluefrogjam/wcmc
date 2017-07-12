@@ -329,7 +329,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
 
       override val spectra: Seq[_ <: Feature with AnnotatedSpectra with CorrectedSpectra] = annotatedSpectra
       override val correctedWith: Sample = input.correctedWith
-      override val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, MSSpectra]] = input.annotationsUsedForCorrection
+      override val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = input.annotationsUsedForCorrection
       override val regressionCurve: Regression = input.regressionCurve
       override val fileName: String = input.fileName
       override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = noneAnnotatedSpectra

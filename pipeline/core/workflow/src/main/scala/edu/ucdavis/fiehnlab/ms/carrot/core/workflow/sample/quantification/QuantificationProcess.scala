@@ -96,7 +96,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
       override val fileName: String = input.fileName
       override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = input.noneAnnotated
       override val correctedWith: Sample = input.correctedWith
-      override val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, MSSpectra]] = input.annotationsUsedForCorrection
+      override val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = input.annotationsUsedForCorrection
       override val regressionCurve: Regression = input.regressionCurve
     }
 
