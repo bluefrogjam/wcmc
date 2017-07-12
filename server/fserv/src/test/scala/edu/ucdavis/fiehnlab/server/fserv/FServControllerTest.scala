@@ -29,6 +29,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util
 
+import scala.io.Source
+
 /**
   * Created by wohlgemuth on 7/7/17.
   */
@@ -64,6 +66,9 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
         //ensure the file was created
         new File(s"${directory}/test.txt").exists() should be(true)
+
+        Source.fromFile(new File(s"${directory}/test.txt")).getLines().toSeq.size should be(Source.fromInputStream(new ClassPathResource("/test.txt").getInputStream).getLines().toSeq.size)
+
 
       }
       "exists" in {

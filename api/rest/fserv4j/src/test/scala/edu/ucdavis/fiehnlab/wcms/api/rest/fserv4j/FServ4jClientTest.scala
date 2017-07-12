@@ -11,9 +11,12 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
+import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.web.client.RestTemplate
+
+import scala.io.Source
 
 /**
   * Created by wohlgemuth on 7/9/17.
@@ -47,6 +50,9 @@ class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfter
       val res = fserv.download("test.txt")
 
       res.isDefined should be(true)
+
+      Source.fromFile(new File(s"${directory}/test.txt")).getLines().toSeq.size should be(Source.fromFile(new File("src/test/resources/test.txt")).getLines().toSeq.size)
+
     }
 
     "test some other file extensions" should {

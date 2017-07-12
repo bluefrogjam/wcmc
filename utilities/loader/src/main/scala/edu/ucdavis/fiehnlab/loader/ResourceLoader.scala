@@ -4,6 +4,7 @@ import java.io._
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -46,12 +47,8 @@ trait ResourceLoader extends LazyLogging {
 
       val outStream = new FileWriter(tempFile)
       val stream = new InputStreamReader(loaded.get)
-      Iterator
-        .continually(stream.read)
-        .takeWhile(-1 !=)
-        .foreach { x =>
-          outStream.write(x)
-        }
+
+      IOUtils.copy(stream,outStream)
 
       outStream.flush()
       outStream.close()

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
+import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.{HttpHeaders, MediaType, ResponseEntity}
@@ -61,13 +62,7 @@ class FServController extends LazyLogging {
       // 'uploadedFileRef'
       writer = new BufferedOutputStream(new FileOutputStream(outputFile, false))
 
-      Iterator
-        .continually(reader.read)
-        .takeWhile(-1 !=)
-        .foreach { x =>
-          writer.write(x)
-          totalBytes = totalBytes + 1
-        }
+      IOUtils.copy(reader,writer)
 
       logger.info(s"wrote ${totalBytes} bytes")
       writer.flush()

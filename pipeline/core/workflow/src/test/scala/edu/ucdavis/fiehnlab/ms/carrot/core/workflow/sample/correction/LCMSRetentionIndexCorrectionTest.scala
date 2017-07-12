@@ -2,9 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception.NotEnoughStandardsFoundException
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PurityProcessing
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,36 +24,31 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec {
   @Autowired
   val loader:SampleLoader = null
 
-  @Autowired
-  val purity: PurityProcessing = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "LCMSRetentionIndexCorrectionTest" should {
 
-    val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.abf")
-    val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.msdial")
+    val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.mzML")
+    val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.mzML")
 
     assert(correction != null)
 
-    "process will fail" must {
 
-
-      s"because we don't have enough standards in ${sample3}" in {
+      s"should fail, because we don't have enough standards in ${sample3}" in {
 
         val error = intercept[NotEnoughStandardsFoundException] {
-          correction.process(purity.process(sample3))
+          correction.process(sample3)
         }
         assert(error != null)
       }
 
-      s"should have enoguth standards for us to continue ${sample2}" in {
-        val corrected = correction.process(purity.process(sample2))
+      s"should pass, because we have enough standards for us to continue ${sample2}" in {
+        val corrected = correction.process(sample2)
 
         assert(corrected.regressionCurve != null)
       }
 
-    }
 
 
   }

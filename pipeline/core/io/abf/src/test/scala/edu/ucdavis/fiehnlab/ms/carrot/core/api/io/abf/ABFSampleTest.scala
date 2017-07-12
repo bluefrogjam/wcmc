@@ -31,12 +31,20 @@ class ABFSampleTest extends WordSpec with ShouldMatchers {
 
   "ABFSampleTest" should {
 
-    "spectra" in {
+    "sblank sample" in {
       val name  = "B5_P20Lipids_Pos_Blank000.abf"
       val sample = new ABFSample(name,loader.loadAsFile(name).get,client)
 
       sample.spectra should not be empty
     }
+
+    "qc sample" in {
+      val name  = "B5_P20Lipids_Pos_QC000.abf"
+      val sample = new ABFSample(name,loader.loadAsFile(name).get,client)
+
+      sample.spectra should not be empty
+    }
+
 
   }
 }

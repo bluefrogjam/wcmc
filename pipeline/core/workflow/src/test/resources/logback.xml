@@ -6,7 +6,7 @@
 	        <Pattern>%date{ISO8601} %level %line --- [%thread] %logger{5} - %msg%n%ex</Pattern>
         </layout>
     </appender>
-
+<!--
     <logger name="edu.ucdavis.fiehnlab.ms.carrot.core" level="debug"/>
     <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.io" level="info"/>
     <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.filter" level="info"/>
@@ -19,9 +19,10 @@
 	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing" level="info"/>
 	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction" level="info"/>
 	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation" level="info"/>
-	<!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantify" level="warn"/>-->
 	<logger name="edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j" level="debug" additivity="false"/>
+-->
 
+	<logger name="edu.ucdavis.fiehnlab" level="debug" additivity="true"/>
     <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>

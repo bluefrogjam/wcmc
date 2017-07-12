@@ -54,7 +54,7 @@ class FServ4jClient extends RemoteLoader {
       val entity = new HttpEntity[String](headers)
 
       val myUrl = s"$url/download/$name"
-      logger.info(s"download resource from: ${myUrl}")
+      logger.debug(s"download resource from: ${myUrl}")
       val response = template.exchange(myUrl, HttpMethod.GET, entity, classOf[Array[Byte]])
 
       if (response.getStatusCode == HttpStatus.OK) {
@@ -87,7 +87,7 @@ class FServ4jClient extends RemoteLoader {
   @Cacheable
   override def exists(name: String): Boolean = {
     val location = s"$url/exists/$name"
-    logger.info(s"looking for location: ${location}")
+    logger.debug(s"looking for location: ${location}")
     try {
       val response = template.getForEntity(location, classOf[Any])
       response.getStatusCode == HttpStatus.OK
