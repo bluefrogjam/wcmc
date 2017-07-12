@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception.NotEnoughStandardsFoundException
@@ -16,7 +17,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("common"))
-class LCMSRetentionIndexCorrectionTest extends WordSpec {
+class LCMSRetentionIndexCorrectionTest extends WordSpec with LazyLogging{
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrection = null
@@ -29,22 +30,33 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec {
 
   "LCMSRetentionIndexCorrectionTest" should {
 
-    val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.mzML")
-    val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.mzML")
+    val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.abf")
+    val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.abf")
 
     assert(correction != null)
 
 
       s"should fail, because we don't have enough standards in ${sample3}" in {
 
+        correction.minimumFoundStandards = 20
         val error = intercept[NotEnoughStandardsFoundException] {
-          correction.process(sample3)
+          val result = correction.process(sample3)
+
+          for(x <- result.annotationsUsedForCorrection ){
+            logger.info(s"used for correction: ${x}")
+          }
         }
         assert(error != null)
       }
 
       s"should pass, because we have enough standards for us to continue ${sample2}" in {
+        correction.minimumFoundStandards = 17
+
         val corrected = correction.process(sample2)
+
+        for(x <- corrected.annotationsUsedForCorrection ){
+          logger.info(s"used for correction: ${x}")
+        }
 
         assert(corrected.regressionCurve != null)
       }

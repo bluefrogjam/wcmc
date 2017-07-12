@@ -57,7 +57,7 @@ trait CorrectedSample extends ProcessedSample {
   /**
     * these are all the targets, which were used for the retention index correction
     */
-  val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, MSSpectra]]
+  val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]]
 
   /**
     * the associated spectra, which are now corrected
