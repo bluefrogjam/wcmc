@@ -5,10 +5,9 @@ import java.util.zip.GZIPInputStream
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, Unknown}
 
 import scala.io.Source
-import scala.util.Try
 
 /**
   * creates a new msdial sample from the given file
@@ -120,6 +119,14 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
         override val scanNumber: Int = dataMap(scanIdentifier).toInt
 
 	      override val accurateMass: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
+        /**
+          * how pure this spectra is
+          */
+        override val purity: Option[Double] = None
+        /**
+          * specified ion mode for the given feature
+          */
+        override val ionMode: Option[IonMode] = None
       }
 	  } else {
 
@@ -148,7 +155,10 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
         override val msLevel: Short = 1
 
         override val purity: Option[Double] = None
-
+        /**
+          * specified ion mode for the given feature
+          */
+        override val ionMode: Option[IonMode] = None
       }
     }
   }

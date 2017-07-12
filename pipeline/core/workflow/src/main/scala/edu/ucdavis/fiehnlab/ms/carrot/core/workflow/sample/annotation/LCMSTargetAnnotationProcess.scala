@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation.{AccurateMassAnnotation, RetentionIndexAnnotation, SequentialAnnotate}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionTimeDifference}
@@ -307,13 +308,11 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
 
 
     //remap to correct types
-    val annotatedSpectra: Seq[_ <: Feature with AnnotatedSpectra with CorrectedSpectra] = result.collect {
+    val annotatedSpectra: Seq[_ <: Feature with AnnotatedSpectra] = result.collect {
 
-      case hit: (Target, CorrectedSpectra) =>
-        hit._2 match {
-          case msms: MSMSSpectra with CorrectedSpectra => AnnotatedMSMSSpectra(msms, hit._1, msms.retentionIndex, MassAccuracy.calculateMassErrorPPM(msms, hit._1, lcmsProperties.massAccuracy), MassAccuracy.calculateMassError(msms, hit._1, lcmsProperties.massAccuracy))
-          case ms: MSSpectra with CorrectedSpectra => AnnotatedMSSpectra(ms, hit._1, ms.retentionIndex, MassAccuracy.calculateMassErrorPPM(ms, hit._1, lcmsProperties.massAccuracy), MassAccuracy.calculateMassError(ms, hit._1, lcmsProperties.massAccuracy))
-        }
+      case hit: (Target, Feature with CorrectedSpectra) =>
+
+        SpectraHelper.addAnnotation(hit._2,MassAccuracy.calculateMassErrorPPM(hit._2, hit._1, lcmsProperties.massAccuracy), MassAccuracy.calculateMassError(hit._2, hit._1, lcmsProperties.massAccuracy),hit._1)
     }
 
     //find the none annotated spectra

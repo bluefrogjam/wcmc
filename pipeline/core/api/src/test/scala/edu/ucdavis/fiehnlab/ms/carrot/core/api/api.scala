@@ -1,7 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.RetentionTimeDifference
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 
 /**
   * a couple of test objects, which should be used in the api test
@@ -55,5 +56,58 @@ package object api {
     2000
     )
 
+
+
+  /**
+    * simple imple of an MSSpectra
+    *
+    * @param modelIons
+    * @param purity
+    * @param scanNumber
+    * @param ions
+    * @param retentionTimeInSeconds
+    * @param msLevel
+    */
+  final case class MSSpectraImpl(override val scanNumber: Int,
+                                 override val ions: Seq[Ion],
+                                 override val retentionTimeInSeconds: Double,
+                                 override val msLevel: Short = 1,
+                                 override val ionMode: Option[IonMode] = None,
+                                 override val modelIons: Option[Seq[Double]] = None,
+                                 override val purity: Option[Double] = None,
+                                 override val accurateMass: Option[Ion]
+                                ) extends MSSpectra
+
+  /**
+    * default impl for a library spectra
+    *
+    * @param scanNumber
+    * @param ions
+    * @param retentionTimeInSeconds
+    * @param msLevel
+    * @param ionMode
+    * @param modelIons
+    * @param purity
+    * @param quantificationIon
+    * @param name
+    * @param inchiKey
+    * @param monoIsotopicMass
+    */
+  sealed case class MSLibrarySpectraImpl(
+                                          override val scanNumber: Int,
+                                          override val ions: Seq[Ion],
+                                          override val retentionTimeInSeconds: Double,
+                                          override val msLevel: Short = 1,
+                                          override val quantificationIon: Option[Double],
+                                          override val name: Option[String],
+                                          override val inchiKey: Option[String],
+                                          override val monoIsotopicMass: Option[Double],
+                                          override val ionMode: Option[IonMode] = None,
+                                          override val modelIons: Option[Seq[Double]] = None,
+                                          override val purity: Option[Double] = None,
+                                          override val accurateMass: Option[Ion] =None
+
+                                        ) extends MSLibrarySpectra {
+  }
 
 }

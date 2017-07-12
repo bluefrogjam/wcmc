@@ -118,6 +118,10 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging{
             override val retentionIndexDistance: Option[Double] = msms.retentionIndexDistance
             override val massAccuracyPPM: Option[Double] = msms.massAccuracyPPM
             override val retentionIndex: Double = msms.retentionIndex
+            /**
+              * accurate mass of this feature, if applicable
+              */
+            override val accurateMass: Option[Ion] = None
           }
 
         /**
@@ -139,12 +143,12 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging{
             override val retentionIndexDistance: Option[Double] = ms.retentionIndexDistance
             override val massAccuracyPPM: Option[Double] = ms.massAccuracyPPM
             override val retentionIndex: Double = ms.retentionIndex
+            /**
+              * accurate mass of this feature, if applicable
+              */
+            override val accurateMass: Option[Ion] = None
           }
 
-        /**
-          * anything else
-          */
-        case None =>  null
       }
   }.collect {
     case x: Feature with QuantifiedSpectra[T] => x

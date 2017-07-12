@@ -23,6 +23,10 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
         override val msLevel: Short = 0
         override val retentionTimeInSeconds: Double = 0
         override val retentionIndex: Double = 96
+        /**
+          * accurate mass of this feature, if applicable
+          */
+        override val accurateMass: Option[Ion] = None
       }))
     }
 
@@ -37,6 +41,10 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
         override val msLevel: Short = 0
         override val retentionTimeInSeconds: Double = 0
         override val retentionIndex: Double = 104
+        /**
+          * accurate mass of this feature, if applicable
+          */
+        override val accurateMass: Option[Ion] = None
       }))
     }
 
@@ -51,6 +59,10 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
         override val msLevel: Short = 0
         override val retentionTimeInSeconds: Double = 0
         override val retentionIndex: Double = 106
+        /**
+          * accurate mass of this feature, if applicable
+          */
+        override val accurateMass: Option[Ion] = None
       }))
     }
 
