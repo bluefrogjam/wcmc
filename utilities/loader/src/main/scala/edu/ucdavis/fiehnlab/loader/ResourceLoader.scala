@@ -45,9 +45,10 @@ trait ResourceLoader extends LazyLogging {
       val tempFile = File.createTempFile("loader-temp", s"$fName")
       tempFile.deleteOnExit()
 
-      val outStream = new FileWriter(tempFile)
-      val stream = new InputStreamReader(loaded.get)
+      val outStream = new FileOutputStream(tempFile)
+      val stream = loaded.get
 
+      logger.debug(s"stream size: ${stream.available()}")
       IOUtils.copy(stream,outStream)
 
       outStream.flush()

@@ -8,6 +8,7 @@ import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
@@ -17,7 +18,7 @@ import scala.io.Source
   * Created by wohlgemuth on 6/16/17.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[MSDialRestProcessorConfig],classOf[CaseClassToJSONSerializationConfiguration]))
+@SpringBootTest(classes = Array(classOf[MSDialRestProcessorConfig]))
 class MSDialRestProcessorTest extends WordSpec with ShouldMatchers{
 
   @Autowired
@@ -64,5 +65,6 @@ class MSDialRestProcessorTest extends WordSpec with ShouldMatchers{
 }
 
 @SpringBootApplication
+@Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
 class MSDialRestProcessorConfig {
 }
