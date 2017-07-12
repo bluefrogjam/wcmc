@@ -22,7 +22,7 @@ object MassAccuracy extends LazyLogging {
       case x: MSSpectra =>
         Some(x.ions.minBy(p => Math.abs(p.mass - targetMass)))
       case x: Feature =>
-        x.accurateMass
+        x.massOfDetectedFeature
     }
 
   }

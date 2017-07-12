@@ -118,7 +118,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
           */
         override val scanNumber: Int = dataMap(scanIdentifier).toInt
 
-	      override val accurateMass: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
+	      override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
         /**
           * how pure this spectra is
           */
@@ -135,7 +135,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
         */
       new MSSpectra {
 
-        override val accurateMass: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
+        override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
 
         override val modelIons: Option[List[Double]] = Some(dataMap(modelMassesIdentifier).split(",").filter(_.nonEmpty).map(_.toDouble).toList)
 

@@ -35,9 +35,9 @@ trait Feature {
   /**
     * accurate mass of this feature, if applicable
     */
-  val accurateMass: Option[Ion]
+  val massOfDetectedFeature: Option[Ion]
 
-  override def toString = s"Feature($scanNumber, $retentionTimeInSeconds, $accurateMass)"
+  override def toString = s"Feature($scanNumber, $retentionTimeInSeconds, $massOfDetectedFeature)"
 }
 
 /**

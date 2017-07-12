@@ -39,7 +39,7 @@ object SpectraHelper {
           /**
             * accurate mass of this feature, if applicable
             */
-          override val accurateMass: Option[Ion] = feat.accurateMass
+          override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
           /**
             * a list of model ions used during the deconvolution
@@ -73,7 +73,7 @@ object SpectraHelper {
           /**
             * accurate mass of this feature, if applicable
             */
-          override val accurateMass: Option[Ion] = feat.accurateMass
+          override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
           /**
             * a list of model ions used during the deconvolution
@@ -118,7 +118,7 @@ object SpectraHelper {
           /**
             * accurate mass of this feature, if applicable
             */
-          override val accurateMass: Option[Ion] = feat.accurateMass
+          override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
         }
 
@@ -179,7 +179,7 @@ object SpectraHelper {
           /**
             * distance of the retention index distance
             */
-          override val retentionIndexDistance: Option[Double] = Some(target.retentionTimeInSeconds - retentionIndex)
+          lazy override val retentionIndexDistance: Option[Double] = Some(target.retentionTimeInSeconds - retentionIndex)
 
           /**
             * specified ion mode for the given feature
@@ -188,7 +188,7 @@ object SpectraHelper {
           /**
             * accurate mass of this feature, if applicable
             */
-          override val accurateMass: Option[Ion] = feat.accurateMass
+          override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
         }
       case feat: MSSpectra with CorrectedSpectra =>
@@ -226,7 +226,7 @@ object SpectraHelper {
           /**
             * distance of the retention index distance
             */
-          override val retentionIndexDistance: Option[Double] = Some(target.retentionTimeInSeconds - retentionIndex)
+          lazy override val retentionIndexDistance: Option[Double] = Some(target.retentionTimeInSeconds - retentionIndex)
           /**
             * how pure this spectra is
             */
@@ -238,7 +238,7 @@ object SpectraHelper {
           /**
             * accurate mass of this feature, if applicable
             */
-          override val accurateMass: Option[Ion] = feat.accurateMass
+          override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
         }
       case feat: Feature with CorrectedSpectra =>
@@ -269,7 +269,7 @@ object SpectraHelper {
           /**
             * distance of the retention index distance
             */
-          override val retentionIndexDistance: Option[Double] = Some(target.retentionTimeInSeconds - retentionIndex)
+          lazy override val retentionIndexDistance: Option[Double] = Some(target.retentionTimeInSeconds - retentionIndex)
           /**
             * how pure this spectra is
             */
@@ -281,7 +281,7 @@ object SpectraHelper {
           /**
             * accurate mass of this feature, if applicable
             */
-          override val accurateMass: Option[Ion] = feat.accurateMass
+          override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
         }
 
     }

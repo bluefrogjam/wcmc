@@ -104,7 +104,7 @@ class FilteredProcessTest extends WordSpec {
     /**
       * accurate mass of this feature, if applicable
       */
-    override val accurateMass: Option[Ion] = Option(Ion(100, 100))
+    override val massOfDetectedFeature: Option[Ion] = Option(Ion(100, 100))
   }
 
 }

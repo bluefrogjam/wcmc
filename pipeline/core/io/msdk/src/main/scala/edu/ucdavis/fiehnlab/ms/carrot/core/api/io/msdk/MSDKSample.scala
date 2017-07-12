@@ -170,7 +170,7 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSSpectra {
   override val modelIons: Option[List[Double]] = None
   override val purity: Option[Double] = None
   override val ionMode: Option[IonMode] = mode
-  override val accurateMass: Option[Ion] = None
+  override val massOfDetectedFeature: Option[Ion] = None
 }
 
 /**
@@ -187,6 +187,6 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSMSSpectr
   override val modelIons: Option[List[Double]] = None
   override val purity: Option[Double] = None
   override val ionMode: Option[IonMode] = mode
-  override val accurateMass: Option[Ion] = None
+  override val massOfDetectedFeature: Option[Ion] = None
 
 }

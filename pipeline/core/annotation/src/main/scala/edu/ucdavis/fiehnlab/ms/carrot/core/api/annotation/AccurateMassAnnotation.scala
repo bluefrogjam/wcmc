@@ -32,8 +32,8 @@ class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float =
 
         correctedSpectra match {
 
-          case x: Feature if x.accurateMass.isDefined =>
-            val ion = x.accurateMass.get
+          case x: Feature if x.massOfDetectedFeature.isDefined =>
+            val ion = x.massOfDetectedFeature.get
 
             logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
@@ -78,8 +78,8 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
         logger.debug(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
-          case x: Feature if x.accurateMass.isDefined =>
-            val ion = x.accurateMass.get
+          case x: Feature if x.massOfDetectedFeature.isDefined =>
+            val ion = x.massOfDetectedFeature.get
 
             logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
@@ -128,8 +128,8 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with La
 
         correctedSpectra match{
 
-          case x:Feature if x.accurateMass.isDefined =>
-            val ion = x.accurateMass.get
+          case x:Feature if x.massOfDetectedFeature.isDefined =>
+            val ion = x.massOfDetectedFeature.get
             val error = mass - ion.mass
             val ppm = Math.abs(error / mass * 1000000)
             logger.debug(s"\t=> error: ${error} and ppm: ${ppm}")

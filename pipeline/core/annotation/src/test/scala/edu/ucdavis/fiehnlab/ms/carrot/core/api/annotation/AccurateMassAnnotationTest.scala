@@ -9,7 +9,7 @@ object Test {
   /**
     * test spectra with 2 ions
     */
-  val testAccurateMassSpectraWith4Ions = MSSpectraImpl(4, Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List(), 2000,accurateMass =Option( Ion(100.3241,100f) ))
+  val testAccurateMassSpectraWith4Ions = MSSpectraImpl(4, Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List(), 2000,massOfDetectedFeature =Option( Ion(100.3241,100f) ))
 
   val testAccurateLibraryMassSpectraWith4Ions = MSLibrarySpectraImpl(
     4,
@@ -49,7 +49,7 @@ object Test {
                                  override val ionMode: Option[IonMode] = None,
                                  override val modelIons: Option[Seq[Double]] = None,
                                  override val purity: Option[Double] = None,
-                                 override val accurateMass: Option[Ion]
+                                 override val massOfDetectedFeature: Option[Ion]
                                 ) extends MSSpectra
 
   /**
@@ -79,7 +79,7 @@ object Test {
                                           override val ionMode: Option[IonMode] = None,
                                           override val modelIons: Option[Seq[Double]] = None,
                                           override val purity: Option[Double] = None,
-                                          override val accurateMass: Option[Ion] = None
+                                          override val massOfDetectedFeature: Option[Ion] = None
 
                                         ) extends MSLibrarySpectra {
   }

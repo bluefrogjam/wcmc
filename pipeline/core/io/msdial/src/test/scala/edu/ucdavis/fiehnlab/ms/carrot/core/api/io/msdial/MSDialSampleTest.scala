@@ -27,7 +27,7 @@ class MSDialSampleTest extends WordSpec {
 
         case feature: Feature =>
           assert(feature.retentionTimeInSeconds > 0)
-          assert(feature.accurateMass.isDefined)
+          assert(feature.massOfDetectedFeature.isDefined)
       }
     }
   }

@@ -25,7 +25,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
         override val msLevel: Short = 1
         override val retentionTimeInSeconds: Double = 200
           override val retentionIndex: Double = retentionTimeInSeconds
-          override val accurateMass: Option[Ion] = None
+          override val massOfDetectedFeature: Option[Ion] = None
 
         },
 
@@ -40,7 +40,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val name: Option[String] = None
           override val inchiKey: Option[String] = None
           override val retentionTimeInSeconds: Double = 204.5f
-          override val accurateMass: Option[Ion] = None
+          override val massOfDetectedFeature: Option[Ion] = None
 
         }))
 
@@ -59,7 +59,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val msLevel: Short = 1
           override val retentionTimeInSeconds: Double = 200
           override val retentionIndex: Double = retentionTimeInSeconds
-          override val accurateMass: Option[Ion] = None
+          override val massOfDetectedFeature: Option[Ion] = None
 
 
         },
@@ -75,7 +75,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val name: Option[String] = None
           override val inchiKey: Option[String] = None
           override val retentionTimeInSeconds: Double = 205.5f
-          override val accurateMass: Option[Ion] = None
+          override val massOfDetectedFeature: Option[Ion] = None
 
         }))
 

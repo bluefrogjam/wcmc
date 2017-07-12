@@ -26,7 +26,7 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
         /**
           * accurate mass of this feature, if applicable
           */
-        override val accurateMass: Option[Ion] = None
+        override val massOfDetectedFeature: Option[Ion] = None
       }))
     }
 
@@ -44,7 +44,7 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
         /**
           * accurate mass of this feature, if applicable
           */
-        override val accurateMass: Option[Ion] = None
+        override val massOfDetectedFeature: Option[Ion] = None
       }))
     }
 
@@ -62,7 +62,7 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
         /**
           * accurate mass of this feature, if applicable
           */
-        override val accurateMass: Option[Ion] = None
+        override val massOfDetectedFeature: Option[Ion] = None
       }))
     }
 

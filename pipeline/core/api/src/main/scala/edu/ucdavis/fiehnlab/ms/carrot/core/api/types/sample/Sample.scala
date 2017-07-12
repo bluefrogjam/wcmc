@@ -121,7 +121,7 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging{
             /**
               * accurate mass of this feature, if applicable
               */
-            override val accurateMass: Option[Ion] = None
+            override val massOfDetectedFeature: Option[Ion] = None
           }
 
         /**
@@ -146,7 +146,7 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging{
             /**
               * accurate mass of this feature, if applicable
               */
-            override val accurateMass: Option[Ion] = None
+            override val massOfDetectedFeature: Option[Ion] = None
           }
 
       }
