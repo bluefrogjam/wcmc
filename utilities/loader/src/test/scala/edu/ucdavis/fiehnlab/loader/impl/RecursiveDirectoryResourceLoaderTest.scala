@@ -31,7 +31,7 @@ class RecursiveDirectoryResourceLoaderTest extends WordSpec {
     }
 
     "succeed loading this resource" in {
-      assert(loader.load("/test.txt").isDefined)
+      assert(loader.load("test.txt").isDefined)
     }
 
     "succeed loading this RecursiveDirectoryResourceLoaderTest.scala" in {

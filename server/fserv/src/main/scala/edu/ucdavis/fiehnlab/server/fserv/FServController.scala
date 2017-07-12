@@ -50,7 +50,7 @@ class FServController extends LazyLogging {
     val outputFile = new File(generateFilePath(fileName))
     var reader: InputStream = null
     var writer: OutputStream = null
-    var totalBytes = 0
+    var totalBytes = 0L
 
     try {
       outputFile.createNewFile
@@ -61,9 +61,10 @@ class FServController extends LazyLogging {
       writer = new BufferedOutputStream(new FileOutputStream(outputFile, false))
 
       IOUtils.copy(reader,writer)
-
-      logger.info(s"wrote ${totalBytes} bytes")
       writer.flush()
+
+      totalBytes = outputFile.length
+      logger.info(s"wrote ${totalBytes} bytes")
 
       Map("message" -> "File successfully uploaded", "TotalBytesRead" -> totalBytes).asJava
 
