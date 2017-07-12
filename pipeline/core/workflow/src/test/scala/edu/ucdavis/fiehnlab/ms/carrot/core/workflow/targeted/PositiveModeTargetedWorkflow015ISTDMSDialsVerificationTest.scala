@@ -22,7 +22,6 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("common", "msdial"))
 class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpec with LazyLogging {
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
@@ -42,7 +41,7 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 
   //sample name to test
-  val sampleName = "B5_P20Lipids_Pos_QC000.abf"
+  val sampleName = "B5-P20Lipids-Pos-QC000.abf"
 
   "LCMSPositiveModeTargetWorkflowTest" when {
 

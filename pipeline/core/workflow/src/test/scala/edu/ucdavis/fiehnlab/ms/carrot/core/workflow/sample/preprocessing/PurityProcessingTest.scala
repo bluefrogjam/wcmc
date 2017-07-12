@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing
 import java.io.File
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.LoadersConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
@@ -14,11 +13,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{WorkflowConfig, WorkflowPro
 import edu.ucdavis.fiehnlab.wcms.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation._
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager}
@@ -28,7 +25,6 @@ import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, T
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[PurityTestConfiguration],classOf[CaseClassToJSONSerializationConfiguration]))
-@ActiveProfiles(Array("common"))
 class PurityProcessingTest extends WordSpec {
 
   @Autowired

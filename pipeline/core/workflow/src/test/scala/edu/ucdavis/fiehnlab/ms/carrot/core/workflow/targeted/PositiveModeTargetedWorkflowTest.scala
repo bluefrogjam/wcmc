@@ -323,7 +323,6 @@ class TestWorkflowEventListener extends WorkflowEventListener with LazyLogging {
 
 @Configuration
 @ComponentScan(basePackageClasses = Array(classOf[ResourceLoader]))
-@Profile(Array("common", "msdial"))
 class PositiveModeTargetedWorkflowTestConfiguration {
 
   @Bean
