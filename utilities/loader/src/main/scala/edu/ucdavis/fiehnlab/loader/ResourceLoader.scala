@@ -42,7 +42,8 @@ trait ResourceLoader extends LazyLogging {
         name
       }
 
-      val tempFile = File.createTempFile("loader-temp", s"$fName")
+      val tempFile = new File(File.createTempFile("pre", "pro").getParentFile,fName)
+      logger.debug(s"storing tempFile at: ${tempFile.getAbsolutePath}")
       tempFile.deleteOnExit()
 
       val outStream = new FileOutputStream(tempFile)

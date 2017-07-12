@@ -13,8 +13,18 @@ import edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j.MSDialRestProcessor
 class ABFSample(override val fileName:String,file:File, val client:MSDialRestProcessor) extends Sample{
 
   /**
+    * simple wrapper method for the deconvolution process
+    * @return
+    */
+
+  def deconvolute:Seq[_ <:Feature] = {
+
+    MSDialSample(fileName,client.process(file)).spectra
+
+  }
+  /**
     * all the deconvolution spectra for this file. Defined as lazy to reduce memory usage
     * and only do this operation once it's required
     */
-   override val spectra: Seq[_ <: Feature] = MSDialSample(fileName,client.process(file)).spectra
+   override val spectra: Seq[_ <: Feature] = deconvolute
 }
