@@ -53,36 +53,4 @@ class Ossa4JClientTest extends WordSpec with ShouldMatchers{
 @SpringBootApplication
 class Ossa4jClientConfig {
 
-  @Bean
-  def objectMapper: ObjectMapper = {
-
-    val mapper = new ObjectMapper() with ScalaObjectMapper
-
-    mapper.registerModule(DefaultScalaModule)
-
-    //required, in case we are provided with a list of value
-    mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    mapper.setSerializationInclusion(Include.NON_NULL)
-    mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-
-    mapper
-  }
-
-  @Bean
-  def restOperations: RestOperations = {
-
-    val rest: RestTemplate = new RestTemplate()
-    rest.getMessageConverters.add(0, mappingJacksonHttpMessageConverter)
-    rest
-  }
-
-
-  @Bean
-  def mappingJacksonHttpMessageConverter: MappingJackson2HttpMessageConverter = {
-    val converter: MappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter()
-    converter.setObjectMapper(objectMapper)
-    converter
-  }
-
 }

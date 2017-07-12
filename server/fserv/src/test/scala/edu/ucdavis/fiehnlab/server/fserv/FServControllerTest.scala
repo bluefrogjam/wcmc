@@ -67,19 +67,18 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
       }
       "exists" in {
-
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test.txt", classOf[Any])
+        val headers = new HttpHeaders
+        headers.setContentType(MediaType.APPLICATION_JSON)
+        val entity = new HttpEntity[String](headers)
+        val response = template.exchange(s"http://localhost:${port}/rest/exists/test.txt",HttpMethod.GET,entity, classOf[java.util.Map[String,Any]])
         response.getStatusCode should be(HttpStatus.OK)
 
       }
       "not exists" in {
-
         val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test123.txt", classOf[Any])
         response.getStatusCode should be(HttpStatus.NOT_FOUND)
-
       }
       "not exists a complicated file name" in {
-
         val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test_withUnder_and2extesnions.mzXML.gz", classOf[Any])
         println(response)
         response.getStatusCode should be(HttpStatus.NOT_FOUND)

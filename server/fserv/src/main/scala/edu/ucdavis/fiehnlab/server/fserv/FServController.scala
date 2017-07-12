@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.server.fserv
 
 import java.io._
 import javax.annotation.PostConstruct
-import javax.servlet.annotation.MultipartConfig
+import javax.servlet.http.HttpServletResponse
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
@@ -13,7 +13,6 @@ import org.springframework.http.{HttpHeaders, MediaType, ResponseEntity}
 import org.springframework.web.bind.annotation._
 import org.springframework.web.multipart.MultipartFile
 
-import scala.collection.JavaConverters._
 import scala.collection.JavaConverters._
 
 /**
@@ -54,10 +53,7 @@ class FServController extends LazyLogging {
 
     try {
       outputFile.createNewFile
-      // Create the input stream to uploaded file to read data from it.
       reader = uploadedFileRef.getInputStream
-      // Create writer for 'outputFile' to write data read from
-      // 'uploadedFileRef'
       writer = new BufferedOutputStream(new FileOutputStream(outputFile, false))
 
       Iterator
@@ -112,20 +108,21 @@ class FServController extends LazyLogging {
 
   }
 
-  @RequestMapping(path = Array("/exists/{file:.+}"), method = Array(RequestMethod.GET), produces = Array(MediaType.APPLICATION_JSON_VALUE),headers = Array("headers=*/*"))
-  @throws[IOException]
-  def exists(@PathVariable("file") param: String): ResponseEntity[java.util.Map[String, _ <: Any]] = {
+  @RequestMapping(path = Array("/exists/{file:.+}"), method = Array(RequestMethod.GET), produces = Array(MediaType.APPLICATION_JSON_VALUE), headers = Array("accepts=application/json"))
+  def exists(@PathVariable("file") param: String, responseBody: HttpServletResponse): java.util.Map[String, _ <: Any] = {
     logger.info(s"checking if file exists: ${param}")
     for (loader: ResourceLoader <- resourceLoader.asScala) {
-      logger.info(s"checking loader: ${loader}")
+      logger.debug(s"checking loader: ${loader}")
       if (loader.exists(param)) {
-        logger.info("found file!")
-        return ResponseEntity.ok.body(Map("exist" -> true, "file" -> param).asJava)
+        logger.debug(s"found file: ${param}")
+        responseBody.setStatus(HttpServletResponse.SC_OK)
+
+        return Map("exist" -> true, "file" -> param).asJava
       }
     }
-    logger.info("resource was not found")
-    ResponseEntity.notFound().build()
-
+    logger.debug(s"resource was not found: ${param}")
+    responseBody.setStatus(HttpServletResponse.SC_NOT_FOUND)
+    Map("exist" -> false, "file" -> param).asJava
   }
 
 
