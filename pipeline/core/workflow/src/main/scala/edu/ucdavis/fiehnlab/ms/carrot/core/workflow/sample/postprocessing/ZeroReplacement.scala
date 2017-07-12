@@ -3,12 +3,12 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 import java.io.FileNotFoundException
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionTimeDifference}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -46,8 +46,7 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
     */
   override def doProcess(sample: QuantifiedSample[Double]): QuantifiedSample[Double] = {
 
-
-    val rawdata: Option[Sample] = zeroReplacementProperties.fileExtension.collect {
+    val rawdata: Option[Sample] = zeroReplacementProperties.fileExtension.collectFirst {
 
       case extension: String =>
         val fileNameToLoad = sample.name + "." + extension
@@ -57,7 +56,7 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
           logger.info(s"loaded rawdata file: ${result.get}")
           result.get
         }
-    }.collect { case p: Sample => p }.headOption
+    }.collectFirst { case p: Sample => p }
 
     if (rawdata.isDefined) {
       logger.info(s"replacing data with: ${rawdata}")

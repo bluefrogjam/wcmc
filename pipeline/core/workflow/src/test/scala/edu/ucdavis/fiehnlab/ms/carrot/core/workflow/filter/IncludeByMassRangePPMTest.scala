@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.api.filter
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
 import org.scalatest.WordSpec
 import edu.ucdavis.fiehnlab.ms.carrot.core.api._

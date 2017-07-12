@@ -29,6 +29,10 @@ case class PreProcessingBeginEvent(experiment: Experiment) extends WorkflowEvent
 
 case class PreProcessingFinishedEvent(experiment: Experiment) extends WorkflowEvent
 
+case class PostProcessingBeginEvent(experiment: Experiment) extends WorkflowEvent
+
+case class PostProcessingFinishedEvent(experiment: Experiment) extends WorkflowEvent
+
 case class CorrectionBeginEvent(experiment: Experiment) extends WorkflowEvent
 
 case class CorrectionFinishedEvent(experiment: Experiment) extends WorkflowEvent

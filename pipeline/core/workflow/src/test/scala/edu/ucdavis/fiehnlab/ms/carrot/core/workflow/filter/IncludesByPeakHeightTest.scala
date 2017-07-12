@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.api.filter
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion
