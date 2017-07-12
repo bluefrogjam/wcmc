@@ -19,6 +19,7 @@
 	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction" level="info"/>
 	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation" level="info"/>
 	<logger name="edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j" level="debug" additivity="true"/>
+	<logger name="edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j" level="debug" additivity="false"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

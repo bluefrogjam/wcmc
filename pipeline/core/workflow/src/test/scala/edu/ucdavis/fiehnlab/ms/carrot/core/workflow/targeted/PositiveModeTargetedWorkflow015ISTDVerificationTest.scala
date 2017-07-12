@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader, 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
@@ -21,7 +22,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("common"))
 class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with LazyLogging {
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
@@ -33,7 +33,7 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
   val listener: TestWorkflowEventListener = null
 
   @Autowired
-  val loader: SampleLoader = null
+  val loader: ResourceLoaderSampleLoader = null
 
   @Autowired
   val targetLibrary: LibraryAccess[Target] = null
@@ -41,7 +41,8 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   //sample name to test
-  val sampleName = "Pos_QC005.mzXML"
+  val sampleName = "B5-P20Lipids-Pos-Blank001.abf"
+//  val sampleName = "B5-P20Lipids-Pos-Blank000.mzML"
 
   "LCMSPositiveModeTargetWorkflowTest" when {
 
@@ -59,7 +60,9 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
         val result = workflow.process(
           Experiment(
             classes = ExperimentClass(
-              samples = loader.getSample(sampleName) :: List()) :: List(), None))
+	            samples = loader.getSample(sampleName) :: List()
+            ) :: List(), None)
+        )
 
       }
 
