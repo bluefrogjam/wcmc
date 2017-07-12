@@ -23,8 +23,8 @@ import scala.io.Source
   * Created by wohlgemuth on 7/9/17.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT,classes = Array(classOf[FServ],classOf[FServ4jClientConfiguration]))
-class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging{
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ], classOf[FServ4jClientConfiguration]))
+class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {
 
   override protected def beforeEach(): Unit = {
     new File(s"$directory/test.txt").delete()
@@ -71,12 +71,41 @@ class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfter
 
     }
 
+    "upload a very large file" should {
+
+      for (x <- 1 to 100 by 10) {
+        s"test file size ${x}MB" in {
+          import java.io.RandomAccessFile
+          val temp = File.createTempFile("temp", "x")
+          temp.deleteOnExit()
+          val f = new RandomAccessFile(temp, "rw")
+          f.setLength(1024 * 1024 * x)
+
+          f.close()
+
+
+          fserv.upload(temp)
+
+          fserv.exists(temp.getName) should be(true)
+
+          val res = fserv.loadAsFile(temp.getName)
+
+          res.isDefined should be(true)
+
+          logger.info(s"file is stored at: ${res.get.getAbsolutePath}")
+          Source.fromFile(res.get).getLines().toSeq.size should be(Source.fromFile(temp).getLines().toSeq.size)
+
+        }
+
+      }
+    }
+
 
     "test some other file extensions" should {
 
-      for(x <- Array("xml","txt","abf","mzML","cdf")){
+      for (x <- Array("xml", "txt", "abf", "mzML", "cdf")) {
 
-        for(a <- 0.to(10)) {
+        for (a <- 0.to(10)) {
           s"upload and download ${x} extension ($a)" in {
             val file = File.createTempFile("dadssa", s".$x")
             val writer = new FileWriter(file)
@@ -103,10 +132,10 @@ class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfter
 
 @Configuration
 @ComponentScan
-class FServ4jClientConfiguration{
+class FServ4jClientConfiguration {
 
   @Bean
-  def restTemplate:RestTemplate = new RestTemplate()
+  def restTemplate: RestTemplate = new RestTemplate()
 
   @Bean
   def resourceLoader: LocalLoader = new RecursiveDirectoryResourceLoader(new File("target/test2"))

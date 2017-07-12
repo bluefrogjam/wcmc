@@ -100,7 +100,7 @@ class FServController extends LazyLogging {
 
         val resource = new InputStreamResource(file.get)
 
-        return ResponseEntity.ok.headers(headers).contentType(MediaType.parseMediaType("application/octet-stream")).body(resource)
+        return ResponseEntity.ok.headers(headers).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource)
       }
     }
     ResponseEntity.notFound().build()
