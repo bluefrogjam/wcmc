@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
@@ -19,7 +20,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("common"))
-class SimpleZeroReplacementTest extends WordSpec {
+class SimpleZeroReplacementTest extends WordSpec with LazyLogging{
 
   @Autowired
   val simpleZeroReplacement: SimpleZeroReplacement = null
@@ -55,6 +56,10 @@ class SimpleZeroReplacementTest extends WordSpec {
       var replaced:QuantifiedSample[Double] = null
       "replace the null values in the file" in {
           replaced = simpleZeroReplacement.process(sample)
+
+        replaced.spectra.foreach{ x =>
+          logger.info(s"spectra: ${x}")
+        }
       }
     }
 

@@ -65,6 +65,12 @@
 			<groupId>edu.ucdavis.fiehnlab.utilities</groupId>
 			<artifactId>compress</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>edu.ucdavis.fiehnlab.wcmc.utilities</groupId>
+			<artifactId>casetojson</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

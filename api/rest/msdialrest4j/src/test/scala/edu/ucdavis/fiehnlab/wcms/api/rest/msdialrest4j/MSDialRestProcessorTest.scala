@@ -2,20 +2,14 @@ package edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j
 
 import java.io.File
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import edu.ucdavis.fiehnlab.wcms.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Bean
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.web.client.{RestOperations, RestTemplate}
 
 import scala.io.Source
 
@@ -23,7 +17,7 @@ import scala.io.Source
   * Created by wohlgemuth on 6/16/17.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[MSDialRestProcessorConfig]))
+@SpringBootTest(classes = Array(classOf[MSDialRestProcessorConfig],classOf[CaseClassToJSONSerializationConfiguration]))
 class MSDialRestProcessorTest extends WordSpec with ShouldMatchers{
 
   @Autowired
