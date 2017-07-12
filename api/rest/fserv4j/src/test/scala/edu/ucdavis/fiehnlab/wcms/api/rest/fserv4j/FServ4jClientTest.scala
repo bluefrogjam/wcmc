@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j
 
-import java.io.File
+import java.io.{File, FileWriter}
 
 import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
@@ -47,6 +47,32 @@ class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfter
       val res = fserv.download("test.txt")
 
       res.isDefined should be(true)
+    }
+
+    "test some other file extensions" should {
+
+      for(x <- Array("xml","txt","abf","mzML","cdf")){
+
+        for(a <- 0.to(10)) {
+          s"upload and download ${x} extension ($a)" in {
+            val file = File.createTempFile("dadssa", s".$x")
+            val writer = new FileWriter(file)
+            for (i <- 0.to(1024)) {
+              for (y <- 0.to(100)) {
+                writer.append("a")
+              }
+            }
+            writer.close()
+            fserv.upload(file)
+
+            fserv.exists(file.getName) should be(true)
+
+            val res = fserv.download(file.getName)
+
+            res.isDefined should be(true)
+          }
+        }
+      }
     }
 
   }

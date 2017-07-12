@@ -28,7 +28,7 @@ class FServ extends WebMvcConfigurerAdapter{
   def resourceLoader: LocalLoader = new RecursiveDirectoryResourceLoader(new File(directory))
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {
-    configurer.favorPathExtension(false).favorParameter(true).parameterName("mediaType").ignoreAcceptHeader(true).useJaf(false).defaultContentType(MediaType.APPLICATION_JSON).mediaType("xml", MediaType.APPLICATION_XML).mediaType("json", MediaType.APPLICATION_JSON)
+    configurer.favorPathExtension(false).favorParameter(false).parameterName("mediaType").ignoreAcceptHeader(false).useJaf(false).defaultContentType(MediaType.APPLICATION_JSON).mediaType("json", MediaType.APPLICATION_JSON)
   }
 }
 

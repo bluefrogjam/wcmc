@@ -91,7 +91,7 @@ class FServController extends LazyLogging {
     }
   }
 
-  @RequestMapping(path = Array("/download/{file:.+}"), method = Array(RequestMethod.GET))
+  @RequestMapping(path = Array("/download/{file:.+}"), method = Array(RequestMethod.GET), produces = Array(MediaType.APPLICATION_OCTET_STREAM_VALUE))
   @throws[IOException]
   def download(@PathVariable("file") param: String): ResponseEntity[InputStreamResource] = {
     for (loader: ResourceLoader <- resourceLoader.asScala) {
