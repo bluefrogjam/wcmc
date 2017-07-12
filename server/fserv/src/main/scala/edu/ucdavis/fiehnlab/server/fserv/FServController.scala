@@ -112,7 +112,7 @@ class FServController extends LazyLogging {
 
   }
 
-  @RequestMapping(path = Array("/exists/{file:.+}"), method = Array(RequestMethod.GET), produces = Array(MediaType.APPLICATION_JSON_VALUE))
+  @RequestMapping(path = Array("/exists/{file:.+}"), method = Array(RequestMethod.GET), produces = Array(MediaType.APPLICATION_JSON_VALUE),headers = Array("headers=*/*"))
   @throws[IOException]
   def exists(@PathVariable("file") param: String): ResponseEntity[java.util.Map[String, _ <: Any]] = {
     logger.info(s"checking if file exists: ${param}")

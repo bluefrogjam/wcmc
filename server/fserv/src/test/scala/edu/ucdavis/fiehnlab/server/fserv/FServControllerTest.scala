@@ -68,11 +68,8 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
       }
       "exists" in {
 
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test.txt", classOf[String])
-
+        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test.txt", classOf[Any])
         response.getStatusCode should be(HttpStatus.OK)
-
-        response.getBody.toLowerCase.contains("true") should be(true)
 
       }
       "not exists" in {
