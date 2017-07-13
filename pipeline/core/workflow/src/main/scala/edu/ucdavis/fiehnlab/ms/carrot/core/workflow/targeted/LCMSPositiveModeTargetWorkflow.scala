@@ -99,16 +99,6 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
   }
 
   /**
-    * provides us with a post processed sample
-    *
-    * @param sample
-    * @param experimentClass
-    * @param experiment
-    * @return
-    */
-  override protected def postProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Sample = sample
-
-  /**
     * preprocesses the given sample
     *
     * @param sample
@@ -153,5 +143,18 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
     */
   override protected def annotateSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): AnnotatedSample = sample match {
     case c: CorrectedSample => annotate.process(c)
+  }
+
+  /**
+    * provides us with a post processed sample
+    *
+    * @param sample
+    * @param experimentClass
+    * @param experiment
+    * @return
+    */
+  override protected def postProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): AnnotatedSample = sample match {
+      //TODO do nothing for now
+    case s:AnnotatedSample => s
   }
 }
