@@ -167,7 +167,7 @@ object SpectraHelper {
           /**
             * associated target
             */
-          override val target: Target = target
+          override val target: Target = _target
           /**
             * mass accuracy
             */
@@ -214,7 +214,7 @@ object SpectraHelper {
           /**
             * associated target
             */
-          override val target: Target = target
+          override val target: Target = _target
           /**
             * mass accuracy
             */
@@ -257,7 +257,7 @@ object SpectraHelper {
           /**
             * associated target
             */
-          override val target: Target = target
+          override val target: Target = _target
           /**
             * mass accuracy
             */
