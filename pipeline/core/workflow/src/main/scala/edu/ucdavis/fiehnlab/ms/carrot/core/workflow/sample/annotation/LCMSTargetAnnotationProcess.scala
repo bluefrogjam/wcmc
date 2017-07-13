@@ -281,7 +281,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
       //get all none identified spectra
       val noneIdentifiedSpectra: Seq[_ <: Feature with CorrectedSpectra] = spectra.filter { s =>
         !annotatedTargets.values.exists { s2 =>
-          s2.scanNumber == s.scanNumber
+          s2.scanNumber == s.scanNumber && s2.massOfDetectedFeature == s.massOfDetectedFeature
         }
       }
 
@@ -317,7 +317,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
 
     //find the none annotated spectra
     val noneAnnotatedSpectra: Seq[_ <: Feature with CorrectedSpectra] = input.spectra.filterNot { s =>
-      annotatedSpectra.exists(_.scanNumber == s.scanNumber)
+      annotatedSpectra.exists( x => x.scanNumber == s.scanNumber && x.massOfDetectedFeature == s.massOfDetectedFeature )
     }
 
     logger.debug(s"spectra count in sample ${input.spectra.size}")
