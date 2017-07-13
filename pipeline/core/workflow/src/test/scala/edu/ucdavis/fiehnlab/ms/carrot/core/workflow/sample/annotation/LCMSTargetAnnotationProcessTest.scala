@@ -49,7 +49,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
       assert(annotation.targets != null)
     }
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST01.abf"))//, "B5_P20Lipids_Pos_NIST02.abf"))
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST01.abf", "B5_P20Lipids_Pos_NIST02.abf"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)
@@ -69,21 +69,20 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
         assert(result.noneAnnotated.size != result.spectra.size)
         assert((result.noneAnnotated.size + result.spectra.size) == result.correctedWith.spectra.size)
 
-        logger.debug(s"sample name: ${sample.fileName}")
-        result.spectra.sortBy(_.target.name.get).foreach { spectra =>
+        result.annotationsUsedForCorrection.foreach { spectra =>   //sortBy(_.target.name.get).
           logger.debug(f"${spectra.target.name.get}")
           logger.debug(f"\ttarget data:")
           logger.debug(f"\t\t mass:          ${spectra.target.monoIsotopicMass.get}%1.4f")
           logger.debug(f"\t\t rt (s):        ${spectra.target.retentionTimeInSeconds}%1.3f")
           logger.debug(f"\t\t rt (m):        ${spectra.target.retentionTimeInMinutes}%1.3f")
           logger.debug(f"\tannotation data:")
-          logger.debug(f"\t\t ri (m):        ${spectra.retentionIndex / 60}%1.3f")
-          logger.debug(f"\t\t ri (s):        ${spectra.retentionIndex}%1.3f")
-          logger.debug(f"\t\t rt (s):        ${spectra.retentionTimeInSeconds}%1.3f")
-          logger.debug(f"\t\t rt (m):        ${spectra.retentionTimeInMinutes}%1.3f")
-          logger.debug(f"\t\t mass accuracy: ${spectra.massAccuracy.get}%1.5f")
-          logger.debug(f"\t\t mass accuracy: ${spectra.massAccuracyPPM.get}%1.3f ppm")
-          logger.debug(f"\t\t distance ri:   ${spectra.retentionIndexDistance.get}%1.3f")
+          logger.debug(f"\t\t ri (m):        ${spectra.annotation.retentionTimeInMinutes}%1.3f")
+          logger.debug(f"\t\t ri (s):        ${spectra.annotation.retentionTimeInSeconds}%1.3f")
+          logger.debug(f"\t\t rt (m):        ${spectra.annotation.retentionTimeInMinutes}%1.3f")
+          logger.debug(f"\t\t rt (s):        ${spectra.annotation.retentionTimeInSeconds}%1.3f")
+          logger.debug(f"\t\t mass accuracy: --") //${spectra.massAccuracy.get}%1.5f
+          logger.debug(f"\t\t mass accuracy: --") //${/*spectra.massAccuracyPPM.get*/}%1.3f ppm
+          logger.debug(f"\t\t distance ri:   --") //${/*spectra.retentionIndexDistance.get*/}%1.3f
 
           logger.debug("")
         }
