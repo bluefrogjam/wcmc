@@ -89,7 +89,7 @@ class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers
 						//automatically discovered values
 						val annotatedTargets: Seq[Double] = samples.flatMap { s =>
 							s.quantifiedTargets.filter { t =>
-								t.target.name.get == "*007 1_CUDA ISTD [M+H]+"
+								t.name.get == "*007 1_CUDA ISTD [M+H]+"
 							}.map(_.quantifiedValue.getOrElse(0.0))
 						}
 
@@ -117,7 +117,7 @@ class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers
 						//automatically discovered values
 						val annotatedTargets: Seq[Double] = samples.flatMap { s =>
 							s.quantifiedTargets.filter { t =>
-								t.target.name.get == "*015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD"
+								t.name.get == "*015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD"
 							}.map(_.quantifiedValue.getOrElse(0.0))
 						}
 
@@ -141,7 +141,7 @@ class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers
 						//automatically discovered values
 						val annotatedTargets: Seq[Double] = samples.flatMap { s =>
 							s.quantifiedTargets.filter { t =>
-								t.target.name.get == "*020 1_Sphingosine d17:1 [M+H]+ ISTD"
+								t.name.get == "*020 1_Sphingosine d17:1 [M+H]+ ISTD"
 							}.map(_.quantifiedValue.getOrElse(0.0))
 						}
 
@@ -165,7 +165,7 @@ class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers
 						//automatically discovered values
 						val annotatedTargets: Seq[Double] = samples.flatMap { s =>
 							s.quantifiedTargets.filter { t =>
-								t.target.name.get == "*010 1_DG (18:1/2:0/0:0) [M+Na]+ ISTD"
+								t.name.get == "*010 1_DG (18:1/2:0/0:0) [M+Na]+ ISTD"
 							}.map(_.quantifiedValue.getOrElse(0.0))
 						}
 

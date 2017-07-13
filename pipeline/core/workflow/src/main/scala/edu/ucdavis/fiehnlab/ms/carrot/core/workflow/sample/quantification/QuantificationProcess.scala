@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component
   * quantifies a sample, so it's ready to be exported
   */
 
-abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: Seq[PostProcessing[T]]) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess, properties.trackChanges) with LazyLogging {
+abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess, properties.trackChanges) with LazyLogging {
   /**
     * builds a sample containing the quantified data
     *
@@ -28,58 +29,73 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
     /**
       * merge the found and none found targets, which can be later replaced or so
       */
-    val resultList: Seq[QuantifiedSpectra[T]] = targets.collect {
+    val resultList: Seq[QuantifiedTarget[T]] = targets.collect {
       case myTarget: Target =>
         val result = input.spectra.filter(_.target == myTarget)
 
         //nothing found for this spectra, needs to be replaced later
         if (result.isEmpty) {
           logger.debug(s"\t=> annotation not found for ${myTarget}")
-          new QuantifiedSpectra[T] {
-            override val target: Target = myTarget
-            override val spectra: Option[_ <: MSSpectra with CorrectedSpectra] = None
+          new QuantifiedTarget[T] {
+            /**
+              * value for this target
+              */
             override val quantifiedValue: Option[T] = None
-            override val massAccuracy: Option[Double] = None
-            override val retentionIndexDistance: Option[Double] = None
-            override val massAccuracyPPM: Option[Double] = None
-            override val retentionIndex: Double = 0.0
+            /**
+              * associated spectra
+              */
+            override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = None
+            /**
+              * a name for this spectra
+              */
+            override val name: Option[String] = myTarget.name
+            /**
+              * retention time in seconds of this target
+              */
+            override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
+            /**
+              * the unique inchi key for this spectra
+              */
+            override val inchiKey: Option[String] = myTarget.inchiKey
+            /**
+              * the mono isotopic mass of this spectra
+              */
+            override val monoIsotopicMass: Option[Double] = myTarget.monoIsotopicMass
           }
         }
         //associated with a target and quantified
         else {
           logger.debug(s"\t=> annotation found for ${myTarget}")
-          new QuantifiedSpectra[T] {
-            override val target: Target = myTarget
-            override val spectra: Option[_ <: Feature with CorrectedSpectra] = Some(result.head)
+          new QuantifiedTarget[T] {
+            /**
+              * value for this target
+              */
             override val quantifiedValue: Option[T] = computeValue(myTarget, result.head)
-            override val massAccuracy: Option[Double] = result.head.massAccuracy
-            override val retentionIndexDistance: Option[Double] = result.head.retentionIndexDistance
-            override val massAccuracyPPM: Option[Double] = result.head.massAccuracyPPM
-            override val retentionIndex: Double = result.head.retentionIndex
+            /**
+              * associated spectra
+              */
+            lazy override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = Option(SpectraHelper.addQuantification(this,result.head))
+            /**
+              * a name for this spectra
+              */
+            override val name: Option[String] = myTarget.name
+            /**
+              * retention time in seconds of this target
+              */
+            override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
+            /**
+              * the unique inchi key for this spectra
+              */
+            override val inchiKey: Option[String] = myTarget.inchiKey
+            /**
+              * the mono isotopic mass of this spectra
+              */
+            override val monoIsotopicMass: Option[Double] = myTarget.monoIsotopicMass
           }
         }
-    }.seq.toSeq.sortBy(_.target.retentionTimeInSeconds)
+    }.seq.toSeq.sortBy(_.retentionTimeInSeconds)
 
-
-    /**
-      * no postprocessing required
-      */
-    if (postprocessingInstructions.isEmpty) {
-      buildResult(input, resultList)
-    }
-    else {
-      /**
-        * uggly and not functional, needs some major refacotring
-        */
-      val it = postprocessingInstructions.iterator
-
-      var result = it.next().process(buildResult(input, resultList))
-      while (it.hasNext) {
-        val temp = it.next().process(result)
-        result = temp
-      }
-      result
-    }
+    buildResult(input, resultList)
   }
 
   /**
@@ -89,14 +105,14 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
     * @param resultList
     * @return
     */
-  protected def buildResult(input: AnnotatedSample, resultList: Seq[QuantifiedSpectra[T]]): QuantifiedSample[T] with Object {val quantifiedTargets: Seq[QuantifiedSpectra[T]]; val fileName: String} = {
+  protected def buildResult(input: AnnotatedSample, resultList: Seq[QuantifiedTarget[T]]): QuantifiedSample[T] = {
 
     new QuantifiedSample[T] {
-      override val quantifiedTargets: Seq[QuantifiedSpectra[T]] = resultList
+      override val quantifiedTargets: Seq[QuantifiedTarget[T]] = resultList
       override val fileName: String = input.fileName
       override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = input.noneAnnotated
       override val correctedWith: Sample = input.correctedWith
-      override val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = input.annotationsUsedForCorrection
+      override val featuresUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = input.featuresUsedForCorrection
       override val regressionCurve: Regression = input.regressionCurve
     }
 
@@ -118,7 +134,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
   * @param properties
   */
 @Component
-class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: List[PostProcessing[Double]]) extends QuantificationProcess[Double](libraryAccess, properties, postprocessingInstructions) {
+class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: List[PostProcessing[Double]]) extends QuantificationProcess[Double](libraryAccess, properties) {
 
   /**
     * computes the height by utilizing the mass from the target
@@ -139,7 +155,7 @@ class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target],
   * @param properties
   */
 @Component
-class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: List[PostProcessing[Int]]) extends QuantificationProcess[Int](libraryAccess, properties, postprocessingInstructions) {
+class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: List[PostProcessing[Int]]) extends QuantificationProcess[Int](libraryAccess, properties) {
 
   /**
     * computes the height by utilizing the mass from the target

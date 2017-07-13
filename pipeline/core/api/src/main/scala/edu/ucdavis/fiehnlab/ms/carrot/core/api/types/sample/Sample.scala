@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
@@ -57,7 +58,7 @@ trait CorrectedSample extends ProcessedSample {
   /**
     * these are all the targets, which were used for the retention index correction
     */
-  val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]]
+  val featuresUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]]
 
   /**
     * the associated spectra, which are now corrected
@@ -85,80 +86,19 @@ trait AnnotatedSample extends CorrectedSample {
 /**
   * provides a quantified sample, which has value information's, etc associated
   */
-trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging{
+trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging {
 
   /**
     * associated spectra, which have been quantified with the associated target
     */
-  override lazy val spectra: Seq[_ <: Feature with QuantifiedSpectra[T]] = quantifiedTargets.collect {
-    case x: QuantifiedSpectra[T] =>
-      x.spectra match {
-
-        /**
-          * msms spectra
-          */
-        case Some(msms: MSMSSpectra with AnnotatedSpectra with CorrectedSpectra) =>
-
-          /**
-            * creates a new instance of a MSMS spectra
-            */
-          new MSMSSpectra with QuantifiedSpectra[T] {
-            override val precursorIon: Double = msms.precursorIon
-            override val spectra: Option[_ <: Feature with CorrectedSpectra] = x.spectra
-            override val target: Target = x.target
-            override val quantifiedValue: Option[T] = x.quantifiedValue
-            override val ionMode: Option[IonMode] = msms.ionMode
-            override val purity: Option[Double] = msms.purity
-            override val scanNumber: Int = msms.scanNumber
-            override val ions: Seq[Ion] = msms.ions
-            override val modelIons: Option[Seq[Double]] = msms.modelIons
-            override val msLevel: Short = msms.msLevel
-            override val retentionTimeInSeconds: Double = msms.retentionTimeInSeconds
-            override val massAccuracy: Option[Double] = msms.massAccuracy
-            override val retentionIndexDistance: Option[Double] = msms.retentionIndexDistance
-            override val massAccuracyPPM: Option[Double] = msms.massAccuracyPPM
-            override val retentionIndex: Double = msms.retentionIndex
-            /**
-              * accurate mass of this feature, if applicable
-              */
-            override val massOfDetectedFeature: Option[Ion] = None
-          }
-
-        /**
-          * ms spectra
-          */
-        case Some(ms: MSSpectra with AnnotatedSpectra with CorrectedSpectra) =>
-          new MSSpectra with QuantifiedSpectra[T] {
-            override val ionMode: Option[IonMode] = ms.ionMode
-            override val purity: Option[Double] = ms.purity
-            override val scanNumber: Int = ms.scanNumber
-            override val ions: Seq[Ion] = ms.ions
-            override val modelIons: Option[Seq[Double]] = ms.modelIons
-            override val msLevel: Short = ms.msLevel
-            override val retentionTimeInSeconds: Double = ms.retentionTimeInSeconds
-            override val spectra: Option[_ <: Feature with CorrectedSpectra] = x.spectra
-            override val target: Target = x.target
-            override val quantifiedValue: Option[T] = x.quantifiedValue
-            override val massAccuracy: Option[Double] = ms.massAccuracy
-            override val retentionIndexDistance: Option[Double] = ms.retentionIndexDistance
-            override val massAccuracyPPM: Option[Double] = ms.massAccuracyPPM
-            override val retentionIndex: Double = ms.retentionIndex
-            /**
-              * accurate mass of this feature, if applicable
-              */
-            override val massOfDetectedFeature: Option[Ion] = None
-          }
-
-      }
-  }.collect {
-    case x: Feature with QuantifiedSpectra[T] => x
+  override lazy val spectra: Seq[_ <: Feature with QuantifiedSpectra[T]] = quantifiedTargets.filter(_.spectra.isDefined).map { x =>
+    x.spectra.get
   }
 
   /**
-    * a list of all our targets used during matching
-    * and can contain empty annotations
+    * quantified targets for this samples
     */
-  val quantifiedTargets: Seq[QuantifiedSpectra[T]]
+  val quantifiedTargets: Seq[QuantifiedTarget[T]]
 }
 
 /**
@@ -206,21 +146,32 @@ trait QuantifiedSpectra[T] extends AnnotatedSpectra {
     */
   val quantifiedValue: Option[T]
 
-  /**
-    * associated spectra
-    */
-  val spectra: Option[_ <: Feature with CorrectedSpectra]
-
-  override def toString = s"QuantifiedSpectra(quantifiedValue=$quantifiedValue, target=$target, spectra=$spectra)"
+  override def toString = s"QuantifiedSpectra(quantifiedValue=$quantifiedValue, target=$target)"
 }
 
+
 /**
-  * a spectra which has been gap replaced
+  * a quantified value for a given target
   *
   * @tparam T
   */
-trait GapFillerSpectra[T] extends QuantifiedSpectra[T]{
-  override def toString = s"GapFillerSpectra(quantifiedValue=$quantifiedValue, target=$target, spectra=$spectra)"
+trait QuantifiedTarget[T] extends Target {
+
+  /**
+    * value for this target
+    */
+  val quantifiedValue: Option[T]
+
+  /**
+    * associated spectra
+    */
+  val spectra: Option[_ <: Feature with QuantifiedSpectra[T]]
+
+  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, spectra=$spectra), rt=$retentionTimeInSeconds"
+}
+
+trait GapFilledTarget[T] extends QuantifiedTarget[T]{
+  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, spectra=$spectra), rt=$retentionTimeInSeconds"
 
 }
 

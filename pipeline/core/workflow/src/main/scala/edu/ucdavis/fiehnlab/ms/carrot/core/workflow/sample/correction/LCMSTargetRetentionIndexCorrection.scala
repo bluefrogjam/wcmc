@@ -298,7 +298,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
       override val spectra: Seq[_ <: Feature with CorrectedSpectra] = correctedSpectra
 
       //the original data, this sample is based on
-      override val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = possibleHits
+      override val featuresUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = possibleHits
       override val regressionCurve: Regression = regression
       override val fileName: String = sampleToCorrect.fileName
     }

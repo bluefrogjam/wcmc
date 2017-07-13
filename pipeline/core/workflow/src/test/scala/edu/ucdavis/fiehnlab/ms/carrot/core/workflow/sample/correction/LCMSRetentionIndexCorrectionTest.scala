@@ -41,7 +41,7 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec with LazyLogging{
         val error = intercept[NotEnoughStandardsFoundException] {
           val result = correction.process(sample3)
 
-          for(x <- result.annotationsUsedForCorrection ){
+          for(x <- result.featuresUsedForCorrection ){
             logger.info(s"used for correction: ${x}")
           }
         }
@@ -53,7 +53,7 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec with LazyLogging{
 
         val corrected = correction.process(sample2)
 
-        for(x <- corrected.annotationsUsedForCorrection ){
+        for(x <- corrected.featuresUsedForCorrection ){
           logger.info(s"used for correction: ${x}")
         }
 

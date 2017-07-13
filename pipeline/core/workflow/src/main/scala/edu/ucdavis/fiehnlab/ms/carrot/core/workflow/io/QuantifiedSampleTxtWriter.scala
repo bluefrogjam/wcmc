@@ -34,7 +34,7 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t", noneReplacements: S
 
         val out = new BufferedWriter(new OutputStreamWriter(outputStream))
 
-        def sortedTargets = data.quantifiedTargets.sortBy(p => (p.target.retentionTimeInSeconds, p.target.name))
+        def sortedTargets = data.quantifiedTargets.sortBy(p => (p.retentionTimeInSeconds, p.name))
 
         //writes the header
         if (lineCounter == 0) {
@@ -45,7 +45,7 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t", noneReplacements: S
 
             //write target list
             sortedTargets.zipWithIndex.foreach { quantifiedSpectra =>
-              val target = quantifiedSpectra._1.target
+              val target = quantifiedSpectra._1
 
 
               out.write(value(target))

@@ -66,7 +66,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
             try {
               val correctionCurve = correction.process(sampleToUseForCorrection)
 
-              Some(correction.doCorrection(correctionCurve.annotationsUsedForCorrection, sample, correctionCurve.regressionCurve, sampleToUseForCorrection))
+              Some(correction.doCorrection(correctionCurve.featuresUsedForCorrection, sample, correctionCurve.regressionCurve, sampleToUseForCorrection))
               //correction successful
             }
             catch {

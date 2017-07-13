@@ -127,6 +127,7 @@ object SpectraHelper {
 
   /**
     * defines the following feature as an annotated feauture.
+    *
     * @param feature
     * @param _massErrorPPM
     * @param _massError
@@ -287,5 +288,171 @@ object SpectraHelper {
     }
   }
 
-  def addQuantification[T]():Feature with QuantifiedSpectra[T] = ???
+  def addQuantification[T](quantified: QuantifiedTarget[T], feature: Feature with AnnotatedSpectra): Feature with QuantifiedSpectra[T] = {
+
+    feature match {
+      case feat: MSMSSpectra with AnnotatedSpectra =>
+        new MSMSSpectra with QuantifiedSpectra[T] {
+          /**
+            * the observed pre cursor ion
+            */
+          override val precursorIon: Double = feat.precursorIon
+          /**
+            * how pure this spectra is
+            */
+          override val purity: Option[Double] = feat.purity
+          /**
+            * a list of model ions used during the deconvolution
+            */
+          override val modelIons: Option[Seq[Double]] = feat.modelIons
+          /**
+            * all the defined ions for this spectra
+            */
+          override val ions: Seq[Ion] = feat.ions
+          /**
+            * the local scan number
+            */
+          override val scanNumber: Int = feat.scanNumber
+          /**
+            * the retention time of this spectra. It should be provided in seconds!
+            */
+          override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
+
+          override val retentionIndex: Double = feat.retentionIndex
+          /**
+            * associated target
+            */
+          override val target: Target = quantified
+          /**
+            * mass accuracy
+            */
+          override val massAccuracy: Option[Double] = feat.massAccuracy
+          /**
+            * accyracy in ppm
+            */
+          override val massAccuracyPPM: Option[Double] = feat.massAccuracyPPM
+          /**
+            * distance of the retention index distance
+            */
+          lazy override val retentionIndexDistance: Option[Double] = feat.retentionIndexDistance
+
+          /**
+            * specified ion mode for the given feature
+            */
+          override val ionMode: Option[IonMode] = feat.ionMode
+          /**
+            * accurate mass of this feature, if applicable
+            */
+          override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
+          /**
+            * value for this target
+            */
+          override val quantifiedValue: Option[T] = quantified.quantifiedValue
+        }
+      case feat: MSSpectra with AnnotatedSpectra =>
+        new MSSpectra with QuantifiedSpectra[T] {
+          /**
+            * how pure this spectra is
+            */
+          override val purity: Option[Double] = feat.purity
+          /**
+            * a list of model ions used during the deconvolution
+            */
+          override val modelIons: Option[Seq[Double]] = feat.modelIons
+          /**
+            * all the defined ions for this spectra
+            */
+          override val ions: Seq[Ion] = feat.ions
+          /**
+            * the local scan number
+            */
+          override val scanNumber: Int = feat.scanNumber
+          /**
+            * the retention time of this spectra. It should be provided in seconds!
+            */
+          override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
+
+          override val retentionIndex: Double = feat.retentionIndex
+          /**
+            * associated target
+            */
+          override val target: Target = quantified
+          /**
+            * mass accuracy
+            */
+          override val massAccuracy: Option[Double] = feat.massAccuracy
+          /**
+            * accyracy in ppm
+            */
+          override val massAccuracyPPM: Option[Double] = feat.massAccuracyPPM
+          /**
+            * distance of the retention index distance
+            */
+          lazy override val retentionIndexDistance: Option[Double] = feat.retentionIndexDistance
+
+          /**
+            * specified ion mode for the given feature
+            */
+          override val ionMode: Option[IonMode] = feat.ionMode
+          /**
+            * accurate mass of this feature, if applicable
+            */
+          override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
+          /**
+            * value for this target
+            */
+          override val quantifiedValue: Option[T] = quantified.quantifiedValue
+
+        }
+      case feat: Feature with AnnotatedSpectra =>
+
+        new Feature with QuantifiedSpectra[T] {
+          /**
+            * how pure this spectra is
+            */
+          override val purity: Option[Double] = feat.purity
+
+          /**
+            * the local scan number
+            */
+          override val scanNumber: Int = feat.scanNumber
+          /**
+            * the retention time of this spectra. It should be provided in seconds!
+            */
+          override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
+
+          override val retentionIndex: Double = feat.retentionIndex
+          /**
+            * associated target
+            */
+          override val target: Target = quantified
+          /**
+            * mass accuracy
+            */
+          override val massAccuracy: Option[Double] = feat.massAccuracy
+          /**
+            * accyracy in ppm
+            */
+          override val massAccuracyPPM: Option[Double] = feat.massAccuracyPPM
+          /**
+            * distance of the retention index distance
+            */
+          lazy override val retentionIndexDistance: Option[Double] = feat.retentionIndexDistance
+
+          /**
+            * specified ion mode for the given feature
+            */
+          override val ionMode: Option[IonMode] = feat.ionMode
+          /**
+            * accurate mass of this feature, if applicable
+            */
+          override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
+          /**
+            * value for this target
+            */
+          override val quantifiedValue: Option[T] = quantified.quantifiedValue
+        }
+
+    }
+  }
 }

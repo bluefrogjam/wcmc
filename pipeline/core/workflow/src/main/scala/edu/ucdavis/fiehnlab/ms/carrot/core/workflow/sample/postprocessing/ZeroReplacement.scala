@@ -36,7 +36,7 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
     * @param rawdata
     * @return
     */
-  def replaceValue(needsReplacement: QuantifiedSpectra[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): QuantifiedSpectra[Double]
+  def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double]
 
   /**
     * actually processes the item
@@ -60,20 +60,24 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
 
     if (rawdata.isDefined) {
       logger.info(s"replacing data with: ${rawdata}")
-      val correctedRawData: CorrectedSample = correction.doCorrection(sample.annotationsUsedForCorrection, rawdata.get, sample.regressionCurve, sample)
+      val correctedRawData: CorrectedSample = correction.doCorrection(sample.featuresUsedForCorrection, rawdata.get, sample.regressionCurve, sample)
 
       logger.info(s"corrected data for: ${correctedRawData}")
 
-      val replacedSpectra = sample.quantifiedTargets.par.collect {
-        case spectra: QuantifiedSpectra[Double] if spectra.quantifiedValue.isDefined => spectra
-        case spectra: QuantifiedSpectra[Double] if spectra.quantifiedValue.isEmpty => replaceValue(spectra, sample, correctedRawData)
+      val replacedSpectra = sample.quantifiedTargets.par.map { spectra =>
+        if (spectra.quantifiedValue.isDefined) {
+          spectra
+        }
+        else {
+          replaceValue(spectra, sample, correctedRawData)
+        }
       }.seq
 
       new QuantifiedSample[Double] {
-        override val quantifiedTargets: Seq[QuantifiedSpectra[Double]] = replacedSpectra
+        override val quantifiedTargets: Seq[QuantifiedTarget[Double]] = replacedSpectra
         override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = sample.noneAnnotated
         override val correctedWith: Sample = sample.correctedWith
-        override val annotationsUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = sample.annotationsUsedForCorrection
+        override val featuresUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = sample.featuresUsedForCorrection
         override val regressionCurve: Regression = sample.regressionCurve
         override val fileName: String = sample.fileName
       }
@@ -113,7 +117,7 @@ class ZeroReplacementProperties {
   /**
     * extension of our rawdata files, to be used for replacement
     */
-  var fileExtension: List[String] = "mzXML"  :: "mzML" :: List()
+  var fileExtension: List[String] = "mzXML" :: "mzML" :: List()
 }
 
 /**
@@ -132,8 +136,8 @@ class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends
     * @param rawdata
     * @return
     */
-  override def replaceValue(needsReplacement: QuantifiedSpectra[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFillerSpectra[Double] = {
-    val receivedTarget = needsReplacement.target
+  override def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
+    val receivedTarget = needsReplacement
 
     val filterByMass = new IncludeByMassRangePPM(receivedTarget, zeroReplacementProperties.massAccuracyPPM)
     val filterByRetentionIndexNoise = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionTimeInSeconds, zeroReplacementProperties.noiseWindowInSeconds)
@@ -176,16 +180,31 @@ class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends
     logger.debug(s"found best spectra for replacement: ${value}")
     val noiseCorrectedValue = MassAccuracy.findClosestIon(value, receivedTarget.monoIsotopicMass.get).get.intensity
 
-    //create replacement object
-    new GapFillerSpectra[Double] {
-      override val spectra: Option[_ <: Feature with CorrectedSpectra] = None
-      //Some(value)
+    new GapFilledTarget[Double] {
+      /**
+        * associated spectra
+        */
+      override val spectra: Option[_ <: Feature with QuantifiedSpectra[Double]] = None
+      /**
+        * value for this target
+        */
       override val quantifiedValue: Option[Double] = Some(noiseCorrectedValue)
-      override val massAccuracy: Option[Double] = MassAccuracy.calculateMassError(value, receivedTarget)
-      override val target: Target = receivedTarget
-      override val retentionIndexDistance: Option[Double] = Some(RetentionTimeDifference.inSeconds(receivedTarget, value))
-      override val massAccuracyPPM: Option[Double] = MassAccuracy.calculateMassErrorPPM(value, receivedTarget)
-      override val retentionIndex: Double = value.retentionIndex
+      /**
+        * the unique inchi key for this spectra
+        */
+      override val inchiKey: Option[String] = needsReplacement.inchiKey
+      /**
+        * retention time in seconds of this target
+        */
+      override val retentionTimeInSeconds: Double = needsReplacement.retentionTimeInSeconds
+      /**
+        * a name for this spectra
+        */
+      override val name: Option[String] = needsReplacement.name
+      /**
+        * the mono isotopic mass of this spectra
+        */
+      override val monoIsotopicMass: Option[Double] = needsReplacement.monoIsotopicMass
     }
   }
 }

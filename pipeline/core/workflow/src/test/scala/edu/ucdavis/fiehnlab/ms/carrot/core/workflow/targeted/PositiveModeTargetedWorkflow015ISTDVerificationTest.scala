@@ -85,7 +85,7 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
 
         val sample:QuantifiedSample[Double] = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]]
 
-        val target = sample.quantifiedTargets.filter(_.target.name.get == "*015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD").head
+        val target = sample.quantifiedTargets.filter(_.name.get == "*015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD").head
 
         val value = target.quantifiedValue.get
 
