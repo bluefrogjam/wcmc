@@ -44,12 +44,14 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
       val path = Paths.get(output.getAbsolutePath)
 
 	    if (output.exists()) {
-		    output.delete()
-	    }
-	    copy(new BufferedInputStream(file.get), path)
+//		    output.delete()
+		    Some(build(name, output))
+	    } else {
+		    copy(new BufferedInputStream(file.get), path)
 
-      //return
-      Some(build(name,output))
+		    //return
+		    Some(build(name, output))
+	    }
     }
     else {
       None
@@ -68,20 +70,18 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
 
   def build(name:String,file: File): Sample = {
     //    println(s"file: ${file}")
-    if (file.getName.toLowerCase().matches(".*.txt[.gz]*")) {
+    if (file.getName.toLowerCase().matches(".*\\.txt(?:.gz)?")) { // .*.txt[.gz]*  can catch invalid files (blahtxt.gz)
       //leco
       null
     }
-    else if (file.getName.toLowerCase().matches(".*.msdial[.gz]*")) {
+    else if (file.getName.toLowerCase().matches(".*\\.msdial(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
       MSDialSample(name,file)
     }
-    else if (file.getName.toLowerCase().matches(".*.abf")) {
+    else if (file.getName.toLowerCase().matches(".*\\.abf")) {  // .*.abf can catch files that end in '.' like blah.abf.
       new ABFSample(name,file,client)
     }
-
     else {
       MSDKSample(name,file)
-
     }
   }
 }

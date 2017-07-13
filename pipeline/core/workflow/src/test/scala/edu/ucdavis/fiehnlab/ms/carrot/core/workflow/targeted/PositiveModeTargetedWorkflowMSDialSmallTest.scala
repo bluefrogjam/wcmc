@@ -14,7 +14,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{Workflow, WorkflowConfig, WorkflowProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
 import org.junit.runner.RunWith
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{Ignore, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -32,6 +32,7 @@ import scala.io.Source
 	*/
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[MSDialTestConfiguration]))
+@Ignore
 class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers with LazyLogging {
 	@Autowired
 	val workflow: LCMSPositiveModeTargetWorkflow[Double] = null

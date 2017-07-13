@@ -37,7 +37,7 @@ trait Feature {
     */
   val massOfDetectedFeature: Option[Ion]
 
-  override def toString = s"Feature($scanNumber, $retentionTimeInSeconds, $massOfDetectedFeature)"
+  override def toString = s"Feature($scanNumber, $retentionTimeInMinutes, ${massOfDetectedFeature.get.mass})"
 }
 
 /**

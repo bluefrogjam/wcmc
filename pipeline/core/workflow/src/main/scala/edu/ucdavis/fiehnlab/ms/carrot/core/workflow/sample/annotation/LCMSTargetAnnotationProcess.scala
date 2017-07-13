@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSpectra, Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
@@ -380,7 +380,8 @@ class LCMSTargetAnnotationProperties {
   /**
     * defined mass accuracy in milli dalton for the annotation process
     */
-  var massAccuracy: Double = 20
+  @Value("${lcmsProperties.massAccuracy:15}")
+  var massAccuracy: Double = _
 
   /**
     * minimum intensity in percent the mass needs to have to be considered
@@ -390,7 +391,8 @@ class LCMSTargetAnnotationProperties {
   /**
     * the defined retention index window to use for it's given targets. It's considered in seconds
     */
-  var retentionIndexWindow: Double = 12
+  @Value("${lcmsProperties.retentionIndexWindow:12}")
+  var retentionIndexWindow: Double = _
 
   /**
     * are we utilizing the recursive annotation mode. This means after an annotation run, we will utilize the left over targets and spectra and try to annotate these, until we have no hits left. This can be expensive computational wise and depending on settings

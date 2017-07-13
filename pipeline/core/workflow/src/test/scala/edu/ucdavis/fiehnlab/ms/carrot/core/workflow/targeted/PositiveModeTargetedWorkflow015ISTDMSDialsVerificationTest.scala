@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, S
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
-import org.scalatest.WordSpec
+import org.scalatest.{Ignore, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -22,6 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@Ignore
 class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpec with LazyLogging {
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
@@ -41,7 +42,7 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 
   //sample name to test
-  val sampleName = "B5-P20Lipids-Pos-QC000.abf"
+  val sampleName = "B5_P20Lipids_Pos_QC000.abf"
 
   "LCMSPositiveModeTargetWorkflowTest" when {
 

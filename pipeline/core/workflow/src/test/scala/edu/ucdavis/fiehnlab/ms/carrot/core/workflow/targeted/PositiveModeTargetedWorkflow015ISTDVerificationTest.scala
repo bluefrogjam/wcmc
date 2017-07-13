@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
-import org.scalatest.WordSpec
+import org.scalatest.{Ignore, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@Ignore
 class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with LazyLogging {
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null

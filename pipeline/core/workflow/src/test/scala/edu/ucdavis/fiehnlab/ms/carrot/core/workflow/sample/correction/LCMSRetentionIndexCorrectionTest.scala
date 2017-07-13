@@ -16,7 +16,6 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("common"))
 class LCMSRetentionIndexCorrectionTest extends WordSpec with LazyLogging{
 
   @Autowired

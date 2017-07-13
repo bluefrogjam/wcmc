@@ -34,7 +34,7 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
     * @return
     */
   @Bean
-  def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](new File("src/test/resources/targets.txt"), "\t")
+  def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](new File("src/test/resources/targets1.txt"), "\t")
 
   @Bean(name = Array("quantification"))
   def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)

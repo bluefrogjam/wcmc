@@ -9,8 +9,13 @@ msdial:
 
 msdialrest.file.source: "G:/Data/P20 Study processing/CSH pos ABF"
 
-workflow.correction.massAccuracy: 15
+workflow.correction.massAccuracy: 150
 workflow.files.targets: "/targets_full.txt"
+
+annotation:
+  lcmsProperties:
+    massAccuracy: 150
+    retentionIndexWindow: 200
 
 #experiment.txt.reader.source: "G:/Data/P20 Study processing/CSH pos ABF"
 

@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.ExperimentTXTReader
 import org.junit.runner.RunWith
+import org.scalatest.Ignore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -18,6 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@Ignore
 class PositiveModeTargetedWorkflowMSDialBigTest extends PositiveModeTargetedWorkflowTest {
 	@Autowired
 	val loader: SampleLoader = null
