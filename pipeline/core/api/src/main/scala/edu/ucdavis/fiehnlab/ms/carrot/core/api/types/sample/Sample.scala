@@ -74,7 +74,7 @@ trait AnnotatedSample extends CorrectedSample {
   /**
     * the associated spectra, which are now corrected
     */
-  override val spectra: Seq[_ <: Feature with AnnotatedSpectra with CorrectedSpectra]
+  override val spectra: Seq[_ <: Feature with AnnotatedSpectra]
 
   /**
     * these spectra had no matching targets
