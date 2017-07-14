@@ -167,11 +167,11 @@ trait QuantifiedTarget[T] extends Target {
     */
   val spectra: Option[_ <: Feature with QuantifiedSpectra[T]]
 
-  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, spectra=$spectra), rt=$retentionTimeInSeconds"
+  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds"
 }
 
 trait GapFilledTarget[T] extends QuantifiedTarget[T]{
-  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, spectra=$spectra), rt=$retentionTimeInSeconds"
+  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds"
 
 }
 

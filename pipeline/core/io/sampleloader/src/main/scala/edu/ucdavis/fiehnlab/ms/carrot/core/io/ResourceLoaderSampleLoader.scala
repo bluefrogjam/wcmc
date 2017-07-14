@@ -1,9 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
-import java.io.{BufferedInputStream, File}
-import java.nio.file.Files.copy
-import java.nio.file.Paths
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
