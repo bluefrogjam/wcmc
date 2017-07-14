@@ -4,7 +4,7 @@ import java.io.{File, InputStream}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.LoadersConfiguration
+import edu.ucdavis.fiehnlab.ms.carrot.core.{LoadersConfiguration, TargetedWorkflowTestConfiguration}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, RetentionIndexTarget, Sample, Target}
@@ -191,32 +191,8 @@ class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers
 
 
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[ResourceLoader]))
-@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration]))
+@Import(Array(classOf[TargetedWorkflowTestConfiguration]))
 class MSDialTestConfiguration extends LazyLogging {
-
-	/**
-		* defined standards for retention index correction
-		*
-		* @return
-		*/
-	@Bean
-	def correctionStandardList: LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](new File("src/test/resources/retentionIndexStandards.txt"), "\t")
-
-	/**
-		* our defined library of library targets
-		*
-		* @return
-		*/
-	@Bean
-	def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](new File("src/test/resources/targets.txt"), "\t")
-
-	@Bean(name = Array("quantification"))
-	def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
-
-	@Bean
-	def quantificationPostProcessing: List[PostProcessing[Double]] = List.empty[PostProcessing[Double]]
 
 	@Bean
 	def writer: QuantifiedSampleTxtWriter[Double] = {

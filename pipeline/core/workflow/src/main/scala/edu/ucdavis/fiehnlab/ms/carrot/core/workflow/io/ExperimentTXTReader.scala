@@ -35,7 +35,7 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
     /**
       * converts the data, groups by class and assemble as an experiment
       */
-    val result = Experiment(Source.fromInputStream(inputStream).getLines().toList./*par.*/collect {
+    val result = Experiment(Source.fromInputStream(inputStream).getLines().toSeq.collect {
       case line: String =>
         if (!line.startsWith("#")) {
           val data = line.split(properties.delimiter)
@@ -56,11 +56,11 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
         }
         else {
           null
-        }                           // returns a tuple (int, proxySample) proxySample = Sample to be loaded
-    }.seq                           // make a sequence of streams in experiment file
-      .filter(_ != null)            // leave nulls out
-      .groupBy(k => k._1)           // group by class index (from experiment file)
-      .mapValues(v => v.map(_._2))  // for each group extract the filename from the tuple (created in groupBy)
+        } // returns a tuple (int, proxySample) proxySample = Sample to be loaded
+    }.seq // make a sequence of streams in experiment file
+      .filter(_ != null) // leave nulls out
+      .groupBy(k => k._1) // group by class index (from experiment file)
+      .mapValues(v => v.map(_._2)) // for each group extract the filename from the tuple (created in groupBy)
       .map(tuple => ExperimentClass(tuple._2, Some(tuple._1))).toSeq) // for each value create an ExperimentClass from the tuple data
 
     if (result.classes.isEmpty) throw new RuntimeException("no classes for the experiment are defined!")
