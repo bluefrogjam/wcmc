@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 	* Created by diego on 7/14/2017.
 	*/
 
-@Component
+//@Component
 class ExperimentRunner extends CommandLineRunner {
 	@Autowired
 	val workflow: LCMSPositiveModeTargetWorkflow[Double] = null

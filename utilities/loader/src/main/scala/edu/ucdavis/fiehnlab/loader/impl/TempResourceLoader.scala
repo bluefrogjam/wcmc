@@ -6,40 +6,54 @@ import edu.ucdavis.fiehnlab.loader.LocalLoader
 import org.springframework.stereotype.Component
 
 /**
-	* Created by diego on 7/13/2017.
-	*/
+  * Created by diego on 7/13/2017.
+  */
 @Component
 class TempResourceLoader extends LocalLoader {
-	/**
-		* returns the related resource or none
-		*
-		* @param name
-		* @return
-		*/
-	override def load(name: String): Option[InputStream] = {
-		val dir = new File(System.getProperty("java.io.tmpdir"))
-		val file = new File(dir, name)
+  /**
+    * returns the related resource or none
+    *
+    * @param name
+    * @return
+    */
+  override def load(name: String): Option[InputStream] = {
+    val dir = new File(System.getProperty("java.io.tmpdir"))
+    val file = new File(dir, name)
 
-		if(exists(file.getAbsolutePath)){
-			logger.debug("\tResource found in temp")
-			Option(new FileInputStream(file))
-		} else {
-			logger.debug(s"\tResource not found in temp: ${file.getAbsolutePath}")
-			None
-		}
-	}
+    if (exists(file.getAbsolutePath)) {
+      logger.debug("\tResource found in temp")
+      Option(new FileInputStream(file))
+    } else {
+      logger.debug(s"\tResource not found in temp: ${file.getAbsolutePath}")
+      None
+    }
+  }
 
-	/**
-		* does the given resource exists
-		*
-		* @param name
-		* @return
-		*/
-	override def exists(name: String): Boolean = {
-//		val fileString = System.getProperty("java.io.tmpdir") + name
+  /**
+    * will load the resource as file, by utilizing a TEMP directory
+    * should be avoided due to uneccesaery performance overhead, but some tools
+    * sadly require files and can't handle streams
+    *
+    * @param name
+    * @return
+    */
+  override def loadAsFile(name: String): Option[File] = {
+    val dir = new File(System.getProperty("java.io.tmpdir"))
+    val file = new File(dir, name)
 
-		return new File(name).exists()
-	}
+    if (file.exists()) Some(file)
+    else None
+  }
 
-	override def priority: Int = super.priority - 100
+  /**
+    * does the given resource exists
+    *
+    * @param name
+    * @return
+    */
+  override def exists(name: String): Boolean = {
+    new File(name).exists()
+  }
+
+  override def priority: Int = super.priority - 100
 }

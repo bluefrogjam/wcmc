@@ -246,7 +246,12 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
 
     val experiment: Experiment = reader.read(inputStream)
 
-    process(experiment)
+    try {
+      process(experiment)
+    }
+    finally {
+      inputStream.close()
+    }
   }
 
   /**

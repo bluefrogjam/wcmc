@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBo
 /**
 	* Created by diego on 7/14/2017.
 	*/
+/*
 @SpringBootApplication
 @EnableAutoConfiguration //(exclude = Array(classOf[DataSourceAutoConfiguration]))
+class AutoLC
 //@Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
 object AutoLC {
 	def main(args: Array[String]): Unit = {
@@ -16,9 +18,10 @@ object AutoLC {
 			System.exit(1)
 		}
 
-		val app = new SpringApplication(classOf[ExperimentRunner])
+		val app = new SpringApplication(classOf[AutoLC])
 		app.setWebEnvironment(false)
 
 		val context = app.run(args: _*)
 	}
 }
+*/
