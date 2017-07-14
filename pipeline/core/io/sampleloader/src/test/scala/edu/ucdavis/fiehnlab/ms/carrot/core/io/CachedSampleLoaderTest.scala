@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @ContextConfiguration(classes = Array(classOf[CachedSampleLoaderTestConfiguration]))
 class CachedSampleLoaderTest extends WordSpec with LazyLogging {
 	@Autowired
-	val loader: CachedSampleLoader = null
+	val loader: SampleLoader = null
 
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -59,9 +59,13 @@ class CachedSampleLoaderTestConfiguration {
 	@Value("${loaders.cached.directory:src/resources}")
 	var directory: String = ""
 
-	@Bean
-	def resourceLoader: ResourceLoader = new CachedResourceLoader(new File(directory))
 
 	@Bean
-	def loader: SampleLoader = new CachedSampleLoader(resourceLoader)
+	def resourceLoader: ResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
+
+	@Bean
+	def resourceSampleLoader: ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(resourceLoader)
+
+	@Bean
+	def loader: SampleLoader = new CachedSampleLoader(resourceSampleLoader)
 }

@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibra
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification._
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{WorkflowConfig, WorkflowProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{CentralWorkflowConfig, WorkflowConfig, WorkflowProperties}
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.context.annotation._
@@ -17,7 +17,7 @@ import org.springframework.context.annotation._
   */
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Import(Array(classOf[WorkflowConfig], classOf[LoadersConfiguration]))
+@Import(Array(classOf[WorkflowConfig],classOf[CentralWorkflowConfig]))
 class TargetedWorkflowTestConfiguration extends LazyLogging {
 
   /**

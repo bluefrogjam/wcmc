@@ -25,6 +25,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
   val client: MSDialRestProcessor = null
 
   logger.info(s"using loader: ${resourceLoader}")
+
   /**
     * loads a sample
     *
@@ -32,26 +33,24 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     * @return
     */
   override def loadSample(name: String): Option[Sample] = {
+    logger.debug(s"looking for sample: ${name}")
+    val fileOption = resourceLoader.loadAsFile(name)
 
-    val file = resourceLoader.load(name)
-
-    if (file.isDefined) {
-      val dir = new File(System.getProperty("java.io.tmpdir"))
-
-      val output = new File(dir, name)
-
-	    //store temporary
-      val path = Paths.get(output.getAbsolutePath)
-
-	    if (output.exists()) {
-//		    output.delete()
-		    Some(build(name, output))
-	    } else {
-		    copy(new BufferedInputStream(file.get), path)
-
-		    //return
-		    Some(build(name, output))
-	    }
+    if (fileOption.isDefined) {
+      val file = fileOption.get
+      if (file.getName.toLowerCase().matches(".*\\.txt(?:.gz)?")) { // .*.txt[.gz]*  can catch invalid files (blahtxt.gz)
+        //leco
+        None
+      }
+      else if (file.getName.toLowerCase().matches(".*\\.msdial(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
+        Some(MSDialSample(name, file))
+      }
+      else if (file.getName.toLowerCase().matches(".*\\.abf")) { // .*.abf can catch files that end in '.' like blah.abf.
+        Some(new ABFSample(name, file, client))
+      }
+      else {
+        Some(MSDKSample(name, file))
+      }
     }
     else {
       None
@@ -66,22 +65,5 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     */
   override def sampleExists(name: String): Boolean = {
     resourceLoader.exists(name)
-  }
-
-  def build(name:String,file: File): Sample = {
-    //    println(s"file: ${file}")
-    if (file.getName.toLowerCase().matches(".*\\.txt(?:.gz)?")) { // .*.txt[.gz]*  can catch invalid files (blahtxt.gz)
-      //leco
-      null
-    }
-    else if (file.getName.toLowerCase().matches(".*\\.msdial(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
-      MSDialSample(name,file)
-    }
-    else if (file.getName.toLowerCase().matches(".*\\.abf")) {  // .*.abf can catch files that end in '.' like blah.abf.
-      new ABFSample(name,file,client)
-    }
-    else {
-      MSDKSample(name,file)
-    }
   }
 }

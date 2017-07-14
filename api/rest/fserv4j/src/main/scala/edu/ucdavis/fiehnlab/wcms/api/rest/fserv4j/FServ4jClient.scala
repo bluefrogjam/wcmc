@@ -47,7 +47,6 @@ class FServ4jClient extends RemoteLoader {
     * @param name
     * @return
     */
-  @Cacheable
   override def load(name: String): Option[InputStream] = {
     if (exists(name)) {
       val headers = new HttpHeaders
@@ -87,7 +86,6 @@ class FServ4jClient extends RemoteLoader {
     * @param name
     * @return
     */
-  @Cacheable
   override def exists(name: String): Boolean = {
     val location = s"$url/exists/$name"
     logger.debug(s"looking for location: ${location}")

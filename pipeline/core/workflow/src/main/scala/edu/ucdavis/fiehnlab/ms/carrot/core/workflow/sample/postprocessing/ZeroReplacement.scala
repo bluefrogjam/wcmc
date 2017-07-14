@@ -46,10 +46,11 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
     */
   override def doProcess(sample: QuantifiedSample[Double]): QuantifiedSample[Double] = {
 
-    val rawdata: Option[Sample] = zeroReplacementProperties.fileExtension.collectFirst {
+    val rawdata: Option[Sample] = zeroReplacementProperties.fileExtension.collect {
 
       case extension: String =>
         val fileNameToLoad = sample.name + "." + extension
+        logger.debug(s"attempting to load file: ${fileNameToLoad}")
         val result = sampleLoader.loadSample(fileNameToLoad)
 
         if (result.isDefined) {
