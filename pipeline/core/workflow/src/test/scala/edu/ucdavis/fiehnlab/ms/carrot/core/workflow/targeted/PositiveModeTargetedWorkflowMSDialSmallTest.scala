@@ -46,7 +46,7 @@ class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers
 //	val expectedValidationVal: Double = 80000
 //	val expectedValidationDelta: Double = 0
 
-	def experimentDefinition: InputStream = getClass.getResourceAsStream("/full/qcExperimentMSDial.txt")
+	def experimentDefinition: InputStream = getClass.getResourceAsStream("/full/qcSet.txt")
 
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 
