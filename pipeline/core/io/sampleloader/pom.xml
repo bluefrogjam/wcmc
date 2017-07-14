@@ -13,6 +13,7 @@
     <artifactId>sampleloader</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>

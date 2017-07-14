@@ -22,6 +22,11 @@
 			<artifactId>spring-web</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>edu.ucdavis.fiehnlab.wcmc.api</groupId>
+			<artifactId>fserv4j</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.typesafe.scala-logging/scala-logging_2.11 -->
 		<dependency>
 			<groupId>com.typesafe.scala-logging</groupId>

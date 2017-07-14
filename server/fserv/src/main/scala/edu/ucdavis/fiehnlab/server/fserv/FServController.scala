@@ -39,11 +39,12 @@ class FServController extends LazyLogging {
   }
 
   @RequestMapping(value = Array("/upload"), produces = Array(MediaType.APPLICATION_JSON_VALUE))
-  def upload(@RequestParam("file") uploadedFileRef: MultipartFile): java.util.Map[String, _ <: Any] = {
+  def upload(@RequestParam("file") uploadedFileRef: MultipartFile, @RequestParam(name = "name",required = false,defaultValue = "")name:String): java.util.Map[String, _ <: Any] = {
 
-    val fileName = uploadedFileRef.getOriginalFilename
 
-    logger.info(s"uploaded file name is: ${fileName}")
+    val fileName = if(name == "") uploadedFileRef.getOriginalFilename else name
+
+    logger.info(s"uploaded file name is: ${name}")
     logger.info(s"content size is: ${uploadedFileRef.getSize}")
 
     // Now create the output file on the server.

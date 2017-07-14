@@ -6,12 +6,13 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
+import edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j.MSDialRestProcessor
 
 /**
   * Created by wohlgemuth on 7/11/17.
   */
-class ABFSample(override val fileName:String,file:File, val client:MSDialRestProcessor) extends Sample with LazyLogging{
+class ABFSample(override val fileName:String,file:File, client:MSDialRestProcessor) extends Sample with LazyLogging{
 
   /**
     * simple wrapper method for the deconvolution process

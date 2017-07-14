@@ -3,13 +3,13 @@ package edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j
 import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcms.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
-import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.stereotype.Component
-import org.springframework.web.client.{RestOperations, RestTemplate}
+import org.springframework.web.client.RestOperations
 
 /**
   * Created by wohlgemuth on 6/16/17.
@@ -31,11 +31,13 @@ class MSDialRestProcessor extends LazyLogging {
   protected def url = s"http://${host}:${port}"
 
   /**
-    * processes the input file and
+    * processes the input file and includes caching support
+    * if enabled
     *
     * @param input
     * @return
     */
+  //@Cacheable(value = Array("msdial-rest-cache"),key = "{input.getName()}")
   def process(input: File): File = {
 
     logger.debug(s"processing file: ${input}")
@@ -218,3 +220,30 @@ case class ServerResponse(filename: String, link: String, message: String, error
   * @param result
   */
 class MSDialException(result: ResponseEntity[ServerResponse]) extends Exception
+
+/**
+  * utilizes our FServer to cache processing results somewhere on the file system o
+  */
+class CachedMSDialRestProcesser extends MSDialRestProcessor{
+
+  @Autowired
+  val fServ4jClient:FServ4jClient = null
+  /**
+    * processes the input file and includes caching support
+    * if enabled
+    *
+    * @param input
+    * @return
+    */
+  override def process(input: File): File = {
+
+    val newFile = s"${input.getName}.processed"
+
+    if(!fServ4jClient.exists(newFile)){
+      logger.info(s"file: ${input.getName} requires processing and will be stored as ${newFile}")
+      fServ4jClient.upload(super.process(input),name = Some(newFile))
+    }
+
+    fServ4jClient.loadAsFile(newFile).get
+  }
+}

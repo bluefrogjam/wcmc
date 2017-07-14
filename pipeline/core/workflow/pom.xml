@@ -13,6 +13,7 @@
     <artifactId>workflow</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.utilities</groupId>
             <artifactId>casetojson</artifactId>

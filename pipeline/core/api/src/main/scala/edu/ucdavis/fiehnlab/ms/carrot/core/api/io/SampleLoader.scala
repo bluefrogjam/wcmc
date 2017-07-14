@@ -16,7 +16,7 @@ trait SampleLoader {
     * @param name
     * @return
     */
-  def loadSample(name: String): Option[Sample]
+  def loadSample(name: String): Option[_ <: Sample]
 
   /**
     * forcefully loads the sample or throws a FileNotFoundException if it was not found
@@ -40,14 +40,14 @@ trait SampleLoader {
     * @param names
     * @return
     */
-  def getSamples(names:Seq[String]) : Seq[Sample] = names.map(getSample)
+  def getSamples(names:Seq[String]) : Seq[_ <: Sample] = names.map(getSample)
 
   /**
     * loads all the specified samples
     * @param names
     * @return
     */
-  def loadSamples(names:Seq[String]) : Seq[Option[Sample]] = names.map(loadSample)
+  def loadSamples(names:Seq[String]) : Seq[Option[_ <: Sample]] = names.map(loadSample)
 
   /**
     * checks if the sample exist
