@@ -26,7 +26,6 @@ class CachedSampleLoader @Autowired()(sampleLoader: SampleLoader) extends Sample
     * @param name
     * @return
     */
-  @Cacheable(value = Array("existsSampleCache"),key = "#name")
   override def sampleExists(name: String): Boolean = sampleLoader.sampleExists(name)
 }
 

@@ -107,7 +107,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
         quantified.spectra.filter(_.target.name.get == "*022 1_TG d5 (17:0/17:1/17:0) ISTD [M+NH4]+").head.retentionTimeInMinutes shouldBe 11.094 +- 0.02
       }
 
-      s"process ${sample} with recursive annotation and with preferring mass accuracy over retention index distance" ignore {
+      s"process ${sample} with recursive annotation and with preferring mass accuracy over retention index distance" in {
 
         annotation.lcmsProperties.recursiveAnnotationMode = true
         annotation.lcmsProperties.preferMassAccuracyOverRetentionIndexDistance = true

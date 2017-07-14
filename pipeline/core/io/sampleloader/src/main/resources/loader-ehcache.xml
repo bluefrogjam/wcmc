@@ -5,28 +5,26 @@
          dynamicConfig="true">
 
     <!-- will be flushed on restarts -->
-    <diskStore path="java.io.tmpdir"/>
+    <diskStore path="java.io.tmpdir/carrot"/>
 
     <cache name="loadSampleCache"
            maxEntriesLocalHeap="0"
            maxEntriesLocalDisk="10000"
-           eternal="false"
+           eternal="true"
            diskSpoolBufferSizeMB="20"
-           timeToIdleSeconds="0" timeToLiveSeconds="86400"
            memoryStoreEvictionPolicy="LFU"
+           diskPersistent="true"
            transactionalMode="off">
-        <persistence strategy="localTempSwap"/>
     </cache>
 
     <cache name="existsSampleCache"
            maxEntriesLocalHeap="1000"
            maxEntriesLocalDisk="10000"
-           eternal="false"
+           eternal="true"
            diskSpoolBufferSizeMB="20"
-           timeToIdleSeconds="0" timeToLiveSeconds="86400"
            memoryStoreEvictionPolicy="LFU"
+           diskPersistent="true"
            transactionalMode="off">
-        <persistence strategy="localTempSwap"/>
     </cache>
 
 </ehcache>
