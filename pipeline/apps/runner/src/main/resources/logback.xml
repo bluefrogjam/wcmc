@@ -6,9 +6,9 @@
             <pattern>%msg%n</pattern>
         </encoder>
     </appender>
-    <logger name="edu.ucdavis.fiehnlab.ms.carrot" level="info"/>
+	<logger name="edu.ucdavis.fiehnlab" level="info"/>
 
-    <root level="info">
+	<root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

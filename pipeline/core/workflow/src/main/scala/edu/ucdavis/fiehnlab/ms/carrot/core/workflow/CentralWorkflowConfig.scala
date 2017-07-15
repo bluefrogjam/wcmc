@@ -11,7 +11,7 @@ import org.springframework.context.annotation._
   * Created by wohlgemuth on 7/14/17.
   */
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[MSDialRestProcessor], classOf[CachedSampleLoader]))
+@ComponentScan(basePackageClasses = Array(classOf[MSDialRestProcessor]))
 @Import(Array(classOf[WorkflowConfig]))
 class CentralWorkflowConfig {
 

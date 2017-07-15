@@ -10,8 +10,8 @@ import org.springframework.validation.ObjectError;
 /**
  * Created by wohlg on 7/14/2016.
  */
-@SpringBootApplication
-@Import(WorkflowConfig.class)
+//@SpringBootApplication
+//@Import(WorkflowConfig.class)
 public class SimpleRunner {
 
   public static void main(String args[]){

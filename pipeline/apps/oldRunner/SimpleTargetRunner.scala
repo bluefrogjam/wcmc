@@ -3,30 +3,13 @@ package edu.ucdavis.fiehnlab.ms.carrot.apps.runner
 import java.io.{File, FileInputStream}
 import java.nio.file.StandardCopyOption._
 import java.nio.file.{Files, Paths}
-import javax.validation.Valid
-import javax.validation.constraints.NotNull
-
-import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io._
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{PostProcessing, SimpleZeroReplacement}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.CommandLineRunner
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.context.annotation._
-import org.springframework.stereotype.{Component, Controller}
 
 import scala.beans.BeanProperty
 
 /**
   * Created by wohlgemuth on 7/12/16.
   */
-@Configuration
+//@Configuration
 class SimpleTargetRunnerConfig {
   /**
     * our targets to be loaded for the retention index correction
@@ -114,8 +97,8 @@ class SimpleTargetRunnerConfig {
 
 }
 
-@Component
-@ConfigurationProperties(prefix = "input")
+//@Component
+//@ConfigurationProperties(prefix = "input")
 class WorkflowRunnerProperties {
 
   @Valid
@@ -148,7 +131,7 @@ class WorkflowRunnerProperties {
 }
 
 
-@Controller
+//@Controller
 class WorkflowRunner extends CommandLineRunner with LazyLogging {
 
 
