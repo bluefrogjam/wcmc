@@ -39,7 +39,7 @@ class MyConfiguration extends LazyLogging {
 	logger.info("creating config")
 
 	@Bean
-	def workflow(workflowProperties: WorkflowProperties, reader: ExperimentTXTReader): Workflow[Double] = {
+	def workflow(workflowProperties: WorkflowProperties, reader: ExperimentTXTReader): LCMSPositiveModeTargetWorkflow[Double] = {
 		logger.info("creating new workflow")
 		new LCMSPositiveModeTargetWorkflow[Double](workflowProperties, writer, reader)
 	}
