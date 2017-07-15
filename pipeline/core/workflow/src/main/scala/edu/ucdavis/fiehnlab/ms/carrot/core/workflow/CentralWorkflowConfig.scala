@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow
 
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.io.{CachedSampleLoader, ResourceLoaderSampleLoader}
+import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j.MSDialRestProcessor
 import org.springframework.context.annotation._
@@ -23,16 +22,6 @@ class CentralWorkflowConfig {
     */
   @Bean
   def resourceSampleLoader(resourceLoader: DelegatingResourceLoader): ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(resourceLoader)
-
-  /**
-    * main loader to be utilized for performance reasons
-    *
-    * @param sampleLoader
-    * @return
-    */
-  @Bean
-  @Primary
-  def cachedSampleLoader(sampleLoader: ResourceLoaderSampleLoader): SampleLoader = new CachedSampleLoader(sampleLoader)
 
   @Bean
   def remoteLoader: FServ4jClient = new FServ4jClient

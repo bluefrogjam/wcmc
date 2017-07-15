@@ -62,12 +62,34 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
         result.getStatusCode should be(HttpStatus.OK)
 
-        result.getBody.get("TotalBytesRead").toString.toInt should be(13)
+        result.getBody.get("TotalBytesRead").toString.toInt should be(9)
 
         //ensure the file was created
         new File(s"${directory}/test.txt").exists() should be(true)
 
         Source.fromFile(new File(s"${directory}/test.txt")).getLines().toSeq.size should be(Source.fromInputStream(new ClassPathResource("/test.txt").getInputStream).getLines().toSeq.size)
+
+
+      }
+
+      "upload 2" in {
+        val map = new LinkedMultiValueMap[String, AnyRef]
+        map.add("file", new ClassPathResource("/test.txt"))
+        map.add("name","YoMama.txt")
+        val headers = new HttpHeaders
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA)
+
+        val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
+        val result = template.exchange(s"http://localhost:${port}/rest/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String,_  <: Any]])
+
+        result.getStatusCode should be(HttpStatus.OK)
+
+        result.getBody.get("TotalBytesRead").toString.toInt should be(9)
+
+        //ensure the file was created
+        new File(s"${directory}/YoMama.txt").exists() should be(true)
+
+        Source.fromFile(new File(s"${directory}/YoMama.txt")).getLines().toSeq.size should be(Source.fromInputStream(new ClassPathResource("/test.txt").getInputStream).getLines().toSeq.size)
 
 
       }

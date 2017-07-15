@@ -4,7 +4,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 
-trait Feature {
+trait Feature extends Serializable{
 
   /**
     * how pure this spectra is

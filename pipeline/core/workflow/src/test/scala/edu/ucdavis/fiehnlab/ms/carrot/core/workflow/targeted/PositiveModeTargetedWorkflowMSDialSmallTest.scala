@@ -1,23 +1,18 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted
 
-import java.io.{File, InputStream}
+import java.io.InputStream
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.{LoadersConfiguration, TargetedWorkflowTestConfiguration}
+import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, RetentionIndexTarget, Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentReaderTxTProperties, ExperimentTXTReader, QuantifiedSampleTxtWriter}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{Workflow, WorkflowConfig, WorkflowProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{Workflow, WorkflowProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
 import org.junit.runner.RunWith
 import org.scalatest.{Ignore, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.context.annotation._
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager}
@@ -51,7 +46,7 @@ class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers
 //	val expectedValidationVal: Double = 80000
 //	val expectedValidationDelta: Double = 0
 
-	def experimentDefinition: InputStream = getClass.getResourceAsStream("/full/qcExperimentMSDial.txt")
+	def experimentDefinition: InputStream = getClass.getResourceAsStream("/full/qcSet.txt")
 
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 

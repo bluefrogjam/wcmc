@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader, TxtStreamLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Target}
@@ -10,10 +10,10 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
-import org.scalatest.{Ignore, WordSpec}
+import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 /**
@@ -22,7 +22,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@Ignore
 class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with LazyLogging {
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null

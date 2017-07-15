@@ -36,10 +36,6 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends Loc
   }
 
   /**
-    * will load the resource as file, by utilizing a TEMP directory
-    * should be avoided due to uneccesaery performance overhead, but some tools
-    * sadly require files and can't handle streams
-    *
     * @param name
     * @return
     */

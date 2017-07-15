@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk
 
-import java.io.{File, FileInputStream}
+import java.io.{File, FileInputStream, FileOutputStream}
 import java.nio.file.Files._
 import java.nio.file.Paths
 import java.util.zip.GZIPInputStream
@@ -15,6 +15,7 @@ import io.github.msdk.io.mzdata.MzDataFileImportMethod
 import io.github.msdk.io.mzml.MzMLFileImportMethod
 import io.github.msdk.io.mzxml.MzXMLFileImportMethod
 import io.github.msdk.io.netcdf.NetCDFFileImportMethod
+import org.apache.commons.io.IOUtils
 
 import scala.collection.JavaConverters._
 
@@ -106,10 +107,14 @@ object MSDKSample extends LazyLogging {
       val dir = new File(System.getProperty("java.io.tmpdir"))
 
       output = new File(dir, name)
-      val path = Paths.get(output.getAbsolutePath)
 
       if (!output.exists()) {
-        copy(new GZIPInputStream(new FileInputStream(file)), path)
+        val in = new GZIPInputStream(new FileInputStream(file))
+        val out = new FileOutputStream(output)
+        IOUtils.copy(in, out)
+        out.flush()
+        out.close()
+        in.close()
         output.deleteOnExit()
       }
 

@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j.MSDialRestProcessor
 /**
   * Created by wohlgemuth on 7/11/17.
   */
-class ABFSample(override val fileName:String,file:File, val client:MSDialRestProcessor) extends Sample with LazyLogging{
+class ABFSample(override val fileName:String,file:File, client:MSDialRestProcessor) extends Sample with LazyLogging{
 
   /**
     * simple wrapper method for the deconvolution process

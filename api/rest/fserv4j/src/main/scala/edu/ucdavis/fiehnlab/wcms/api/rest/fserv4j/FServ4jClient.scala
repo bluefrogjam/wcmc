@@ -115,15 +115,17 @@ class FServ4jClient extends RemoteLoader {
     * @param file
     * @return
     */
-  def upload(file: File) = {
+  def upload(file: File,name:Option[String] = None) = {
     if (file.exists()) {
       val map = new LinkedMultiValueMap[String, AnyRef]
       map.add("file", new FileSystemResource(file))
+      map.add("name", if(name.isDefined){name.get} else{file.getName})
+
       val headers = new HttpHeaders
       headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
       val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-      val result = template.exchange(s"$url/upload", HttpMethod.POST, requestEntity, classOf[String])
+      val result = template.exchange(s"$url/upload", HttpMethod.POST, requestEntity, classOf[Any])
 
       if (result.getStatusCode != HttpStatus.OK) {
         throw new HttpServerErrorException(result.getStatusCode)

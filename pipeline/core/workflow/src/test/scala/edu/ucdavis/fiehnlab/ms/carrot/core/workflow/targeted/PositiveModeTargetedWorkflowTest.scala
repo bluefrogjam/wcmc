@@ -13,7 +13,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{Workflow, WorkflowPropertie
 import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
 
