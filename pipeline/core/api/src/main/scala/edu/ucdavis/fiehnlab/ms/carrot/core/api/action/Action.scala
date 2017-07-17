@@ -10,6 +10,11 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
   */
 trait Action {
 
+	/**
+		* Defines the priority for this action when multiple actions can run
+		*/
+	val priority: Int = 0
+
   /**
     * executes this action
     * @param sample

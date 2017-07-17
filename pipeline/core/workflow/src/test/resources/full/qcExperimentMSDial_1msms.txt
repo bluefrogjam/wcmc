@@ -1,2 +1,1 @@
-B5_SA0001_P20Lipids_Pos_1FL_1004.abf;1
 B5_SA0259_P20Lipids_Pos_1FV_2392_MSMS.abf;1
