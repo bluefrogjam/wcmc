@@ -28,16 +28,18 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
 			System.exit(1)
 		}
 
-		println(args.mkString("\n"))
-		val expFile: String = args.head
+		val expFile: File = new File(args.head)
 
-		val resultFile: String = new File(expFile).getName.substring(0, expFile.lastIndexOf(".") + 1)
+		if (expFile.exists()) {
+			val resultFile: String = expFile.getName.substring(0, expFile.getName.lastIndexOf("."))
 
-		val outFile: FileOutputStream = new FileOutputStream(resultFile)
+			val outFile: FileOutputStream = new FileOutputStream(s"${resultFile}.final")
 
-		if (new File(expFile).exists()) {
 			val results = workflow.process(experimentTXTReader.read(new FileInputStream(expFile)))
 			IOUtils.copy(results, outFile)
+
+			outFile.flush()
+			outFile.close()
 		} else {
 			println("Experiment doesn't exist")
 			System.exit(1)
