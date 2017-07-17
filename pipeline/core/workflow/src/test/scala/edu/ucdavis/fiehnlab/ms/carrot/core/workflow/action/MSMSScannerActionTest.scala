@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 
-import java.io.{FileInputStream, InputStream}
+import java.io.{File, FileInputStream, InputStream}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.{Action, PostAction}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{Reader, SampleLoader, Writer}
@@ -28,7 +29,7 @@ import scala.collection.JavaConverters._
 	* Created by diego on 7/17/2017.
 	*/
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringBootTest
+@SpringBootTest(classes = Array(classOf[ActionTestConfiguration]))
 class MSMSScannerActionTest extends WordSpec with Matchers with LazyLogging {
 	@Autowired
 	val experimentTXTReader: ExperimentTXTReader = null
@@ -42,18 +43,22 @@ class MSMSScannerActionTest extends WordSpec with Matchers with LazyLogging {
 	@Autowired
 	var msmsScannerAction: MSMSScannerAction = null
 
+	@Autowired
+	val loader: ResourceLoader = null
+
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 
 	"MSMSScannerActionTest" should {
 
 		"have post actions defined" in {
-			workflow.postActions should not be empty
 			logger.info(s"postActions: ${workflow.postActions.asScala.map{_.getClass.getSimpleName}.mkString("\n")}")
-			logger.info(s"listeners: ${workflow.eventListeners.asScala.map{_.getClass.getSimpleName}.mkString("\n")}")
+			workflow.postActions should not be empty
 
+			logger.info(s"listeners: ${workflow.eventListeners.asScala.map{_.getClass.getSimpleName}.mkString("\n")}")
+			workflow.eventListeners should not be empty
 		}
 
-		var experiment: Experiment = experimentTXTReader.read(getClass.getResourceAsStream("/full/qcExperimentMSDial_1MSMS.txt"))
+		val experiment: Experiment = experimentTXTReader.read(loader.load("qcExperimentMSDial_1MSMS.txt").get)
 
 		val is: InputStream = workflow.process(experiment)
 		logger.info(s" --- stream: ${is.available()}")
@@ -116,19 +121,22 @@ class ActionTestConfiguration {
 	def listener: WorkflowEventListener = new MyWorkflowEventListener()
 
 	@Bean
-	def writer: QuantifiedSampleTxtWriter[Double] = {
-		new QuantifiedSampleTxtWriter[Double]
-	}
+	def loader: ResourceLoader = new RecursiveDirectoryResourceLoader(new File("/src"))
 
-	@Bean
-	def experimentTXTReader(localDirectorySampleLoader: SampleLoader, experimentTXTReaderProperties: ExperimentReaderTxTProperties): ExperimentTXTReader = {
-		new ExperimentTXTReader(localDirectorySampleLoader, experimentTXTReaderProperties)
-	}
-
-	@Bean
-	def workflow(properties: WorkflowProperties, writer: Writer[Sample], experimentTXTReader: Reader[Experiment], listener: WorkflowEventListener): Workflow[Double] = {
-		val wf = new LCMSPositiveModeTargetWorkflow[Double](properties, writer, experimentTXTReader)
-		wf.eventListeners.add(listener)
-		wf
-	}
+//	@Bean
+//	def writer: QuantifiedSampleTxtWriter[Double] = {
+//		new QuantifiedSampleTxtWriter[Double]
+//	}
+//
+//	@Bean
+//	def experimentTXTReader(localDirectorySampleLoader: SampleLoader, experimentTXTReaderProperties: ExperimentReaderTxTProperties): ExperimentTXTReader = {
+//		new ExperimentTXTReader(localDirectorySampleLoader, experimentTXTReaderProperties)
+//	}
+//
+//	@Bean
+//	def workflow(properties: WorkflowProperties, writer: Writer[Sample], experimentTXTReader: Reader[Experiment], listener: WorkflowEventListener): Workflow[Double] = {
+//		val wf = new LCMSPositiveModeTargetWorkflow[Double](properties, writer, experimentTXTReader)
+//		wf.eventListeners.add(listener)
+//		wf
+//	}
 }

@@ -75,4 +75,6 @@ class MyConfiguration extends LazyLogging {
   @Bean(name = Array("quantification"))
   def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
 
+	@Bean
+	def quantificationPostProcessing: List[PostProcessing[Double]] = List.empty[PostProcessing[Double]]
 }

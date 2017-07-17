@@ -29,11 +29,11 @@ class CentralWorkflowConfig {
   @Bean
   def remoteLoader: FServ4jClient = new FServ4jClient
 
-  /**
-    * which msdial rest processor to use to convert abf samples
-    * @return
-    */
-  @Bean
-  def msdialRest:MSDialRestProcessor = new CachedMSDialRestProcesser
+//  /**
+//    * which msdial rest processor to use to convert abf samples
+//    * @return
+//    */
+//  @Bean
+//  def msdialRest:MSDialRestProcessor = new CachedMSDialRestProcesser
 
 }
