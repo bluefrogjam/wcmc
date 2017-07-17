@@ -101,6 +101,16 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging {
   val quantifiedTargets: Seq[QuantifiedTarget[T]]
 }
 
+trait ReplacedSample[T] extends QuantifiedSample[T] {
+
+  /**
+    * associated spectra, which have been quantified with the associated target
+    */
+  override lazy val spectra: Seq[_ <: Feature with QuantifiedSpectra[T]] = quantifiedTargets.filter(_.spectra.isDefined).map { x =>
+    x.spectra.get
+  }
+}
+
 /**
   * a corrected spectra
   */

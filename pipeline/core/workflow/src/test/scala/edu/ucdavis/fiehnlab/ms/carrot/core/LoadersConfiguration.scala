@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core
 import java.io.File
 
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j.{CachedMSDialRestProcesser, MSDialRestProcessor}
 import org.springframework.context.annotation.{Bean, Configuration}
 
 /**
@@ -21,11 +20,4 @@ class LoadersConfiguration {
     */
   @Bean
   def resourceLoaderSrc: RecursiveDirectoryResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
-
-  /**
-    * which msdial rest processor to use to convert abf samples
-    * @return
-    */
-  @Bean
-  def msdialRest:MSDialRestProcessor = new CachedMSDialRestProcesser
 }
