@@ -74,7 +74,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
             /**
               * associated spectra
               */
-            lazy override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = Option(SpectraHelper.addQuantification(this,result.head))
+            lazy override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = Option(SpectraHelper.addQuantification(this, result.head))
             /**
               * a name for this spectra
               */

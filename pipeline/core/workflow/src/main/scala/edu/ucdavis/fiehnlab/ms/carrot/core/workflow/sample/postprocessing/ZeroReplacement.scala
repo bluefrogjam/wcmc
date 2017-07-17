@@ -44,7 +44,7 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
     * @param sample
     * @return
     */
-  override def doProcess(sample: QuantifiedSample[Double]): QuantifiedSample[Double] = {
+  final override def doProcess(sample: QuantifiedSample[Double]): QuantifiedSample[Double] = {
 
     val rawdata: Option[Sample] = zeroReplacementProperties.fileExtension.collect {
 
@@ -65,12 +65,12 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
 
       logger.info(s"corrected data for: ${correctedRawData}")
 
-      val replacedSpectra = sample.quantifiedTargets.par.map { spectra =>
-        if (spectra.quantifiedValue.isDefined) {
-          spectra
+      val replacedSpectra = sample.quantifiedTargets.par.map { target =>
+        if (target.quantifiedValue.isDefined) {
+          target
         }
         else {
-          replaceValue(spectra, sample, correctedRawData)
+          replaceValue(target, sample, correctedRawData)
         }
       }.seq
 
@@ -163,29 +163,83 @@ class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends
 
     logger.debug(s"noise is: ${noise} for target: ${receivedTarget}")
 
-    val replacementValueSpectra = rawdata.spectra.par.filter { spectra =>
+    val replacementValueSpectra = rawdata.spectra.filter { spectra =>
       filterByMass.include(spectra)
     }
 
     logger.debug(s"found ${replacementValueSpectra.size} spectra,after mass filter for target ${receivedTarget}")
 
-    val filteredByTime = replacementValueSpectra.filter { spectra =>
+    val filteredByTime: Seq[Feature with CorrectedSpectra] = replacementValueSpectra.filter { spectra =>
       filterByRetentionIndex.include(spectra)
     }
     logger.debug(s"found ${filteredByTime.size} spectra,after mass filter for target ${receivedTarget}")
 
-    val value = filteredByTime.maxBy { spectra =>
+    val value: (Feature with CorrectedSpectra) = filteredByTime.maxBy { spectra =>
       MassAccuracy.findClosestIon(spectra, receivedTarget.monoIsotopicMass.get).get.intensity
     }
 
-    logger.debug(s"found best spectra for replacement: ${value}")
+    logger.debug(s"found best spectra for replacement: $value")
     val noiseCorrectedValue = MassAccuracy.findClosestIon(value, receivedTarget.monoIsotopicMass.get).get.intensity
 
+    /**
+      * build target object
+      */
     new GapFilledTarget[Double] {
+
+      val _target: GapFilledTarget[Double] = this
+
       /**
-        * associated spectra
+        * which actual spectra has been used for the replacement
         */
-      override val spectra: Option[_ <: Feature with QuantifiedSpectra[Double]] = None
+      override lazy val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
+        /**
+          * which sample was used for the replacement
+          */
+        override val sampleUsedForReplacement: String = rawdata.fileName
+        /**
+          * value for this target
+          */
+        override val quantifiedValue: Option[Double] = Some(noiseCorrectedValue)
+        /**
+          * associated target
+          */
+        override lazy val target: Target = _target
+        /**
+          * mass accuracy
+          */
+        override val massAccuracy: Option[Double] = None
+        /**
+          * accyracy in ppm
+          */
+        override val massAccuracyPPM: Option[Double] = None
+        /**
+          * distance of the retention index distance
+          */
+        override val retentionIndexDistance: Option[Double] = None
+
+        override val retentionIndex: Double = value.retentionIndex
+        /**
+          * how pure this spectra is
+          */
+        override val purity: Option[Double] = value.purity
+        /**
+          * the local scan number
+          */
+        override val scanNumber: Int = value.scanNumber
+        /**
+          * the retention time of this spectra. It should be provided in seconds!
+          */
+        override val retentionTimeInSeconds: Double = value.retentionTimeInSeconds
+        /**
+          * specified ion mode for the given feature
+          */
+        override val ionMode: Option[IonMode] = value.ionMode
+        /**
+          * accurate mass of this feature, if applicable
+          */
+        override val massOfDetectedFeature: Option[Ion] = value.massOfDetectedFeature
+      }
+
       /**
         * value for this target
         */

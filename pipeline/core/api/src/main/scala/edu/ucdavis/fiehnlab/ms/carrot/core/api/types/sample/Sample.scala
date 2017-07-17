@@ -91,7 +91,7 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging {
   /**
     * associated spectra, which have been quantified with the associated target
     */
-  override lazy val spectra: Seq[_ <: Feature with QuantifiedSpectra[T]] = quantifiedTargets.filter(_.spectra.isDefined).map { x =>
+  final override lazy val spectra: Seq[_ <: Feature with QuantifiedSpectra[T]] = quantifiedTargets.filter(_.spectra.isDefined).map { x =>
     x.spectra.get
   }
 
@@ -101,15 +101,6 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging {
   val quantifiedTargets: Seq[QuantifiedTarget[T]]
 }
 
-trait ReplacedSample[T] extends QuantifiedSample[T] {
-
-  /**
-    * associated spectra, which have been quantified with the associated target
-    */
-  override lazy val spectra: Seq[_ <: Feature with QuantifiedSpectra[T]] = quantifiedTargets.filter(_.spectra.isDefined).map { x =>
-    x.spectra.get
-  }
-}
 
 /**
   * a corrected spectra
@@ -158,6 +149,16 @@ trait QuantifiedSpectra[T] extends AnnotatedSpectra {
 
   override def toString = s"QuantifiedSpectra(quantifiedValue=$quantifiedValue, target=$target)"
 }
+trait GapFilledSpectra[T] extends QuantifiedSpectra[T]{
+
+  /**
+    * which sample was used for the replacement
+    */
+  val sampleUsedForReplacement:String
+
+  override def toString = s"GapFilled(quantifiedValue=$quantifiedValue, target=$target, sample=$sampleUsedForReplacement)"
+
+}
 
 
 /**
@@ -180,8 +181,23 @@ trait QuantifiedTarget[T] extends Target {
   override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds"
 }
 
+/**
+  * defines a target which has
+  * @tparam T
+  */
 trait GapFilledTarget[T] extends QuantifiedTarget[T]{
-  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds"
+
+  /**
+    * which actual spectra has been used for the replacement
+    */
+  val spectraUsedForReplacement:Feature with GapFilledSpectra[T]
+
+  /**
+    * to avoid that somebody can overwrite this value in an implementation and sets it to NONE, which might break expected behaviour.
+    */
+  final override val spectra: Option[_ <: Feature with GapFilledSpectra[T]] = Some(spectraUsedForReplacement)
+
+  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
 
 }
 
