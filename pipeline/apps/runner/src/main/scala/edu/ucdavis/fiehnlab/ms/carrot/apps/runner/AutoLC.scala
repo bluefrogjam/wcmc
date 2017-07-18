@@ -70,8 +70,8 @@ class MyConfiguration extends LazyLogging {
   val workflowProperties: WorkflowProperties = null
 
   @Bean
-  def zeroReplacement(properties: WorkflowProperties): SimpleZeroReplacement = new SimpleZeroReplacement(properties)
+  def zeroReplacement(properties: WorkflowProperties): PostProcessing[Double] = new SimpleZeroReplacement(properties)
 
   @Bean(name = Array("quantification"))
-  def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
+  def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
 }

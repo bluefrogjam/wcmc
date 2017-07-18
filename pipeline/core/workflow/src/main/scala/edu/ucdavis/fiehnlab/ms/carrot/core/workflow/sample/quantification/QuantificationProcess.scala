@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component
   * quantifies a sample, so it's ready to be exported
   */
 
-abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess, properties.trackChanges) with LazyLogging {
+abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, val postprocessingInstructions: java.util.List[PostProcessing[T]]) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess, properties.trackChanges) with LazyLogging {
+
   /**
     * builds a sample containing the quantified data
     *
@@ -134,7 +135,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
   * @param properties
   */
 @Component
-class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: List[PostProcessing[Double]]) extends QuantificationProcess[Double](libraryAccess, properties) {
+class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: java.util.List[PostProcessing[Double]]) extends QuantificationProcess[Double](libraryAccess, properties, postprocessingInstructions) {
 
   /**
     * computes the height by utilizing the mass from the target
@@ -155,7 +156,7 @@ class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target],
   * @param properties
   */
 @Component
-class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: List[PostProcessing[Int]]) extends QuantificationProcess[Int](libraryAccess, properties) {
+class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: java.util.List[PostProcessing[Int]]) extends QuantificationProcess[Int](libraryAccess, properties, postprocessingInstructions) {
 
   /**
     * computes the height by utilizing the mass from the target

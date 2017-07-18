@@ -9,10 +9,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception.RetentionIndexCorrectionException
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantificationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{LCMSProperties, Workflow, WorkflowProperties}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+
 import scala.collection.JavaConverters._
 
 /**
@@ -39,7 +41,14 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
   override protected def quantifySample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): QuantifiedSample[T] = sample match {
     case s: AnnotatedSample =>
       logger.info(s"quantify sample: $s")
-      quantificationProcess.process(s)
+      var temp = quantificationProcess.process(s)
+
+      logger.info(s"running applicable postprocessing for chosen datatype: $s")
+      quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
+        temp = x.process(temp)
+      }
+
+      temp
   }
 
 
@@ -107,15 +116,15 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
     * @return
     */
   override protected def preProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Sample = {
-    if(preProcessor.isEmpty){
+    if (preProcessor.isEmpty) {
       sample
     }
-    else{
+    else {
       //TODO could be done more elegant with a fold, but no time to play with it
       val iterator = preProcessor.asScala.sortBy(_.priortiy).reverseIterator
       var temp = iterator.next().process(sample)
 
-      while(iterator.hasNext){
+      while (iterator.hasNext) {
         temp = iterator.next().process(temp)
       }
 
@@ -154,7 +163,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
     * @return
     */
   override protected def postProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): AnnotatedSample = sample match {
-      //TODO do nothing for now
-    case s:AnnotatedSample => s
+    //TODO do nothing for now
+    case s: AnnotatedSample => s
   }
 }
