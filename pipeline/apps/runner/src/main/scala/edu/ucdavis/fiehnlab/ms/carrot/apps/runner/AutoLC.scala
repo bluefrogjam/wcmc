@@ -33,7 +33,7 @@ object AutoLC extends App with LazyLogging {
 }
 
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[ResourceLoader], classOf[MSDialRestProcessor]))
+@ComponentScan(basePackageClasses = Array(classOf[ResourceLoader]))
 @Import(Array(classOf[CentralWorkflowConfig]))
 class MyConfiguration extends LazyLogging {
   logger.info("creating config")
