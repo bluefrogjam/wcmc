@@ -43,8 +43,9 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
       logger.info(s"quantify sample: $s")
       var temp = quantificationProcess.process(s)
 
-      logger.info(s"running applicable postprocessing for chosen datatype: $s")
+      logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen datatype: $s")
       quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
+        logger.info(s"executing: $x")
         temp = x.process(temp)
       }
 

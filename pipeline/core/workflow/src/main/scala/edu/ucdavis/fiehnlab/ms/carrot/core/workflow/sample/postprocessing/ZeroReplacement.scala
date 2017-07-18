@@ -126,7 +126,6 @@ class ZeroReplacementProperties {
   *
   * @param properties
   */
-@Component
 class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends ZeroReplacement(properties) {
   /**
     * replaces the given value, with the best possible value
