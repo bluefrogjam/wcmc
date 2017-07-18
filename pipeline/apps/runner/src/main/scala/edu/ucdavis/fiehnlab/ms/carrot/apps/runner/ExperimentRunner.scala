@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.apps.runner
 import java.io.{File, FileInputStream, FileOutputStream}
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.ExperimentTXTReader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
 import org.apache.commons.io.IOUtils
@@ -11,38 +12,43 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 
 /**
-	* Created by diego on 7/14/2017.
-	*/
+  * Created by diego on 7/14/2017.
+  */
 
 @Component
 class ExperimentRunner extends CommandLineRunner with LazyLogging {
-	@Autowired
-	val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
+  @Autowired
+  val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
 
-	@Autowired
-	val experimentTXTReader: ExperimentTXTReader = null
+  @Autowired
+  val resourceLoader: DelegatingResourceLoader = null
 
-	override def run(args: String*): Unit = {
-		logger.info("my runner class")
-		if (args.length < 1) {
-			System.exit(1)
-		}
+  @Autowired
+  val experimentTXTReader: ExperimentTXTReader = null
 
-		val expFile: File = new File(args.head)
+  override def run(args: String*): Unit = {
+    logger.info("my runner class")
+    if (args.length < 1) {
+      System.exit(1)
+    }
 
-		if (expFile.exists()) {
-			val resultFile: String = expFile.getName.substring(0, expFile.getName.lastIndexOf("."))
+    var expFile: File = new File(args.head)
 
-			val outFile: FileOutputStream = new FileOutputStream(s"${resultFile}.final")
+    if (!expFile.exists()) {
+      expFile = resourceLoader.loadAsFile(args.head).get
+    }
 
-			val results = workflow.process(experimentTXTReader.read(new FileInputStream(expFile)))
-			IOUtils.copy(results, outFile)
+    val resultFile = new File(s"${expFile.getName.substring(0, expFile.getName.lastIndexOf("."))}.result.txt")
 
-			outFile.flush()
-			outFile.close()
-		} else {
-			println("Experiment doesn't exist")
-			System.exit(1)
-		}
-	}
+    logger.info(s"storing result at: ${resultFile.getAbsolutePath}")
+
+    val outFile: FileOutputStream = new FileOutputStream(resultFile)
+
+    val results = workflow.process(experimentTXTReader.read(new FileInputStream(expFile)))
+    IOUtils.copy(results, outFile)
+
+    outFile.flush()
+    outFile.close()
+
+  }
 }
