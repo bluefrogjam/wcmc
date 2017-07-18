@@ -38,7 +38,7 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
   @Autowired
   val targetLibrary: LibraryAccess[Target] = null
 
-	new TestContextManager(this.getClass).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   //sample name to test
   val sampleName = "B5_P20Lipids_Pos_QC000.abf"
@@ -49,10 +49,10 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
       assert(targetLibrary.load.nonEmpty)
     }
 
-//  possibly add an endpoint to check file presence on the server
-//    "able to load our sample" in{
-//      assert(loader.loadSample(sampleName).isDefined)
-//    }
+    //  possibly add an endpoint to check file presence on the server
+    //    "able to load our sample" in{
+    //      assert(loader.loadSample(sampleName).isDefined)
+    //    }
 
     s"find *015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD in sample $sampleName with a value over 80k" must {
 
@@ -80,7 +80,7 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
 
       "validate the result" in {
 
-        val sample:QuantifiedSample[Double] = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]]
+        val sample: QuantifiedSample[Double] = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]]
 
         val target = sample.quantifiedTargets.filter(_.name.get == "*015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD").head
 

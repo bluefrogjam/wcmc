@@ -47,7 +47,6 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t", noneReplacements: S
             sortedTargets.zipWithIndex.foreach { quantifiedSpectra =>
               val target = quantifiedSpectra._1
 
-
               out.write(value(target))
 
               if (quantifiedSpectra._2 < data.quantifiedTargets.size - 1) {
@@ -80,8 +79,7 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t", noneReplacements: S
           if (quantifiedSpectra._2 < data.quantifiedTargets.size - 1) {
             out.write(seperator)
           }
-          else
-          {
+          else {
             out.write("\n")
           }
         }
