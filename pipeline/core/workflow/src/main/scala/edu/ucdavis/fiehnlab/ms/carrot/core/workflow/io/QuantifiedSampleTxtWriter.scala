@@ -4,7 +4,7 @@ import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 
 /**
   * writes the quantified sample as a txt file
@@ -39,7 +39,7 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t", noneReplacements: S
         //writes the header
         if (lineCounter == 0) {
 
-          def writeLine(header: String, value: (Target) => String) = {
+          def writeLine(header: String, value: Target => String) = {
             out.write(header)
             out.write(seperator)
 
@@ -74,7 +74,32 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t", noneReplacements: S
         out.write(seperator)
 
         sortedTargets.zipWithIndex.foreach { quantifiedSpectra =>
-          out.write(quantifiedSpectra._1.quantifiedValue.getOrElse(noneReplacements).toString)
+
+          val target = quantifiedSpectra._1
+
+          //studid way to format numbers, scala give me a decent class hirachy for numbers...
+          val res: String = target match {
+            case x: GapFilledTarget[T] =>
+              val data: String = s"${x.quantifiedValue.get}"
+
+              try {
+                f"[${data.toDouble}%1.0f]"
+              }
+              catch {
+                case n: NumberFormatException => s"[$n]"
+              }
+            case x: QuantifiedTarget[T] =>
+              val data: String = s"${x.quantifiedValue.get}"
+
+              try {
+                f"${data.toDouble}%1.0f"
+              }
+              catch {
+                case n: NumberFormatException => data
+              }
+          }
+
+          out.write(res)
 
           if (quantifiedSpectra._2 < data.quantifiedTargets.size - 1) {
             out.write(seperator)

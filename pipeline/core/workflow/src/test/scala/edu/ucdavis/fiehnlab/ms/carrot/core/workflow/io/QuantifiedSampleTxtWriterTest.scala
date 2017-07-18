@@ -4,10 +4,12 @@ import java.io.{FileInputStream, FileOutputStream}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
@@ -37,19 +39,28 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
   @Qualifier("quantification")
   val quantification: QuantifyByHeightProcess = null
 
+  @Autowired
+  val replacement:ZeroReplacement = null
+
+  @Autowired
+  val loader: SampleLoader = null
+
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "QuantifiedSampleTxtWriterTest" should {
 
 
-    val samples: List[_ <: Sample] = new MSDialSample(getClass.getResourceAsStream("/lipids/B5_P20Lipids_Pos_NIST02.msdial"), "B5_P20Lipids_Pos_NIST02.msdial") :: new MSDialSample(getClass.getResourceAsStream("/lipids/B5_SA0002_P20Lipids_Pos_1FL_1006.msdial"), "B5_SA0002_P20Lipids_Pos_1FL_1006.msdial") :: List()
+
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.abf", "B5_P20Lipids_Pos_QC000.abf"))
 
     //correct the data
     val correctedSample = samples.map(correction.process)
 
     val annotated = correctedSample.map(annotation.process)
 
-    val results = annotated.map(quantification.process)
+    val quantified = annotated.map(quantification.process)
+
+    val results = quantified.map(replacement.process)
 
     "write" in {
 
