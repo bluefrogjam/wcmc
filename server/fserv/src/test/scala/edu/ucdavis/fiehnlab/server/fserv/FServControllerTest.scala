@@ -1,9 +1,11 @@
 package edu.ucdavis.fiehnlab.server.fserv
 
 import java.io.File
+import java.nio.file.{Files, Paths}
+import java.util
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
+import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -18,16 +20,6 @@ import org.springframework.http._
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.util.LinkedMultiValueMap
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
-import org.springframework.http.converter.ByteArrayHttpMessageConverter
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.util
 
 import scala.io.Source
 
@@ -62,7 +54,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
         result.getStatusCode should be(HttpStatus.OK)
 
-        result.getBody.get("TotalBytesRead").toString.toInt should be(9)
+	      result.getBody.get("TotalBytesRead").toString.toInt should be(13)
 
         //ensure the file was created
         new File(s"${directory}/test.txt").exists() should be(true)
@@ -84,7 +76,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
         result.getStatusCode should be(HttpStatus.OK)
 
-        result.getBody.get("TotalBytesRead").toString.toInt should be(9)
+	      result.getBody.get("TotalBytesRead").toString.toInt should be(13)
 
         //ensure the file was created
         new File(s"${directory}/YoMama.txt").exists() should be(true)
