@@ -21,7 +21,7 @@ class TempResourceLoader extends LocalLoader {
     val file = new File(dir, name)
 
     if (exists(file.getAbsolutePath)) {
-      logger.debug("\tResource found in temp")
+	    logger.debug(s"\tResource found in temp ${file.getAbsolutePath}")
       Option(new FileInputStream(file))
     } else {
       logger.debug(s"\tResource not found in temp: ${file.getAbsolutePath}")

@@ -1,10 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.apps.runner
 
-import java.io.File
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
-import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentTXTReader, QuantifiedSampleTxtWriter}
@@ -25,7 +22,6 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
 class AutoLC
 
 object AutoLC extends App with LazyLogging {
-  logger.info("creating app")
   val app = new SpringApplication(classOf[AutoLC])
   app.setWebEnvironment(false)
   app.run(args: _*)
@@ -35,11 +31,8 @@ object AutoLC extends App with LazyLogging {
 @ComponentScan(basePackageClasses = Array(classOf[ResourceLoader]))
 @Import(Array(classOf[CentralWorkflowConfig]))
 class MyConfiguration extends LazyLogging {
-  logger.info("creating config")
-
   @Bean
   def workflow(workflowProperties: WorkflowProperties, reader: ExperimentTXTReader): LCMSPositiveModeTargetWorkflow[Double] = {
-    logger.info("creating new workflow")
     new LCMSPositiveModeTargetWorkflow[Double](workflowProperties, writer, reader)
   }
 
