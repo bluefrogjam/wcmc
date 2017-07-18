@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
   *
   * @tparam T
   */
-class QuantifiedSampleTxtWriter[T](seperator: String = "\t", noneReplacements: String = "NA") extends Writer[Sample] with LazyLogging {
+class QuantifiedSampleTxtWriter[T](seperator: String = "\t") extends Writer[Sample] with LazyLogging {
 
   var lineCounter: Int = 0
 
