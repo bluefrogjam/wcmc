@@ -35,23 +35,17 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
     /**
       * converts the data, groups by class and assemble as an experiment
       */
-    val result = Experiment(Source.fromInputStream(inputStream).getLines().toSeq.collect {
+    val result = Experiment(Source.fromInputStream(inputStream).getLines().toSeq.par.collect {
       case line: String =>
         if (!line.startsWith("#")) {
           val data = line.split(properties.delimiter)
-          if (loader.sampleExists(data(0))) {
-            val sample = new ProxySample(data(0), loader)
+          val sample = new ProxySample(data(0), loader)
 
-            if (data.size == 1) {
-              ("none", sample)
-            }
-            else {
-              (data(1), sample)
-            }
+          if (data.size == 1) {
+            ("none", sample)
           }
           else {
-            logger.warn(s"sample not found ${data(0)}")
-            null
+            (data(1), sample)
           }
         }
         else {

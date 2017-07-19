@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
@@ -83,6 +84,7 @@ trait ResourceLoader extends LazyLogging {
   * attempets to load resources from different defined loaders
   */
 @Component
+@Primary
 class DelegatingResourceLoader extends ResourceLoader {
 
   /**
@@ -94,7 +96,7 @@ class DelegatingResourceLoader extends ResourceLoader {
   /**
     * sorted by priority
     */
-  lazy val sortedLoader: List[ResourceLoader] = loaders.asScala.sortBy(_.priority).toList
+  lazy val sortedLoader: List[ResourceLoader] = loaders.asScala.sortBy(_.priority).reverse.toList
 
   /**
     * trys to find the resource in any of the defined loaders or null
@@ -102,7 +104,7 @@ class DelegatingResourceLoader extends ResourceLoader {
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.load(name).isDefined => loader.load(name) }.getOrElse(None)
+  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.exists(name) => loader.load(name) }.getOrElse(None)
 
   override def toString = s"DelegatingResourceLoader($sortedLoader)"
 
@@ -110,7 +112,7 @@ class DelegatingResourceLoader extends ResourceLoader {
 
   @PostConstruct
   def init(): Unit ={
-    logger.info(s"configured with the following resource loaders: ${loaders}")
+    logger.info(s"configured with the following resource loaders: ${sortedLoader}")
   }
 }
 

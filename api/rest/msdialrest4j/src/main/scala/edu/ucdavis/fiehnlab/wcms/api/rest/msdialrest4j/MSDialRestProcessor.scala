@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j
 import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcms.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -228,6 +229,9 @@ class CachedMSDialRestProcesser extends MSDialRestProcessor{
 
   @Autowired
   val fServ4jClient:FServ4jClient = null
+
+  @Autowired
+  val resourceLoader:ResourceLoader = null
   /**
     * processes the input file and includes caching support
     * if enabled
@@ -239,11 +243,11 @@ class CachedMSDialRestProcesser extends MSDialRestProcessor{
 
     val newFile = s"${input.getName}.processed"
 
-    if(!fServ4jClient.exists(newFile)){
+    if(!resourceLoader.exists(newFile)){
       logger.info(s"file: ${input.getName} requires processing and will be stored as ${newFile}")
       fServ4jClient.upload(super.process(input),name = Some(newFile))
     }
 
-    fServ4jClient.loadAsFile(newFile).get
+    resourceLoader.loadAsFile(newFile).get
   }
 }

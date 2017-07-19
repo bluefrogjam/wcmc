@@ -99,7 +99,7 @@ object MSDKSample extends LazyLogging {
     */
   def apply(originalName:String,file: File): MSDKSample = {
 
-    logger.info(s"checking if ${originalName}, which is located at ${file.getAbsolutePath} needs to be uncompressed")
+    logger.debug(s"checking if ${originalName}, which is located at ${file.getAbsolutePath} needs to be uncompressed")
 
     var output = file
 
@@ -121,7 +121,7 @@ object MSDKSample extends LazyLogging {
 
     }
 
-    logger.info(s"attempting to load ${originalName} which is located at ${output.getAbsolutePath}")
+    logger.debug(s"attempting to load ${originalName} which is located at ${output.getAbsolutePath}")
     val name = output.getName.toLowerCase.substring(file.getName.indexOf(".") + 1)
 
     new MSDKSample(

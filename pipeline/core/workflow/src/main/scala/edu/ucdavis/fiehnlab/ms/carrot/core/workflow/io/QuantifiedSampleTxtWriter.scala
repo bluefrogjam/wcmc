@@ -78,25 +78,30 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t") extends Writer[Samp
           val target = quantifiedSpectra._1
 
           //studid way to format numbers, scala give me a decent class hirachy for numbers...
-          val res: String = target match {
-            case x: GapFilledTarget[T] =>
-              val data: String = s"${x.quantifiedValue.get}"
+          val res: String = if (target.quantifiedValue.isDefined) {
+            target match {
+              case x: GapFilledTarget[T] =>
+                val data: String = s"${x.quantifiedValue.get}"
 
-              try {
-                f"[${data.toDouble}%1.0f]"
-              }
-              catch {
-                case n: NumberFormatException => s"[$n]"
-              }
-            case x: QuantifiedTarget[T] =>
-              val data: String = s"${x.quantifiedValue.get}"
+                try {
+                  f"[${data.toDouble}%1.0f]"
+                }
+                catch {
+                  case n: NumberFormatException => s"[$n]"
+                }
+              case x: QuantifiedTarget[T] =>
+                val data: String = s"${x.quantifiedValue.get}"
 
-              try {
-                f"${data.toDouble}%1.0f"
-              }
-              catch {
-                case n: NumberFormatException => data
-              }
+                try {
+                  f"${data.toDouble}%1.0f"
+                }
+                catch {
+                  case n: NumberFormatException => data
+                }
+            }
+          }
+          else {
+            "[NA]"
           }
 
           out.write(res)

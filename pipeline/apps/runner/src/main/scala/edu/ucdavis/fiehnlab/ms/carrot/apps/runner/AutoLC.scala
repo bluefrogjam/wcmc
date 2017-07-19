@@ -70,4 +70,7 @@ class MyConfiguration extends LazyLogging {
 
   @Bean(name = Array("quantification"))
   def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
+
+  @Bean
+  def localLoader:ResourceLoader = new RecursiveDirectoryResourceLoader(new File("/Volumes/SSD/loader"),1000)
 }

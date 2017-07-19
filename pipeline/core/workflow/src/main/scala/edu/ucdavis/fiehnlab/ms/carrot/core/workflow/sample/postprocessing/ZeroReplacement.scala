@@ -51,11 +51,17 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
       case extension: String =>
         val fileNameToLoad = sample.name + "." + extension
         logger.debug(s"attempting to load file: ${fileNameToLoad}")
-        val result = sampleLoader.loadSample(fileNameToLoad)
 
-        if (result.isDefined) {
-          logger.info(s"loaded rawdata file: ${result.get}")
-          result.get
+        try {
+          val result = sampleLoader.loadSample(fileNameToLoad)
+
+          if (result.isDefined) {
+            logger.info(s"loaded rawdata file: ${result.get}")
+            result.get
+          }
+        }catch {
+          case e:Throwable =>
+            logger.warn(s"observed error: ${e.getMessage} => skip",e)
         }
     }.collectFirst { case p: Sample => p }
 
@@ -70,7 +76,15 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
           target
         }
         else {
-          replaceValue(target, sample, correctedRawData)
+          try {
+
+            replaceValue(target, sample, correctedRawData)
+          }
+          catch {
+            case e:Exception =>
+              logger.warn(s"replacement faild for entry, ignore for now: ${e.getMessage}",e)
+              target
+          }
         }
       }.seq
 
@@ -85,8 +99,8 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
     }
     //toss exception
     else {
-      logger.warn(s"sorry we were not able to load the rawdata file for ${sample.name} using the loader ${sampleLoader}")
-      throw new FileNotFoundException(s"sorry we were not able to load the rawdata file for ${sample.name} using the loader ${sampleLoader}")
+      logger.warn(s"sorry we were not able to load the rawdata file for ${sample.name} using the loader ${sampleLoader}, we are skipping this replacement")
+      sample
     }
   }
 }

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 /**
   * searches directories recursivly to find resources and returns the input stream to them, if found
   */
-class RecursiveDirectoryResourceLoader @Autowired()(directory: File) extends LocalLoader {
+class RecursiveDirectoryResourceLoader @Autowired()(directory: File, override val priority:Int = 0) extends LocalLoader {
 
   if (!directory.exists()) {
     logger.info(s"making directory: ${directory.getAbsolutePath}")

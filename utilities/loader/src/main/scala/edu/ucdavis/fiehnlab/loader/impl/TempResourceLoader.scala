@@ -55,5 +55,5 @@ class TempResourceLoader extends LocalLoader {
     new File(name).exists()
   }
 
-  override def priority: Int = super.priority - 100
+  override def priority: Int = 100
 }
