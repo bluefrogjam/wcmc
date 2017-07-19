@@ -27,7 +27,6 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
   val experimentTXTReader: ExperimentTXTReader = null
 
   override def run(args: String*): Unit = {
-    logger.info("my runner class")
     if (args.length < 1) {
       System.exit(1)
     }

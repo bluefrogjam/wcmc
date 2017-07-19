@@ -33,19 +33,18 @@ trait ResourceLoader extends LazyLogging {
     * @return
     */
   def loadAsFile(name: String): Option[File] = {
-    logger.debug(s"loading file: ${name}")
     val loaded = load(name)
 
     if (loaded.isDefined) {
+	    logger.debug(s"loading file: ${name}")
       val fName = if(name.startsWith("/")){
         name.substring(1)
-      }
-      else{
+      } else {
         name
       }
 
       val tempFile = new File(File.createTempFile("pre", "pro").getParentFile,fName)
-      logger.debug(s"storing tempFile at: ${tempFile.getAbsolutePath}")
+	    logger.debug(s"storing ${fName} at: ${tempFile.getAbsolutePath}")
       tempFile.deleteOnExit()
 
       val outStream = new FileOutputStream(tempFile)
@@ -58,8 +57,8 @@ trait ResourceLoader extends LazyLogging {
       outStream.close()
       stream.close()
       Option(tempFile)
-    }
-    else {
+    } else {
+	    logger.debug(s"File ${name} not found")
       None
     }
   }
