@@ -3,10 +3,11 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%msg%n</pattern>
+	        <Pattern>%date{ISO8601} %level %line --- [%thread] %logger{5} - %msg%n%ex</Pattern>
         </encoder>
     </appender>
 	<logger name="edu.ucdavis.fiehnlab" level="info"/>
+	<logger name="edu.ucdavis.fiehnlab.wcmc.api.rest" level="debug"/>
 
 	<root level="info">
         <appender-ref ref="STDOUT"/>

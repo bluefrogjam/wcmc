@@ -33,6 +33,7 @@ trait ResourceLoader extends LazyLogging {
     * @return
     */
   def loadAsFile(name: String): Option[File] = {
+	  logger.info(s"loading file: ${name}")
     val loaded = load(name)
 
     if (loaded.isDefined) {

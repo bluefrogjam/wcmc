@@ -30,44 +30,31 @@ object MSDialSample {
   */
 class MSDialSample(inputStream: InputStream, override val fileName: String) extends Sample with LazyLogging {
 
-  protected val nameIdentifier: String = "name"
-  protected val scanLeftIdentifier: String = "scanatleft"
-  protected val scanIdentifier: String = "scanattop"
-  protected val scanRightIdentifier: String = "scanatright"
-  protected val retentionTimeLeftMinutesIdentifier: String = "rtatleft(min)"
-  protected val retentionTimeMinutesIdentifier: String = "rtattop(min)"
-  protected val retentionTimeRightMinutesIdentifier: String = "rtatright(min)"
-  protected val intensityAtLeftIdentifier: String ="heightatleft"
-  protected val intensityIdentifier: String = "heightattop"
-  protected val intensityAtRightIdentifier: String = "heightatright"
-  protected val areaAboveZeroIdentifier: String = "areaabovezero"
-  protected val areaAboveBaselineIdentifier: String = "areaabovecaseline"
-  protected val normalizedValueIdentifier: String = "normalizednalue"
-  protected val mPlus1IonIntensityIdentifier: String = "ms1_m+1intensity"
-  protected val mPlus2IonIntensityIdentifier: String = "ms1_m+2intensity"
-  protected val purityIdentifier: String = "peakpurevalue"
-  protected val sharpnessIdentifier: String = "sharpness"
-  protected val gaussianSimilarityIdentifier: String = "gaussiansimylarity"
-  protected val idealSlopeIdentifier: String = "idealslope"
-  protected val modelMassesIdentifier: String = "modelmasses"
-  protected val uniquemassIdentifier: String = "uniquemass"
-  protected val basePeakIdentifir: String = "basepeakvalue"
-  protected val symmetryIdentifier: String = "symmetry"
-  protected val amplitudeScoreIdentifier: String = "amplitudescore"
-  protected val amplitudOrderIdentifier: String = "amplitudorder"
+	/*
+	 * msdial's output:
+	 * PeakID  Title   Scans   RT(min) Precursor m/z   Height  Area    MetaboliteName  AdductIon       Isotope SMILES  InChIKey        Dot product     Reverse dot product      Fragment presence %     Total score     MS1 spectrum    MSMS spectrum
+	 */
+
+  protected val scanIdentifier: String = "peakid"
+  protected val nameIdentifier: String = "title"
+	protected val numberOfScansIdentifier: String = "scans"
+  protected val retentionTimeMinutesIdentifier: String = "rt(min)"
+	protected val precursorMZIdentifier: String = "precursor m/z"
+  protected val intensityIdentifier: String = "height"
+	protected val areaIdentifier = "area"
+  protected val purityIdentifier: String = "metabolitename"
   protected val adductIonNameIdentifier: String = "adductionname"
-  protected val adductParentIdentifier: String = "adductparent"
-  protected val adductIonAccurateMassIdentifier: String = "adductionaccuratemass"
-  protected val adductIonXmerIdentifier: String = "adductionxmer"
-  protected val adductIonChargeIdentifier: String = "adductionchargenumber"
-  protected val accurateMassIdentifier: String = "accuratemass"
-  protected val accurateMassSimilarityIdentifier: String = "accuratemasssimilarity"
   protected val isotopeIdentifier: String = "isotope"
+  protected val smilesIdentifier: String = "smiles"
+  protected val inchikeyIdentifier: String = "inchikey"
   protected val dotProductIdentifier: String = "dot product"
   protected val reverseDotProductIdentifier: String = "reverse dot product"
   protected val fragmentPrecensePercentIdentifier: String = "fragment presence %"
   protected val totalScoreIdentifier: String = "total score"
-  protected val spectraIdentifier: String = "spectra"
+  protected val spectrumIdentifier: String = "ms1 spectrum"
+  protected val msmsSpectrumIdentifier: String = "msms spectrum"
+
+	protected val modelMassesIdentifier: String = "model masses"
 
   override val spectra: Seq[Feature] = readFile(inputStream)
 
@@ -104,7 +91,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
     */
   def buildSpectra(dataMap: Map[String, String]): Feature = {
 
-	  if (!dataMap.keySet.contains(spectraIdentifier)) {
+	  if (!dataMap.keySet.contains(spectrumIdentifier)) {
       /**
         * no spectra available so it's just a feature
         */
@@ -118,9 +105,10 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
           */
         override val scanNumber: Int = dataMap(scanIdentifier).toInt
 
-	      override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
+	      // WHY the mass IS an ION ????
+	      override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(precursorMZIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
         /**
-          * how pure this spectra is
+          * how pure this spectrum is
           */
         override val purity: Option[Double] = None
         /**
@@ -135,13 +123,13 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
         */
       new MSSpectra {
 
-        override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
+        override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(precursorMZIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
 
-        override val modelIons: Option[List[Double]] = Some(dataMap(modelMassesIdentifier).split(",").filter(_.nonEmpty).map(_.toDouble).toList)
+        override val modelIons: Option[List[Double]] = Option(dataMap(modelMassesIdentifier).split(",").filter(_.nonEmpty).map(_.toDouble).toList)
 
         override val scanNumber: Int = dataMap(scanIdentifier).toInt
 
-        override val ions: Seq[Ion] = dataMap(spectraIdentifier).split(" ").filter(_.nonEmpty).collect {
+        override val ions: Seq[Ion] = dataMap(spectrumIdentifier).split(" ").filter(_.nonEmpty).collect {
             case x: String if x.nonEmpty =>
               val values = x.split(":")
 
@@ -152,7 +140,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
         override val retentionTimeInSeconds: Double = dataMap(retentionTimeMinutesIdentifier).toDouble * 60
 
-        override val msLevel: Short = 1
+        override val msLevel: Short = if(dataMap(msmsSpectrumIdentifier).isEmpty) 1 else 2
 
         override val purity: Option[Double] = None
         /**

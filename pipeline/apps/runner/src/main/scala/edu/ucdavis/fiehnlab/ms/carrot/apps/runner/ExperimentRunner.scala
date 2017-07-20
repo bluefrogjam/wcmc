@@ -33,6 +33,7 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
 
     var expFile: File = new File(args.head)
 
+    logger.info(s"experiment file: ${expFile.getAbsolutePath}")
     if (!expFile.exists()) {
       expFile = resourceLoader.loadAsFile(args.head).get
     }

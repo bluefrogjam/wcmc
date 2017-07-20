@@ -1,0 +1,8 @@
+directory: 'h:\\p20repo'
+
+wcms.api.rest.msdialrest4j.host: localhost
+wcms.api.rest.msdialrest4j.port: 80
+
+#input.correction: correction.txt
+#input.library: library.txt
+#input.experiment: experiment.txt
