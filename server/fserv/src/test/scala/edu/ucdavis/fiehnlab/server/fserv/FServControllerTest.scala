@@ -24,110 +24,106 @@ import org.springframework.util.LinkedMultiValueMap
 import scala.io.Source
 
 /**
-  * Created by wohlgemuth on 7/7/17.
-  */
+	* Created by wohlgemuth on 7/7/17.
+	*/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers {
-  @Value("${wcms.server.fserv.directory:storage}")
-  val directory: String = null
+	@Value("${wcms.server.fserv.directory:storage}")
+	val directory: String = null
 
-  @LocalServerPort
-  private val port: Int = 0
+	@LocalServerPort
+	private val port: Int = 0
 
   val template = new TestRestTemplate()
 
-  new TestContextManager(this.getClass).prepareTestInstance(this)
+	new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "FServControllerTest" should {
+	"FServControllerTest" should {
 
-    "upload and download a simple file" must {
+		"upload and download a simple file" must {
 
-      "upload" in {
-        val map = new LinkedMultiValueMap[String, AnyRef]
-        map.add("file", new ClassPathResource("/test.txt"))
-        val headers = new HttpHeaders
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA)
+			"upload" in {
+				val map = new LinkedMultiValueMap[String, AnyRef]
+				map.add("file", new ClassPathResource("/test.txt"))
+				val headers = new HttpHeaders
+				headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
-        val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-        val result = template.exchange(s"http://localhost:${port}/rest/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String,_  <: Any]])
+				val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
+				val result = template.exchange(s"http://localhost:${port}/rest/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String, _ <: Any]])
 
-        result.getStatusCode should be(HttpStatus.OK)
+				result.getStatusCode should be(HttpStatus.OK)
 
-	      result.getBody.get("TotalBytesRead").toString.toInt should be(13)
+				result.getBody.get("TotalBytesRead").toString.toInt should be(13)
 
-        //ensure the file was created
-        new File(s"${directory}/test.txt").exists() should be(true)
+				//ensure the file was created
+				new File(s"${directory}/test.txt").exists() should be(true)
 
-        Source.fromFile(new File(s"${directory}/test.txt")).getLines().toSeq.size should be(Source.fromInputStream(new ClassPathResource("/test.txt").getInputStream).getLines().toSeq.size)
+				Source.fromFile(new File(s"${directory}/test.txt")).getLines().toSeq.size should be(Source.fromInputStream(new ClassPathResource("/test.txt").getInputStream).getLines().toSeq.size)
+			}
 
+			"upload 2" in {
+				val map = new LinkedMultiValueMap[String, AnyRef]
+				map.add("file", new ClassPathResource("/test.txt"))
+				map.add("name", "YoMama.txt")
+				val headers = new HttpHeaders
+				headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
-      }
+				val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
+				val result = template.exchange(s"http://localhost:${port}/rest/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String, _ <: Any]])
 
-      "upload 2" in {
-        val map = new LinkedMultiValueMap[String, AnyRef]
-        map.add("file", new ClassPathResource("/test.txt"))
-        map.add("name","YoMama.txt")
-        val headers = new HttpHeaders
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA)
+				result.getStatusCode should be(HttpStatus.OK)
 
-        val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-        val result = template.exchange(s"http://localhost:${port}/rest/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String,_  <: Any]])
+				result.getBody.get("TotalBytesRead").toString.toInt should be(13)
 
-        result.getStatusCode should be(HttpStatus.OK)
+				//ensure the file was created
+				new File(s"${directory}/YoMama.txt").exists() should be(true)
 
-	      result.getBody.get("TotalBytesRead").toString.toInt should be(13)
+				Source.fromFile(new File(s"${directory}/YoMama.txt")).getLines().toSeq.size should be(Source.fromInputStream(new ClassPathResource("/test.txt").getInputStream).getLines().toSeq.size)
+			}
 
-        //ensure the file was created
-        new File(s"${directory}/YoMama.txt").exists() should be(true)
+			"exists" in {
+				val headers = new HttpHeaders
+				headers.setContentType(MediaType.APPLICATION_JSON)
+				val entity = new HttpEntity[String](headers)
+				val response = template.exchange(s"http://localhost:${port}/rest/exists/test.txt", HttpMethod.GET, entity, classOf[java.util.Map[String, Any]])
+				response.getStatusCode should be(HttpStatus.OK)
 
-        Source.fromFile(new File(s"${directory}/YoMama.txt")).getLines().toSeq.size should be(Source.fromInputStream(new ClassPathResource("/test.txt").getInputStream).getLines().toSeq.size)
+			}
 
+			"not exists" in {
+				val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test123.txt", classOf[Any])
+				response.getStatusCode should be(HttpStatus.NOT_FOUND)
+			}
 
-      }
-      "exists" in {
-        val headers = new HttpHeaders
-        headers.setContentType(MediaType.APPLICATION_JSON)
-        val entity = new HttpEntity[String](headers)
-        val response = template.exchange(s"http://localhost:${port}/rest/exists/test.txt",HttpMethod.GET,entity, classOf[java.util.Map[String,Any]])
-        response.getStatusCode should be(HttpStatus.OK)
+			"not exists a complicated file name" in {
+				val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test_withUnder_and2extesnions.mzXML.gz", classOf[Any])
+				println(response)
+				response.getStatusCode should be(HttpStatus.NOT_FOUND)
+			}
 
-      }
-      "not exists" in {
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test123.txt", classOf[Any])
-        response.getStatusCode should be(HttpStatus.NOT_FOUND)
-      }
-      "not exists a complicated file name" in {
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test_withUnder_and2extesnions.mzXML.gz", classOf[Any])
-        println(response)
-        response.getStatusCode should be(HttpStatus.NOT_FOUND)
+			"download" in {
+				val headers = new HttpHeaders
+				headers.setAccept(util.Arrays.asList(MediaType.APPLICATION_OCTET_STREAM))
 
-      }
+				val entity = new HttpEntity[String](headers)
 
-      "download" in {
-        val headers = new HttpHeaders
-        headers.setAccept(util.Arrays.asList(MediaType.APPLICATION_OCTET_STREAM))
+				val response = template.exchange(s"http://localhost:${port}/rest/download/test.txt", HttpMethod.GET, entity, classOf[Array[Byte]])
 
-        val entity = new HttpEntity[String](headers)
+				response.getStatusCode should be(HttpStatus.OK)
 
-        val response = template.exchange(s"http://localhost:${port}/rest/download/test.txt", HttpMethod.GET, entity, classOf[Array[Byte]])
+				Files.write(Paths.get("target/test.txt.result"), response.getBody)
 
-        response.getStatusCode should be(HttpStatus.OK)
+				new File("target/test.txt.result").exists() should be(true)
+			}
+		}
 
-        Files.write(Paths.get("target/test.txt.result"), response.getBody)
-
-        new File("target/test.txt.result").exists() should be(true)
-
-      }
-    }
-
-
-  }
+	}
 }
 
 @Configuration
 class TestConfiguration {
 
-  @Bean
-  def resourceLoader: LocalLoader = new RecursiveDirectoryResourceLoader(new File("target"))
+	@Bean
+	def resourceLoader: LocalLoader = new RecursiveDirectoryResourceLoader(new File("target"))
 }

@@ -50,7 +50,7 @@ class FServController extends LazyLogging {
     // Now create the output file on the server.
     val outputFile = new File(generateFilePath(fileName))
     var reader: InputStream = null
-    var writer: OutputStream = null
+	  var writer: FileOutputStream = null
     var totalBytes = 0L
 
     try {
@@ -59,7 +59,7 @@ class FServController extends LazyLogging {
       reader = uploadedFileRef.getInputStream
       // Create writer for 'outputFile' to write data read from
       // 'uploadedFileRef'
-      writer = new BufferedOutputStream(new FileOutputStream(outputFile, false))
+      writer = new FileOutputStream(outputFile, false)
 
       IOUtils.copy(reader,writer)
       writer.flush()
@@ -75,14 +75,17 @@ class FServController extends LazyLogging {
 
         Map("message" -> "File upload failed", "error" -> e.getMessage).asJava
 
-    } finally try {
-      reader.close()
-      writer.close()
-    } catch {
-      case e: IOException =>
-        logger.error(e.getMessage, e)
+    } finally {
+	    try {
+		    reader.close()
+	    } catch {
+		    case e: IOException =>
+			    logger.error(e.getMessage, e)
+			    Map("message" -> "File upload failed", "error" -> e.getMessage).asJava
+	    }
 
-        Map("message" -> "File upload failed", "error" -> e.getMessage).asJava
+	    // after flush writer should be empty, next line avoids reporting 'fake?' IOException, on successful upload.
+	    IOUtils.closeQuietly(writer)
     }
   }
 
