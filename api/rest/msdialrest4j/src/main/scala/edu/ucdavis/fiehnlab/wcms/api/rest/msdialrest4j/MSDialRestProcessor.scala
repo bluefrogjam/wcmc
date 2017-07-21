@@ -20,10 +20,10 @@ import org.springframework.web.client.RestOperations
 @Component
 class MSDialRestProcessor extends LazyLogging {
 
-  @Value("${wcms.api.rest.msdialrest4j.host:128.120.143.101}")
+	@Value("${wcms.api.rest.msdialrest4j.host}") // no default value to be able to override from runner.
   val host: String = ""
 
-  @Value("${wcms.api.rest.msdialrest4j.port:80}")
+	@Value("${wcms.api.rest.msdialrest4j.port}")
   val port: Int = 80
 
   @Autowired
@@ -45,7 +45,7 @@ class MSDialRestProcessor extends LazyLogging {
     //if directory and ends with .d zip file
     val (toUpload, temp) = if (input.isDirectory && input.getName.endsWith(".d")) {
 
-      val temp = File.createTempFile("wcms", ".zip")
+	    val temp = File.createTempFile("wcmc", ".zip")
       ZipUtil.zipDir(input.getAbsolutePath, temp.getAbsolutePath, s"${input.getName}")
       (temp, true)
     }
