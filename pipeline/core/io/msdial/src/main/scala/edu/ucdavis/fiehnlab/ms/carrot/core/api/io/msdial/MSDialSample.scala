@@ -4,8 +4,8 @@ import java.io.{File, FileInputStream, IOException, InputStream}
 import java.util.zip.GZIPInputStream
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, Unknown}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample}
 
 import scala.io.Source
 
@@ -70,7 +70,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
     if (lines.hasNext) {
       val lineh = lines.next()
       val headers = lineh.toLowerCase().split("\t").toList
-
+	    logger.info(s"Headers: ${headers.mkString(" - ")}")
       lines.collect {
         case line: String if line nonEmpty =>
 	        val contents = line.split("\t").toList
@@ -116,7 +116,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
           */
         override val ionMode: Option[IonMode] = None
       }
-	  } else {
+	  } else if (!dataMap.contains(msmsSpectrumIdentifier)) {
 
       /**
         * complete spectra available
@@ -140,7 +140,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
         override val retentionTimeInSeconds: Double = dataMap(retentionTimeMinutesIdentifier).toDouble * 60
 
-        override val msLevel: Short = if(dataMap(msmsSpectrumIdentifier).isEmpty) 1 else 2
+	      override val msLevel: Short = 1
 
         override val purity: Option[Double] = None
         /**
@@ -148,7 +148,39 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
           */
         override val ionMode: Option[IonMode] = None
       }
-    }
+	  } else {
+		  new MSMSSpectra {
+			  /* PeakID  Title   Scans   RT(min) Precursor m/z   Height  Area    MetaboliteName  AdductIon       Isotope SMILES  InChIKey        Dot product     Reverse dot product      Fragment presence %     Total score     MS1 spectrum    MSMS spectrum */
+			  override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(precursorMZIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
+
+			  override val modelIons: Option[List[Double]] = Option(dataMap(modelMassesIdentifier).split(",").filter(_.nonEmpty).map(_.toDouble).toList)
+
+			  override val scanNumber: Int = dataMap(scanIdentifier).toInt
+
+			  override val ions: Seq[Ion] = dataMap(msmsSpectrumIdentifier).split(" ").filter(_.nonEmpty).collect {
+				  case x: String if x.nonEmpty =>
+					  val values = x.split(":")
+
+					  Ion(values(0).toDouble, values(1).toFloat)
+
+			  }.filter(_.intensity > 100).toSeq
+
+
+			  override val retentionTimeInSeconds: Double = dataMap(retentionTimeMinutesIdentifier).toDouble * 60
+
+			  override val msLevel: Short = 2
+
+			  override val purity: Option[Double] = if (dataMap(fragmentPrecensePercentIdentifier).isEmpty) None else Option(dataMap(fragmentPrecensePercentIdentifier).toDouble)
+			  /**
+				  * specified ion mode for the given feature
+				  */
+			  override val ionMode: Option[IonMode] = None
+			  /**
+				  * the observed pre cursor ion
+				  */
+			  override val precursorIon: Double = dataMap(precursorMZIdentifier).toDouble
+		  }
+	  }
   }
 }
 
