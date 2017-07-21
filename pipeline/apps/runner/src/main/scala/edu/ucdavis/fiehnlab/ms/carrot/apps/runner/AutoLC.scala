@@ -1,6 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.apps.runner
 
+import java.io.File
+
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
@@ -9,7 +12,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{PostP
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{CentralWorkflowConfig, WorkflowProperties}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -31,6 +34,9 @@ object AutoLC extends App with LazyLogging {
 @ComponentScan(basePackageClasses = Array(classOf[ResourceLoader]))
 @Import(Array(classOf[CentralWorkflowConfig]))
 class MyConfiguration extends LazyLogging {
+	@Value("${loaders.recursive.baseDirectory:./}")
+	val directory: String = ""
+
   @Bean
   def workflow(workflowProperties: WorkflowProperties, reader: ExperimentTXTReader): LCMSPositiveModeTargetWorkflow[Double] = {
     new LCMSPositiveModeTargetWorkflow[Double](workflowProperties, writer, reader)
@@ -45,7 +51,7 @@ class MyConfiguration extends LazyLogging {
     * @return
     */
   @Bean
-  def correctionStandardList(resourceLoader: DelegatingResourceLoader): LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](resourceLoader.loadAsFile("retentionIndexStandards.txt").get, "\t")
+  def correctionStandardList(resourceLoader: DelegatingResourceLoader): LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](resourceLoader.loadAsFile("retentionIndexStandards.txt").get)
 
   /**
     * our defined library of library targets
@@ -53,7 +59,7 @@ class MyConfiguration extends LazyLogging {
     * @return
     */
   @Bean
-  def libraryAccess(resourceLoader: DelegatingResourceLoader): LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
+  def libraryAccess(resourceLoader: DelegatingResourceLoader): LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get)
 
   @Autowired
   val workflowProperties: WorkflowProperties = null
@@ -65,5 +71,5 @@ class MyConfiguration extends LazyLogging {
   def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
 
   @Bean
-  def localLoader:ResourceLoader = new RecursiveDirectoryResourceLoader(new File("/Volumes/SSD/loader"),1000)
+  def localLoader:ResourceLoader = new RecursiveDirectoryResourceLoader(new File(directory),1000)
 }
