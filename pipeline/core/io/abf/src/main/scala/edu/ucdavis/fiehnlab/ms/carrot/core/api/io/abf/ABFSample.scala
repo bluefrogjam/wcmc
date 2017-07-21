@@ -20,8 +20,10 @@ class ABFSample(override val fileName:String,file:File, client:MSDialRestProcess
 
   def deconvolute:Seq[_ <:Feature] = {
     logger.debug("converting to MSDial representation")
-    MSDialSample(fileName,client.process(file)).spectra
-
+	  val start = System.nanoTime()
+	  val spec = MSDialSample(fileName, client.process(file)).spectra
+	  logger.info(s"preprocess took: ${(System.nanoTime() - start) / 1000000000}s")
+	  spec
   }
   /**
     * all the deconvolution spectra for this file. Defined as lazy to reduce memory usage
