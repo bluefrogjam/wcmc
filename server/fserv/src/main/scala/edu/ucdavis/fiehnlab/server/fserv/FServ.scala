@@ -4,7 +4,7 @@ import java.io.File
 
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.wcms.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -21,7 +21,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 @Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
 class FServ extends WebMvcConfigurerAdapter{
 
-  @Value("${wcms.server.fserv.directory:storage}")
+  @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null
 
   @Bean

@@ -29,7 +29,7 @@ import scala.io.Source
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers {
-	@Value("${wcms.server.fserv.directory:storage}")
+	@Value("${wcmc.server.fserv.directory:storage}")
 	val directory: String = null
 
 	@LocalServerPort

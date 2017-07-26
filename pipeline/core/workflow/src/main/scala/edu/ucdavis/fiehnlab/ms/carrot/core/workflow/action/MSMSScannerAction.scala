@@ -21,16 +21,16 @@ class MSMSScannerAction extends PostAction with LazyLogging {
 		* @param experiment
 		*/
 	override def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
-		logger.info(s"Scanning for msms spectra on sample: ${sample.name}, class: ${experimentClass.name.getOrElse("not available")}, experiment: ${experiment.name.getOrElse("not available")}")
-		val msmsSpec = sample.spectra match {
-			case spectrum: MSSpectra if spectrum.spectraString.length > 0 =>
-				logger.info(spectrum.spectraString)
-				spectrum
-			case _ =>
-				logger.info("no msms")
-				None
-		}
-
-		logger.info(s"found '${msmsSpec}' MSMS scans in sample")
+//		logger.info(s"Scanning for msms spectra on sample: ${sample.name}, class: ${experimentClass.name.getOrElse("not available")}, experiment: ${experiment.name.getOrElse("not available")}")
+//		val msmsSpec = sample.spectra match {
+//			case spectrum: MSSpectra if spectrum.spectraString.length > 0 =>
+//				logger.info(spectrum.spectraString)
+//				spectrum
+//			case _ =>
+//				logger.info("no msms")
+//				None
+//		}
+//
+//		logger.info(s"found '${msmsSpec}' MSMS scans in sample")
 	}
 }

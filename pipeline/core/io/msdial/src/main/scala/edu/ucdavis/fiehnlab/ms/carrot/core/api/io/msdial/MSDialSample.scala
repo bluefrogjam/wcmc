@@ -32,7 +32,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
 	/*
 	 * msdial's output:
-	 * PeakID  Title   Scans   RT(min) Precursor m/z   Height  Area    MetaboliteName  AdductIon       Isotope SMILES  InChIKey        Dot product     Reverse dot product      Fragment presence %     Total score     MS1 spectrum    MSMS spectrum
+	 * PeakID  Title   Scans   RT(min) Precursor m/z   Height  Area    Model Masses MetaboliteName  AdductIon       Isotope SMILES  InChIKey        Dot product     Reverse dot product      Fragment presence %     Total score     MS1 spectrum    MSMS spectrum
 	 */
 
   protected val scanIdentifier: String = "peakid"
@@ -70,7 +70,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
     if (lines.hasNext) {
       val lineh = lines.next()
       val headers = lineh.toLowerCase().split("\t").toList
-	    logger.info(s"Headers: ${headers.mkString(" - ")}")
+	    logger.debug(s"Headers: ${headers.mkString(" - ")}")
       lines.collect {
         case line: String if line nonEmpty =>
 	        val contents = line.split("\t").toList

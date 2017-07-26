@@ -13,6 +13,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
 import org.junit.runner.RunWith
 import org.scalatest.{Ignore, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation._
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager}
@@ -26,8 +27,7 @@ import scala.io.Source
 	* might be remove at a later time
 	*/
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ContextConfiguration(classes = Array(classOf[MSDialTestConfiguration]))
-@Ignore
+@SpringBootTest
 class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers with LazyLogging {
 	@Autowired
 	val workflow: LCMSPositiveModeTargetWorkflow[Double] = null

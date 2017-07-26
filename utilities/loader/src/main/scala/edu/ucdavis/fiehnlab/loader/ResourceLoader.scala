@@ -36,10 +36,14 @@ trait ResourceLoader extends LazyLogging {
 	  val tempDir = new File(System.getProperty("java.io.tmpdir"))
 	  if(!tempDir.exists()) { tempDir.mkdirs() }
 
-    val loaded = load(name)
+	  val loaded = try {
+			  load(name)
+	  } catch {
+		  case error: IOException => { logger.error(s"Error in ${this.getClass.getSimpleName} = ${error.getMessage}")}
+		  None
+	  }
 
     if (loaded.isDefined) {
-	    logger.debug(s"loading file: ${name}")
       val fName = if(name.startsWith("/")){
         name.substring(1)
       } else {
@@ -108,7 +112,7 @@ class DelegatingResourceLoader extends ResourceLoader {
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.exists(name) => loader.load(name) }.getOrElse(None)
+  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.exists(name) => {logger.debug(s"using ${loader.getClass.getSimpleName}"); loader.load(name)} }.getOrElse(None)
 
   override def toString = s"DelegatingResourceLoader($sortedLoader)"
 

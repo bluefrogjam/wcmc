@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow
 
-import edu.ucdavis.fiehnlab.wcms.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.springframework.context.annotation.{ComponentScan, Configuration, Import}
 
 /**
