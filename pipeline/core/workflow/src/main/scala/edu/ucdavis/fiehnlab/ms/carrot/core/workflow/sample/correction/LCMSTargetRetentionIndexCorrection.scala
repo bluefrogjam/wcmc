@@ -186,7 +186,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     */
   override def process(input: Sample, targets: Iterable[RetentionIndexTarget]): CorrectedSample = {
 
-    logger.debug(s"correction sample: ${input}")
+	  logger.info(s"correcting sample: ${input.name}")
 
     if (targets.size < minimumDefinedStandard) {
       throw new NotEnoughStandardsDefinedException(s"we require a defined minimum of ${minimumDefinedStandard} retention index standard for this correction to work. But only ${targets.size} standards were provided")

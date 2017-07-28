@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, RetentionIndexTarget, Sample, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
@@ -26,7 +26,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
     */
   final override def process(input: AnnotatedSample, targets: Iterable[Target]): QuantifiedSample[T] = {
 
-    logger.debug(s"quantify sample: ${input.fileName}")
+	  logger.info(s"quantifying sample: ${input.name}")
     /**
       * merge the found and none found targets, which can be later replaced or so
       */
