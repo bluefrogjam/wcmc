@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 import java.io.{BufferedWriter, File, FileWriter}
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.utilities.SpectrumMinimizer
 import edu.ucdavis.fiehnlab.wcmc.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
@@ -24,10 +25,11 @@ class MSDialRestProcessor extends LazyLogging {
 	@Value("${wcmc.api.rest.msdialrest4j.port:80}") // no default value to be able to override from runner.
   val port: Int = 80
 
-
-
   @Autowired
   val restTemplate: RestOperations = null
+
+	@Autowired
+	val minimizer: SpectrumMinimizer = null
 
   protected def url = s"http://${host}:${port}"
 
@@ -139,7 +141,8 @@ class MSDialRestProcessor extends LazyLogging {
         out.flush()
         out.close()
 
-        file
+	      //minimize and return
+	      minimizer.minimize(file)
       }
       else {
         throw new MSDialException(result)

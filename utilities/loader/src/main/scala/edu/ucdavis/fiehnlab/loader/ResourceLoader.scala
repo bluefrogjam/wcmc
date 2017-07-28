@@ -112,7 +112,10 @@ class DelegatingResourceLoader extends ResourceLoader {
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.exists(name) => {logger.debug(s"using ${loader.getClass.getSimpleName}"); loader.load(name)} }.getOrElse(None)
+  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.exists(name) => {
+	  loader.load(name)
+  }
+  }.getOrElse(None)
 
   override def toString = s"DelegatingResourceLoader($sortedLoader)"
 
