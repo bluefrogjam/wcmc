@@ -5,8 +5,8 @@ import java.io.File
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader, TxtStreamLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
@@ -30,7 +30,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 class BetterZeroReplacementTest extends WordSpec with ShouldMatchers with LazyLogging {
 
 	@Autowired
-	val betterZeroReplacement: BetterZeroReplacement = null
+	val betterZeroReplacement: SimpleZeroReplacement = null
 
 	@Autowired
 	val preprocess: MSDialRestProcessor = null
@@ -55,10 +55,10 @@ class BetterZeroReplacementTest extends WordSpec with ShouldMatchers with LazyLo
 
 	logger.info(s"Workflow: ${workflow}")
 
-	"SimpleZeroReplacementTest" must {
+	"BetterZeroReplacementTest" must {
 
 		"replaceValue" should {
-			val rawsample = loader.getSample("B5_P20Lipids_Pos_NIST01.abf")
+			val rawsample = loader.getSample("B5_P20Lipids_Pos_QC001.abf")
 
 			val sample: QuantifiedSample[Double] =
 				quantify.process(
@@ -77,14 +77,13 @@ class BetterZeroReplacementTest extends WordSpec with ShouldMatchers with LazyLo
 				var replaced: QuantifiedSample[Double] = betterZeroReplacement.process(sample)
 				replaced should not be null
 
-				//				replaced.quantifiedTargets.filter(_.quantifiedValue.isEmpty).foreach { x =>
-				//					logger.info(s"target: ${x.name.get}, mz=${x.monoIsotopicMass}, rt=${x.retentionTimeInSeconds}")
-				//				}
+				val merge = replaced.quantifiedTargets.zipAll(replaced.spectra, None, None)
 
-				logger.info(s"# correction features: ${sample.featuresUsedForCorrection.mkString("\n")}")
+				logger.info(s"\n${merge.filter(item => item._2.isInstanceOf[GapFilledSpectra[Double]] || item._2 == None).mkString("\n")}")
 
 				//all spectra should be the same count as the targets
-				replaced.spectra.length should be(replaced.quantifiedTargets.length)
+				val minAnnotations = replaced.quantifiedTargets.length //* 0.75
+				replaced.spectra.length >= minAnnotations.toInt
 			}
 		}
 
@@ -100,8 +99,11 @@ class BZRTestConfiguration extends LazyLogging {
 	@Autowired
 	val resourceLoader: DelegatingResourceLoader = null
 
+//	@Bean
+//	def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets1.txt").get, "\t")
+
 	@Bean
-	def betterZeroReplacement(properties: WorkflowProperties): PostProcessing[Double] = new BetterZeroReplacement(properties)
+	def betterZeroReplacement(properties: WorkflowProperties): PostProcessing[Double] = new SimpleZeroReplacement(properties)
 
 	@Bean(name = Array("quantification"))
 	def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
@@ -111,4 +113,13 @@ class BZRTestConfiguration extends LazyLogging {
 
 	@Bean
 	def minimizer: SpectrumMinimizer = new SpectrumMinimizer()
+
+	@Bean
+	def zeroReplacementProperties: ZeroReplacementProperties = {
+		val props = new ZeroReplacementProperties()
+		props.fileExtension = "abf.processed" :: List.empty
+//		props.massAccuracyPPM = 30
+//		props.massAccuracy = 0.05
+		props
+	}
 }

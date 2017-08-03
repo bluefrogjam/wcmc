@@ -40,7 +40,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     * this defines how many standards we need to find on minimum
     * for a retention index correction method to be successful
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
+  @Value("${wcmc.pipeline.workflow.config.correction.regression.minimumStandards:10}")
   var minimumFoundStandards: Int = 16
 
   /**
@@ -186,13 +186,10 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     */
   override def process(input: Sample, targets: Iterable[RetentionIndexTarget]): CorrectedSample = {
 
-	  logger.info(s"correcting sample: ${input.name}")
+	  logger.info(s"correcting sample: ${input.name} with ${targets.size} standards")
 
     if (targets.size < minimumDefinedStandard) {
       throw new NotEnoughStandardsDefinedException(s"we require a defined minimum of ${minimumDefinedStandard} retention index standard for this correction to work. But only ${targets.size} standards were provided")
-    }
-    else {
-      logger.debug(s"${targets.size} standards were defined")
     }
 
 
@@ -200,38 +197,36 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     val filters: SequentialAnnotate = new SequentialAnnotate(massAccuracy :: massIntensity :: List())
 
     /**
-      * find possible matches for our specified targets
+      * find possible matches for our specified standards
       */
     val matches: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = targets.toSeq.sortBy(_.retentionTimeInMinutes).par.collect {
 
       //find a possible match
       case target: RetentionIndexTarget =>
-        logger.debug(s"looking for matches for ${target}")
+        logger.info(s"looking for matches for ${target.name.get}")
         val result = findMatch(target, input.spectra, filters)
 
         //nothing found, return null
         if (result.isEmpty) {
           if (target.required) {
-            throw new RequiredStandardNotFoundException(s"this target ${target} was not found during the detection phase, but it's required. Sample was ${input.fileName}")
+            throw new RequiredStandardNotFoundException(s"this standard ${target} was not found during the detection phase, but it's required. Sample was ${input.fileName}")
           }
           else {
-            logger.debug("\t=>\tno hits found for this target")
+            logger.debug("\t=>\tno hits found for this standard")
             None
           }
         }
         //1 found, perfect
         else if (result.size == 1) {
-          logger.debug(s"\t=>\t${result.head} found for this target")
+          logger.debug(s"\t=>\t${result.head} found for this standard")
           TargetAnnotation[RetentionIndexTarget, Feature](target, result.head)
         }
         //otherwise let's find the best hit
         else {
-          logger.debug(s"\t=>\t${result.size} hits found for this target")
+          logger.debug(s"\t=>\t${result.size} hits found for this standard")
           findBestHit(target, result)
         }
-    }
-
-      .collect {
+    }.collect {
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[RetentionIndexTarget, Feature] =>
           logger.debug(s"annotated: ${hit.target} with ${hit.annotation}")

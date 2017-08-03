@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.math
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 
 /**
   * Created by wohlgemuth on 6/22/16.
@@ -10,14 +10,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
 object MassAccuracy extends LazyLogging {
 
   /**
-    * returns the ion in this spectra, which is closest to the target mass, in the defined window
+    * returns the ion in this spectrum, which is closest mass to the target mass, in the defined window
     *
     * @param spectra
     * @param targetMass
     * @return
     */
   def findClosestIon(spectra: Feature, targetMass: Double): Option[Ion] = {
-    logger.trace(s"outdated method, refactor! ${spectra.scanNumber} and looking for ${targetMass}")
+//    logger.trace(s"outdated method, refactor! ${spectra.scanNumber} and looking for ${targetMass}")
     spectra match {
       case x: MSSpectra =>
         Some(x.ions.minBy(p => Math.abs(p.mass - targetMass)))
@@ -69,4 +69,17 @@ object MassAccuracy extends LazyLogging {
       None
     }
   }
+
+	def closestIonFromRawData(rawdata: CorrectedSample, targetMass: Double, needsReplacement: QuantifiedTarget[Double], massAccuracy: Double): Option[Ion] = {
+		val ions = rawdata.spectra.collect {
+			case spec: MSSpectra =>
+				spec.ions.filter(ion =>
+					targetMass - massAccuracy < needsReplacement.monoIsotopicMass.get &&
+						needsReplacement.monoIsotopicMass.get < targetMass + massAccuracy)
+		}
+		logger.warn(s"collection: ${ions}")
+
+			//.minBy(p => Math.abs (p.massOfDetectedFeature.get.mass - targetMass))
+		Some(Ion(0,0))
+	}
 }

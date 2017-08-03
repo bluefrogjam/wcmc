@@ -20,7 +20,7 @@ class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double) extends
     logger.debug(s"mass error is: ${error} for ${spectra} and ${target}")
 
     if(error.isDefined){
-      val result  = error.get < windowInPPM
+      val result  = error.get <= windowInPPM
 
       logger.debug(s"\t=> accepted $result")
       result

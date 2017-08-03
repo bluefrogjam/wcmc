@@ -7,7 +7,7 @@
         </layout>
     </appender>
 	<logger name="org.springframework" level="info"/>
-	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core" level="debug"/>
+	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core" level="info"/>
     <!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.io" level="info"/>-->
     <!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.filter" level="info"/>-->
 	<!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.io.mzxml" level="trace"/>-->

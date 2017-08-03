@@ -38,7 +38,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
         //leco
         None
       }
-      else if (file.getName.toLowerCase().matches(".*\\.msdial(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
+      else if (file.getName.toLowerCase().matches(".*\\.(msdial|processed)(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
         Some(MSDialSample(name, file))
       }
       else if (file.getName.toLowerCase().matches(".*\\.abf")) { // .*.abf can catch files that end in '.' like blah.abf.

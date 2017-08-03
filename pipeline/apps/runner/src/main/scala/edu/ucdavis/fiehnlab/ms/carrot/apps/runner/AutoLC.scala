@@ -3,15 +3,15 @@ package edu.ucdavis.fiehnlab.ms.carrot.apps.runner
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentTXTReader, QuantifiedSampleTxtWriter}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{PostProcessing, SimpleZeroReplacement}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{PostProcessing, SimpleZeroReplacement, ZeroReplacementProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{CentralWorkflowConfig, WorkflowProperties}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.utilities.SpectrumMinimizer
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -72,6 +72,13 @@ class MyConfiguration extends LazyLogging {
   @Bean(name = Array("quantification"))
   def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
 
-  @Bean
-  def localLoader:ResourceLoader = new RecursiveDirectoryResourceLoader(new File(directory),1000)
+	@Bean
+	def spectrumMinimizer: SpectrumMinimizer = new SpectrumMinimizer()
+
+	@Bean
+	def zeroReplacementProperties: ZeroReplacementProperties = {
+		val zrp = new ZeroReplacementProperties()
+		zrp.fileExtension = "abf.processed" :: List.empty
+		zrp
+	}
 }

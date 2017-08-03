@@ -27,26 +27,18 @@ import scala.io.Source
 	* might be remove at a later time
 	*/
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringBootTest
+@SpringBootTest(classes = Array(classOf[MSDialTestConfiguration]))
 class PositiveModeTargetedWorkflowMSDialSmallTest extends WordSpec with Matchers with LazyLogging {
 	@Autowired
 	val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
 
-//	@Autowired
-//	val properties: WorkflowProperties = null
-//
 	@Autowired
 	val listener: TestWorkflowEventListener = null
 
-//	@Autowired
-//	val reader: ExperimentTXTReader = null
-//
 	val expectedCorrelation: Double = 0.99
 	val expectedContentSize: Integer = 33
-//	val expectedValidationVal: Double = 80000
-//	val expectedValidationDelta: Double = 0
 
-	def experimentDefinition: InputStream = getClass.getResourceAsStream("/full/qcSet.txt")
+	def experimentDefinition: InputStream = getClass.getResourceAsStream("/lipids/lipidExperiment.txt")
 
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 

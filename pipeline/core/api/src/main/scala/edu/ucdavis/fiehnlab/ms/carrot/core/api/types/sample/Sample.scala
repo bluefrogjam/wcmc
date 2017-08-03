@@ -149,6 +149,7 @@ trait QuantifiedSpectra[T] extends AnnotatedSpectra {
 
   override def toString = s"QuantifiedSpectra(quantifiedValue=$quantifiedValue, target=$target)"
 }
+
 trait GapFilledSpectra[T] extends QuantifiedSpectra[T]{
 
   /**
@@ -178,7 +179,7 @@ trait QuantifiedTarget[T] extends Target {
     */
   val spectra: Option[_ <: Feature with QuantifiedSpectra[T]]
 
-  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds"
+  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=${name.getOrElse("Unknown")}, rt=$retentionTimeInSeconds)"
 }
 
 /**
