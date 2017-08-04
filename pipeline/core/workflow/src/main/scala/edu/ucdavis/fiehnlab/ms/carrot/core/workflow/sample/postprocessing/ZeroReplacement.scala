@@ -46,6 +46,8 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
     */
   final override def doProcess(sample: QuantifiedSample[Double]): QuantifiedSample[Double] = {
 
+    //contains a bug doing unnessescary search against the server. A collect first would be more appropriate
+    //to check if a file exist
     val rawdata: Option[Sample] = zeroReplacementProperties.fileExtension.collect {
 
       case extension: String =>
@@ -71,7 +73,7 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
 
       logger.info(s"corrected data for: ${correctedRawData}")
 
-      val replacedSpectra = sample.quantifiedTargets.par.map { target =>
+      val replacedSpectra = sample.quantifiedTargets.map { target =>
         if (target.quantifiedValue.isDefined) {
           target
         }
@@ -82,11 +84,11 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
           }
           catch {
             case e:Exception =>
-              logger.warn(s"replacement faild for entry, ignore for now: ${e.getMessage}",e)
+              logger.debug(s"replacement failed for entry, ignore for now: ${e.getMessage}",e)
               target
           }
         }
-      }.seq
+      }
 
       new QuantifiedSample[Double] {
         override val quantifiedTargets: Seq[QuantifiedTarget[Double]] = replacedSpectra
@@ -132,7 +134,7 @@ class ZeroReplacementProperties {
   /**
     * extension of our rawdata files, to be used for replacement
     */
-  var fileExtension: List[String] = "mzXML" :: "mzML" :: List()
+  var fileExtension: List[String] = "mzML" :: List()
 }
 
 /**
@@ -192,7 +194,7 @@ class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends
     }
 
     logger.debug(s"found best spectra for replacement: $value")
-    val noiseCorrectedValue = MassAccuracy.findClosestIon(value, receivedTarget.monoIsotopicMass.get).get.intensity
+    val noiseCorrectedValue:Double = MassAccuracy.findClosestIon(value, receivedTarget.monoIsotopicMass.get).get.intensity
 
     /**
       * build target object
@@ -204,7 +206,7 @@ class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends
       /**
         * which actual spectra has been used for the replacement
         */
-      override lazy val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
+      override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
         /**
           * which sample was used for the replacement
           */
@@ -212,11 +214,11 @@ class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends
         /**
           * value for this target
           */
-        override val quantifiedValue: Option[Double] = Some(noiseCorrectedValue)
+        override val quantifiedValue: Option[Double] = Option(noiseCorrectedValue)
         /**
           * associated target
           */
-        override lazy val target: Target = _target
+        override val target: Target = _target
         /**
           * mass accuracy
           */

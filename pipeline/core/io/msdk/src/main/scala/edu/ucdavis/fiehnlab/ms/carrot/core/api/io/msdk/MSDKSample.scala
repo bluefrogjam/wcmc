@@ -22,54 +22,59 @@ import scala.collection.JavaConverters._
 /**
   * this provides us with an easy way to utilized MSDK based data classes in our simplified schema
   */
-class MSDKSample(name:String,delegate: RawDataFile) extends Sample with LazyLogging {
+class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLogging {
 
 
   /**
     * a collection of spectra
     * belonging to this sample
     */
-  override val spectra: Seq[_ <: MSSpectra] = delegate.getScans.asScala.map {
+  override val spectra: Seq[_ <: Feature] = try {
+    delegate.getScans.asScala.map {
 
-    //test all ms scans
-    spectra: MsScan =>
+      //test all ms scans
+      spectra: MsScan =>
 
-      logger.debug(s"reading scan: ${spectra}")
-      if (spectra.getMsFunction.getMsLevel == 0) {
-        throw new RuntimeException("Invalid MS Level!")
-      }
-      else if (spectra.getMsFunction.getMsLevel == 1) {
+        logger.debug(s"reading scan: ${spectra}")
+        if (spectra.getMsFunction.getMsLevel == 0) {
+          throw new RuntimeException("Invalid MS Level!")
+        }
+        else if (spectra.getMsFunction.getMsLevel == 1) {
 
-        //discover which mixins we need
-        spectra.getPolarity match {
-          case PolarityType.NEGATIVE =>
-            spectra.getSpectrumType match {
-              case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(NegativeMode())) with Centroided
-              case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(NegativeMode())) with Profiled
-              case _ => {
-                logger.warn("Unrecognized spectrum type, setting to profiled")
-                new MSDKMSSpectra(spectra, Some(NegativeMode())) with Profiled
+          //discover which mixins we need
+          spectra.getPolarity match {
+            case PolarityType.NEGATIVE =>
+              spectra.getSpectrumType match {
+                case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(NegativeMode())) with Centroided
+                case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(NegativeMode())) with Profiled
+                case _ => {
+                  logger.warn("Unrecognized spectrum type, setting to profiled")
+                  new MSDKMSSpectra(spectra, Some(NegativeMode())) with Profiled
+                }
               }
-            }
-          case PolarityType.POSITIVE =>
-            new MSDKMSSpectra(spectra, Some(PositiveMode()))
-          case _ =>
-            new MSDKMSSpectra(spectra, None)
+            case PolarityType.POSITIVE =>
+              new MSDKMSSpectra(spectra, Some(PositiveMode()))
+            case _ =>
+              new MSDKMSSpectra(spectra, None)
+          }
         }
-      }
-      else {
-        //discover which mixins we need
-        spectra.getPolarity match {
-          case PolarityType.NEGATIVE =>
-            new MSDKMSMSSpectra(spectra, Some(NegativeMode()))
-          case PolarityType.POSITIVE =>
-            new MSDKMSMSSpectra(spectra, Some(PositiveMode()))
-          case _ =>
-            new MSDKMSMSSpectra(spectra, None)
+        else {
+          //discover which mixins we need
+          spectra.getPolarity match {
+            case PolarityType.NEGATIVE =>
+              new MSDKMSMSSpectra(spectra, Some(NegativeMode()))
+            case PolarityType.POSITIVE =>
+              new MSDKMSMSSpectra(spectra, Some(PositiveMode()))
+            case _ =>
+              new MSDKMSMSSpectra(spectra, None)
+          }
         }
-      }
-  }
 
+    }
+  }
+  finally {
+    delegate.dispose()
+  }
 
   /**
     * the unique file name of the sample
@@ -79,8 +84,8 @@ class MSDKSample(name:String,delegate: RawDataFile) extends Sample with LazyLogg
   /**
     * disposing of the delegate
     */
-  delegate.dispose()
 }
+
 
 object MSDKSample extends LazyLogging {
   /**
@@ -89,7 +94,7 @@ object MSDKSample extends LazyLogging {
     * @param rawDataFile
     * @return
     */
-  def apply(name:String,rawDataFile: RawDataFile): MSDKSample = new MSDKSample(name,rawDataFile)
+  def apply(name: String, rawDataFile: RawDataFile): MSDKSample = new MSDKSample(name, rawDataFile)
 
   /**
     * simple factory to find the rawdata delegate for us
@@ -97,7 +102,7 @@ object MSDKSample extends LazyLogging {
     * @param file
     * @return
     */
-  def apply(originalName:String,file: File): MSDKSample = {
+  def apply(originalName: String, file: File): MSDKSample = {
 
     logger.debug(s"checking if ${originalName}, which is located at ${file.getAbsolutePath} needs to be uncompressed")
 

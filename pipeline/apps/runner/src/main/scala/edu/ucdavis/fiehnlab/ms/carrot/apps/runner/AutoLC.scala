@@ -1,6 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.apps.runner
 
+import java.io.File
+import java.util
+
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
@@ -61,6 +65,11 @@ class MyConfiguration extends LazyLogging {
   @Bean
   def zeroReplacement(properties: WorkflowProperties): PostProcessing[Double] = new SimpleZeroReplacement(properties)
 
+
+/*
+  @Bean
+  def postprocessing:java.util.List[PostProcessing[Double]] = new util.ArrayList[PostProcessing[Double]]()
+  */
   @Bean(name = Array("quantification"))
   def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
 
