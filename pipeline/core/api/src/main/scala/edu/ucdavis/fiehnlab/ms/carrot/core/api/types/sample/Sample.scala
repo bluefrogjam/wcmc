@@ -101,6 +101,14 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging {
   val quantifiedTargets: Seq[QuantifiedTarget[T]]
 }
 
+trait GapFilledSample[T] extends  QuantifiedSample[T] {
+
+  /**
+    * which file was used for the gap filling
+    */
+  val gapFilledWithFile:String
+}
+
 
 /**
   * a corrected spectra
@@ -195,7 +203,7 @@ trait GapFilledTarget[T] extends QuantifiedTarget[T]{
   /**
     * to avoid that somebody can overwrite this value in an implementation and sets it to NONE, which might break expected behaviour.
     */
-  final override val spectra: Option[_ <: Feature with GapFilledSpectra[T]] = Some(spectraUsedForReplacement)
+  lazy final override val spectra: Option[_ <: Feature with GapFilledSpectra[T]] = Some(spectraUsedForReplacement)
 
   override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
 

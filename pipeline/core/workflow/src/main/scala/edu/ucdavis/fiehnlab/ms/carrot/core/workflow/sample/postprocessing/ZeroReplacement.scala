@@ -73,13 +73,12 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
 
       logger.info(s"corrected data for: ${correctedRawData}")
 
-      val replacedSpectra = sample.quantifiedTargets.map { target =>
+      val replacedSpectra:Seq[QuantifiedTarget[Double]] = sample.quantifiedTargets.map { target =>
         if (target.quantifiedValue.isDefined) {
           target
         }
         else {
           try {
-
             replaceValue(target, sample, correctedRawData)
           }
           catch {
@@ -90,13 +89,18 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
         }
       }
 
-      new QuantifiedSample[Double] {
+      logger.info("finished replacement")
+      new GapFilledSample[Double] {
         override val quantifiedTargets: Seq[QuantifiedTarget[Double]] = replacedSpectra
         override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = sample.noneAnnotated
         override val correctedWith: Sample = sample.correctedWith
         override val featuresUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = sample.featuresUsedForCorrection
         override val regressionCurve: Regression = sample.regressionCurve
         override val fileName: String = sample.fileName
+        /**
+          * which file was used for the gap filling
+          */
+        override val gapFilledWithFile: String = rawdata.get.fileName
       }
     }
     //toss exception
@@ -199,82 +203,82 @@ class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends
     /**
       * build target object
       */
-    new GapFilledTarget[Double] {
-
-      val _target: GapFilledTarget[Double] = this
-
-      /**
-        * which actual spectra has been used for the replacement
-        */
-      override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
-        /**
-          * which sample was used for the replacement
-          */
-        override val sampleUsedForReplacement: String = rawdata.fileName
-        /**
-          * value for this target
-          */
-        override val quantifiedValue: Option[Double] = Option(noiseCorrectedValue)
-        /**
-          * associated target
-          */
-        override val target: Target = _target
-        /**
-          * mass accuracy
-          */
-        override val massAccuracy: Option[Double] = None
-        /**
-          * accyracy in ppm
-          */
-        override val massAccuracyPPM: Option[Double] = None
-        /**
-          * distance of the retention index distance
-          */
-        override val retentionIndexDistance: Option[Double] = None
-
-        override val retentionIndex: Double = value.retentionIndex
-        /**
-          * how pure this spectra is
-          */
-        override val purity: Option[Double] = value.purity
-        /**
-          * the local scan number
-          */
-        override val scanNumber: Int = value.scanNumber
-        /**
-          * the retention time of this spectra. It should be provided in seconds!
-          */
-        override val retentionTimeInSeconds: Double = value.retentionTimeInSeconds
-        /**
-          * specified ion mode for the given feature
-          */
-        override val ionMode: Option[IonMode] = value.ionMode
-        /**
-          * accurate mass of this feature, if applicable
-          */
-        override val massOfDetectedFeature: Option[Ion] = value.massOfDetectedFeature
-      }
-
-      /**
-        * value for this target
-        */
-      override val quantifiedValue: Option[Double] = Some(noiseCorrectedValue)
-      /**
-        * the unique inchi key for this spectra
-        */
-      override val inchiKey: Option[String] = needsReplacement.inchiKey
-      /**
-        * retention time in seconds of this target
-        */
-      override val retentionTimeInSeconds: Double = needsReplacement.retentionTimeInSeconds
-      /**
-        * a name for this spectra
-        */
-      override val name: Option[String] = needsReplacement.name
-      /**
-        * the mono isotopic mass of this spectra
-        */
-      override val monoIsotopicMass: Option[Double] = needsReplacement.monoIsotopicMass
-    }
+   new ZeroreplacedTarget(value,noiseCorrectedValue,needsReplacement,fileUsedForReplacement = rawdata.fileName)
   }
+}
+
+class ZeroreplacedTarget(value:Feature with CorrectedSpectra, noiseCorrectedValue:Double,needsReplacement: QuantifiedTarget[Double],fileUsedForReplacement:String) extends GapFilledTarget[Double] {
+
+  /**
+    * which actual spectra has been used for the replacement
+    */
+  override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
+  /**
+    * which sample was used for the replacement
+    */
+  override val sampleUsedForReplacement: String = fileUsedForReplacement
+  /**
+    * value for this target
+    */
+  override val quantifiedValue: Option[Double] = Option(noiseCorrectedValue)
+  /**
+    * associated target
+    */
+  override val target: Target = ZeroreplacedTarget.this
+  /**
+    * mass accuracy
+    */
+  override val massAccuracy: Option[Double] = None
+  /**
+    * accyracy in ppm
+    */
+  override val massAccuracyPPM: Option[Double] = None
+  /**
+    * distance of the retention index distance
+    */
+  override val retentionIndexDistance: Option[Double] = None
+
+  override val retentionIndex: Double = value.retentionIndex
+  /**
+    * how pure this spectra is
+    */
+  override val purity: Option[Double] = value.purity
+  /**
+    * the local scan number
+    */
+  override val scanNumber: Int = value.scanNumber
+  /**
+    * the retention time of this spectra. It should be provided in seconds!
+    */
+  override val retentionTimeInSeconds: Double = value.retentionTimeInSeconds
+  /**
+    * specified ion mode for the given feature
+    */
+  override val ionMode: Option[IonMode] = value.ionMode
+  /**
+    * accurate mass of this feature, if applicable
+    */
+  override val massOfDetectedFeature: Option[Ion] = value.massOfDetectedFeature
+}
+
+  /**
+    * value for this target
+    */
+  override val quantifiedValue: Option[Double] = Some(noiseCorrectedValue)
+  /**
+    * the unique inchi key for this spectra
+    */
+  override val inchiKey: Option[String] = needsReplacement.inchiKey
+  /**
+    * retention time in seconds of this target
+    */
+  override val retentionTimeInSeconds: Double = needsReplacement.retentionTimeInSeconds
+  /**
+    * a name for this spectra
+    */
+  override val name: Option[String] = needsReplacement.name
+  /**
+    * the mono isotopic mass of this spectra
+    */
+  override val monoIsotopicMass: Option[Double] = needsReplacement.monoIsotopicMass
 }

@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.apps.runner
 
-import java.io.{File, FileInputStream, FileOutputStream}
+import java.io.{File, FileInputStream, FileNotFoundException, FileOutputStream}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
+import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.ExperimentTXTReader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
 import org.apache.commons.io.IOUtils
@@ -23,6 +23,10 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
   @Autowired
   val resourceLoader: DelegatingResourceLoader = null
 
+
+  @Autowired
+  val resourceLoaders: java.util.Collection[ResourceLoader] = null
+
   @Autowired
   val experimentTXTReader: ExperimentTXTReader = null
 
@@ -33,8 +37,15 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
 
     var expFile: File = new File(args.head)
 
+    logger.info(s"trying to work with file: ${expFile.getAbsolutePath}")
     if (!expFile.exists()) {
-      expFile = resourceLoader.loadAsFile(args.head).get
+      logger.info("trying to load file remotely")
+      if(resourceLoader.exists(args.head)) {
+        expFile = resourceLoader.loadAsFile(args.head).get
+      }
+      else{
+        throw new FileNotFoundException(s"sorry the specified file was neither found locally nor in any defined loaders. Missing file name is: ${args.head}. Defined loaders in context are: ${resourceLoaders}")
+      }
     }
 
     val resultFile = new File(s"${expFile.getName.substring(0, expFile.getName.lastIndexOf("."))}.result.txt")
