@@ -33,6 +33,9 @@ trait ResourceLoader extends LazyLogging {
     * @return
     */
   def loadAsFile(name: String): Option[File] = {
+	  val tempDir = new File(System.getProperty("java.io.tmpdir"))
+	  if(!tempDir.exists()) { tempDir.mkdirs() }
+
     val loaded = load(name)
 
     if (loaded.isDefined) {
@@ -43,7 +46,9 @@ trait ResourceLoader extends LazyLogging {
         name
       }
 
-      val tempFile = new File(File.createTempFile("pre", "pro").getParentFile,fName)
+	    val prepro = File.createTempFile("pre", "pro")
+	    prepro.deleteOnExit()
+      val tempFile = new File(prepro.getParentFile,fName)
 	    logger.debug(s"storing ${fName} at: ${tempFile.getAbsolutePath}")
       tempFile.deleteOnExit()
 
