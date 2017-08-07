@@ -169,7 +169,7 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
       classes = experiment.classes.collect {
         case clazz: ExperimentClass =>
           ExperimentClass(
-            samples = clazz.samples.collect {
+            samples = clazz.samples.par.collect {
               case sample: Sample =>
                 try {
                   callback(sample, clazz, experiment)
