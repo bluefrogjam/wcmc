@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, RetentionIndexTarget, Sample, _}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Target, Sample, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import org.springframework.beans.factory.annotation.Autowired
@@ -113,7 +113,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
       override val fileName: String = input.fileName
       override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = input.noneAnnotated
       override val correctedWith: Sample = input.correctedWith
-      override val featuresUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = input.featuresUsedForCorrection
+      override val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]] = input.featuresUsedForCorrection
       override val regressionCurve: Regression = input.regressionCurve
     }
 

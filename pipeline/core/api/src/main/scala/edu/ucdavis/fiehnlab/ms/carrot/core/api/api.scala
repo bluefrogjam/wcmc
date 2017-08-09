@@ -276,6 +276,18 @@ package object api {
       * a name for this spectra
       */
     override val name: Option[String] = Some("test")
+    /**
+      * is this a confirmed target
+      */
+    override val confirmedTarget: Boolean = false
+    /**
+      * is this target required for a successful retention index correction
+      */
+    override val requiredForCorrection: Boolean = false
+    /**
+      * is this a retention index correction standard
+      */
+    override val isRetentionIndexStandard: Boolean = false
   }
 
 

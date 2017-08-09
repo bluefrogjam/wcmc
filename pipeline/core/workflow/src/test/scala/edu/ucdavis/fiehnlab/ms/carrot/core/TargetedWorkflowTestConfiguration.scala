@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{CentralWorkflowConfig, WorkflowProperties}
@@ -28,7 +28,7 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
     * @return
     */
   @Bean
-  def correctionStandardList: LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](resourceLoader.loadAsFile("retentionIndexStandards.txt").get, "\t")
+  def correctionStandardList: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("retentionIndexStandards.txt").get, "\t")
 
   /**
     * our defined library of library targets

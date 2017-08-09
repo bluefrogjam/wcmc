@@ -34,7 +34,17 @@ trait Target {
   /**
     * is this a confirmed target
     */
-  val confirmedTarget:Boolean = true
+  val confirmedTarget:Boolean
+
+  /**
+    * is this target required for a successful retention index correction
+    */
+  val requiredForCorrection:Boolean
+
+  /**
+    * is this a retention index correction standard
+    */
+  val isRetentionIndexStandard:Boolean
 
   override def toString = f"Target(name=${name.getOrElse("None")}, retentionTime=$retentionTimeInMinutes (min), retentionTime=$retentionTimeInSeconds (s), inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${monoIsotopicMass.getOrElse("None")})"
 
@@ -45,18 +55,7 @@ trait Target {
       case _ => false
     }
   }
-}
 
-/**
-  * special target used for retention index correction
-  */
-trait RetentionIndexTarget extends Target{
-  /**
-    * is this target required for a successful retention index correction
-    */
-  val required:Boolean
-
-  override def toString = f"RetentionIndexTarget(name=${name.getOrElse("None")}, retentionTime=$retentionTimeInMinutes%1.3f (min), retentionTime=$retentionTimeInSeconds%1.2f (s), inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${monoIsotopicMass.getOrElse(-1.0)}%1.5f, required=$required)"
 }
 
 

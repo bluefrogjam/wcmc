@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
 import java.io._
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target}
 
 import scala.io.Source
 
@@ -57,39 +57,50 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
           val temp = x.split(seperator)
 
           if (temp.length == 3) {
-            new RetentionIndexTarget {
+            new Target {
               override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
               override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
-              override val required: Boolean = false
+              override val requiredForCorrection: Boolean = false
+              override val isRetentionIndexStandard: Boolean = true
+              /**
+                * is this a confirmed target
+                */
+              override val confirmedTarget: Boolean = true
             }
           }
           else if (temp.length == 2) {
-            new RetentionIndexTarget {
+            new Target {
               override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = None
               override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
-              override val required: Boolean = false
+              override val requiredForCorrection: Boolean = false
+              override val isRetentionIndexStandard: Boolean = true
+              override val confirmedTarget: Boolean = true
             }
           }
           else if (temp.length == 4) {
-            new RetentionIndexTarget {
+            new Target {
               override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
               override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
-              override val required: Boolean = temp(3).toBoolean
+              override val requiredForCorrection: Boolean = temp(3).toBoolean
+              override val isRetentionIndexStandard: Boolean = true
+              override val confirmedTarget: Boolean = true
             }
           }
           else if (temp.length == 5) {
-            new RetentionIndexTarget {
+            new Target {
               override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
               override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
-              override val required: Boolean = temp(3).toBoolean
+              override val requiredForCorrection: Boolean = temp(3).toBoolean
               override val inchiKey: Option[String] = Some(temp(4))
+              override val isRetentionIndexStandard: Boolean = true
+              override val confirmedTarget: Boolean = true
             }
           }
 
@@ -115,10 +126,6 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
 
     targets.foreach { target =>
 
-      val required = target match {
-        case x: RetentionIndexTarget => x.required
-        case _ => ""
-      }
 
 
       out.write(
@@ -127,7 +134,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
                |${target.monoIsotopicMass}
                |$seperator${target.name.getOrElse("unknown")}
                |$seperator
-               |$required
+               |${target.requiredForCorrection}
                |$seperator
                |${target.inchiKey.getOrElse("")}
                |\n""".stripMargin

@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentTXTReader, QuantifiedSampleTxtWriter}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{PostProcessing, SimpleZeroReplacement}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
@@ -51,7 +51,7 @@ class MyConfiguration extends LazyLogging {
     * @return
     */
   @Bean
-  def correctionStandardList(resourceLoader: DelegatingResourceLoader): LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](resourceLoader.loadAsFile("retentionIndexStandards.txt").get)
+  def correctionStandardList(resourceLoader: DelegatingResourceLoader): LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("retentionIndexStandards.txt").get)
 
   /**
     * our defined library of library targets

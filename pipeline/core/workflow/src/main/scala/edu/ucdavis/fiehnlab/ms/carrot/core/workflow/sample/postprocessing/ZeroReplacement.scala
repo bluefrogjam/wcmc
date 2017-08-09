@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionTimeDifference}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, _}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
@@ -94,7 +94,7 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
         override val quantifiedTargets: Seq[QuantifiedTarget[Double]] = replacedSpectra
         override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = sample.noneAnnotated
         override val correctedWith: Sample = sample.correctedWith
-        override val featuresUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = sample.featuresUsedForCorrection
+        override val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]] = sample.featuresUsedForCorrection
         override val regressionCurve: Regression = sample.regressionCurve
         override val fileName: String = sample.fileName
         /**

@@ -47,6 +47,18 @@ class MassAccuracyTest extends WordSpec {
             override val name: Option[String] = None
             override val inchiKey: Option[String] = None
             override val retentionTimeInSeconds: Double = 0
+            /**
+              * is this a confirmed target
+              */
+            override val confirmedTarget: Boolean = false
+            /**
+              * is this target required for a successful retention index correction
+              */
+            override val requiredForCorrection: Boolean = false
+            /**
+              * is this a retention index correction standard
+              */
+            override val isRetentionIndexStandard: Boolean = false
           })
 
 
@@ -68,6 +80,18 @@ class MassAccuracyTest extends WordSpec {
             override val name: Option[String] = None
             override val inchiKey: Option[String] = None
             override val retentionTimeInSeconds: Double = 0
+            /**
+              * is this a confirmed target
+              */
+            override val confirmedTarget: Boolean = false
+            /**
+              * is this target required for a successful retention index correction
+              */
+            override val requiredForCorrection: Boolean = false
+            /**
+              * is this a retention index correction standard
+              */
+            override val isRetentionIndexStandard: Boolean = false
           })
 
 
@@ -89,6 +113,18 @@ class MassAccuracyTest extends WordSpec {
             override val name: Option[String] = None
             override val inchiKey: Option[String] = None
             override val retentionTimeInSeconds: Double = 0
+            /**
+              * is this a confirmed target
+              */
+            override val confirmedTarget: Boolean = false
+            /**
+              * is this target required for a successful retention index correction
+              */
+            override val requiredForCorrection: Boolean = false
+            /**
+              * is this a retention index correction standard
+              */
+            override val isRetentionIndexStandard: Boolean = false
           })
 
 
@@ -109,6 +145,18 @@ class MassAccuracyTest extends WordSpec {
             override val name: Option[String] = None
             override val inchiKey: Option[String] = None
             override val retentionTimeInSeconds: Double = 0
+            /**
+              * is this a confirmed target
+              */
+            override val confirmedTarget: Boolean = false
+            /**
+              * is this target required for a successful retention index correction
+              */
+            override val requiredForCorrection: Boolean = false
+            /**
+              * is this a retention index correction standard
+              */
+            override val isRetentionIndexStandard: Boolean = false
           })
 
 
@@ -129,6 +177,18 @@ class MassAccuracyTest extends WordSpec {
             override val name: Option[String] = None
             override val inchiKey: Option[String] = None
             override val retentionTimeInSeconds: Double = 0
+            /**
+              * is this a confirmed target
+              */
+            override val confirmedTarget: Boolean = false
+            /**
+              * is this target required for a successful retention index correction
+              */
+            override val requiredForCorrection: Boolean = false
+            /**
+              * is this a retention index correction standard
+              */
+            override val isRetentionIndexStandard: Boolean = false
           })
 
 
@@ -149,6 +209,18 @@ class MassAccuracyTest extends WordSpec {
             override val name: Option[String] = None
             override val inchiKey: Option[String] = None
             override val retentionTimeInSeconds: Double = 0
+            /**
+              * is this a confirmed target
+              */
+            override val confirmedTarget: Boolean = false
+            /**
+              * is this target required for a successful retention index correction
+              */
+            override val requiredForCorrection: Boolean = false
+            /**
+              * is this a retention index correction standard
+              */
+            override val isRetentionIndexStandard: Boolean = false
           })
 
         ppmError.get shouldBe 30.2374 +- 0.0001

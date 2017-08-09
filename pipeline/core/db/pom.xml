@@ -3,22 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>pipeline</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
+        <artifactId>core</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
         <version>1.0.16-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
-    <artifactId>core</artifactId>
-	<version>1.0.16-SNAPSHOT</version>
+    <artifactId>db</artifactId>
     <packaging>pom</packaging>
-
     <modules>
-        <module>api</module>
-        <module>io</module>
-        <module>annotation</module>
-	    <module>workflow</module>
-        <module>db</module>
+        <module>mongo</module>
     </modules>
+
 </project>
