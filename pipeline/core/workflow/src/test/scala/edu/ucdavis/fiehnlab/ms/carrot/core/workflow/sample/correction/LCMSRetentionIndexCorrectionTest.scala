@@ -2,7 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception.NotEnoughStandardsFoundException
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -49,7 +50,7 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec with LazyLogging{
       }
 
       s"should pass, because we have enough standards for us to continue ${sample2}" in {
-        correction.minimumFoundStandards = 17
+        correction.minimumFoundStandards = 16
 
         val corrected = correction.process(sample2)
 

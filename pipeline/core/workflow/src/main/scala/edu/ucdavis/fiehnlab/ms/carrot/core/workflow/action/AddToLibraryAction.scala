@@ -57,6 +57,18 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
           * the mono isotopic mass of this spectra
           */
         override val monoIsotopicMass: Option[Double] = Some(target.massOfDetectedFeature.get.mass)
+        /**
+          * is this a confirmed target
+          */
+        override val confirmedTarget: Boolean = false
+        /**
+          * is this target required for a successful retention index correction
+          */
+        override val requiredForCorrection: Boolean = false
+        /**
+          * is this a retention index correction standard
+          */
+        override val isRetentionIndexStandard: Boolean = false
       })
     }
     else{

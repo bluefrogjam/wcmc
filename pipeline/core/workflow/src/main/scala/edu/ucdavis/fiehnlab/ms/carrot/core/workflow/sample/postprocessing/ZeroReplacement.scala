@@ -281,4 +281,16 @@ class ZeroreplacedTarget(value:Feature with CorrectedSpectra, noiseCorrectedValu
     * the mono isotopic mass of this spectra
     */
   override val monoIsotopicMass: Option[Double] = needsReplacement.monoIsotopicMass
+  /**
+    * is this a confirmed target
+    */
+  override val confirmedTarget: Boolean = needsReplacement.confirmedTarget
+  /**
+    * is this target required for a successful retention index correction
+    */
+  override val requiredForCorrection: Boolean = needsReplacement.requiredForCorrection
+  /**
+    * is this a retention index correction standard
+    */
+  override val isRetentionIndexStandard: Boolean = needsReplacement.isRetentionIndexStandard
 }

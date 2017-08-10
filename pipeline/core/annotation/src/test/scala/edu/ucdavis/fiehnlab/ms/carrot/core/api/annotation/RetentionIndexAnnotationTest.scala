@@ -41,6 +41,18 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val inchiKey: Option[String] = None
           override val retentionTimeInSeconds: Double = 204.5f
           override val massOfDetectedFeature: Option[Ion] = None
+          /**
+            * is this a confirmed target
+            */
+          override val confirmedTarget: Boolean = false
+          /**
+            * is this target required for a successful retention index correction
+            */
+          override val requiredForCorrection: Boolean = false
+          /**
+            * is this a retention index correction standard
+            */
+          override val isRetentionIndexStandard: Boolean = false
 
         }))
 
@@ -76,6 +88,18 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val inchiKey: Option[String] = None
           override val retentionTimeInSeconds: Double = 205.5f
           override val massOfDetectedFeature: Option[Ion] = None
+          /**
+            * is this a confirmed target
+            */
+          override val confirmedTarget: Boolean = false
+          /**
+            * is this target required for a successful retention index correction
+            */
+          override val requiredForCorrection: Boolean = false
+          /**
+            * is this a retention index correction standard
+            */
+          override val isRetentionIndexStandard: Boolean = false
 
         }))
 

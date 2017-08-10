@@ -58,18 +58,18 @@ class MSMSScannerActionTest extends WordSpec with Matchers with LazyLogging {
 			workflow.eventListeners should not be empty
 		}
 
-		val experiment: Experiment = experimentTXTReader.read(loader.load("qcExperimentMSDial_1MSMS.txt").get)
-
-		val is: InputStream = workflow.process(experiment)
-		logger.info(s" --- stream: ${is.available()}")
-		val result: String = scala.io.Source.fromInputStream(is).mkString
-		logger.info(s" --- result: ${result.length}")
+		val experiment: Experiment = experimentTXTReader.read(loader.load("qcExperimentMSDial_1msms.txt").get)
 
 		"experiment loaded" in {
 			experiment.classes should not be empty
 		}
 
 		"find MSMS spectra in an MSMS Sample" in {
+
+			val is: InputStream = workflow.process(experiment)
+			logger.info(s" --- stream: ${is.available()}")
+			val result: String = scala.io.Source.fromInputStream(is).mkString
+			logger.info(s" --- result: ${result.length}")
 
 			result.length should be > 0
 		}
@@ -108,7 +108,7 @@ class MyWorkflowEventListener extends WorkflowEventListener with LazyLogging {
 }
 
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[ResourceLoader]))
+@ComponentScan(basePackageClasses = Array(classOf[ResourceLoader],classOf[ActionTestConfiguration]))
 @Import(Array(classOf[CentralWorkflowConfig]))
 class ActionTestConfiguration {
 	@Bean
@@ -121,7 +121,7 @@ class ActionTestConfiguration {
 	def listener: WorkflowEventListener = new MyWorkflowEventListener()
 
 	@Bean
-	def loader: ResourceLoader = new RecursiveDirectoryResourceLoader(new File("/src"))
+	def loader: ResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
 
 //	@Bean
 //	def writer: QuantifiedSampleTxtWriter[Double] = {

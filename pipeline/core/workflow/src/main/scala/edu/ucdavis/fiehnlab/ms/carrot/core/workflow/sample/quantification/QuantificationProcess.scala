@@ -1,12 +1,14 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
 
+import java.util
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Target, Sample, _}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Sample, Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +18,10 @@ import org.springframework.stereotype.Component
   * quantifies a sample, so it's ready to be exported
   */
 
-abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, val postprocessingInstructions: java.util.List[PostProcessing[T]]) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess, properties.trackChanges) with LazyLogging {
+abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess, properties.trackChanges) with LazyLogging {
+
+  @Autowired(required = false)
+  val postprocessingInstructions: java.util.List[PostProcessing[T]] = new util.ArrayList[PostProcessing[T]]()
 
   /**
     * builds a sample containing the quantified data
@@ -62,6 +67,18 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
               * the mono isotopic mass of this spectra
               */
             override val monoIsotopicMass: Option[Double] = myTarget.monoIsotopicMass
+            /**
+              * is this a confirmed target
+              */
+            override val confirmedTarget: Boolean = myTarget.confirmedTarget
+            /**
+              * is this target required for a successful retention index correction
+              */
+            override val requiredForCorrection: Boolean = myTarget.requiredForCorrection
+            /**
+              * is this a retention index correction standard
+              */
+            override val isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
           }
         }
         //associated with a target and quantified
@@ -92,6 +109,18 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
               * the mono isotopic mass of this spectra
               */
             override val monoIsotopicMass: Option[Double] = myTarget.monoIsotopicMass
+            /**
+              * is this a confirmed target
+              */
+            override val confirmedTarget: Boolean = myTarget.confirmedTarget
+            /**
+              * is this target required for a successful retention index correction
+              */
+            override val requiredForCorrection: Boolean = myTarget.requiredForCorrection
+            /**
+              * is this a retention index correction standard
+              */
+            override val isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
           }
         }
     }.seq.toSeq.sortBy(_.retentionTimeInSeconds)
@@ -135,7 +164,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
   * @param properties
   */
 @Component
-class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: java.util.List[PostProcessing[Double]]) extends QuantificationProcess[Double](libraryAccess, properties, postprocessingInstructions) {
+class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends QuantificationProcess[Double](libraryAccess, properties) {
 
   /**
     * computes the height by utilizing the mass from the target
@@ -156,7 +185,7 @@ class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target],
   * @param properties
   */
 @Component
-class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties, postprocessingInstructions: java.util.List[PostProcessing[Int]]) extends QuantificationProcess[Int](libraryAccess, properties, postprocessingInstructions) {
+class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends QuantificationProcess[Int](libraryAccess, properties) {
 
   /**
     * computes the height by utilizing the mass from the target

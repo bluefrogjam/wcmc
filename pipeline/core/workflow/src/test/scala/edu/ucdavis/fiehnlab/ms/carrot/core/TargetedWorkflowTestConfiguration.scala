@@ -23,14 +23,6 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
   val resourceLoader: DelegatingResourceLoader = null
 
   /**
-    * defined standards for retention index correction
-    *
-    * @return
-    */
-  @Bean
-  def correctionStandardList: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("retentionIndexStandards.txt").get, "\t")
-
-  /**
     * our defined library of library targets
     *
     * @return
@@ -39,9 +31,6 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
   def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
 
   @Bean(name = Array("quantification"))
-  def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
-
-  @Bean
-  def quantificationPostProcessing: List[PostProcessing[Double]] = List.empty[PostProcessing[Double]]
+  def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties)
 
 }

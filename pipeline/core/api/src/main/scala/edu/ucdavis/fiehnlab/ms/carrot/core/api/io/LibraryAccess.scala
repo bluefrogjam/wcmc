@@ -63,7 +63,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
               override val requiredForCorrection: Boolean = false
-              override val isRetentionIndexStandard: Boolean = true
+              override val isRetentionIndexStandard: Boolean = false
               /**
                 * is this a confirmed target
                 */
@@ -77,7 +77,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
               override val requiredForCorrection: Boolean = false
-              override val isRetentionIndexStandard: Boolean = true
+              override val isRetentionIndexStandard: Boolean = false
               override val confirmedTarget: Boolean = true
             }
           }
@@ -87,8 +87,8 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override val name: Option[String] = Some(temp(2))
               override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
-              override val requiredForCorrection: Boolean = temp(3).toBoolean
-              override val isRetentionIndexStandard: Boolean = true
+              override val requiredForCorrection: Boolean = false
+              override val isRetentionIndexStandard: Boolean = temp(3).toBoolean
               override val confirmedTarget: Boolean = true
             }
           }
@@ -97,9 +97,9 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
               override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
-              override val requiredForCorrection: Boolean = temp(3).toBoolean
-              override val inchiKey: Option[String] = Some(temp(4))
-              override val isRetentionIndexStandard: Boolean = true
+              override val inchiKey: Option[String] = None
+              override val requiredForCorrection: Boolean = false
+              override val isRetentionIndexStandard: Boolean = temp(4).toBoolean
               override val confirmedTarget: Boolean = true
             }
           }
