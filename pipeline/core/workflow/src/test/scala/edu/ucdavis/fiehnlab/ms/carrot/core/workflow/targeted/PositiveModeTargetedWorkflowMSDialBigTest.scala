@@ -19,7 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@Ignore
 class PositiveModeTargetedWorkflowMSDialBigTest extends PositiveModeTargetedWorkflowTest {
 	@Autowired
 	val loader: SampleLoader = null

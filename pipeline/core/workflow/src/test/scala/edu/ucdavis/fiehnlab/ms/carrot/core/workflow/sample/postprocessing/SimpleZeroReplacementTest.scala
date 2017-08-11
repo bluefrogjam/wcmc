@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
@@ -11,6 +12,7 @@ import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -73,4 +75,11 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
     }
 
   }
+}
+
+@Configuration
+class SimpleZeroReplacementConfiguration{
+
+  @Bean
+  def zeroReplacement(workflowProperties: WorkflowProperties):SimpleZeroReplacement = new SimpleZeroReplacement(workflowProperties)
 }
