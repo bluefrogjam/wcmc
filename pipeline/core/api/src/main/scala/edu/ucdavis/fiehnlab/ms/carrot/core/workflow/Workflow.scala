@@ -201,10 +201,7 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
               case sample: Sample => sample
             }.seq,
 
-            name = clazz.name,
-            organ = clazz.organ,
-            species = clazz.species,
-            treatments = clazz.treatments
+            name = clazz.name
           )
       },
       name = experiment.name

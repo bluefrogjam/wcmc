@@ -28,11 +28,11 @@ object MassAccuracy extends LazyLogging {
   }
 
   def calculateMassErrorPPM(spectra: Feature, target: Target, massWindow: Double = 0): Option[Double] = {
-    if (target.monoIsotopicMass.isDefined) {
+    if (target.precursorMass.isDefined) {
       val error = calculateMassError(spectra, target, massWindow)
 
       if (error.isDefined) {
-        Some(error.get / target.monoIsotopicMass.get * 1000000)
+        Some(error.get / target.precursorMass.get * 1000000)
       }
       else {
         None
@@ -52,8 +52,8 @@ object MassAccuracy extends LazyLogging {
     * @return
     */
   def calculateMassError(spectra: Feature, target: Target, massWindow: Double = 0): Option[Double] = {
-    if (target.monoIsotopicMass.isDefined) {
-      val mass = target.monoIsotopicMass.get
+    if (target.precursorMass.isDefined) {
+      val mass = target.precursorMass.get
 
       val ion = findClosestIon(spectra, mass)
 

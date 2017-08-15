@@ -13,14 +13,14 @@ class IncludeByMassRangePPMTest extends WordSpec {
 
     "include this spectra" in{
       val filter = new IncludeByMassRangePPM(new Target {
-        override val monoIsotopicMass: Option[Double] = Some(100.3242)
+        override val precursorMass: Option[Double] = Some(100.3242)
         override val name: Option[String] = None
         override val inchiKey: Option[String] = None
         override val retentionTimeInSeconds: Double = 0
         /**
           * is this a confirmed target
           */
-        override val confirmedTarget: Boolean = false
+        override val confirmed: Boolean = false
         /**
           * is this target required for a successful retention index correction
           */
@@ -35,14 +35,14 @@ class IncludeByMassRangePPMTest extends WordSpec {
 
     "but not this spectra" in {
       val filter = new IncludeByMassRangePPM(new Target {
-        override val monoIsotopicMass: Option[Double] = Some(100.3249)
+        override val precursorMass: Option[Double] = Some(100.3249)
         override val name: Option[String] = None
         override val inchiKey: Option[String] = None
         override val retentionTimeInSeconds: Double = 0
         /**
           * is this a confirmed target
           */
-        override val confirmedTarget: Boolean = false
+        override val confirmed: Boolean = false
         /**
           * is this target required for a successful retention index correction
           */

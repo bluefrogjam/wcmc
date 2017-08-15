@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>mongo</module>
+        <module>mona</module>
     </modules>
 
 </project>

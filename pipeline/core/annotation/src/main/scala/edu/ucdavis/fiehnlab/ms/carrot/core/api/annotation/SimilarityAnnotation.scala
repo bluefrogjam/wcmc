@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.Spectrum
 import edu.ucdavis.fiehnlab.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.math.spectrum.BinByRoundingMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSLibrarySpectra, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.util.Utilities
 
 /**
@@ -24,10 +24,10 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
 
     librarySpectra match {
-      case x: MSLibrarySpectra =>
+      case x: Target =>
         correctedSpectra match {
           case y: MSSpectra =>
-            val value = algorithm.compute(convertSpectra(y.spectraString), convertSpectra(x.spectraString))
+            val value = algorithm.compute(convertSpectra(y.spectraString), convertSpectra(x.spectrum.get.spectraString))
             logger.debug(s"computed match is: ${value}")
             val result = value > simmilarityOffset
             logger.debug(s"\t=> matches: ${result}")

@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -56,11 +57,11 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
         /**
           * the mono isotopic mass of this spectra
           */
-        override val monoIsotopicMass: Option[Double] = Some(target.massOfDetectedFeature.get.mass)
+        override val precursorMass: Option[Double] = Some(target.massOfDetectedFeature.get.mass)
         /**
           * is this a confirmed target
           */
-        override val confirmedTarget: Boolean = false
+        override val confirmed: Boolean = false
         /**
           * is this target required for a successful retention index correction
           */
@@ -69,7 +70,7 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
           * is this a retention index correction standard
           */
         override val isRetentionIndexStandard: Boolean = false
-      })
+      },new AcquisitionMethod(None,None))
     }
     else{
       logger.info(s"target has no mass associated, so it's not valid: ${target}")

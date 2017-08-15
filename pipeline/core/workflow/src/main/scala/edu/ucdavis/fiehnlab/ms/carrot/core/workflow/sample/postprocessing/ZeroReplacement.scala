@@ -177,7 +177,7 @@ class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends
     logger.debug(s"found ${noiseSpectra.size} spectra, to utilize for noise calculation")
 
     val noise = noiseSpectra.map { spectra =>
-      MassAccuracy.findClosestIon(spectra, receivedTarget.monoIsotopicMass.get).get.intensity
+      MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
     }.min
 
     logger.debug(s"noise is: ${noise} for target: ${receivedTarget}")
@@ -194,11 +194,11 @@ class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends
     logger.debug(s"found ${filteredByTime.size} spectra,after mass filter for target ${receivedTarget}")
 
     val value: (Feature with CorrectedSpectra) = filteredByTime.maxBy { spectra =>
-      MassAccuracy.findClosestIon(spectra, receivedTarget.monoIsotopicMass.get).get.intensity
+      MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
     }
 
     logger.debug(s"found best spectra for replacement: $value")
-    val noiseCorrectedValue:Double = MassAccuracy.findClosestIon(value, receivedTarget.monoIsotopicMass.get).get.intensity
+    val noiseCorrectedValue:Double = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get).get.intensity
 
     /**
       * build target object
@@ -280,11 +280,11 @@ class ZeroreplacedTarget(value:Feature with CorrectedSpectra, noiseCorrectedValu
   /**
     * the mono isotopic mass of this spectra
     */
-  override val monoIsotopicMass: Option[Double] = needsReplacement.monoIsotopicMass
+  override val precursorMass: Option[Double] = needsReplacement.precursorMass
   /**
     * is this a confirmed target
     */
-  override val confirmedTarget: Boolean = needsReplacement.confirmedTarget
+  override val confirmed: Boolean = needsReplacement.confirmed
   /**
     * is this target required for a successful retention index correction
     */

@@ -103,7 +103,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
 
     //sort by accuracy first
     val sortedByAccuracy = spectra.sortBy { spectra =>
-      val mass = standard.monoIsotopicMass.get
+      val mass = standard.precursorMass.get
       val bestIon = MassAccuracy.findClosestIon(spectra, mass /*, correctionSettings.massAccuracy*/).get
       val distance = Math.abs(mass - bestIon.mass)
 

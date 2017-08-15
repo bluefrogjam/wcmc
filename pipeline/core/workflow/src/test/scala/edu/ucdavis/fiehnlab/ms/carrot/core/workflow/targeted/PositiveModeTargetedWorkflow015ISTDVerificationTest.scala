@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.acquisition.AcquisitionLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
@@ -37,6 +38,8 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
 
   @Autowired
   val targetLibrary: LibraryAccess[Target] = null
+  @Autowired
+  val acquisitionLoader:AcquisitionLoader = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -47,7 +50,7 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
   "LCMSPositiveModeTargetWorkflowTest" when {
 
     "ensure our targets are defined" in {
-      assert(targetLibrary.load.nonEmpty)
+      assert(targetLibrary.load(acquisitionLoader.load(loader.getSample(sampleName)).get).nonEmpty)
     }
 
     "able to load our sample" in{

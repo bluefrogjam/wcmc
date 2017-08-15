@@ -100,7 +100,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
         logger.debug(s"utilizing close peak detection mode, since retention time difference was less than ${lcmsProperties.closePeakDetection}")
 
         val closePeaks = resultList.filter(p => RetentionTimeDifference.inSeconds(target, p) < lcmsProperties.closePeakDetection).sortBy { ms =>
-          val ion = MassAccuracy.findClosestIon(ms, target.monoIsotopicMass.get /*, lcmsProperties.massAccuracy*/)
+          val ion = MassAccuracy.findClosestIon(ms, target.precursorMass.get /*, lcmsProperties.massAccuracy*/)
 
           if (ion.isDefined) {
             ion.get.intensity
@@ -114,7 +114,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
           if (debug) {
             closePeaks.zipWithIndex.foreach { p =>
               logger.debug(s"\t\t=> ${p._1}")
-              val closestIon = MassAccuracy.findClosestIon(p._1, target.monoIsotopicMass.get /*, lcmsProperties.massAccuracy*/).get
+              val closestIon = MassAccuracy.findClosestIon(p._1, target.precursorMass.get /*, lcmsProperties.massAccuracy*/).get
 
               logger.debug(f"\t\t\t=> rank: ${p._2 + 1}, intensity was: ${closestIon.intensity}")
             }
@@ -176,12 +176,12 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
               logger.debug(s"\t=>\t${y._1}")
               logger.debug(f"\t\t=> rank:                ${y._2}")
               logger.debug(f"\t\t=> ri distance:         ${RetentionTimeDifference.inSeconds(y._1, x._1)}%1.2f seconds")
-              logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get).get.mass)}%1.5f dalton")
+              logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.precursorMass.get - MassAccuracy.findClosestIon(x._1, y._1.precursorMass.get).get.mass)}%1.5f dalton")
               //              logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.mass)}%1.5f dalton")
               logger.debug(f"\t\t=> mass error (ppm):    ${MassAccuracy.calculateMassErrorPPM(x._1, y._1, lcmsProperties.massAccuracy / 1000).get}%1.5f ppm")
               logger.debug(f"\t\t=> mass error * ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1, lcmsProperties.massAccuracy / 1000).get * RetentionTimeDifference.inSeconds(y._1, x._1)}%1.5f ppm")
               logger.debug(f"\t\t=> mass error / ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1, lcmsProperties.massAccuracy / 1000).get / RetentionTimeDifference.inSeconds(y._1, x._1)}%1.5f ppm")
-              logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get).get.intensity}%1.0f")
+              logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.precursorMass.get).get.intensity}%1.0f")
               //              logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.intensity}%1.0f")
 
 
@@ -194,7 +194,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
           if (lcmsProperties.closePeakDetection > 0.0) {
             logger.debug("utilizing close peak detection mode")
 
-            val closePeaks = optimizedTargetList.filter { p => RetentionTimeDifference.inSeconds(p, x._1) < lcmsProperties.closePeakDetection }.sortBy(target => MassAccuracy.findClosestIon(x._1, target.monoIsotopicMass.get /*, lcmsProperties.massAccuracy*/).get.intensity).reverse
+            val closePeaks = optimizedTargetList.filter { p => RetentionTimeDifference.inSeconds(p, x._1) < lcmsProperties.closePeakDetection }.sortBy(target => MassAccuracy.findClosestIon(x._1, target.precursorMass.get /*, lcmsProperties.massAccuracy*/).get.intensity).reverse
 
             if (closePeaks.nonEmpty) {
 
@@ -203,12 +203,12 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
                 logger.debug(s"\t=>\t${y._1}")
                 logger.debug(f"\t\t=> rank:                ${y._2}")
                 logger.debug(f"\t\t=> ri distance:         ${RetentionTimeDifference.inSeconds(y._1, x._1)}%1.2f seconds")
-                logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get).get.mass)}%1.5f dalton")
+                logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.precursorMass.get - MassAccuracy.findClosestIon(x._1, y._1.precursorMass.get).get.mass)}%1.5f dalton")
                 //                logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.mass)}%1.5f dalton")
                 logger.debug(f"\t\t=> mass error (ppm):    ${MassAccuracy.calculateMassErrorPPM(x._1, y._1, lcmsProperties.massAccuracy / 1000).get}%1.5f ppm")
                 logger.debug(f"\t\t=> mass error * ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1, lcmsProperties.massAccuracy / 1000).get * RetentionTimeDifference.inSeconds(y._1, x._1)}%1.5f ppm")
                 logger.debug(f"\t\t=> mass error / ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1, lcmsProperties.massAccuracy / 1000).get / RetentionTimeDifference.inSeconds(y._1, x._1)}%1.5f ppm")
-                logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get).get.intensity}%1.0f")
+                logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.precursorMass.get).get.intensity}%1.0f")
                 //                logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.intensity}%1.0f")
 
 

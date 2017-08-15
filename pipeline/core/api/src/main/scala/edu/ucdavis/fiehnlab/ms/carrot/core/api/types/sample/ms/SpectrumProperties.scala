@@ -41,9 +41,9 @@ trait Feature extends Serializable{
 }
 
 /**
-  * defines a MS Spectra
+  * commonly shared properties of a spectrum
   */
-trait MSSpectra extends Feature {
+trait SpectrumProperties {
 
   /**
     * the msLevel of this spectra
@@ -53,14 +53,14 @@ trait MSSpectra extends Feature {
   /**
     * base peak for this spectra
     */
-  lazy val basePeak: Ion = ions.maxBy(_.intensity)
+  def basePeak: Ion = ions.maxBy(_.intensity)
 
   /**
     * computes the tic for this spectra
     *
     * @return
     */
-  lazy val tic: Double = ions.map(_.intensity).sum
+  def tic: Double = ions.map(_.intensity).sum
 
   /**
     * a list of model ions used during the deconvolution
@@ -92,29 +92,18 @@ trait MSSpectra extends Feature {
     */
   def relativeSpectra: Seq[Ion] = {
 
-    val maxIntensity: Float = ions.maxBy(_.intensity).intensity
+    val maxIntensity: Double = ions.maxBy(_.intensity).intensity
 
     ions.map(x => Ion(x.mass, 100 * x.intensity / maxIntensity))
   }
 
-  override def toString = f"MSSpectra(scanNumber=$scanNumber, basePeak=${basePeak.mass}%1.5f, tic=$tic%1.3f, retentionTime=$retentionTimeInSeconds%1.2f (s), retentionTime=$retentionTimeInMinutes%1.3f (min))"
 }
-
 /**
-  * this defines a Library Spectra
+  * defines a MS Spectra
   */
-trait MSLibrarySpectra extends MSSpectra with Target {
+trait MSSpectra extends Feature with SpectrumProperties{
 
-  /**
-    * this ion is used for quantification of data
-    * and used for height calculations
-    */
-  val quantificationIon: Option[Double]
-
-  /**
-    * the retention index of this spectra
-    */
-  override def retentionTimeInMinutes: Double = super.retentionTimeInMinutes
+  override def toString = f"MSSpectra(scanNumber=$scanNumber, basePeak=${basePeak.mass}%1.5f, tic=$tic%1.3f, retentionTime=$retentionTimeInSeconds%1.2f (s), retentionTime=$retentionTimeInMinutes%1.3f (min))"
 }
 
 /**
@@ -133,11 +122,6 @@ trait MSMSSpectra extends MSSpectra {
     */
   override val msLevel: Short = 2
 }
-
-/**
-  * an MSMS Library Spectra
-  */
-trait MSMSLibrarySpectra extends MSLibrarySpectra with MSMSSpectra
 
 /**
   * Marks a Spectrum as acquired in Centroid mode

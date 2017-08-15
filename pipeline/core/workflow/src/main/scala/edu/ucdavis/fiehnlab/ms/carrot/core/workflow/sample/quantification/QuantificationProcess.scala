@@ -66,11 +66,11 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
             /**
               * the mono isotopic mass of this spectra
               */
-            override val monoIsotopicMass: Option[Double] = myTarget.monoIsotopicMass
+            override val precursorMass: Option[Double] = myTarget.precursorMass
             /**
               * is this a confirmed target
               */
-            override val confirmedTarget: Boolean = myTarget.confirmedTarget
+            override val confirmed: Boolean = myTarget.confirmed
             /**
               * is this target required for a successful retention index correction
               */
@@ -108,11 +108,11 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
             /**
               * the mono isotopic mass of this spectra
               */
-            override val monoIsotopicMass: Option[Double] = myTarget.monoIsotopicMass
+            override val precursorMass: Option[Double] = myTarget.precursorMass
             /**
               * is this a confirmed target
               */
-            override val confirmedTarget: Boolean = myTarget.confirmedTarget
+            override val confirmed: Boolean = myTarget.confirmed
             /**
               * is this target required for a successful retention index correction
               */
@@ -173,7 +173,7 @@ class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target],
     * @param spectra
     * @return
     */
-  protected override def computeValue(target: Target, spectra: Feature): Option[Double] = MassAccuracy.findClosestIon(spectra, target.monoIsotopicMass.get /*, 5*/) match {
+  protected override def computeValue(target: Target, spectra: Feature): Option[Double] = MassAccuracy.findClosestIon(spectra, target.precursorMass.get /*, 5*/) match {
     case Some(x: Ion) => Some(x.intensity)
     case None => None
   }

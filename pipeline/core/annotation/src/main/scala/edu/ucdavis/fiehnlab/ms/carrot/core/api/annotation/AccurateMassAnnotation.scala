@@ -21,7 +21,7 @@ class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float =
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
         logger.debug(s"checking mass: ${mass}")
 
@@ -68,7 +68,7 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
         logger.debug(s"checking mass: ${mass}")
 
@@ -123,7 +123,7 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with La
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
 
         correctedSpectra match{
@@ -166,7 +166,7 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
         logger.debug(s"checking mass: ${mass}")
 
@@ -213,7 +213,7 @@ class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minInten
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
         logger.debug(s"checking mass: ${mass}")
 
@@ -261,7 +261,7 @@ class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int) extends Annotat
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
 
         correctedSpectra match{

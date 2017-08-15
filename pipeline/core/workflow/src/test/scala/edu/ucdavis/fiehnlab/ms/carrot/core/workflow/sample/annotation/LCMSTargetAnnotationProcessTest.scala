@@ -72,7 +72,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
         result.featuresUsedForCorrection.foreach { spectra =>   //sortBy(_.target.name.get).
           logger.debug(f"${spectra.target.name.get}")
           logger.debug(f"\ttarget data:")
-          logger.debug(f"\t\t mass:          ${spectra.target.monoIsotopicMass.get}%1.4f")
+          logger.debug(f"\t\t mass:          ${spectra.target.precursorMass.get}%1.4f")
           logger.debug(f"\t\t rt (s):        ${spectra.target.retentionTimeInSeconds}%1.3f")
           logger.debug(f"\t\t rt (m):        ${spectra.target.retentionTimeInMinutes}%1.3f")
           logger.debug(f"\tannotation data:")
@@ -122,7 +122,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
         result.spectra.sortBy(_.target.name.get).foreach { spectra =>
           logger.debug(f"${spectra.target.name.get}")
           logger.debug(f"\ttarget data:")
-          logger.debug(f"\t\t mass:          ${spectra.target.monoIsotopicMass.get}%1.4f")
+          logger.debug(f"\t\t mass:          ${spectra.target.precursorMass.get}%1.4f")
           logger.debug(f"\t\t rt (s):        ${spectra.target.retentionTimeInSeconds}%1.3f")
           logger.debug(f"\t\t rt (m):        ${spectra.target.retentionTimeInMinutes}%1.3f")
           logger.debug(f"\tannotation data:")

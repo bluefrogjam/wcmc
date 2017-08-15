@@ -1,35 +1,27 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation.Test._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSLibrarySpectra, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
 import org.scalatest.WordSpec
 
 object Test {
   /**
     * test spectra with 2 ions
     */
-  val testAccurateMassSpectraWith4Ions = MSSpectraImpl(4, Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List(), 2000,massOfDetectedFeature =Option( Ion(100.3241,100f) ))
+  val testAccurateMassSpectraWith4Ions = MSSpectraImpl(4, Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List(), 2000, massOfDetectedFeature = Option(Ion(100.3241, 100f)))
 
   val testAccurateLibraryMassSpectraWith4Ions = MSLibrarySpectraImpl(
-    4,
-    Ion(100.3246, 50) :: Ion(120.2136, 50) :: Ion(130.1326, 100) :: Ion(140.2226, 10) :: List(),
-    2324.2f,
-    1,
-    Some(100.3241),
-    Some("test"),
-    Some("BQJCRHHNABKAKU-KBQPJGBKSA-N"),
-    Some(100.3241)
+    retentionTimeInSeconds = 2324.2f,
+    precursorMass = Some(100.3241),
+    name = Some("test"),
+    inchiKey = Some("BQJCRHHNABKAKU-KBQPJGBKSA-N")
   )
   val testAccurateLibraryMassSpectra2With4Ions = MSLibrarySpectraImpl(
-    4,
-    Ion(100.3146, 50) :: Ion(12.2136, 50) :: Ion(32.1326, 100) :: Ion(140.2226, 10) :: List(),
-    2324.2f,
-    1,
-    Some(100.3111),
-    Some("test"),
-    Some("BQJCRHHNABKAKU-KBQPJGBKSA-N"),
-    Some(100.3111)
+    retentionTimeInSeconds = 2324.2f,
+    precursorMass = Some(100.3111),
+    name = Some("test"),
+    inchiKey = Some("BQJCRHHNABKAKU-KBQPJGBKSA-N")
   )
 
   /**
@@ -55,37 +47,22 @@ object Test {
   /**
     * default impl for a library spectra
     *
-    * @param scanNumber
-    * @param ions
     * @param retentionTimeInSeconds
-    * @param msLevel
-    * @param ionMode
-    * @param modelIons
-    * @param purity
-    * @param quantificationIon
+
     * @param name
     * @param inchiKey
-    * @param monoIsotopicMass
+    * @param precursorMass
     */
   sealed case class MSLibrarySpectraImpl(
-                                          override val scanNumber: Int,
-                                          override val ions: Seq[Ion],
                                           override val retentionTimeInSeconds: Double,
-                                          override val msLevel: Short = 1,
-                                          override val quantificationIon: Option[Double],
                                           override val name: Option[String],
                                           override val inchiKey: Option[String],
-                                          override val monoIsotopicMass: Option[Double],
-                                          override val ionMode: Option[IonMode] = None,
-                                          override val modelIons: Option[Seq[Double]] = None,
-                                          override val purity: Option[Double] = None,
-                                          override val massOfDetectedFeature: Option[Ion] = None
-
-                                        ) extends MSLibrarySpectra {
+                                          override val precursorMass: Option[Double]
+                                        ) extends Target {
     /**
       * is this a confirmed target
       */
-    override val confirmedTarget: Boolean = false
+    override val confirmed: Boolean = false
     /**
       * is this target required for a successful retention index correction
       */

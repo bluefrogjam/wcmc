@@ -15,21 +15,6 @@ final case class ExperimentClass(
                                   /**
                                     * optional name for this class
                                     */
-                                  name: Option[String] = None,
-
-                                  /**
-                                    * name of the organ
-                                    */
-                                  organ: Option[String] = None,
-
-                                  /**
-                                    * species name
-                                    */
-                                  species: Option[String] = None,
-
-                                  /**
-                                    * associated treamtnets
-                                    */
-                                  treatments: Option[Seq[String]] = None
+                                  name: Option[String] = None
                                 )
 

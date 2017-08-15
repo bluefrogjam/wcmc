@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.acquisition.AcquisitionLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
@@ -36,6 +37,9 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
   val loader: SampleLoader = null
 
   @Autowired
+  val acquisitionLoader:AcquisitionLoader = null
+
+  @Autowired
   val targetLibrary: LibraryAccess[Target] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -46,7 +50,7 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
   "LCMSPositiveModeTargetWorkflowTest" when {
 
     "ensure our targets are defined" in {
-      assert(targetLibrary.load.nonEmpty)
+      assert(targetLibrary.load(acquisitionLoader.load(loader.getSample(sampleName)).get).nonEmpty)
     }
 
     //  possibly add an endpoint to check file presence on the server

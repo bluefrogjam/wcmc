@@ -61,7 +61,7 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t") extends Writer[Samp
 
 
           writeLine("target", target => target.name.getOrElse(target.retentionTimeInSeconds).toString)
-          writeLine("mass", target => f"${target.monoIsotopicMass.getOrElse(0.0)}%1.4f")
+          writeLine("mass", target => f"${target.precursorMass.getOrElse(0.0)}%1.4f")
           writeLine("retention time (s)", target => f"${target.retentionTimeInSeconds}%1.2f")
           writeLine("retention time (min)", target => f"${target.retentionTimeInMinutes}%1.2f")
           //write mass

@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.mongo
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, ShouldMatchers, WordSpec}
@@ -24,13 +25,15 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
   @Autowired
   val libraryRepository: ILibraryRepository = null
 
+  val acquistionMethod:AcquisitionMethod = new AcquisitionMethod(None,None)
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
   "MongoLibraryAccessTest" should {
 
     "be able to add a target" in {
-      library.load.size should be(0)
+      library.load(acquistionMethod).size should be(0)
 
       library.add(new Target {
         /**
@@ -48,11 +51,11 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
         /**
           * the mono isotopic mass of this spectra
           */
-        override val monoIsotopicMass: Option[Double] = Some(100)
+        override val precursorMass: Option[Double] = Some(100)
         /**
           * is this a confirmed target
           */
-        override val confirmedTarget: Boolean = false
+        override val confirmed: Boolean = false
         /**
           * is this target required for a successful retention index correction
           */
@@ -61,9 +64,9 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
           * is this a retention index correction standard
           */
         override val isRetentionIndexStandard: Boolean = false
-      })
+      },acquistionMethod)
 
-      library.load.size should be(1)
+      library.load(acquistionMethod).size should be(1)
 
 
       library.add(new Target {
@@ -82,11 +85,11 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
         /**
           * the mono isotopic mass of this spectra
           */
-        override val monoIsotopicMass: Option[Double] = Some(100.2)
+        override val precursorMass: Option[Double] = Some(100.2)
         /**
           * is this a confirmed target
           */
-        override val confirmedTarget: Boolean = false
+        override val confirmed: Boolean = false
         /**
           * is this target required for a successful retention index correction
           */
@@ -95,9 +98,9 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
           * is this a retention index correction standard
           */
         override val isRetentionIndexStandard: Boolean = false
-      })
+      },acquistionMethod)
 
-      library.load.size should be(2)
+      library.load(acquistionMethod).size should be(2)
 
 
       library.add(new Target {
@@ -116,11 +119,11 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
         /**
           * the mono isotopic mass of this spectra
           */
-        override val monoIsotopicMass: Option[Double] = None
+        override val precursorMass: Option[Double] = None
         /**
           * is this a confirmed target
           */
-        override val confirmedTarget: Boolean = false
+        override val confirmed: Boolean = false
         /**
           * is this target required for a successful retention index correction
           */
@@ -129,11 +132,11 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
           * is this a retention index correction standard
           */
         override val isRetentionIndexStandard: Boolean = false
-      })
+      },acquistionMethod)
 
-      library.load.size should be(3)
+      library.load(acquistionMethod).size should be(3)
 
-      library.load.toList.maxBy(_.retentionTimeInSeconds).monoIsotopicMass should be(None)
+      library.load(acquistionMethod).toList.maxBy(_.retentionTimeInSeconds).precursorMass should be(None)
 
     }
 

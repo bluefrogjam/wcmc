@@ -4,12 +4,14 @@ import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{IonMode, Target, Unknown}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.{Document, Field}
 import org.springframework.data.repository.PagingAndSortingRepository
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.{Component, Repository}
 
 import scala.annotation.meta.field
 import scala.collection.JavaConverters._
@@ -18,18 +20,20 @@ import scala.collection.JavaConverters._
   * provides easy access to query against a mongodb for targets
   * Created by wohlgemuth on 8/7/17.
   */
+@Component
+@Profile(Array("backend-mongo"))
 class MongoLibraryAccess @Autowired()(libraryRepository: ILibraryRepository, libraryName: String) extends LibraryAccess[Target] with LazyLogging {
   /**
     * loads all the spectra from the library
     *
     * @return
     */
-  override def load: Iterable[Target] = {
+  override def load(acquistionMethod:AcquisitionMethod): Iterable[Target] = {
     val lib = libraryRepository.findOneByName(libraryName)
 
     if (lib == null) {
       generateNoneExistingLibrary()
-      load
+      load(acquistionMethod)
     }
     else {
       lib.targets.asScala.map { t =>
@@ -49,11 +53,11 @@ class MongoLibraryAccess @Autowired()(libraryRepository: ILibraryRepository, lib
           /**
             * the mono isotopic mass of this spectra
             */
-          override val monoIsotopicMass: Option[Double] = if (t.monoIsotopicMass == 0.0) None else Some(t.monoIsotopicMass)
+          override val precursorMass: Option[Double] = if (t.monoIsotopicMass == 0.0) None else Some(t.monoIsotopicMass)
           /**
             * is this a confirmed target
             */
-          override val confirmedTarget: Boolean = t.confirmedTarget
+          override val confirmed: Boolean = t.confirmedTarget
           /**
             * is this target required for a successful retention index correction
             */
@@ -83,13 +87,13 @@ class MongoLibraryAccess @Autowired()(libraryRepository: ILibraryRepository, lib
     *
     * @param targets
     */
-  override def add(targets: Iterable[Target]): Unit = {
+  override def add(targets: Iterable[Target],acquistionMethod:AcquisitionMethod): Unit = {
 
     val lib = libraryRepository.findOneByName(libraryName)
 
     if (lib == null) {
       generateNoneExistingLibrary()
-      add(targets)
+      add(targets,acquistionMethod:AcquisitionMethod)
     }
     else {
       logger.info(s"added ${targets.size} to ${lib}")
@@ -98,8 +102,8 @@ class MongoLibraryAccess @Autowired()(libraryRepository: ILibraryRepository, lib
           name = t.name.orNull,
           retentionTimeInSeconds = t.retentionTimeInSeconds,
           inchiKey = t.inchiKey.orNull,
-          monoIsotopicMass = t.monoIsotopicMass.getOrElse(0.0),
-          confirmedTarget = t.confirmedTarget,
+          monoIsotopicMass = t.precursorMass.getOrElse(0.0),
+          confirmedTarget = t.confirmed,
           requiredForCorrection = t.requiredForCorrection,
           isRetentionIndexStandard = t.isRetentionIndexStandard
         )
