@@ -158,6 +158,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "be possible to add and load targets" in {
+      monaSpectrumRestClient.login(username,password)
       monaSpectrumRestClient.list().foreach(s => monaSpectrumRestClient.delete(s.id))
 
       val acquisitionMethod:AcquisitionMethod = new AcquisitionMethod(None,None)

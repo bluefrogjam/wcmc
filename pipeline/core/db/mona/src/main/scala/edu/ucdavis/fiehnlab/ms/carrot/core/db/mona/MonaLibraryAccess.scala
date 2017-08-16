@@ -37,16 +37,17 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
   @Qualifier("monaRestServer")
   val monaRestServer: String = null
 
+  @PostConstruct
+  def init = {
+    logger.info(s"utilizing mona server for targets at: ${monaRestServer}")
+  }
+
+
   /**
     * based on the given method this will evaluate to a query against the system to provide us with valid targets
     * for annotation and identification
     */
   def query(acquistionMethod:AcquisitionMethod): String = ""
-
-  @PostConstruct
-  def init = {
-    logger.info(s"utilizing mona server for targets at: ${monaRestServer}")
-  }
 
   /**
     * loads all the spectra from the library
@@ -139,6 +140,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
       )
 
+      //attach the acquisition method metadata now
       Some(
         Spectrum(
           compound = Array(compound),
