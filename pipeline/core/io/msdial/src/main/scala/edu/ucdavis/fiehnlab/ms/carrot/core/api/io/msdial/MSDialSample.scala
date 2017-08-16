@@ -4,7 +4,7 @@ import java.io.{File, FileInputStream, IOException, InputStream}
 import java.util.zip.GZIPInputStream
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, Unknown}
 
 import scala.io.Source
@@ -133,7 +133,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
       /**
         * complete spectra available
         */
-      new MSSpectra {
+      new MSMSSpectra {
 
         override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
 
@@ -152,13 +152,17 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
         override val retentionTimeInSeconds: Double = dataMap(retentionTimeMinutesIdentifier).toDouble * 60
 
-        override val msLevel: Short = 1
+        override val msLevel: Short = 2
 
         override val purity: Option[Double] = None
         /**
           * specified ion mode for the given feature
           */
         override val ionMode: Option[IonMode] = None
+        /**
+          * the observed pre cursor ion. Assssumed to be the accurateMasssIdentifier
+          */
+        override val precursorIon: Double = dataMap(accurateMassIdentifier).toDouble
       }
     }
   }

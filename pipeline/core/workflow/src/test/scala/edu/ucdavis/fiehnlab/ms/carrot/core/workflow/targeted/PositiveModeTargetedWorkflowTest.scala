@@ -76,7 +76,7 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
           content.size shouldBe expectedContentSize
         }
 
-        "provide validation" when {
+        "provide validation" ignore {
 
           val samples: Seq[QuantifiedSample[Double]] = listener.quantifiedExperiment.classes.flatMap(_.samples).collect {
             case sample: QuantifiedSample[Double] => sample

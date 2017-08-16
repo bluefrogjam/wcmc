@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.abf
 
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSMSSpectra
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowConfig
 import edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j.MSDialRestProcessor
@@ -19,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[ABFSampleTestConfig],classOf[WorkflowConfig]))
-class ABFSampleTest extends WordSpec with ShouldMatchers {
+class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
 
   @Autowired
   val client: MSDialRestProcessor = null
@@ -44,6 +46,22 @@ class ABFSampleTest extends WordSpec with ShouldMatchers {
 
       sample.spectra should not be empty
     }
+
+
+    "msms sample" in {
+      val name  = "B5_SA0259_P20Lipids_Pos_1FV_2392_MSMS.abf"
+      val sample = new ABFSample(name,loader.loadAsFile(name).get,client)
+
+      sample.spectra should not be empty
+
+      val msms = sample.spectra.collect{
+        case x:MSMSSpectra => x
+      }
+
+      msms should not be empty
+    }
+
+
 
   }
 }
