@@ -29,7 +29,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
   val correction: LCMSTargetRetentionIndexCorrection = null
 
   @Autowired
-  @Qualifier("quantification")
+//  @Qualifier("quantification")
   val quantificationProcess: QuantificationProcess[T] = null
 
   @Autowired(required = false)

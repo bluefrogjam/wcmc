@@ -12,6 +12,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, 
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 /**
@@ -164,6 +165,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
   * @param properties
   */
 @Component
+@Profile(Array("quantify-by-height"))
 class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends QuantificationProcess[Double](libraryAccess, properties) {
 
   /**
@@ -185,6 +187,7 @@ class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target],
   * @param properties
   */
 @Component
+@Profile(Array("quantify-by-scan"))
 class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends QuantificationProcess[Int](libraryAccess, properties) {
 
   /**

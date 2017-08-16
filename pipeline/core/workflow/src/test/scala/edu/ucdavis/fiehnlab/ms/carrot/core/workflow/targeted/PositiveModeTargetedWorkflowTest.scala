@@ -206,8 +206,6 @@ class TestWorkflowEventListener extends WorkflowEventListener with LazyLogging {
 		  quantifiedExperiment = event.experiment
 	  }
 
-    case event: PreProcessingBeginEvent => logger.debug("PreProcessing...")
-
     case _ => logger.info(s"received event: ${workflowEvent}")
   }
 }

@@ -254,7 +254,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
       * @param targets
       */
     def annotate(spectra: Seq[_ <: Feature with CorrectedSpectra], targets: Iterable[Target]): Seq[(Target, _ <: Feature with CorrectedSpectra)] = {
-
+      logger.info(s"sspectra requiring annotation: ${spectra.size}")
       val annotatedTargets: Map[Target, _ <: Feature with CorrectedSpectra] = if (debug) {
         //if debugging is enable, we sort by name
         ListMap(findMatchesForTargets(targets, spectra).toSeq.sortBy(_._1.name): _*)
