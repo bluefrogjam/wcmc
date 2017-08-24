@@ -115,7 +115,8 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
       }
 
       "validate the generation of new target" in {
-
+        val method = acquisitionLoader.load(loader.getSample(sampleNames.head)).get
+        assert(targetLibrary.load(method).size == 1232)
       }
     }
 
@@ -235,106 +236,6 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
 
       "validate the generation of new target" in {
 
-      }
-    }
-
-  }
-}
-
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("dynamic-library", "backend-txt", "quantify-by-height"))
-class PositiveModeTargetedWorkflowMSMSVerificationTest extends WordSpec with LazyLogging {
-  @Autowired
-  val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
-
-  @Autowired
-  val properties: WorkflowProperties = null
-
-  @Autowired
-  val listener: TestWorkflowEventListener = null
-
-  @Autowired
-  val loader: ResourceLoaderSampleLoader = null
-
-  @Autowired
-  val targetLibrary: LibraryAccess[Target] = null
-
-  @Autowired
-  val acquisitionLoader: AcquisitionLoader = null
-
-  new TestContextManager(this.getClass).prepareTestInstance(this)
-
-  //sample name to test
-  val sampleName = "B5_SA0267_P20Lipids_Pos_1FV_2416_MSMS.abf"
-
-  "PositiveModeTargetedWorkflowMSMSVerificationTest" when {
-
-    "ensure our targets are defined" in {
-      assert(targetLibrary.load(acquisitionLoader.load(loader.getSample(sampleName)).get).nonEmpty)
-    }
-
-    "able to load our sample" in {
-      assert(loader.loadSample(sampleName).isDefined)
-    }
-
-    s"find *015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD in sample $sampleName with a value over 80k" must {
-
-      "process our single sample" in {
-        val result = workflow.process(
-          Experiment(
-            classes = ExperimentClass(
-              samples = loader.getSample(sampleName) :: List()
-            ) :: List(), None)
-        )
-
-      }
-
-      "has a result" in {
-        assert(listener.quantifiedExperiment != null)
-      }
-
-      "result has content " in {
-        assert(listener.quantifiedExperiment.classes.nonEmpty)
-        assert(listener.quantifiedExperiment.classes.head.samples.nonEmpty)
-      }
-
-
-      "ensure we have targets defined" in {
-        assert(listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.nonEmpty)
-      }
-
-      "validate the amount of replaced value" in {
-        val count = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.count(_.isInstanceOf[GapFilledTarget[Double]])
-        val nonReplacedCount = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.count(!_.isInstanceOf[GapFilledTarget[Double]])
-
-        logger.info(s"replaced value count: ${count}")
-        logger.info(s"none replaced value count: ${nonReplacedCount}")
-
-
-        count shouldBe 256
-      }
-      "validate the result" in {
-
-        val sample: QuantifiedSample[Double] = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]]
-
-        val target = sample.quantifiedTargets.filter(_.name.get == "*015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD").head
-
-        val value = target.quantifiedValue.get
-
-        logger.info(s"value was: $value")
-        value shouldBe (44000.0 +- 1000.0)
-      }
-
-      "validate the generation of new target" in {
-
-        val method = acquisitionLoader.load(loader.getSample(sampleName)).get
-
-        val targetCount = targetLibrary.load(method).size
-
-        logger.warn(s"count: ${targetCount}")
-
-        targetCount shouldBe (903)
       }
     }
 

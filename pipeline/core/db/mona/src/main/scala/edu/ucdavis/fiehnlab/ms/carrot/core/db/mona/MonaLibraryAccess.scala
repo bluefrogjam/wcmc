@@ -68,7 +68,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       inchiKey = t.inchiKey.orNull,
       metaData = Array(),
       molFile = null,
-      names = Array(Names(computed = false, t.name.getOrElse(s"unknown_${t.retentionIndex}_${t.precursorMass.get}"), 0, "carrot")),
+      names = Array(Names(computed = false, t.name.getOrElse(f"unknown_${t.retentionIndex}%1.4f_${t.precursorMass.get}%1.4f"), 0, "carrot")),
       tags = Array(),
       computed = false,
       score = null
