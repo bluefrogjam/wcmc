@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.filter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.scalatest.WordSpec
@@ -78,14 +78,6 @@ class FilteredProcessTest extends WordSpec {
     */
   val testSpectraWith1Ion = new MSSpectra {
     /**
-      * a list of model ions used during the deconvolution
-      */
-    override val modelIons: Option[Seq[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override val ions: Seq[Ion] = Ion(100, 100) :: List()
-    /**
       * specified ion mode for the given feature
       */
     override val ionMode: Option[IonMode] = None
@@ -105,6 +97,22 @@ class FilteredProcessTest extends WordSpec {
       * accurate mass of this feature, if applicable
       */
     override val massOfDetectedFeature: Option[Ion] = Option(Ion(100, 100))
+
+    /**
+      * associated spectrum propties if applicable
+      */
+    override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[Seq[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override val ions: Seq[Ion] = Ion(100, 100) :: List()
+
+    })
+
   }
 
 }

@@ -43,7 +43,7 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
         /**
           * retention time in seconds of this target
           */
-        override val retentionTimeInSeconds: Double = 123
+        override val retentionIndex: Double = 123
         /**
           * a name for this spectra
           */
@@ -77,7 +77,7 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
         /**
           * retention time in seconds of this target
           */
-        override val retentionTimeInSeconds: Double = 123.5
+        override val retentionIndex: Double = 123.5
         /**
           * a name for this spectra
           */
@@ -111,7 +111,7 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
         /**
           * retention time in seconds of this target
           */
-        override val retentionTimeInSeconds: Double = 124.5
+        override val retentionIndex: Double = 124.5
         /**
           * a name for this spectra
           */
@@ -136,7 +136,7 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
 
       library.load(acquistionMethod).size should be(3)
 
-      library.load(acquistionMethod).toList.maxBy(_.retentionTimeInSeconds).precursorMass should be(None)
+      library.load(acquistionMethod).toList.maxBy(_.retentionIndex).precursorMass should be(None)
 
     }
 

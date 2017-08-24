@@ -3,8 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{CentralWorkflowConfig, WorkflowProperties}
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,10 +26,8 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
     *
     * @return
     */
+  @Profile(Array("backend-txt"))
   @Bean
   def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
-
-  @Bean(name = Array("quantification"))
-  def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties)
 
 }

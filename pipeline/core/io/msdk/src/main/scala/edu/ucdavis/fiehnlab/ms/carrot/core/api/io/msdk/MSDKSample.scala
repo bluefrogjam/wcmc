@@ -175,14 +175,25 @@ object MSDKSample extends LazyLogging {
   * @param spectra
   */
 class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSSpectra {
-  override val ions: Seq[Ion] = MSDKSample.build(spectra)
   override val retentionTimeInSeconds: Double = spectra.getChromatographyInfo.getRetentionTime.toDouble
-  override val msLevel: Short = spectra.getMsFunction.getMsLevel.toShort
+
   override val scanNumber: Int = spectra.getScanNumber
-  override val modelIons: Option[List[Double]] = None
   override val purity: Option[Double] = None
   override val ionMode: Option[IonMode] = mode
   override val massOfDetectedFeature: Option[Ion] = None
+  /**
+    * associated spectrum propties if applicable
+    */
+  override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+    /**
+      * a list of model ions used during the deconvolution
+      */
+    override val modelIons: Option[List[Double]] = None
+    /**
+      * all the defined ions for this spectra
+      */
+    override val ions: Seq[Ion] = MSDKSample.build(spectra)
+  })
 }
 
 /**
@@ -192,13 +203,22 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSSpectra {
   */
 class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSMSSpectra {
   override val precursorIon: Double = spectra.getIsolations.get(0).getPrecursorMz
-  override val ions: Seq[Ion] = MSDKSample.build(spectra)
   override val retentionTimeInSeconds: Double = spectra.getChromatographyInfo.getRetentionTime.toDouble
-  override val msLevel: Short = spectra.getMsFunction.getMsLevel.toShort
   override val scanNumber: Int = spectra.getScanNumber
-  override val modelIons: Option[List[Double]] = None
   override val purity: Option[Double] = None
   override val ionMode: Option[IonMode] = mode
-  override val massOfDetectedFeature: Option[Ion] = None
-
+  override val massOfDetectedFeature: Option[Ion] = MSDKSample.build(spectra).find(_.mass == spectra.getIsolations.get(0).getPrecursorMz)
+  /**
+    * associated spectrum propties if applicable
+    */
+  override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+    /**
+      * a list of model ions used during the deconvolution
+      */
+    override val modelIons: Option[List[Double]] = None
+    /**
+      * all the defined ions for this spectra
+      */
+    override val ions: Seq[Ion] = MSDKSample.build(spectra)
+  })
 }

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation.Test._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
 import org.scalatest.WordSpec
 
@@ -12,52 +12,64 @@ object Test {
   val testAccurateMassSpectraWith4Ions = MSSpectraImpl(4, Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List(), 2000, massOfDetectedFeature = Option(Ion(100.3241, 100f)))
 
   val testAccurateLibraryMassSpectraWith4Ions = MSLibrarySpectraImpl(
-    retentionTimeInSeconds = 2324.2f,
+    retentionIndex = 2324.2f,
     precursorMass = Some(100.3241),
     name = Some("test"),
-    inchiKey = Some("BQJCRHHNABKAKU-KBQPJGBKSA-N")
+    inchiKey = Some("BQJCRHHNABKAKU-KBQPJGBKSA-N"),
+    io = Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List()
   )
   val testAccurateLibraryMassSpectra2With4Ions = MSLibrarySpectraImpl(
-    retentionTimeInSeconds = 2324.2f,
+    retentionIndex = 2324.2f,
     precursorMass = Some(100.3111),
     name = Some("test"),
-    inchiKey = Some("BQJCRHHNABKAKU-KBQPJGBKSA-N")
+    inchiKey = Some("BQJCRHHNABKAKU-KBQPJGBKSA-N"),
+    io = Ion(100.3241, 50) :: Ion(120.2132, 50) :: List()
+
   )
 
   /**
     * simple imple of an MSSpectra
     *
-    * @param modelIons
     * @param purity
     * @param scanNumber
-    * @param ions
     * @param retentionTimeInSeconds
-    * @param msLevel
     */
   final case class MSSpectraImpl(override val scanNumber: Int,
-                                 override val ions: Seq[Ion],
+                                 io: Seq[Ion],
                                  override val retentionTimeInSeconds: Double,
-                                 override val msLevel: Short = 1,
                                  override val ionMode: Option[IonMode] = None,
-                                 override val modelIons: Option[Seq[Double]] = None,
                                  override val purity: Option[Double] = None,
                                  override val massOfDetectedFeature: Option[Ion]
-                                ) extends MSSpectra
+                                ) extends MSSpectra {
+    /**
+      * associated spectrum propties if applicable
+      */
+    override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[Seq[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override lazy val ions: Seq[Ion] = io
+    })
+  }
 
   /**
     * default impl for a library spectra
     *
-    * @param retentionTimeInSeconds
-
+    * @param retentionIndex
     * @param name
     * @param inchiKey
     * @param precursorMass
     */
   sealed case class MSLibrarySpectraImpl(
-                                          override val retentionTimeInSeconds: Double,
+                                          override val retentionIndex: Double,
                                           override val name: Option[String],
                                           override val inchiKey: Option[String],
-                                          override val precursorMass: Option[Double]
+                                          override val precursorMass: Option[Double],
+                                          io: Seq[Ion]
                                         ) extends Target {
     /**
       * is this a confirmed target
@@ -71,6 +83,17 @@ object Test {
       * is this a retention index correction standard
       */
     override val isRetentionIndexStandard: Boolean = false
+
+    override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[Seq[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override lazy val ions: Seq[Ion] = io
+    })
   }
 
 }

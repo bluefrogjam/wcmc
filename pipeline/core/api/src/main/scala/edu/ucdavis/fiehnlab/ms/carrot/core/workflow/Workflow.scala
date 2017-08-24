@@ -105,7 +105,10 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
     * @param experiment
     */
   protected final def postAnnotationAction(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
-    postActions.asScala.foreach { x => x.run(sample, experimentClass, experiment) }
+    postActions.asScala.foreach { x =>
+
+      logger.info(s"running side action: ${x}")
+      x.run(sample, experimentClass, experiment) }
   }
 
   /**
@@ -172,13 +175,14 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
       classes = experiment.classes.collect {
         case clazz: ExperimentClass =>
           ExperimentClass(
-            samples = clazz.samples.par.collect {
+            samples = clazz.samples.collect {
               case sample: Sample =>
                 try {
                   callback(sample, clazz, experiment)
                 } catch {
                   case e: Exception =>
 
+                    e.printStackTrace()
                     val exceptionHandling = if (exceptionCallBack != null) {
                       logger.debug(s"utilizing providing exception handling to handle: ${e.getMessage}")
                       exceptionCallBack(sample, clazz, experiment, e)

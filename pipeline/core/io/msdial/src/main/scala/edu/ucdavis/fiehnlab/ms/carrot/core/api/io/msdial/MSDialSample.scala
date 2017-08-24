@@ -4,7 +4,7 @@ import java.io.{File, FileInputStream, IOException, InputStream}
 import java.util.zip.GZIPInputStream
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, Unknown}
 
 import scala.io.Source
@@ -13,8 +13,8 @@ import scala.io.Source
   * creates a new msdial sample from the given file
   */
 object MSDialSample {
-  def apply(name:String,file: File): MSDialSample = {
-    if(file.getName.endsWith("gz")){
+  def apply(name: String, file: File): MSDialSample = {
+    if (file.getName.endsWith("gz")) {
       new MSDialSample(new GZIPInputStream(new FileInputStream(file)), name)
     }
     else {
@@ -37,7 +37,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
   protected val retentionTimeLeftMinutesIdentifier: String = "rtatleft(min)"
   protected val retentionTimeMinutesIdentifier: String = "rtattop(min)"
   protected val retentionTimeRightMinutesIdentifier: String = "rtatright(min)"
-  protected val intensityAtLeftIdentifier: String ="heightatleft"
+  protected val intensityAtLeftIdentifier: String = "heightatleft"
   protected val intensityIdentifier: String = "heightattop"
   protected val intensityAtRightIdentifier: String = "heightatright"
   protected val areaAboveZeroIdentifier: String = "areaabovezero"
@@ -86,10 +86,10 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
       lines.collect {
         case line: String if line nonEmpty =>
-	        val contents = line.split("\t").toList
-	        val map = (headers zip contents).toMap
+          val contents = line.split("\t").toList
+          val map = (headers zip contents).toMap
 
-            buildSpectra(map)
+          buildSpectra(map)
       }.filter(_ != null).toSeq
     } else {
       throw new IOException(s"sorry the file: $fileName contained no lines!")
@@ -104,7 +104,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
     */
   def buildSpectra(dataMap: Map[String, String]): Feature = {
 
-	  if (!dataMap.keySet.contains(spectraIdentifier)) {
+    if (!dataMap.keySet.contains(spectraIdentifier)) {
       /**
         * no spectra available so it's just a feature
         */
@@ -118,7 +118,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
           */
         override val scanNumber: Int = dataMap(scanIdentifier).toInt
 
-	      override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
+        override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
         /**
           * how pure this spectra is
           */
@@ -128,7 +128,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
           */
         override val ionMode: Option[IonMode] = None
       }
-	  } else {
+    } else {
 
       /**
         * complete spectra available
@@ -137,22 +137,10 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
         override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
 
-        override val modelIons: Option[List[Double]] = Some(dataMap(modelMassesIdentifier).split(",").filter(_.nonEmpty).map(_.toDouble).toList)
-
         override val scanNumber: Int = dataMap(scanIdentifier).toInt
-
-        override val ions: Seq[Ion] = dataMap(spectraIdentifier).split(" ").filter(_.nonEmpty).collect {
-            case x: String if x.nonEmpty =>
-              val values = x.split(":")
-
-              Ion(values(0).toDouble, values(1).toFloat)
-
-          }.filter(_.intensity > 0).toSeq
 
 
         override val retentionTimeInSeconds: Double = dataMap(retentionTimeMinutesIdentifier).toDouble * 60
-
-        override val msLevel: Short = 2
 
         override val purity: Option[Double] = None
         /**
@@ -163,6 +151,21 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
           * the observed pre cursor ion. Assssumed to be the accurateMasssIdentifier
           */
         override val precursorIon: Double = dataMap(accurateMassIdentifier).toDouble
+
+        override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+
+          override val modelIons: Option[List[Double]] = Some(dataMap(modelMassesIdentifier).split(",").filter(_.nonEmpty).map(_.toDouble).toList)
+
+          override val ions: Seq[Ion] = dataMap(spectraIdentifier).split(" ").filter(_.nonEmpty).collect {
+            case x: String if x.nonEmpty =>
+              val values = x.split(":")
+
+              Ion(values(0).toDouble, values(1).toFloat)
+
+          }.filter(_.intensity > 0).toSeq
+
+        })
+
       }
     }
   }

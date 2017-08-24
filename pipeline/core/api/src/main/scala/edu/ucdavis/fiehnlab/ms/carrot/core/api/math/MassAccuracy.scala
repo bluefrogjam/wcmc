@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.math
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{AccurateMassSupport, Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
 
 /**
@@ -19,17 +19,16 @@ object MassAccuracy extends LazyLogging {
   def findClosestIon(spectra: Feature, targetMass: Double): Option[Ion] = {
     logger.trace(s"outdated method, refactor! ${spectra.scanNumber} and looking for ${targetMass}")
     spectra match {
-      case x: MSSpectra =>
-        Some(x.ions.minBy(p => Math.abs(p.mass - targetMass)))
+      case x: MSSpectra if x.spectrum.isDefined =>
+        Some(x.spectrum.get.ions.minBy(p => Math.abs(p.mass - targetMass)))
       case x: Feature =>
         x.massOfDetectedFeature
     }
-
   }
 
-  def calculateMassErrorPPM(spectra: Feature, target: Target, massWindow: Double = 0): Option[Double] = {
+  def calculateMassErrorPPM(spectra: AccurateMassSupport, target: Target): Option[Double] = {
     if (target.precursorMass.isDefined) {
-      val error = calculateMassError(spectra, target, massWindow)
+      val error = calculateMassError(spectra, target)
 
       if (error.isDefined) {
         Some(error.get / target.precursorMass.get * 1000000)
@@ -48,17 +47,16 @@ object MassAccuracy extends LazyLogging {
     *
     * @param spectra
     * @param target
-    * @param massWindow
     * @return
     */
-  def calculateMassError(spectra: Feature, target: Target, massWindow: Double = 0): Option[Double] = {
+  def calculateMassError(spectra: AccurateMassSupport, target: Target): Option[Double] = {
     if (target.precursorMass.isDefined) {
       val mass = target.precursorMass.get
 
-      val ion = findClosestIon(spectra, mass)
+      val ion = spectra.accurateMass
 
       if (ion.isDefined) {
-        Some(Math.abs(mass - ion.get.mass))
+        Some(Math.abs(mass - ion.get))
       }
       else {
         None

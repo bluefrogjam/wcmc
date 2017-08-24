@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import org.scalatest.{FunSuite, WordSpec}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api._
+import org.scalatest.WordSpec
 
 /**
   * Created by wohlgemuth on 6/26/16.

@@ -35,7 +35,7 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
     /**
       * converts the data, groups by class and assemble as an experiment
       */
-    val result = Experiment(Source.fromInputStream(inputStream).getLines().toSeq.par.collect {
+    val result = Experiment(Source.fromInputStream(inputStream).getLines().toSeq.collect {
       case line: String =>
         if (!line.startsWith("#")) {
           val data = line.split(properties.delimiter)

@@ -34,7 +34,7 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t") extends Writer[Samp
 
         val out = new BufferedWriter(new OutputStreamWriter(outputStream))
 
-        def sortedTargets = data.quantifiedTargets.sortBy(p => (p.retentionTimeInSeconds, p.name))
+        def sortedTargets = data.quantifiedTargets.sortBy(p => (p.retentionIndex, p.name))
 
         //writes the header
         if (lineCounter == 0) {
@@ -60,9 +60,9 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t") extends Writer[Samp
           }
 
 
-          writeLine("target", target => target.name.getOrElse(target.retentionTimeInSeconds).toString)
+          writeLine("target", target => target.name.getOrElse(target.retentionIndex).toString)
           writeLine("mass", target => f"${target.precursorMass.getOrElse(0.0)}%1.4f")
-          writeLine("retention time (s)", target => f"${target.retentionTimeInSeconds}%1.2f")
+          writeLine("retention time (s)", target => f"${target.retentionIndex}%1.2f")
           writeLine("retention time (min)", target => f"${target.retentionTimeInMinutes}%1.2f")
           //write mass
 

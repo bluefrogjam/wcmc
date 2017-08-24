@@ -6,16 +6,15 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.acquisition.AcquisitionLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
-import org.scalatest.{Ignore, WordSpec}
+import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 /**
   * This test is a case to ensure that our value is in the exspected range and this annotation
@@ -23,6 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@ActiveProfiles(Array("backend-txt","quantify-by-height"))
 class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpec with LazyLogging {
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
@@ -52,11 +52,6 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
     "ensure our targets are defined" in {
       assert(targetLibrary.load(acquisitionLoader.load(loader.getSample(sampleName)).get).nonEmpty)
     }
-
-    //  possibly add an endpoint to check file presence on the server
-    //    "able to load our sample" in{
-    //      assert(loader.loadSample(sampleName).isDefined)
-    //    }
 
     s"find *015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD in sample $sampleName with a value over 80k" must {
 
@@ -91,7 +86,7 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
         val value = target.quantifiedValue.get
 
         logger.info(s"value was: $value")
-        value shouldBe (80000.0 +- 1000.0)
+        value shouldBe (80000.0 +- 5000.0)
       }
     }
 

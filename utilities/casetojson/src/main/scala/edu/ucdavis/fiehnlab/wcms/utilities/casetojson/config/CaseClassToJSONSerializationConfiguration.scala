@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Primary}
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.{RestOperations, RestTemplate}
 
@@ -30,6 +30,7 @@ class CaseClassToJSONSerializationConfiguration {
     mapper
   }
 
+  @Primary
   @Bean
   def restTemplate: RestTemplate = {
     val rest: RestTemplate = new RestTemplate()

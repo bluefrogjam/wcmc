@@ -7,12 +7,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Sample, Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Profile
+import org.springframework.context.annotation.{Primary, Profile}
 import org.springframework.stereotype.Component
 
 /**
@@ -59,7 +59,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
             /**
               * retention time in seconds of this target
               */
-            override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
+            override val retentionIndex: Double = myTarget.retentionIndex
             /**
               * the unique inchi key for this spectra
               */
@@ -101,7 +101,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
             /**
               * retention time in seconds of this target
               */
-            override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
+            override val retentionIndex: Double = myTarget.retentionIndex
             /**
               * the unique inchi key for this spectra
               */
@@ -175,10 +175,7 @@ class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target],
     * @param spectra
     * @return
     */
-  protected override def computeValue(target: Target, spectra: Feature): Option[Double] = MassAccuracy.findClosestIon(spectra, target.precursorMass.get /*, 5*/) match {
-    case Some(x: Ion) => Some(x.intensity)
-    case None => None
-  }
+  protected override def computeValue(target: Target, spectra: Feature): Option[Double] = if (spectra.massOfDetectedFeature.isDefined) Some(spectra.massOfDetectedFeature.get.intensity) else None
 }
 
 /**

@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.leco
 import java.io.{IOException, InputStream}
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
 
 import scala.io.Source
@@ -56,23 +57,34 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
     * @param map
     * @return
     */
-  def buildSpectra(scan: Int, map: Map[String, String]): LecoSpectrum = new LecoSpectrum {
-    override val modelIons: Option[List[Double]] = Some(map.get(uniquemassIdentifier).get.toDouble :: List())
-    override val purity: Option[Double] = Some(map.get(purityIdentifier).get.toDouble)
-    override val scanNumber: Int = scan
+  def buildSpectra(scan: Int, map: Map[String, String]): LecoSpectrum = {
 
-    override val ions: List[Ion] = map.get(spectraIdentifier).get.toString.split(" ").collect {
-      case x: String =>
-        val values = x.split(":")
 
-         Ion(values(0).toDouble, values(1).toFloat)
+    val spec = new LecoSpectrum {
+      override val purity: Option[Double] = Some(map.get(purityIdentifier).get.toDouble)
+      override val scanNumber: Int = scan
 
-    }.filter(_.intensity > 0).toList
-    override val retentionTimeInSeconds: Double = map.get(retentionTimeSecondsIdentifier).get.toDouble
-    override val msLevel: Short = 1
-    /**
-      * accurate mass of this feature, if applicable
-      */
-    override val massOfDetectedFeature: Option[Ion] = None
+      override val retentionTimeInSeconds: Double = map.get(retentionTimeSecondsIdentifier).get.toDouble
+      /**
+        * accurate mass of this feature, if applicable
+        */
+      override val massOfDetectedFeature: Option[Ion] = None
+
+      override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+        override val modelIons: Option[List[Double]] = Some(map.get(uniquemassIdentifier).get.toDouble :: List())
+
+
+        override val ions: List[Ion] = map.get(spectraIdentifier).get.toString.split(" ").collect {
+          case x: String =>
+            val values = x.split(":")
+
+            Ion(values(0).toDouble, values(1).toFloat)
+
+        }.filter(_.intensity > 0).toList
+      })
+
+
+    }
+    spec
   }
 }

@@ -126,9 +126,9 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with La
     librarySpectra.precursorMass match {
       case Some(mass) =>
 
-        correctedSpectra match{
+        correctedSpectra match {
 
-          case x:Feature if x.massOfDetectedFeature.isDefined =>
+          case x: Feature if x.massOfDetectedFeature.isDefined =>
             val ion = x.massOfDetectedFeature.get
             val error = mass - ion.mass
             val ppm = Math.abs(error / mass * 1000000)
@@ -146,7 +146,6 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with La
     }
   }
 }
-
 
 
 /**
@@ -176,8 +175,8 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
         logger.debug(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
-          case x: MSSpectra =>
-            x.relativeSpectra.exists { ion: Ion =>
+          case x: MSSpectra if x.spectrum.isDefined =>
+            x.spectrum.get.relativeSpectra.exists { ion: Ion =>
 
               logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
@@ -223,8 +222,8 @@ class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minInten
         logger.debug(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
-          case x: MSSpectra =>
-            x.ions.exists { ion: Ion =>
+          case x: MSSpectra if x.spectrum.isDefined =>
+            x.spectrum.get.ions.exists { ion: Ion =>
 
               logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
@@ -264,11 +263,11 @@ class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int) extends Annotat
     librarySpectra.precursorMass match {
       case Some(mass) =>
 
-        correctedSpectra match{
-          case x:MSSpectra =>
+        correctedSpectra match {
+          case x: MSSpectra if x.spectrum.isDefined =>
             logger.debug(s"checking mass: ${mass}")
 
-            x.ions.exists { ion: Ion =>
+            x.spectrum.get.ions.exists { ion: Ion =>
               val error = mass - ion.mass
               val ppm = Math.abs(error / mass * 1000000)
               logger.debug(s"\t=> error: ${error} and ppm: ${ppm}")

@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
 import java.io._
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 
@@ -43,7 +44,7 @@ trait LibraryAccess[T <: Target] {
   *
   * @param file
   */
-class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\t") extends LibraryAccess[T] {
+class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\t") extends LibraryAccess[T] with LazyLogging{
 
   /**
     * loads all the spectra from the library
@@ -62,7 +63,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
             new Target {
               override val precursorMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
-              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
+              override val retentionIndex: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
               override val requiredForCorrection: Boolean = false
               override val isRetentionIndexStandard: Boolean = false
@@ -76,7 +77,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
             new Target {
               override val precursorMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = None
-              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
+              override val retentionIndex: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
               override val requiredForCorrection: Boolean = false
               override val isRetentionIndexStandard: Boolean = false
@@ -87,7 +88,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
             new Target {
               override val precursorMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
-              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
+              override val retentionIndex: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
               override val requiredForCorrection: Boolean = false
               override val isRetentionIndexStandard: Boolean = temp(3).toBoolean
@@ -96,9 +97,9 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
           }
           else if (temp.length == 5) {
             new Target {
+              override val retentionIndex: Double = temp(0).toDouble * 60
               override val precursorMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
-              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
               override val requiredForCorrection: Boolean = false
               override val isRetentionIndexStandard: Boolean = temp(4).toBoolean
@@ -107,6 +108,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
           }
 
           else {
+            logger.info(s"target line is: ${temp.mkString(" ")}")
             throw new IOException("unsupported file format discovered!")
           }
         }
@@ -124,22 +126,13 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     */
   override def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod): Unit = {
 
+    logger.info(s"updating library at: ${file.getAbsolutePath}")
     val out = new FileWriter(file, true)
 
     targets.foreach { target =>
 
-
-
       out.write(
-        s"""|${target.retentionTimeInSeconds}
-               |$seperator
-               |${target.precursorMass}
-               |$seperator${target.name.getOrElse("unknown")}
-               |$seperator
-               |${target.requiredForCorrection}
-               |$seperator
-               |${target.inchiKey.getOrElse("")}
-               |\n""".stripMargin
+        s"""${target.retentionIndex}$seperator${target.precursorMass.get}$seperator${target.name.getOrElse("unknown")}$seperator${target.requiredForCorrection}$seperator${target.inchiKey.getOrElse("")}\n"""
       )
     }
 

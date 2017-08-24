@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSpectra, Ion, IonMode, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, MSSpectra, SpectrumProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
 import org.scalatest.WordSpec
 
 /**
@@ -20,20 +20,22 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val purity: Option[Double] = None
           override val ionMode: Option[IonMode] = None
           override val scanNumber: Int = 1
-          override val ions: Seq[Ion] = Seq.empty
-          override val modelIons: Option[Seq[Double]] = None
-          override val msLevel: Short = 1
+
           override val retentionTimeInSeconds: Double = 200
           override val retentionIndex: Double = retentionTimeInSeconds
           override val massOfDetectedFeature: Option[Ion] = None
 
+          override val spectrum = Option(new SpectrumProperties {
+            override val ions: Seq[Ion] = Seq.empty
+            override val modelIons: Option[Seq[Double]] = None
+          })
         },
 
         new Target {
           override val precursorMass: Option[Double] = None
           override val name: Option[String] = None
           override val inchiKey: Option[String] = None
-          override val retentionTimeInSeconds: Double = 204.5f
+          override val retentionIndex: Double = 204.5f
           /**
             * is this a confirmed target
             */
@@ -66,9 +68,10 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val purity: Option[Double] = None
           override val ionMode: Option[IonMode] = None
           override val scanNumber: Int = 1
-          override val ions: Seq[Ion] = Seq.empty
-          override val modelIons: Option[Seq[Double]] = None
-          override val msLevel: Short = 1
+          override val spectrum = Option(new SpectrumProperties {
+            override val ions: Seq[Ion] = Seq.empty
+            override val modelIons: Option[Seq[Double]] = None
+          })
           override val retentionTimeInSeconds: Double = 200
           override val retentionIndex: Double = retentionTimeInSeconds
           override val massOfDetectedFeature: Option[Ion] = None
@@ -80,7 +83,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val precursorMass: Option[Double] = None
           override val name: Option[String] = None
           override val inchiKey: Option[String] = None
-          override val retentionTimeInSeconds: Double = 205.5f
+          override val retentionIndex: Double = 205.5f
           /**
             * is this a confirmed target
             */

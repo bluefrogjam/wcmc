@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 
 /**
   * Defines a basic sample, which needs to be processed
@@ -110,12 +109,6 @@ trait GapFilledSample[T] extends  QuantifiedSample[T] {
 }
 
 
-/**
-  * a corrected spectra
-  */
-trait CorrectedSpectra {
-  val retentionIndex: Double
-}
 
 /**
   * an annotated spectra
@@ -186,7 +179,7 @@ trait QuantifiedTarget[T] extends Target {
     */
   val spectra: Option[_ <: Feature with QuantifiedSpectra[T]]
 
-  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds"
+  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex"
 }
 
 /**
@@ -205,7 +198,7 @@ trait GapFilledTarget[T] extends QuantifiedTarget[T]{
     */
   lazy final override val spectra: Option[_ <: Feature with GapFilledSpectra[T]] = Some(spectraUsedForReplacement)
 
-  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
+  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
 
 }
 

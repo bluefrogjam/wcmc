@@ -10,14 +10,15 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 /**
   * Created by wohlg on 7/1/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@ActiveProfiles(Array("backend-txt","quantify-by-height"))
 class QuantifyByHeightProcessTest extends WordSpec with LazyLogging{
 
   @Autowired
@@ -30,7 +31,6 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging{
   val annotation: LCMSTargetAnnotationProcess = null
 
   @Autowired
-  @Qualifier("quantification")
   val quantification: QuantifyByHeightProcess = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)

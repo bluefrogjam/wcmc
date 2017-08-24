@@ -26,8 +26,8 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
     librarySpectra match {
       case x: Target =>
         correctedSpectra match {
-          case y: MSSpectra =>
-            val value = algorithm.compute(convertSpectra(y.spectraString), convertSpectra(x.spectrum.get.spectraString))
+          case y: MSSpectra if y.spectrum.isDefined=>
+            val value = algorithm.compute(convertSpectra(y.spectrum.get.spectraString), convertSpectra(x.spectrum.get.spectraString))
             logger.debug(s"computed match is: ${value}")
             val result = value > simmilarityOffset
             logger.debug(s"\t=> matches: ${result}")

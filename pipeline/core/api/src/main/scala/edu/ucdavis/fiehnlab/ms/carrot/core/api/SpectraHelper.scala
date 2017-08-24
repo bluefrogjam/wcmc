@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 
 /**
   * provides a couple of different methods, which should be used to create new instances of
@@ -41,14 +41,8 @@ object SpectraHelper {
             */
           override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
-          /**
-            * a list of model ions used during the deconvolution
-            */
-          override val modelIons: Option[Seq[Double]] = feat.modelIons
-          /**
-            * all the defined ions for this spectra
-            */
-          override val ions: Seq[Ion] = feat.ions
+          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+
           /**
             * the local scan number
             */
@@ -75,14 +69,8 @@ object SpectraHelper {
             */
           override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
-          /**
-            * a list of model ions used during the deconvolution
-            */
-          override val modelIons: Option[Seq[Double]] = feat.modelIons
-          /**
-            * all the defined ions for this spectra
-            */
-          override val ions: Seq[Ion] = feat.ions
+          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+
           /**
             * the local scan number
             */
@@ -150,11 +138,8 @@ object SpectraHelper {
           /**
             * a list of model ions used during the deconvolution
             */
-          override val modelIons: Option[Seq[Double]] = feat.modelIons
-          /**
-            * all the defined ions for this spectra
-            */
-          override val ions: Seq[Ion] = feat.ions
+          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+
           /**
             * the local scan number
             */
@@ -180,7 +165,7 @@ object SpectraHelper {
           /**
             * distance of the retention index distance
             */
-          lazy override val retentionIndexDistance: Option[Double] = Some(target.retentionTimeInSeconds - retentionIndex)
+          lazy override val retentionIndexDistance: Option[Double] = Some(target.retentionIndex - retentionIndex)
 
           /**
             * specified ion mode for the given feature
@@ -194,14 +179,8 @@ object SpectraHelper {
         }
       case feat: MSSpectra with CorrectedSpectra =>
         new MSSpectra with AnnotatedSpectra {
-          /**
-            * a list of model ions used during the deconvolution
-            */
-          override val modelIons: Option[Seq[Double]] = feat.modelIons
-          /**
-            * all the defined ions for this spectra
-            */
-          override val ions: Seq[Ion] = feat.ions
+          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+
           /**
             * the local scan number
             */
@@ -227,7 +206,7 @@ object SpectraHelper {
           /**
             * distance of the retention index distance
             */
-          lazy override val retentionIndexDistance: Option[Double] = Some(target.retentionTimeInSeconds - retentionIndex)
+          lazy override val retentionIndexDistance: Option[Double] = Some(target.retentionIndex - retentionIndex)
           /**
             * how pure this spectra is
             */
@@ -270,7 +249,7 @@ object SpectraHelper {
           /**
             * distance of the retention index distance
             */
-          lazy override val retentionIndexDistance: Option[Double] = Some(target.retentionTimeInSeconds - retentionIndex)
+          lazy override val retentionIndexDistance: Option[Double] = Some(target.retentionIndex - retentionIndex)
           /**
             * how pure this spectra is
             */
@@ -301,14 +280,8 @@ object SpectraHelper {
             * how pure this spectra is
             */
           override val purity: Option[Double] = feat.purity
-          /**
-            * a list of model ions used during the deconvolution
-            */
-          override val modelIons: Option[Seq[Double]] = feat.modelIons
-          /**
-            * all the defined ions for this spectra
-            */
-          override val ions: Seq[Ion] = feat.ions
+          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+
           /**
             * the local scan number
             */
@@ -355,14 +328,8 @@ object SpectraHelper {
             * how pure this spectra is
             */
           override val purity: Option[Double] = feat.purity
-          /**
-            * a list of model ions used during the deconvolution
-            */
-          override val modelIons: Option[Seq[Double]] = feat.modelIons
-          /**
-            * all the defined ions for this spectra
-            */
-          override val ions: Seq[Ion] = feat.ions
+          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+
           /**
             * the local scan number
             */

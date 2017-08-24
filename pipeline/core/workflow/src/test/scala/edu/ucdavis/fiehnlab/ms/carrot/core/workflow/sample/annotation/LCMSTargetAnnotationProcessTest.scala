@@ -4,16 +4,14 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.LCMSProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.{SpringBootTest, TestConfiguration}
-import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.test.context.TestContextManager
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 /**
@@ -21,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@ActiveProfiles(Array("backend-txt","quantify-by-scan"))
 class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -73,7 +72,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
           logger.debug(f"${spectra.target.name.get}")
           logger.debug(f"\ttarget data:")
           logger.debug(f"\t\t mass:          ${spectra.target.precursorMass.get}%1.4f")
-          logger.debug(f"\t\t rt (s):        ${spectra.target.retentionTimeInSeconds}%1.3f")
+          logger.debug(f"\t\t rt (s):        ${spectra.target.retentionIndex}%1.3f")
           logger.debug(f"\t\t rt (m):        ${spectra.target.retentionTimeInMinutes}%1.3f")
           logger.debug(f"\tannotation data:")
           logger.debug(f"\t\t ri (m):        ${spectra.annotation.retentionTimeInMinutes}%1.3f")
@@ -123,7 +122,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
           logger.debug(f"${spectra.target.name.get}")
           logger.debug(f"\ttarget data:")
           logger.debug(f"\t\t mass:          ${spectra.target.precursorMass.get}%1.4f")
-          logger.debug(f"\t\t rt (s):        ${spectra.target.retentionTimeInSeconds}%1.3f")
+          logger.debug(f"\t\t rt (s):        ${spectra.target.retentionIndex}%1.3f")
           logger.debug(f"\t\t rt (m):        ${spectra.target.retentionTimeInMinutes}%1.3f")
           logger.debug(f"\tannotation data:")
           logger.debug(f"\t\t ri (m):        ${spectra.retentionIndex / 60}%1.3f")

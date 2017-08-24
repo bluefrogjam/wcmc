@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component
 @Component
 class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess, properties.trackChanges) with LazyLogging {
 
-  @Value("${wcms.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
-  val massAccuracySetting: Double = 0.015
+  @Value("${wcms.pipeline.workflow.config.correction.peak.mass.accuracy:0.005}")
+  val massAccuracySetting: Double = 0.005
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
@@ -101,14 +101,11 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     */
   def findBestHit(standard: Target, spectra: Seq[_ <: Feature]): TargetAnnotation[Target, Feature] = {
 
-    //sort by accuracy first
+    //sort by mass error. The smaller the error the better
     val sortedByAccuracy = spectra.sortBy { spectra =>
-      val mass = standard.precursorMass.get
-      val bestIon = MassAccuracy.findClosestIon(spectra, mass /*, correctionSettings.massAccuracy*/).get
-      val distance = Math.abs(mass - bestIon.mass)
 
       //that's our distance
-      distance
+      MassAccuracy.calculateMassError(spectra,standard)
     }
     //return the closest mass distance wise
     TargetAnnotation[Target, Feature](standard, sortedByAccuracy.head)
@@ -129,10 +126,10 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
           target
         }
         else {
-          val min = target.target.retentionTimeInSeconds - groupCloseByRetentionIndexStandardDifference
-          val max = target.target.retentionTimeInSeconds + groupCloseByRetentionIndexStandardDifference
+          val min = target.target.retentionIndex - groupCloseByRetentionIndexStandardDifference
+          val max = target.target.retentionIndex + groupCloseByRetentionIndexStandardDifference
           val previousTarget = matches(position - 1)
-          val previousTime = previousTarget.target.retentionTimeInSeconds
+          val previousTime = previousTarget.target.retentionIndex
           val result = previousTime >= min && previousTime <= max
 
           if (result) {
@@ -203,7 +200,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     /**
       * find possible matches for our specified targets
       */
-    val matches: Seq[TargetAnnotation[Target, Feature]] = targets.toSeq.sortBy(_.retentionTimeInMinutes).par.collect {
+    val matches: Seq[TargetAnnotation[Target, Feature]] = targets.toSeq.sortBy(_.retentionTimeInMinutes).collect {
 
       //find a possible match
       case target: Target =>
@@ -235,10 +232,11 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
       .collect {
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[Target, Feature] =>
-          logger.debug(s"annotated: ${hit.target} with ${hit.annotation}")
+          logger.info(s"annotated: ${hit.target.name.getOrElse("Unknown")}/${hit.target.retentionIndex}/${hit.target.precursorMass.getOrElse(0)} with ${hit.annotation.retentionTimeInSeconds}/${hit.annotation.massOfDetectedFeature.get.mass}")
           hit
       }.seq
 
+    logger.info(s"${matches.size} possible matches for RI markers were found")
     //do some optimization for us
     val optimizedMatches = optimize(matches)
 
@@ -277,12 +275,12 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     */
   def doCorrection(possibleHits: Seq[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample): CorrectedSample = {
 
-    val x: Array[Double] = possibleHits.map(_.target.retentionTimeInSeconds.toDouble).toArray
+    val x: Array[Double] = possibleHits.map(_.target.retentionIndex.toDouble).toArray
     val y: Array[Double] = possibleHits.map(_.annotation.retentionTimeInSeconds.toDouble).toArray
 
     regression.calibration(x, y)
 
-    logger.debug(s"${regression.toString}\n")
+    logger.info(s"${regression.toString}\n")
 
     val correctedSpectra: Seq[_ <: Feature with CorrectedSpectra] = sampleToCorrect.spectra.map(x => SpectraHelper.addCorrection(x,regression.computeY(x.retentionTimeInSeconds)))
 

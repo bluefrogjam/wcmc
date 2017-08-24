@@ -45,7 +45,7 @@ class MongoLibraryAccess @Autowired()(libraryRepository: ILibraryRepository, lib
           /**
             * retention time in seconds of this target
             */
-          override val retentionTimeInSeconds: Double = t.retentionTimeInSeconds
+          override val retentionIndex: Double = t.retentionTimeInSeconds
           /**
             * a name for this spectra
             */
@@ -100,7 +100,7 @@ class MongoLibraryAccess @Autowired()(libraryRepository: ILibraryRepository, lib
       val res = libraryRepository.save(lib.copy(targets = (lib.targets.asScala.toSeq ++ targets.toSeq.map { t: Target =>
         LibraryTarget(
           name = t.name.orNull,
-          retentionTimeInSeconds = t.retentionTimeInSeconds,
+          retentionTimeInSeconds = t.retentionIndex,
           inchiKey = t.inchiKey.orNull,
           monoIsotopicMass = t.precursorMass.getOrElse(0.0),
           confirmedTarget = t.confirmed,

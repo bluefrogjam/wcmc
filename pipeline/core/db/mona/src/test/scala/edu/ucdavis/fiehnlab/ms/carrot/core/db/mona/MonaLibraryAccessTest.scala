@@ -33,7 +33,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     /**
       * retention time in seconds of this target
       */
-    override val retentionTimeInSeconds: Double = 100
+    override val retentionIndex: Double = 100
     /**
       * the unique inchi key for this spectra
       */
@@ -77,7 +77,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     /**
       * retention time in seconds of this target
       */
-    override val retentionTimeInSeconds: Double = 100.5
+    override val retentionIndex: Double = 100.5
     /**
       * the unique inchi key for this spectra
       */

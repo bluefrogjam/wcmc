@@ -5,7 +5,6 @@ import java.io.{FileInputStream, FileOutputStream}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
@@ -25,7 +24,7 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("common"))
+@ActiveProfiles(Array("backend-txt","quantify-by-height"))
 class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 
 
@@ -36,7 +35,6 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
   val annotation: LCMSTargetAnnotationProcess = null
 
   @Autowired
-  @Qualifier("quantification")
   val quantification: QuantifyByHeightProcess = null
 
   @Autowired

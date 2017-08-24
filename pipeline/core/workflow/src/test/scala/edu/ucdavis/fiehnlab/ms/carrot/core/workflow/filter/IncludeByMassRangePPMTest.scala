@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import org.scalatest.WordSpec
 import edu.ucdavis.fiehnlab.ms.carrot.core.api._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import org.scalatest.WordSpec
 
 /**
   * Created by wohlg on 7/14/2016.
@@ -16,7 +16,7 @@ class IncludeByMassRangePPMTest extends WordSpec {
         override val precursorMass: Option[Double] = Some(100.3242)
         override val name: Option[String] = None
         override val inchiKey: Option[String] = None
-        override val retentionTimeInSeconds: Double = 0
+        override val retentionIndex: Double = 0
         /**
           * is this a confirmed target
           */
@@ -38,7 +38,7 @@ class IncludeByMassRangePPMTest extends WordSpec {
         override val precursorMass: Option[Double] = Some(100.3249)
         override val name: Option[String] = None
         override val inchiKey: Option[String] = None
-        override val retentionTimeInSeconds: Double = 0
+        override val retentionIndex: Double = 0
         /**
           * is this a confirmed target
           */

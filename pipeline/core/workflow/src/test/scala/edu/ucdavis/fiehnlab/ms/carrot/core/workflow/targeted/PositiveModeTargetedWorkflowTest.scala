@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{Reader, SampleLoader, Writer}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event.{PreProcessingBeginEvent, QuantificationFinishedEvent, WorkflowEvent, WorkflowEventListener}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event.{QuantificationFinishedEvent, WorkflowEvent, WorkflowEventListener}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentReaderTxTProperties, ExperimentTXTReader, QuantifiedSampleTxtWriter}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{Workflow, WorkflowProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
@@ -73,10 +73,10 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
         s"content is of size ${expectedContentSize()}" in {
           val content = Source.fromInputStream(result).getLines().toList
 
-          content.size shouldBe expectedContentSize
+         content.size shouldBe expectedContentSize
         }
 
-        "provide validation" ignore {
+        "provide validation" must {
 
           val samples: Seq[QuantifiedSample[Double]] = listener.quantifiedExperiment.classes.flatMap(_.samples).collect {
             case sample: QuantifiedSample[Double] => sample

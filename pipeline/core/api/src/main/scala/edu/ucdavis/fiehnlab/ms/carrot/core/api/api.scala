@@ -23,14 +23,22 @@ package object api {
     * simple test spectra with 1 ion
     */
   val testSpectraWith1Ion = new MSSpectra {
+
+
     /**
-      * a list of model ions used during the deconvolution
+      * associated spectrum propties if applicable
       */
-    override val modelIons: Option[Seq[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override val ions: Seq[Ion] = Ion(100, 100) :: List()
+    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[Seq[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override val ions: Seq[Ion] = Ion(100, 100) :: List()
+
+    })
     /**
       * specified ion mode for the given feature
       */
@@ -57,14 +65,19 @@ package object api {
     * test spectra with 2 ions
     */
   val testSpectraWith2Ions = new MSSpectra {
-    /**
-      * a list of model ions used during the deconvolution
-      */
-    override val modelIons: Option[Seq[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override val ions: Seq[Ion] = Ion(100, 100) :: Ion(120, 50) :: List()
+
+    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[Seq[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override val ions: Seq[Ion] = Ion(100, 100) :: Ion(120, 50) :: List()
+
+    })
+
     /**
       * specified ion mode for the given feature
       */
@@ -94,14 +107,21 @@ package object api {
     * test spectra with 2 ions
     */
   val testSpectraWith3Ions = new MSSpectra {
-    /**
-      * a list of model ions used during the deconvolution
-      */
-    override val modelIons: Option[Seq[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override val ions: Seq[Ion] = Ion(100, 10) :: Ion(120, 50) :: Ion(130, 100) :: List()
+
+
+    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[Seq[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override val ions: Seq[Ion] = Ion(100, 10) :: Ion(120, 50) :: Ion(130, 100) :: List()
+
+    })
+
+
     /**
       * specified ion mode for the given feature
       */
@@ -131,14 +151,20 @@ package object api {
     * test spectra with 2 ions
     */
   val testSpectraWith4Ions = new MSSpectra {
-    /**
-      * a list of model ions used during the deconvolution
-      */
-    override val modelIons: Option[Seq[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override val ions: Seq[Ion] = Ion(100, 50) :: Ion(120, 50) :: Ion(130, 100) :: Ion(140, 10) :: List()
+
+    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[Seq[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override val ions: Seq[Ion] = Ion(100, 50) :: Ion(120, 50) :: Ion(130, 100) :: Ion(140, 10) :: List()
+
+    })
+
     /**
       * specified ion mode for the given feature
       */
@@ -165,14 +191,20 @@ package object api {
   //MSSpectraImpl(4, Ion(100, 50) :: Ion(120, 50) :: Ion(130, 100) :: Ion(140, 10) :: List(), 4000, massOfDetectedFeature = Option(Ion(100, 100)))
 
   val testAccurateMassSpectraWith4Ions = new MSSpectra {
-    /**
-      * a list of model ions used during the deconvolution
-      */
-    override val modelIons: Option[Seq[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override val ions: Seq[Ion] = Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List()
+
+    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[Seq[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override val ions: Seq[Ion] = Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List()
+
+    })
+
     /**
       * specified ion mode for the given feature
       */
@@ -197,14 +229,19 @@ package object api {
 
   //MSSpectraImpl(5, Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List(), 5000, massOfDetectedFeature = Option(Ion(100.3241, 50)))
   val testAccurateMassSpectraWith4Ions2 = new MSSpectra {
-    /**
-      * a list of model ions used during the deconvolution
-      */
-    override val modelIons: Option[Seq[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override val ions: Seq[Ion] = Ion(100.3241, 50) :: Ion(100.3242, 50) :: Ion(100.2339, 100) :: Ion(140.2224, 10) :: List()
+
+    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[Seq[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override val ions: Seq[Ion] = Ion(100.3241, 50) :: Ion(100.3242, 50) :: Ion(100.2339, 100) :: Ion(140.2224, 10) :: List()
+
+    })
     /**
       * specified ion mode for the given feature
       */

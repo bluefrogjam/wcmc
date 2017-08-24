@@ -22,3 +22,12 @@ wcms:
       msdialrest4j:
         host: 128.120.143.101
         port: 80
+
+
+mona:
+  rest:
+    server:
+      host: 127.0.0.1
+      port: 11111
+      user: admin
+      password: admin

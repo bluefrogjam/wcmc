@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("common"))
+@ActiveProfiles(Array("backend-txt","quantify-by-height"))
 class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers{
 
   @Autowired
@@ -30,11 +30,11 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrection = null
 
+
   @Autowired
   val annotation: LCMSTargetAnnotationProcess = null
 
   @Autowired
-  @Qualifier("quantification")
   val quantify: QuantifyByHeightProcess = null
 
   @Autowired
