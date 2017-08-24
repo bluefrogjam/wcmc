@@ -66,7 +66,10 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         * all the defined ions for this spectra
         */
       override val ions: Seq[Ion] = Seq(Ion(100.021, 123.123), Ion(224.0837, 1231.021))
-
+      /**
+        * the msLevel of this spectra
+        */
+      override val msLevel: Short = 2
     })
   }
   val testTarget2 = new Target {
@@ -110,6 +113,8 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         * all the defined ions for this spectra
         */
       override val ions: Seq[Ion] = Seq(Ion(100.021, 123.123), Ion(224.0837, 1231.021))
+
+      override val msLevel: Short = 2
 
     })
   }

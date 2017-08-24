@@ -154,6 +154,8 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 
         override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
 
+          override val msLevel: Short = 2
+
           override val modelIons: Option[List[Double]] = Some(dataMap(modelMassesIdentifier).split(",").filter(_.nonEmpty).map(_.toDouble).toList)
 
           override val ions: Seq[Ion] = dataMap(spectraIdentifier).split(" ").filter(_.nonEmpty).collect {

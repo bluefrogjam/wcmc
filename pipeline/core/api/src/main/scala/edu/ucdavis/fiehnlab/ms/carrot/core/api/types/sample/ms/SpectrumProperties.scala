@@ -61,7 +61,7 @@ trait SpectrumProperties {
   /**
     * the msLevel of this spectra
     */
-  val msLevel: Short = 1
+  val msLevel: Short
 
   /**
     * base peak for this spectra
@@ -170,7 +170,7 @@ trait SimilaritySupport {
   /**
     * associated spectrum propties if applicable
     */
-  val spectrum: Option[SpectrumProperties] = None
+  val spectrum: Option[SpectrumProperties]
 
 }
 

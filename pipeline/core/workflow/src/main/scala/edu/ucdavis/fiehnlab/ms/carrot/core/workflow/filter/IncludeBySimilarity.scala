@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Similarity
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SimilaritySupport
 
 /**
   * checks if the spectra matches the given similarity, based on the cutoff
@@ -10,14 +10,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
   * @param origin
   * @param cutoff needs to be less than 1
   */
-class IncludeBySimilarity(val origin: MSSpectra, val cutoff: Double) extends Filter[MSSpectra] {
+class IncludeBySimilarity(val origin: SimilaritySupport, val cutoff: Double) extends Filter[SimilaritySupport] {
 
   assert(cutoff <= 1)
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
     */
-  override def include(spectra: MSSpectra): Boolean = {
+  override def include(spectra: SimilaritySupport): Boolean = {
     val result = Similarity.compute(spectra, origin)
 
     assert(result <= 1.0)

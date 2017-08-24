@@ -53,6 +53,10 @@ object Test {
         * all the defined ions for this spectra
         */
       override lazy val ions: Seq[Ion] = io
+      /**
+        * the msLevel of this spectra
+        */
+      override val msLevel: Short = 1
     })
   }
 
@@ -93,6 +97,10 @@ object Test {
         * all the defined ions for this spectra
         */
       override lazy val ions: Seq[Ion] = io
+      /**
+        * the msLevel of this spectra
+        */
+      override val msLevel: Short = 1
     })
   }
 

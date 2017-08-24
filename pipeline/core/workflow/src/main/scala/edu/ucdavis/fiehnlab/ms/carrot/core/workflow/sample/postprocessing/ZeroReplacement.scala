@@ -5,7 +5,7 @@ import java.io.FileNotFoundException
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{AccurateMassSupport, CorrectedSpectra, Feature}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
@@ -123,7 +123,7 @@ class ZeroReplacementProperties {
   /**
     * window used for noise calculations in seconds, if 0 the whole chromatography will be used
     */
-  var noiseWindowInSeconds: Int = 90
+  var noiseWindowInSeconds: Int = 0
 
   /**
     * the defined retention index correction for the peak detection during the replacement
@@ -289,6 +289,8 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
       * accurate mass of this feature, if applicable
       */
     override val massOfDetectedFeature: Option[Ion] = value.massOfDetectedFeature
+
+
   }
 
   /**
@@ -327,4 +329,8 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * retention time in seconds of this target
     */
   override val retentionIndex: Double = needsReplacement.retentionIndex
+  /**
+    * associated spectrum propties if applicable
+    */
+  override val spectrum: Option[SpectrumProperties] = needsReplacement.spectrum
 }

@@ -30,7 +30,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
     * belonging to this sample
     */
   override val spectra: Seq[_ <: Feature] = try {
-    delegate.getScans.asScala.map {
+    delegate.getScans.asScala.filter(_.getIntensityValues.nonEmpty).map {
 
       //test all ms scans
       spectra: MsScan =>
@@ -162,8 +162,12 @@ object MSDKSample extends LazyLogging {
     * @param spectra
     * @return
     */
-  def build(spectra: MsScan): Seq[Ion] = spectra.getMzValues.zip(spectra.getIntensityValues).map {
-    ion: (Double, Float) => Ion(ion._1, ion._2)
+  def build(spectra: MsScan): Seq[Ion] = {
+    val data = spectra.getMzValues.zip(spectra.getIntensityValues).map {
+      ion: (Double, Float) => Ion(ion._1, ion._2)
+    }
+    assert(data.nonEmpty)
+    data
   }
 
 }
@@ -193,6 +197,8 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSSpectra {
       * all the defined ions for this spectra
       */
     override val ions: Seq[Ion] = MSDKSample.build(spectra)
+
+    override val msLevel: Short = 1
   })
 }
 
@@ -220,5 +226,7 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSMSSpectr
       * all the defined ions for this spectra
       */
     override val ions: Seq[Ion] = MSDKSample.build(spectra)
+
+    override val msLevel: Short = 2
   })
 }

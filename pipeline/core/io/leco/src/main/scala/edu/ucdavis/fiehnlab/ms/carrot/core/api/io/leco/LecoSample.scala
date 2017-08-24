@@ -81,6 +81,10 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
             Ion(values(0).toDouble, values(1).toFloat)
 
         }.filter(_.intensity > 0).toList
+        /**
+          * the msLevel of this spectra
+          */
+        override val msLevel: Short = 1
       })
 
 

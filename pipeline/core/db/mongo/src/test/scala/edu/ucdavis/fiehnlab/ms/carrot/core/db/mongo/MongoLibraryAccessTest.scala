@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.mongo
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -64,6 +65,9 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
           * is this a retention index correction standard
           */
         override val isRetentionIndexStandard: Boolean = false
+
+        override val spectrum: Option[SpectrumProperties] = None
+
       },acquistionMethod)
 
       library.load(acquistionMethod).size should be(1)
@@ -98,6 +102,9 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
           * is this a retention index correction standard
           */
         override val isRetentionIndexStandard: Boolean = false
+
+        override val spectrum: Option[SpectrumProperties] = None
+
       },acquistionMethod)
 
       library.load(acquistionMethod).size should be(2)
@@ -132,6 +139,9 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
           * is this a retention index correction standard
           */
         override val isRetentionIndexStandard: Boolean = false
+
+        override val spectrum: Option[SpectrumProperties] = None
+
       },acquistionMethod)
 
       library.load(acquistionMethod).size should be(3)

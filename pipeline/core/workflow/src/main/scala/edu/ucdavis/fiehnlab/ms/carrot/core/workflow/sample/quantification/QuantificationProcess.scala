@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Sample, Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
@@ -80,6 +80,10 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
               * is this a retention index correction standard
               */
             override val isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
+            /**
+              * associated spectrum propties if applicable
+              */
+            override val spectrum: Option[SpectrumProperties] = myTarget.spectrum
           }
         }
         //associated with a target and quantified
@@ -122,6 +126,10 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
               * is this a retention index correction standard
               */
             override val isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
+            /**
+              * associated spectrum propties if applicable
+              */
+            override val spectrum: Option[SpectrumProperties] = myTarget.spectrum
           }
         }
     }.seq.toSeq.sortBy(_.retentionTimeInSeconds)

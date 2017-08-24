@@ -10,9 +10,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSMSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow, IncludeBySimilarity}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.Profile
+import org.springframework.context.annotation.{Description, Profile}
 import org.springframework.stereotype.Component
 
 /**
@@ -34,14 +34,18 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
   /**
     * minimum required similarity
     */
-  @Value("${carrot.msms.generate.library.similarity.min:700}")
-  val minimumSimilarity: Double = 700
+  @Value("${carrot.msms.generate.library.similarity.min:0.7}")
+  val minimumSimilarity: Double = 0.7
 
   @Value("${carrot.msms.generate.library.retentionIndex.window:1}")
   val retentionIndexWindow: Double = 1
 
   @Value("${carrot.msms.generate.library.accurateMass.window:5}")
   val accurateMassWindow: Double = 700
+
+
+  @Value("${carrot.msms.generate.library.intensity.min:0}")
+  val minimumRequiredIntensity: Double = 700
 
   /**
     * executes this action
@@ -150,23 +154,27 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     * @return
     */
   def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod): Boolean = {
-    //we only accept MS2 and higher for this
-    val toMatch = targets.load(acquisitionMethod).filter(_.spectrum.isDefined).filter(_.spectrum.get.msLevel > 1)
-
-    //RI filter
     val riFilter = new IncludeByRetentionIndexTimeWindow(newTarget.retentionIndex,retentionIndexWindow)
-
-    val filteredByRi = toMatch.filter(riFilter.include)
-
-    logger.info(s"after ri filter: ${filteredByRi.size} are left")
-    //MASS filter
     val massFilter = new IncludeByMassRangePPM(newTarget,accurateMassWindow)
+    val similarityFilter = new IncludeBySimilarity(newTarget,minimumSimilarity)
 
-    //Similarity filter
+    //we only accept MS2 and higher for this
+    val toMatch = targets.load(acquisitionMethod).filter(_.spectrum.isDefined)
+
+
+
+    //MS1+ spectra filter
+    val msmsSpectra = toMatch.filter(_.spectrum.get.msLevel > 1)
+    val filteredByRi = msmsSpectra.filter(riFilter.include)
     val filtedByMass = filteredByRi.filter(massFilter.include)
+    val filteredBySimilarity = filtedByMass.filter(similarityFilter.include)
 
-    logger.info(s"after mass filter: ${filtedByMass.size} are left")
+    logger.debug(s"existing targets: ${toMatch.size}")
+    logger.debug(s"after MS level filter: ${msmsSpectra.size} targets are left")
+    logger.debug(s"after ri filter: ${filteredByRi.size} targets are left")
+    logger.debug(s"after mass filter: ${filtedByMass.size} targets are left")
+    logger.debug(s"after similarity filter: ${filteredBySimilarity.size} targets are left")
 
-    false
+    filteredBySimilarity.nonEmpty
   }
 }

@@ -28,6 +28,10 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val spectrum = Option(new SpectrumProperties {
             override val ions: Seq[Ion] = Seq.empty
             override val modelIons: Option[Seq[Double]] = None
+            /**
+              * the msLevel of this spectra
+              */
+            override val msLevel: Short = 1
           })
         },
 
@@ -54,6 +58,10 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val spectrum = Option(new SpectrumProperties {
             override val ions: Seq[Ion] = Seq.empty
             override val modelIons: Option[Seq[Double]] = None
+            /**
+              * the msLevel of this spectra
+              */
+            override val msLevel: Short = 1
           }
           )
         }))
@@ -71,6 +79,10 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val spectrum = Option(new SpectrumProperties {
             override val ions: Seq[Ion] = Seq.empty
             override val modelIons: Option[Seq[Double]] = None
+            /**
+              * the msLevel of this spectra
+              */
+            override val msLevel: Short = 1
           })
           override val retentionTimeInSeconds: Double = 200
           override val retentionIndex: Double = retentionTimeInSeconds
@@ -100,7 +112,10 @@ class RetentionIndexAnnotationTest extends WordSpec {
           override val spectrum = Option(new SpectrumProperties {
             override val ions: Seq[Ion] = Seq.empty
             override val modelIons: Option[Seq[Double]] = None
-
+            /**
+              * the msLevel of this spectra
+              */
+            override val msLevel: Short = 1
           })
         }))
 

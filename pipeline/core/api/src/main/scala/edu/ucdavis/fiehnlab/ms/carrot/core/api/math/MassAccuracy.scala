@@ -17,10 +17,16 @@ object MassAccuracy extends LazyLogging {
     * @return
     */
   def findClosestIon(spectra: Feature, targetMass: Double): Option[Ion] = {
-    logger.trace(s"outdated method, refactor! ${spectra.scanNumber} and looking for ${targetMass}")
     spectra match {
       case x: MSSpectra if x.spectrum.isDefined =>
-        Some(x.spectrum.get.ions.minBy(p => Math.abs(p.mass - targetMass)))
+          if(x.spectrum.get.ions.isEmpty){
+            logger.warn(s"${x} has no IONS!")
+            None
+          }
+          else {
+            Some(x.spectrum.get.ions.minBy(p => Math.abs(p.mass - targetMass)))
+          }
+
       case x: Feature =>
         x.massOfDetectedFeature
     }

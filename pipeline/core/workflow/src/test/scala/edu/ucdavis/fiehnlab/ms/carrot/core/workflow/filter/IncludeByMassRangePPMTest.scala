@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import org.scalatest.WordSpec
 
 /**
@@ -29,6 +30,10 @@ class IncludeByMassRangePPMTest extends WordSpec {
           * is this a retention index correction standard
           */
         override val isRetentionIndexStandard: Boolean = false
+        /**
+          * associated spectrum propties if applicable
+          */
+        override val spectrum: Option[SpectrumProperties] = None
       },5)
       assert(filter.include(testAccurateMassSpectraWith4Ions2))
     }
@@ -51,6 +56,8 @@ class IncludeByMassRangePPMTest extends WordSpec {
           * is this a retention index correction standard
           */
         override val isRetentionIndexStandard: Boolean = false
+
+        override val spectrum: Option[SpectrumProperties] = None
       },5)
       assert(!filter.include(testAccurateMassSpectraWith4Ions2))
     }

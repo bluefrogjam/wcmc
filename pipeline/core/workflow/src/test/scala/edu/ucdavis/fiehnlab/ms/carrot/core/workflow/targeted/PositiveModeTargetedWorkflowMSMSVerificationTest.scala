@@ -19,6 +19,109 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
+
+@RunWith(classOf[SpringJUnit4ClassRunner])
+@SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@ActiveProfiles(Array("dynamic-library", "backend-mona", "quantify-by-height"))
+class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends WordSpec with LazyLogging {
+
+  @Autowired
+  val resourceLoader: DelegatingResourceLoader = null
+
+  @Autowired
+  val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
+
+  @Autowired
+  val properties: WorkflowProperties = null
+
+  @Autowired
+  val listener: TestWorkflowEventListener = null
+
+  @Autowired
+  val loader: ResourceLoaderSampleLoader = null
+
+  @Autowired
+  val targetLibrary: LibraryAccess[Target] = null
+
+  @Autowired
+  val acquisitionLoader: AcquisitionLoader = null
+
+  @Autowired
+  val monaSpectrumRestClient: MonaSpectrumRestClient = null
+
+  @Value("${mona.rest.server.user}")
+  val username: String = null
+
+  @Value("${mona.rest.server.password}")
+  val password: String = null
+
+  new TestContextManager(this.getClass).prepareTestInstance(this)
+
+  //sample name to test
+  val sampleNames = "B5_SA0267_P20Lipids_Pos_1FV_2416_MSMS.abf" :: "B5_SA0262_P20Lipids_Pos_1FV_2404_MSMS.abf" :: List()
+
+  "PositiveModeTargetedWorkflowMSMSVerificationTest" when {
+
+    "populate a target library" in {
+      logger.warn("building MONA library")
+      monaSpectrumRestClient.login(username, password)
+      monaSpectrumRestClient.list().foreach(p => monaSpectrumRestClient.delete(p.id))
+
+      val lib = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
+      val method = acquisitionLoader.load(loader.getSample(sampleNames.head)).get
+      val targetsToAdd = lib.load(method)
+      targetLibrary.add(targetsToAdd, method)
+
+    }
+    "ensure our targets are defined" in {
+      assert(targetLibrary.load(acquisitionLoader.load(loader.getSample(sampleNames.head)).get).nonEmpty)
+    }
+
+    "able to load our sample" in {
+      sampleNames.foreach { sampleName =>
+        assert(loader.loadSample(sampleName).isDefined)
+      }
+
+    }
+
+    s"process our samples" must {
+
+      "process our samples" in {
+        val result = workflow.process(
+          Experiment(
+            classes = ExperimentClass(
+              samples = sampleNames.map { sampleName =>
+                loader.getSample(sampleName)
+              }
+
+
+            ) :: List(), None)
+        )
+
+      }
+
+      "has a result" in {
+        assert(listener.quantifiedExperiment != null)
+      }
+
+      "result has content " in {
+        assert(listener.quantifiedExperiment.classes.nonEmpty)
+        assert(listener.quantifiedExperiment.classes.head.samples.nonEmpty)
+      }
+
+
+      "ensure we have targets defined" in {
+        assert(listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.nonEmpty)
+      }
+
+      "validate the generation of new target" in {
+
+      }
+    }
+
+  }
+}
+
 /**
   * This test is a case to ensure that our value is in the exspected range and this annotation
   * won't change based on configured parameters in later iterations
@@ -27,7 +130,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("dynamic-library", "backend-mona","quantify-by-height"))
+@ActiveProfiles(Array("dynamic-library", "backend-mona", "quantify-by-height"))
 class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -116,7 +219,7 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
         val count = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.count(_.isInstanceOf[GapFilledTarget[Double]])
         logger.info(s"replaced value count: ${count}")
 
-        count shouldBe (0)
+        count shouldBe (256)
       }
       "validate the result" in {
 
@@ -140,7 +243,7 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("dynamic-library","backend-txt","quantify-by-height"))
+@ActiveProfiles(Array("dynamic-library", "backend-txt", "quantify-by-height"))
 class PositiveModeTargetedWorkflowMSMSVerificationTest extends WordSpec with LazyLogging {
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
@@ -203,9 +306,13 @@ class PositiveModeTargetedWorkflowMSMSVerificationTest extends WordSpec with Laz
 
       "validate the amount of replaced value" in {
         val count = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.count(_.isInstanceOf[GapFilledTarget[Double]])
-        logger.info(s"replaced value count: ${count}")
+        val nonReplacedCount = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.count(!_.isInstanceOf[GapFilledTarget[Double]])
 
-        count shouldBe 0
+        logger.info(s"replaced value count: ${count}")
+        logger.info(s"none replaced value count: ${nonReplacedCount}")
+
+
+        count shouldBe 256
       }
       "validate the result" in {
 

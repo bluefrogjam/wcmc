@@ -110,7 +110,10 @@ class FilteredProcessTest extends WordSpec {
         * all the defined ions for this spectra
         */
       override val ions: Seq[Ion] = Ion(100, 100) :: List()
-
+      /**
+        * the msLevel of this spectra
+        */
+      override val msLevel: Short = 1
     })
 
   }

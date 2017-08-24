@@ -5,6 +5,7 @@ import java.util
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{IonMode, Target, Unknown}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
@@ -66,6 +67,9 @@ class MongoLibraryAccess @Autowired()(libraryRepository: ILibraryRepository, lib
             * is this a retention index correction standard
             */
           override val isRetentionIndexStandard: Boolean = t.isRetentionIndexStandard
+
+          override val spectrum: Option[SpectrumProperties] = None
+
         }
       }
     }

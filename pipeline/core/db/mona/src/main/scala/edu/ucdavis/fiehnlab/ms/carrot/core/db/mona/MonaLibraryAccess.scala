@@ -156,7 +156,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         score = null,
         unit = null,
         url = null,
-        value = if (t.spectrum.isDefined) "MS2" else "MS1"
+        value = if (t.spectrum.isDefined) s"MS${t.spectrum.get.msLevel}" else "MS1"
       )
 
 
@@ -228,7 +228,15 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     val isRetentionIndexStandard: Option[MetaData] = x.metaData.find(p => p.name == "riStandard" && p.category == "carrot")
     val requiredForCorrection: Option[MetaData] = x.metaData.find(p => p.name == "requiredForCorrection" && p.category == "carrot")
     val confirmed: Option[MetaData] = x.metaData.find(p => p.name == "confirmed" && p.category == "carrot")
-    val ionMode = x.metaData.find(p => p.name == "ionization mode" && p.category == "carrot")
+    val ionMode = x.metaData.find(p => p.name == "ionization mode" && p.category == "none")
+    val msObservedLevel = x.metaData.find(p => p.name == "ms level" && p.category == "none").get.value.toString match {
+      case "MS1" => 1
+      case "MS2" => 2
+      case "MS3" => 3
+      case "MS4" => 4
+
+    }
+
     val spectrum = x.spectrum
 
     val spectrumProperties = new SpectrumProperties {
@@ -246,6 +254,10 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
           Ion(values(0).toDouble, values(1).toFloat)
 
       }.filter(_.intensity > 0).toList
+      /**
+        * the msLevel of this spectra
+        */
+      override val msLevel: Short = msObservedLevel.toShort
     }
 
     /**

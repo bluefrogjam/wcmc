@@ -5,6 +5,7 @@ import java.io._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 
 import scala.io.Source
 
@@ -71,6 +72,10 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
                 * is this a confirmed target
                 */
               override val confirmed: Boolean = true
+              /**
+                * associated spectrum propties if applicable
+                */
+              override val spectrum: Option[SpectrumProperties] = None
             }
           }
           else if (temp.length == 2) {
@@ -82,6 +87,8 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override val requiredForCorrection: Boolean = false
               override val isRetentionIndexStandard: Boolean = false
               override val confirmed: Boolean = true
+              override val spectrum: Option[SpectrumProperties] = None
+
             }
           }
           else if (temp.length == 4) {
@@ -93,6 +100,8 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override val requiredForCorrection: Boolean = false
               override val isRetentionIndexStandard: Boolean = temp(3).toBoolean
               override val confirmed: Boolean = true
+              override val spectrum: Option[SpectrumProperties] = None
+
             }
           }
           else if (temp.length == 5) {
@@ -104,6 +113,8 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override val requiredForCorrection: Boolean = false
               override val isRetentionIndexStandard: Boolean = temp(4).toBoolean
               override val confirmed: Boolean = true
+              override val spectrum: Option[SpectrumProperties] = None
+
             }
           }
 
