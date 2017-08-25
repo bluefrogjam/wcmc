@@ -9,12 +9,14 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSp
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.TargetGenerationNotSupportedException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
+
+import scala.collection.mutable
 
 /**
   * provides easy access to the MoNA database to query for targets and add new targets
@@ -56,6 +58,100 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     */
   override def load(acquistionMethod: AcquisitionMethod): Iterable[Target] = monaSpectrumRestClient.list(query = if (query(acquistionMethod) != "") Option(query(acquistionMethod)) else None).map { x => generateTarget(x) }
 
+  def generateAcquisitonInfo(data: Array[MetaData], acquistionMethod: AcquisitionMethod): Array[MetaData] = {
+
+    val buffer: mutable.Buffer[MetaData] = data.toBuffer
+
+    acquistionMethod.matrix match {
+      case Some(matrix) =>
+        matrix.organ match {
+          case Some(organ) =>
+            buffer +=
+              MetaData(
+                category = "matrix",
+                computed = false,
+                hidden = false,
+                name = "organ",
+                score = null,
+                unit = null,
+                url = null,
+                value = organ
+              )
+
+          case None => None
+
+        }
+        matrix.species match {
+          case Some(species) =>
+            buffer +=
+              MetaData(
+                category = "matrix",
+                computed = false,
+                hidden = false,
+                name = "species",
+                score = null,
+                unit = null,
+                url = null,
+                value = species
+              )
+          case None => None
+        }
+      case None => None
+    }
+
+
+    acquistionMethod.chromatographicMethod match {
+      case None =>
+      case Some(method) =>
+        method.column match {
+          case Some(column) =>
+            buffer +=
+              MetaData(
+                category = "none",
+                computed = false,
+                hidden = false,
+                name = "column",
+                score = null,
+                unit = null,
+                url = null,
+                value = column
+              )
+          case None => None
+
+        }
+        method.instrument match {
+          case Some(instrument) =>
+            buffer +=
+              MetaData(
+                category = "none",
+                computed = false,
+                hidden = false,
+                name = "instrument",
+                score = null,
+                unit = null,
+                url = null,
+                value = instrument
+              )
+          case None => None
+
+        }
+
+        buffer +=
+          MetaData(
+            category = "none",
+            computed = false,
+            hidden = false,
+            name = "method",
+            score = null,
+            unit = null,
+            url = null,
+            value = method.name
+          )
+    }
+
+    buffer.toArray
+  }
+
   /**
     * converts the given target to a valid mona spectrum for uploads
     *
@@ -74,6 +170,36 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       score = null
     )
 
+    val metaData: Array[MetaData] = generateAcquisitonInfo(generateDefaultMetaData(t), acquistionMethod)
+
+    //attach the acquisition method metadata now
+    Some(
+      Spectrum(
+        compound = Array(compound),
+        id = null,
+        dateCreated = new Date(),
+        lastUpdated = new Date(),
+        metaData = metaData,
+        annotations = Array(),
+        score = null,
+        spectrum = if (t.spectrum.isDefined) {
+          t.spectrum.get.spectraString
+        }
+        else {
+          logger.warn(s"has no spectra associated, using pre cursor mass as simulated spectra: ${t}")
+          s"${t.precursorMass.get}:100"
+        },
+        splash = null,
+        submitter = associateWithSubmitter(),
+        tags = Array(Tags(ruleBased = false, "carrot")),
+        authors = Array(),
+        library = associateWithLibrary()
+      )
+    )
+
+  }
+
+  private def generateDefaultMetaData(t: Target) = {
     val metaData = Array(
       MetaData(
         category = "none",
@@ -86,7 +212,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         value = t.retentionTimeInSeconds
       ),
       MetaData(
-        category = "carrot",
+        category = "none",
         computed = false,
         hidden = false,
         name = "retention index",
@@ -161,32 +287,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
 
     )
-
-    //attach the acquisition method metadata now
-    Some(
-      Spectrum(
-        compound = Array(compound),
-        id = null,
-        dateCreated = new Date(),
-        lastUpdated = new Date(),
-        metaData = metaData,
-        annotations = Array(),
-        score = null,
-        spectrum = if (t.spectrum.isDefined) {
-          t.spectrum.get.spectraString
-        }
-        else {
-          logger.warn(s"has no spectra associated, using pre cursor mass as simulated spectra: ${t}")
-          s"${t.precursorMass.get}:100"
-        },
-        splash = null,
-        submitter = associateWithSubmitter(),
-        tags = Array(Tags(ruleBased = false, "carrot")),
-        authors = Array(),
-        library = associateWithLibrary()
-      )
-    )
-
+    metaData
   }
 
   /**
@@ -222,7 +323,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     val inchi = compound.inchiKey
 
     val retentionTime: Option[MetaData] = x.metaData.find(p => p.name == "retention time" && p.category == "none")
-    val retentionIndex: Option[MetaData] = x.metaData.find(p => p.name == "retention index" && p.category == "carrot")
+    val retentionIndex: Option[MetaData] = x.metaData.find(p => p.name == "retention index" && p.category == "none")
 
     val precursorIon: Option[MetaData] = x.metaData.find(p => p.name == "precursor m/z" && p.category == "none")
     val isRetentionIndexStandard: Option[MetaData] = x.metaData.find(p => p.name == "riStandard" && p.category == "carrot")

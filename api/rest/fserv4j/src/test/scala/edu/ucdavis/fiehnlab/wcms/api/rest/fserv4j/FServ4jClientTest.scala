@@ -3,16 +3,15 @@ package edu.ucdavis.fiehnlab.wcms.api.rest.fserv4j
 import java.io.{File, FileWriter}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
+import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.server.fserv.FServ
 import org.junit.runner.RunWith
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
-import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.web.client.RestTemplate
@@ -133,9 +132,6 @@ class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfter
 @Configuration
 @ComponentScan
 class FServ4jClientConfiguration {
-
-  @Bean
-  def restTemplate: RestTemplate = new RestTemplate()
 
   @Bean
   def resourceLoader: LocalLoader = new RecursiveDirectoryResourceLoader(new File("target/test2"))

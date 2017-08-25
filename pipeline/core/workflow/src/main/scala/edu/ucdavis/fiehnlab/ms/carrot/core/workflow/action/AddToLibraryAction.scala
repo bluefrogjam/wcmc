@@ -37,7 +37,7 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
   @Value("${carrot.msms.generate.library.similarity.min:0.7}")
   val minimumSimilarity: Double = 0.7
 
-  @Value("${carrot.msms.generate.library.retentionIndex.window:1}")
+  @Value("${carrot.msms.generate.library.retentionIndex.window:6}")
   val retentionIndexWindow: Double = 1
 
   @Value("${carrot.msms.generate.library.accurateMass.window:5}")

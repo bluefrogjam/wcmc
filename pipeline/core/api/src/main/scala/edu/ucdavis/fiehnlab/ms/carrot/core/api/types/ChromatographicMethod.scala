@@ -24,7 +24,7 @@ class Matrix(
               val treatments: Option[Seq[Treatment]] = None
             )
 
-class AcquisitionMethod(chromatographicMethod: Option[ChromatographicMethod], matrix: Option[Matrix])
+class AcquisitionMethod(val chromatographicMethod: Option[ChromatographicMethod], val matrix: Option[Matrix])
 
 /**
   * associated treatment

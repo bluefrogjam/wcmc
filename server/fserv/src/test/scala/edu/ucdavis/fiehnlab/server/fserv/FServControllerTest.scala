@@ -54,7 +54,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
         result.getStatusCode should be(HttpStatus.OK)
 
-	      result.getBody.get("TotalBytesRead").toString.toInt should be(13)
+	      result.getBody.get("TotalBytesRead").toString.toInt should be(9)
 
         //ensure the file was created
         new File(s"${directory}/test.txt").exists() should be(true)
@@ -76,7 +76,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
         result.getStatusCode should be(HttpStatus.OK)
 
-	      result.getBody.get("TotalBytesRead").toString.toInt should be(13)
+	      result.getBody.get("TotalBytesRead").toString.toInt should be(9)
 
         //ensure the file was created
         new File(s"${directory}/YoMama.txt").exists() should be(true)

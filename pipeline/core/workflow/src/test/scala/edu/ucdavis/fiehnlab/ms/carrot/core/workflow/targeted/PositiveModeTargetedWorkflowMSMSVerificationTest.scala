@@ -6,9 +6,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSp
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.acquisition.AcquisitionLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.junit.runner.RunWith
@@ -16,9 +17,32 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.{Bean, Configuration, Primary}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
+@Configuration
+class MethodConfig{
+
+  val method: AcquisitionMethod = new AcquisitionMethod(
+    Some(new ChromatographicMethod("test", Some("agilent"), None, None)),
+    Some(new Matrix(Some("test"), Some("test-organ"), None))
+  )
+
+  @Bean
+  @Primary
+  def acquistionLoader:AcquisitionLoader = new AcquisitionLoader {
+    /**
+      * loads the related acquition method for the specified sample
+      * whihc should provide you with all relevant metadata
+      *
+      * @param sample
+      * @return
+      */
+    override def load(sample: Sample): Option[AcquisitionMethod] = Option(method)
+  }
+
+}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
@@ -116,7 +140,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
 
       "validate the generation of new target" in {
         val method = acquisitionLoader.load(loader.getSample(sampleNames.head)).get
-        assert(targetLibrary.load(method).size == 1232)
+        assert(targetLibrary.load(method).size == 1203)
       }
     }
 

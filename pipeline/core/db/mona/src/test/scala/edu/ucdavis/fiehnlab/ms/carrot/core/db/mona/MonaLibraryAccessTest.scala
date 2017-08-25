@@ -156,7 +156,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       result.get.compound.head.names.length shouldBe 1
 
-      result.get.compound.head.names.head.name shouldBe s"unknown_${100.0}_${224.0837}"
+      result.get.compound.head.names.head.name shouldBe s"unknown_100.0000_224.0837"
 
       result.get.compound.head.inchiKey shouldBe "UDOOPSJCRMKSGL-ZHACJKMWSA-N"
 
