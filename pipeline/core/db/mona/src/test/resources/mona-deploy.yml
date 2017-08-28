@@ -123,7 +123,7 @@ services:
 
   #provides us with the mona similarity service
   similarity:
-    image: eros.fiehnlab.ucdavis.edu/mona-similarity
+    image: eros.fiehnlab.ucdavis.edu/mona-similarity:latest
 
     depends_on:
       - proxy
