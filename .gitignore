@@ -20,14 +20,9 @@ tmp/
 
 #data files
 **/*.abf
-<<<<<<< HEAD
 **/*.d/
 **/*.mzXML
 **/*.mzML
 **/*.mzxml
 **/*.mzml
-=======
-**/*.d
-**/*.[mMzZX?x?MmLl]
->>>>>>> d3eb244a1bfdf4a459bd8f234336ab07af3a5c47
 
