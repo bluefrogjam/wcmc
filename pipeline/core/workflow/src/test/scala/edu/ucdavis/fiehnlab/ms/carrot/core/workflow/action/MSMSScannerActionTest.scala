@@ -37,9 +37,6 @@ class MSMSScannerActionTest extends WordSpec with Matchers with LazyLogging {
 	@Autowired
 	val workflow: Workflow[Double] = null
 
-//	@Autowired
-//	val listener: MyWorkflowEventListener = null
-
 	@Autowired
 	var msmsScannerAction: MSMSScannerAction = null
 

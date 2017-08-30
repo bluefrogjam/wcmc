@@ -73,7 +73,7 @@ class MyConfiguration extends LazyLogging {
   def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
 
 	@Bean
-	def spectrumMinimizer: SpectrumMinimizer = new SpectrumMinimizer()
+	def spectrumMinimizer: Option[SpectrumMinimizer] = Some(new SpectrumMinimizer())
 
 	@Bean
 	def zeroReplacementProperties: ZeroReplacementProperties = {

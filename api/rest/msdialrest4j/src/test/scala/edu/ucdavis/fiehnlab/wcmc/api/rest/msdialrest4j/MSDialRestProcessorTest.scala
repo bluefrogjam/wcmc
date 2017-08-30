@@ -78,5 +78,5 @@ class MSDialRestProcessorConfig {
 	def msdialProcessor: MSDialRestProcessor = new MSDialRestProcessor()
 
 	@Bean
-	def minimizer: SpectrumMinimizer = new SpectrumMinimizer()
+	def minimizer: Option[SpectrumMinimizer] = Some(new SpectrumMinimizer())
 }

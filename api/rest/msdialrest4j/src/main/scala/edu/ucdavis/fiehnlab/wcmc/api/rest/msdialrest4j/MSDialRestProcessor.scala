@@ -29,7 +29,7 @@ class MSDialRestProcessor extends LazyLogging {
   val restTemplate: RestOperations = null
 
 	@Autowired
-	val minimizer: SpectrumMinimizer = null
+	val minimizer: Option[SpectrumMinimizer] = null
 
   protected def url = s"http://${host}:${port}"
 
@@ -142,7 +142,11 @@ class MSDialRestProcessor extends LazyLogging {
         out.close()
 
 	      //minimize and return
-	      minimizer.minimize(file)
+	      var miniFile = file
+	      if(minimizer.isDefined) {
+		      miniFile = minimizer.get.minimize(file)
+	      }
+	      miniFile
       }
       else {
         throw new MSDialException(result)

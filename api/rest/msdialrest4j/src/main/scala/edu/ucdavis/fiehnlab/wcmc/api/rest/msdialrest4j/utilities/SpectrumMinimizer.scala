@@ -3,6 +3,8 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.utilities
 import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
 import scala.io.Source
@@ -11,15 +13,20 @@ import scala.io.Source
 	* Created by diego on 7/28/2017.
 	*/
 @Component
+@ConfigurationProperties(prefix = "spectrum.minimizer")
 class SpectrumMinimizer extends LazyLogging {
 	def minimize(file: File): File = {
 		val outFile = new File(s"${file.getAbsolutePath}.fixed")
 		val outStream: FileOutputStream = new FileOutputStream(outFile)
 
+		@Value("${basePeakRatio:0.001}")
+		val basePeakRatio: Double = 0.001
+
 		var linemax: Int = 0
 		var maxSpec: Int = 0
-
 		var headers: Array[String] = null
+
+		logger.debug(s"opening file ${file.getName} for spectrum filtering (threshold: ${basePeakRatio} * basePeak)...")
 		Source.fromFile(file).getLines().foreach { line =>
 			if (line.startsWith("PeakID")) {
 				headers = line.toLowerCase().split("\t")
@@ -39,7 +46,7 @@ class SpectrumMinimizer extends LazyLogging {
 							(pair(0).toDouble, pair(1).toDouble)
 					}
 
-				val threshold = basePeakInt * 0.001
+				val threshold = basePeakInt * basePeakRatio
 
 				outStream.write(dataMap("peakid").getBytes())
 				outStream.write('\t')
@@ -104,9 +111,10 @@ class SpectrumMinimizer extends LazyLogging {
 
 			}
 		}
-
 		outStream.flush()
 		outStream.close()
+
+		logger.debug(s"finished filtering of ${file.getName}.")
 
 		outFile
 	}
