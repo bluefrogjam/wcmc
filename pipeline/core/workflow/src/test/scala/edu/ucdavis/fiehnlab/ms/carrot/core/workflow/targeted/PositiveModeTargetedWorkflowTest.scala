@@ -33,6 +33,12 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
   @Autowired
   val listener: TestWorkflowEventListener = null
 
+  @Autowired
+  val reader:ExperimentTXTReader = null
+
+  @Autowired
+  val writer:Writer[Sample] = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   /**
@@ -60,7 +66,7 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
           workflow.eventListeners should not be empty
         }
 
-        val result = workflow.process(experimentDefinition)
+        val result = workflow.process(experimentDefinition,reader,writer)
 
         "result is not null" in {
           result should not be null

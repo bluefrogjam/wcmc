@@ -51,6 +51,6 @@ class DelegatingAcquisitionLoader extends AcquisitionLoader {
       }
     }
 
-    Some(new AcquisitionMethod(None, None))
+    Some(new AcquisitionMethod(None))
   }
 }

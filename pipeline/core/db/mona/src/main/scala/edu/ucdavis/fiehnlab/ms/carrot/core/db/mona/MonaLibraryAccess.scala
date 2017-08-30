@@ -62,44 +62,6 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
     val buffer: mutable.Buffer[MetaData] = data.toBuffer
 
-    acquistionMethod.matrix match {
-      case Some(matrix) =>
-        matrix.organ match {
-          case Some(organ) =>
-            buffer +=
-              MetaData(
-                category = "matrix",
-                computed = false,
-                hidden = false,
-                name = "organ",
-                score = null,
-                unit = null,
-                url = null,
-                value = organ
-              )
-
-          case None => None
-
-        }
-        matrix.species match {
-          case Some(species) =>
-            buffer +=
-              MetaData(
-                category = "matrix",
-                computed = false,
-                hidden = false,
-                name = "species",
-                score = null,
-                unit = null,
-                url = null,
-                value = species
-              )
-          case None => None
-        }
-      case None => None
-    }
-
-
     acquistionMethod.chromatographicMethod match {
       case None =>
       case Some(method) =>

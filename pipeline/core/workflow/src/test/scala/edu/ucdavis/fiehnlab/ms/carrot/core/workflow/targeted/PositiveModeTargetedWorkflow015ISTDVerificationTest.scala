@@ -63,7 +63,7 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
         val result = workflow.process(
           Experiment(
             classes = ExperimentClass(
-	            samples = loader.getSample(sampleName) :: List()
+	            samples = loader.getSample(sampleName) :: List(),None
             ) :: List(), None)
         )
 

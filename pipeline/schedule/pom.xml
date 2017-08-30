@@ -2,23 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <parent>
-	    <groupId>edu.ucdavis.fiehnlab</groupId>
-	    <artifactId>wcmc</artifactId>
-	    <version>1.0-SNAPSHOT</version>
+        <artifactId>pipeline</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
+        <version>1.0.16-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
-    <artifactId>pipeline</artifactId>
-    <version>1.0.16-SNAPSHOT</version>
+    <artifactId>schedule</artifactId>
     <packaging>pom</packaging>
-
     <modules>
-        <module>core</module>
-        <module>apps</module>
-        <module>schedule</module>
+        <module>api</module>
+        <module>server</module>
+
     </modules>
+
 
 </project>

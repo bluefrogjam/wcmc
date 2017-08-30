@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
 /**
   * a postive mode based LCMS target workflow
   */
-class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowProperties, writer: Writer[Sample], reader: Reader[Experiment]) extends Workflow[T](properties, writer, reader) {
+class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowProperties, writer: Writer[Sample], reader: Reader[Experiment]) extends Workflow[T](properties) {
 
   @Autowired
   val lcmsLCMSProperties: LCMSProperties = null

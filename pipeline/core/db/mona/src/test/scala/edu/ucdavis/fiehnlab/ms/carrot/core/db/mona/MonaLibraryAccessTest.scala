@@ -146,7 +146,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "generateTarget" in {
 
-      val result = library.generateSpectrum(testTarget,new AcquisitionMethod(None,None))
+      val result = library.generateSpectrum(testTarget,new AcquisitionMethod(None))
 
       result.isDefined shouldBe true
 
@@ -166,7 +166,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       monaSpectrumRestClient.login(username,password)
       monaSpectrumRestClient.list().foreach(s => monaSpectrumRestClient.delete(s.id))
 
-      val acquisitionMethod:AcquisitionMethod = new AcquisitionMethod(None,None)
+      val acquisitionMethod:AcquisitionMethod = new AcquisitionMethod(None)
       library.add(testTarget,acquisitionMethod)
         library.load(acquisitionMethod).size shouldBe 1
 

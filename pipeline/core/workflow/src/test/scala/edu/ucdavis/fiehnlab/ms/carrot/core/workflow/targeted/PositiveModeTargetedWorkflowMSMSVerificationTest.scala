@@ -25,8 +25,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 class MethodConfig{
 
   val method: AcquisitionMethod = new AcquisitionMethod(
-    Some(new ChromatographicMethod("test", Some("agilent"), None, None)),
-    Some(new Matrix(Some("test"), Some("test-organ"), None))
+    Some(new ChromatographicMethod("test", Some("agilent"), None, None))
   )
 
   @Bean
@@ -116,7 +115,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
             classes = ExperimentClass(
               samples = sampleNames.map { sampleName =>
                 loader.getSample(sampleName)
-              }
+              },None
 
 
             ) :: List(), None)
@@ -220,7 +219,7 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
         val result = workflow.process(
           Experiment(
             classes = ExperimentClass(
-              samples = loader.getSample(sampleName) :: List()
+              samples = loader.getSample(sampleName) :: List(), None
             ) :: List(), None)
         )
 

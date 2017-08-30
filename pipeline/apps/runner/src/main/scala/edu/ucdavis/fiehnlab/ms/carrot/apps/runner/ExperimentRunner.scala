@@ -4,6 +4,8 @@ import java.io.{File, FileInputStream, FileNotFoundException, FileOutputStream}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.ExperimentTXTReader
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
 import org.apache.commons.io.IOUtils
@@ -30,6 +32,9 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
   @Autowired
   val experimentTXTReader: ExperimentTXTReader = null
 
+  @Autowired
+  val writer:Writer[Sample] = null
+
   override def run(args: String*): Unit = {
     if (args.length < 1) {
       System.exit(1)
@@ -54,7 +59,7 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
 
     val outFile: FileOutputStream = new FileOutputStream(resultFile)
 
-    val results = workflow.process(experimentTXTReader.read(new FileInputStream(expFile)))
+    val results = workflow.process(experimentTXTReader.read(new FileInputStream(expFile)),writer)
     IOUtils.copy(results, outFile)
 
     outFile.flush()

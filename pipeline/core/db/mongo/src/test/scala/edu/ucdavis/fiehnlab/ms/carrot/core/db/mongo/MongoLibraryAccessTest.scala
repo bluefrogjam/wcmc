@@ -26,7 +26,7 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
   @Autowired
   val libraryRepository: ILibraryRepository = null
 
-  val acquistionMethod:AcquisitionMethod = new AcquisitionMethod(None,None)
+  val acquistionMethod:AcquisitionMethod = new AcquisitionMethod(None)
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

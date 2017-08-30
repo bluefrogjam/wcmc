@@ -5,12 +5,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode
 /**
   * Created by wohlgemuth on 8/15/17.
   */
-class ChromatographicMethod(
-                             val name: String,
-                             val instrument: Option[String],
-                             val column: Option[String],
-                             val ionMode: Option[IonMode]
-                           )
+case class ChromatographicMethod(
+                                  name: String,
+                                  instrument: Option[String],
+                                  column: Option[String],
+                                  ionMode: Option[IonMode]
+                                )
 
 /**
   * defined matrix of an experimental sample
@@ -18,13 +18,14 @@ class ChromatographicMethod(
   * @param species
   * @param organ
   */
-class Matrix(
-              val species: Option[String],
-              val organ: Option[String],
-              val treatments: Option[Seq[Treatment]] = None
+case class Matrix(
+               identifier: Option[String],
+               species: Option[String],
+               organ: Option[String],
+               treatments: Option[Seq[Treatment]] = None
             )
 
-class AcquisitionMethod(val chromatographicMethod: Option[ChromatographicMethod], val matrix: Option[Matrix])
+case class AcquisitionMethod(chromatographicMethod: Option[ChromatographicMethod])
 
 /**
   * associated treatment

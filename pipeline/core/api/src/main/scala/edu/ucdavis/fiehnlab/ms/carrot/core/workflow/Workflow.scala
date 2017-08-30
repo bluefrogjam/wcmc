@@ -18,7 +18,7 @@ import scala.collection.JavaConverters._
 /**
   * Implementations of this class, will provide us with detailed workflows how to process and annotate data, depending on platform, etc
   */
-abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sample], reader: Reader[Experiment]) extends ItemProcessor[InputStream, InputStream] with LazyLogging {
+abstract class Workflow[T](val properties: WorkflowProperties) extends ItemProcessor[Experiment, Experiment] with LazyLogging {
 
   @Autowired(required = false)
   val postActions: java.util.Collection[PostAction] = new util.ArrayList()
@@ -108,7 +108,8 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
     postActions.asScala.foreach { x =>
 
       logger.info(s"running side action: ${x}")
-      x.run(sample, experimentClass, experiment) }
+      x.run(sample, experimentClass, experiment)
+    }
   }
 
   /**
@@ -165,6 +166,11 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
   /**
     * assembles a new experiment, based on the provided callback function
     *
+    * TODO
+    *
+    * final needs to be removed, so we can parallized it using a task runner
+    * at a later stage
+    *
     * @param experiment        experiment
     * @param callback          method to handle the processing
     * @param exceptionCallBack what todo in case of an exception and is an optional argument
@@ -205,7 +211,7 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
               case sample: Sample => sample
             }.seq,
 
-            name = clazz.name
+            matrix = clazz.matrix
           )
       },
       name = experiment.name
@@ -215,7 +221,7 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
   /**
     * exports the data and provides us with an input stream, where we can read the result from
     */
-  protected final def export(experiment: Experiment): InputStream = {
+  protected final def export(experiment: Experiment, writer: Writer[Sample]): InputStream = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ExportBeginEvent(experiment)))
 
     val file = File.createTempFile("carrot-target", ".txt")
@@ -243,7 +249,7 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
   /**
     * runs the whole workflow for an experiment
     */
-  final def process(inputStream: InputStream): InputStream = {
+  final def process(inputStream: InputStream, reader: Reader[Experiment], writer: Writer[Sample]): InputStream = {
 
     assert(inputStream != null)
     assert(reader != null)
@@ -251,7 +257,7 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
     val experiment: Experiment = reader.read(inputStream)
 
     try {
-      process(experiment)
+      process(experiment, writer)
     }
     finally {
       inputStream.close()
@@ -264,23 +270,37 @@ abstract class Workflow[T](val properties: WorkflowProperties, writer: Writer[Sa
     * @param experiment
     * @return
     */
-  final def process(experiment: Experiment): InputStream = {
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(experiment)))
+  final def process(experiment: Experiment, writer: Writer[Sample]): InputStream = {
 
     val result = export(
-      quantify(
-        annotation(
-          correction(
-            preprocessing(
-              experiment
-            )
+      process(experiment)
+      , writer
+    )
+
+    result
+  }
+
+  /**
+    * process an experiment and returns it as quantified data set. Other steps can than work on it
+    * directly afterwards without the involvement of writers and readers
+    *
+    * @param experiment
+    * @return
+    */
+  final def process(experiment: Experiment): Experiment = {
+    eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(experiment)))
+
+    val result = quantify(
+      annotation(
+        correction(
+          preprocessing(
+            experiment
           )
         )
       )
     )
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessFinishedEvent(experiment)))
-
     result
   }
 }
