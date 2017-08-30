@@ -17,3 +17,9 @@ buildNumber.properties
 tmp/
 **/runner/*result.txt*
 !/pipeline/core/workflow/src/test/scala/edu/ucdavis/fiehnlab/ms/carrot/core/workflow/targeted/PositiveModeTargetedWorkflowMSMSVerificationTest.scala
+
+#data files
+**/*.abf
+**/*.d
+**/*.[mMzZX?x?MmLl]
+
