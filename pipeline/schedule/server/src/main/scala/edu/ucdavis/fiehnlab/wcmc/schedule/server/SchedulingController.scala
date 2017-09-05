@@ -1,11 +1,12 @@
 package edu.ucdavis.fiehnlab.wcmc.schedule.server
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.wcmc.schedule.api.{Task, TaskScheduler}
+import edu.ucdavis.fiehnlab.wcmc.schedule.api.{AdvancedTaskScheduler, Task, TaskScheduler}
 import edu.ucdavis.fiehnlab.wcms.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Configuration, Import}
 import org.springframework.web.bind.annotation._
+
 import scala.collection.JavaConverters._
 
 /**
@@ -23,7 +24,7 @@ class SchedulingController extends LazyLogging {
     * @param task
     */
   @RequestMapping(value = Array("/submit"), method = Array(RequestMethod.POST))
-  def submit(@RequestBody task: Task): Map[String,Any] = Map("result" -> taskScheduler.submit(task))
+  def submit(@RequestBody task: Task): Map[String, Any] = Map("result" -> taskScheduler.submit(task))
 
   /**
     * the task has finished
@@ -32,7 +33,12 @@ class SchedulingController extends LazyLogging {
     * @return
     */
   @RequestMapping(path = Array("/finished/{id}"), method = Array(RequestMethod.GET))
-  def isFinished(@PathVariable("id")id: String): Map[String,Any] = Map("result" -> taskScheduler.isFinished(id))
+  def isFinished(@PathVariable("id") id: String): Map[String, Any] = taskScheduler match {
+    case scheduler: AdvancedTaskScheduler =>
+      Map("result" -> scheduler.isFinished(id))
+    case _ =>
+      Map("result" -> "not supported")
+  }
 
   /**
     * the task has failed
@@ -41,7 +47,14 @@ class SchedulingController extends LazyLogging {
     * @return
     */
   @RequestMapping(path = Array("/failed/{id}"), method = Array(RequestMethod.GET))
-  def isFailed(@PathVariable("id")id: String): Map[String,Any] = Map("result" -> taskScheduler.isFailed(id))
+  def isFailed(@PathVariable("id") id: String): Map[String, Any] =
+  taskScheduler match {
+    case scheduler: AdvancedTaskScheduler =>
+      Map("result" -> scheduler.isFailed(id))
+    case _ =>
+      Map("result" -> "not supported")
+  }
+
 
   /**
     * the task has been scheduled
@@ -50,7 +63,13 @@ class SchedulingController extends LazyLogging {
     * @return
     */
   @RequestMapping(path = Array("/scheduled/{id}"), method = Array(RequestMethod.GET))
-  def isScheduled(@PathVariable("id")id: String): Map[String,Any] = Map("result" -> taskScheduler.isScheduled(id))
+  def isScheduled(@PathVariable("id") id: String): Map[String, Any] = taskScheduler match {
+    case scheduler: AdvancedTaskScheduler =>
+      Map("result" -> scheduler.isScheduled(id))
+    case _ =>
+      Map("result" -> "not supported")
+  }
+
 
   /**
     * the task is currently running
@@ -59,7 +78,12 @@ class SchedulingController extends LazyLogging {
     * @return
     */
   @RequestMapping(path = Array("/running/{id}"), method = Array(RequestMethod.GET))
-  def isRunning(@PathVariable("id") id: String): Map[String,Any] = Map("result" -> taskScheduler.isRunning(id))
+  def isRunning(@PathVariable("id") id: String): Map[String, Any] = taskScheduler match {
+    case scheduler: AdvancedTaskScheduler =>
+      Map("result" -> scheduler.isRunning(id))
+    case _ =>
+      Map("result" -> "not supported")
+  }
 
   /**
     * returns the current queue of the scheduler
@@ -67,7 +91,14 @@ class SchedulingController extends LazyLogging {
     * @return
     */
   @RequestMapping(path = Array("/queue"), method = Array(RequestMethod.GET))
-  def queue: java.util.List[String] = taskScheduler.queue.asJava
+  def queue: java.util.List[String] =
+  taskScheduler match {
+    case scheduler: AdvancedTaskScheduler =>
+      scheduler.queue.asJava
+    case _ =>
+      List.empty[String].asJava
+  }
+
 
   /**
     * the actual used implementation of the scheduler
@@ -78,9 +109,8 @@ class SchedulingController extends LazyLogging {
 }
 
 
-
 @Configuration
 @Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
-class SchedulingControllerConfig{
+class SchedulingControllerConfig {
 
 }

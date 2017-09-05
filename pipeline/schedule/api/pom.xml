@@ -20,12 +20,19 @@
             <artifactId>api</artifactId>
             <version>1.0.16-SNAPSHOT</version>
 
-
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-feign</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
+            <artifactId>workflow</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

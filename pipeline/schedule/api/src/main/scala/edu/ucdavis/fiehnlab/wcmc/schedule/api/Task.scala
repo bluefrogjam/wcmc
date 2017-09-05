@@ -43,6 +43,14 @@ trait TaskScheduler {
     */
   def submit(task: Task): String
 
+}
+
+/**
+  * a task scheduler which offers some more functionality
+  * if you require this
+  */
+trait AdvancedTaskScheduler extends TaskScheduler{
+
   /**
     * the task has finished
     *
@@ -82,4 +90,3 @@ trait TaskScheduler {
   def queue:Seq[String]
 
 }
-

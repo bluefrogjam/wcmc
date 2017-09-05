@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.schedule.server
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.wcmc.schedule.api.{SampleToProcess, Task, TaskScheduler}
+import edu.ucdavis.fiehnlab.wcmc.schedule.api.{AdvancedTaskScheduler, SampleToProcess, Task, TaskScheduler}
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBo
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.context.annotation.{Bean, Import}
+import org.springframework.context.annotation.Bean
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
@@ -94,7 +94,7 @@ class SchedulingControllerConfigTest {
     * @return
     */
   @Bean
-  def taskScheduler: TaskScheduler = new TaskScheduler {
+  def taskScheduler: TaskScheduler = new AdvancedTaskScheduler {
     /**
       * runs this provided task
       *
