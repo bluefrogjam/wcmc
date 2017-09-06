@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.schedule.server
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.schedule.api.{AdvancedTaskScheduler, Task, TaskScheduler}
-import edu.ucdavis.fiehnlab.wcms.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Configuration, Import}
 import org.springframework.web.bind.annotation._

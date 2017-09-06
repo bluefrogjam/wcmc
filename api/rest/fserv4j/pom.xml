@@ -61,7 +61,7 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.server</groupId>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.server</groupId>
             <artifactId>fserv</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>

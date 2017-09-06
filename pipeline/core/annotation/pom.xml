@@ -14,8 +14,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core.io</groupId>
-            <artifactId>scanner</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
+            <artifactId>api</artifactId>
             <version>1.0.16-SNAPSHOT</version>
         </dependency>
     </dependencies>

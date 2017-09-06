@@ -4,7 +4,8 @@ import java.io.File
 
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.wcms.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
+import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +51,7 @@ class ResourceLoaderSampleLoaderTest extends WordSpec {
 }
 
 @Configuration
-@ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j"))
+@ComponentScan(basePackageClasses = Array(classOf[MSDialRestProcessor]))
 @Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
 class ResourceLoaderSampleLoaderTestConfiguration {
 
