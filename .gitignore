@@ -25,4 +25,5 @@ tmp/
 **/*.mzML
 **/*.mzxml
 **/*.mzml
-
+!**/msdialrest4j/src/test/resources/*.abf
+!**/msdialrest4j/src/test/resources/*.d/
