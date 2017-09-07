@@ -21,7 +21,7 @@ import scala.collection.JavaConverters._
   */
 @CrossOrigin
 @RestController
-@RequestMapping(value = Array("/rest"))
+@RequestMapping(value = Array("/rest/file"))
 class FServController extends LazyLogging {
 
   @Value("${wcms.server.fserv.directory:storage}")
