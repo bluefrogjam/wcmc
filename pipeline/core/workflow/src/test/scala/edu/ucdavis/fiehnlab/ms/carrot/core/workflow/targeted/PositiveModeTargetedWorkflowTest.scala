@@ -36,9 +36,6 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
   @Autowired
   val reader:ExperimentTXTReader = null
 
-  @Autowired
-  val writer:Writer[Sample] = null
-
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   /**
@@ -66,7 +63,7 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
           workflow.eventListeners should not be empty
         }
 
-        val result = workflow.process(experimentDefinition,reader,writer)
+        val result = workflow.process(reader.read(experimentDefinition))
 
         "result is not null" in {
           result should not be null
@@ -74,12 +71,6 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
 
         "ensure we got a quantified experiment as result" in {
           listener.quantifiedExperiment should not be null
-        }
-
-        s"content is of size ${expectedContentSize()}" in {
-          val content = Source.fromInputStream(result).getLines().toList
-
-         content.size shouldBe expectedContentSize
         }
 
         "provide validation" must {
@@ -232,6 +223,6 @@ class PositiveModeTargetedWorkflowTestConfiguration {
 
   @Bean
   def workflow(properties: WorkflowProperties, writer: Writer[Sample], experimentTXTReader: Reader[Experiment]): LCMSPositiveModeTargetWorkflow[Double] = {
-    new LCMSPositiveModeTargetWorkflow(properties, writer, experimentTXTReader)
+    new LCMSPositiveModeTargetWorkflow(properties)
   }
 }

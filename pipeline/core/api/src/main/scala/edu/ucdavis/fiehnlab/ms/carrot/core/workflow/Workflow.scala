@@ -247,40 +247,6 @@ abstract class Workflow[T](val properties: WorkflowProperties) extends ItemProce
   }
 
   /**
-    * runs the whole workflow for an experiment
-    */
-  final def process(inputStream: InputStream, reader: Reader[Experiment], writer: Writer[Sample]): InputStream = {
-
-    assert(inputStream != null)
-    assert(reader != null)
-
-    val experiment: Experiment = reader.read(inputStream)
-
-    try {
-      process(experiment, writer)
-    }
-    finally {
-      inputStream.close()
-    }
-  }
-
-  /**
-    * alternate method, to go directly from an experiment and should only used in tests, etc
-    *
-    * @param experiment
-    * @return
-    */
-  final def process(experiment: Experiment, writer: Writer[Sample]): InputStream = {
-
-    val result = export(
-      process(experiment)
-      , writer
-    )
-
-    result
-  }
-
-  /**
     * process an experiment and returns it as quantified data set. Other steps can than work on it
     * directly afterwards without the involvement of writers and readers
     *

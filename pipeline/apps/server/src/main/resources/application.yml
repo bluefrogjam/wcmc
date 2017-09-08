@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: carrot.scheduler.spring, carrot.targets.mona, carrot.target.dynamic, carrot.report.quantify.height
+  http:
+    multipart:
+      max-file-size: 2048MB
+      max-request-size: 2048MB
+
+
+mona:
+  rest:
+    server:
+      user: admin
+      password: admin
+server:
+  port: 50000

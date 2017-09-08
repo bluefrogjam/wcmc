@@ -173,7 +173,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
   * @param properties
   */
 @Component
-@Profile(Array("quantify-by-height"))
+@Profile(Array("carrot.report.quantify.height"))
 class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends QuantificationProcess[Double](libraryAccess, properties) {
 
   /**

@@ -23,7 +23,7 @@ import scala.collection.JavaConverters._
   */
 
 @SpringBootTest
-@ActiveProfiles(Array("backend-mona"))
+@ActiveProfiles(Array("carrot.targets.mona"))
 class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging{
   val testTarget = new Target {
     /**

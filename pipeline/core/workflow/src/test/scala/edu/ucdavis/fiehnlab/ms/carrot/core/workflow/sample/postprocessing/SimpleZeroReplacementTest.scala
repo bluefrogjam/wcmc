@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","quantify-by-height"))
+@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height"))
 class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers{
 
   @Autowired

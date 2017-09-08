@@ -24,7 +24,7 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","quantify-by-height"))
+@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height"))
 class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 
 

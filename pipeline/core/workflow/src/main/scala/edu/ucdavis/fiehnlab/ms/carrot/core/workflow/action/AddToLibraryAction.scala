@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
   * Created by wohlgemuth on 7/12/17.
   */
 @Component
-@Profile(Array("dynamic-library"))
+@Profile(Array("carrot.targets.dynamic"))
 class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extends PostAction with LazyLogging {
 
   @Autowired

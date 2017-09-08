@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
   * it's successful operation
   */
 @RestController
-@RequestMapping(value = Array("/rest"))
+@RequestMapping(value = Array("/rest/schedule"))
 class SchedulingController extends LazyLogging {
 
   /**

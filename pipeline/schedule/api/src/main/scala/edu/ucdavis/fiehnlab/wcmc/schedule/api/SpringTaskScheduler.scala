@@ -61,7 +61,9 @@ class SpringTaskScheduler extends TaskScheduler with LazyLogging {
     )
 
     logger.info(s"starting to process the generated experiment: ${experiment}")
-    workflow.process(experiment)
+    val result = workflow.process(experiment)
+
+    storage.store(result,task)
   }
 }
 

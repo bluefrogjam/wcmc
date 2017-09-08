@@ -25,7 +25,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles(Array("carrot.scheduler.spring", "quantify-by-height"))
+@ActiveProfiles(Array("carrot.scheduler.spring", "carrot.report.quantify.height","carrot.store.result.fserv4j"))
 class SpringTaskSchedulerTest extends WordSpec {
 
   @Autowired
@@ -75,6 +75,6 @@ class SpringTestApp {
 
   @Bean
   def workflow(properties: WorkflowProperties, writer: Writer[Sample], experimentTXTReader: Reader[Experiment]): LCMSPositiveModeTargetWorkflow[Double] = {
-    new LCMSPositiveModeTargetWorkflow(properties, writer, experimentTXTReader)
+    new LCMSPositiveModeTargetWorkflow(properties)
   }
 }

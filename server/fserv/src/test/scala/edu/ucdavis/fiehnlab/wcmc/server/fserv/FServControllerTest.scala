@@ -50,7 +50,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
         headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
         val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-        val result = template.exchange(s"http://localhost:${port}/rest/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String,_  <: Any]])
+        val result = template.exchange(s"http://localhost:${port}/rest/file/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String,_  <: Any]])
 
         result.getStatusCode should be(HttpStatus.OK)
 
@@ -72,7 +72,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
         headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
         val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-        val result = template.exchange(s"http://localhost:${port}/rest/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String,_  <: Any]])
+        val result = template.exchange(s"http://localhost:${port}/rest/file/upload", HttpMethod.POST, requestEntity, classOf[java.util.Map[String,_  <: Any]])
 
         result.getStatusCode should be(HttpStatus.OK)
 
@@ -89,16 +89,16 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
         val headers = new HttpHeaders
         headers.setContentType(MediaType.APPLICATION_JSON)
         val entity = new HttpEntity[String](headers)
-        val response = template.exchange(s"http://localhost:${port}/rest/exists/test.txt",HttpMethod.GET,entity, classOf[java.util.Map[String,Any]])
+        val response = template.exchange(s"http://localhost:${port}/rest/file/exists/test.txt",HttpMethod.GET,entity, classOf[java.util.Map[String,Any]])
         response.getStatusCode should be(HttpStatus.OK)
 
       }
       "not exists" in {
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test123.txt", classOf[Any])
+        val response = template.getForEntity(s"http://localhost:${port}/rest/file/exists/test123.txt", classOf[Any])
         response.getStatusCode should be(HttpStatus.NOT_FOUND)
       }
       "not exists a complicated file name" in {
-        val response = template.getForEntity(s"http://localhost:${port}/rest/exists/test_withUnder_and2extesnions.mzXML.gz", classOf[Any])
+        val response = template.getForEntity(s"http://localhost:${port}/rest/file/exists/test_withUnder_and2extesnions.mzXML.gz", classOf[Any])
         println(response)
         response.getStatusCode should be(HttpStatus.NOT_FOUND)
 
@@ -110,7 +110,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
         val entity = new HttpEntity[String](headers)
 
-        val response = template.exchange(s"http://localhost:${port}/rest/download/test.txt", HttpMethod.GET, entity, classOf[Array[Byte]])
+        val response = template.exchange(s"http://localhost:${port}/rest/file/download/test.txt", HttpMethod.GET, entity, classOf[Array[Byte]])
 
         response.getStatusCode should be(HttpStatus.OK)
 

@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception.RetentionIndexCorrectionException
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantificationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{LCMSProperties, Workflow, WorkflowProperties}
@@ -19,7 +20,7 @@ import scala.collection.JavaConverters._
 /**
   * a postive mode based LCMS target workflow
   */
-class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowProperties, writer: Writer[Sample], reader: Reader[Experiment]) extends Workflow[T](properties) {
+class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowProperties) extends Workflow[T](properties) {
 
   @Autowired
   val lcmsLCMSProperties: LCMSProperties = null
@@ -32,6 +33,10 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
 
   @Autowired(required = false)
   val preProcessor: java.util.List[PreProcessor] = new util.ArrayList[PreProcessor]()
+
+
+  @Autowired(required = false)
+  val postProcessor: java.util.List[PostProcessing[T]] = new util.ArrayList[PostProcessing[T]]()
 
   @Autowired
   val annotate: LCMSTargetAnnotationProcess = null
@@ -163,6 +168,21 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
     */
   override protected def postProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): AnnotatedSample = sample match {
     //TODO do nothing for now
-    case s: AnnotatedSample => s
+    case s: QuantifiedSample[T] =>
+      if (postProcessor.isEmpty) {
+        s
+      }
+      else {
+        //TODO could be done more elegant with a fold, but no time to play with it
+        val iterator = postProcessor.asScala.sortBy(_.priortiy).reverseIterator
+        var temp = iterator.next().process(s)
+
+        while (iterator.hasNext) {
+          temp = iterator.next().process(temp)
+        }
+
+        temp
+      }
+
   }
 }

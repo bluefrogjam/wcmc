@@ -47,4 +47,11 @@ class SampleTXTWriter(separator: String = "\t", noneReplacements: String = "NA")
 //        out.flush()
     }
   }
+
+  /**
+    * the writers extension
+    *
+    * @return
+    */
+  override def extension: String = "txt"
 }

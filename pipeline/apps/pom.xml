@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>runner</module>
+        <module>server</module>
     </modules>
 
 

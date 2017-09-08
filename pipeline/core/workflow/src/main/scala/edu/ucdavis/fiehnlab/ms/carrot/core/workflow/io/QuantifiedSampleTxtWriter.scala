@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
   *
   * @tparam T
   */
-class QuantifiedSampleTxtWriter[T](seperator: String = "\t") extends Writer[Sample] with LazyLogging {
+class QuantifiedSampleTxtWriter[T](seperator: String = ",") extends Writer[Sample] with LazyLogging {
 
   var lineCounter: Int = 0
 
@@ -129,4 +129,11 @@ class QuantifiedSampleTxtWriter[T](seperator: String = "\t") extends Writer[Samp
   override def writeHeader(outputStream: OutputStream) = {
     lineCounter = 0
   }
+
+  /**
+    * the writers extension
+    *
+    * @return
+    */
+  override def extension: String = "csv"
 }

@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.server.fserv
+package edu.ucdavis.fiehnlab.wcmc.server.fserv.app
 
 import java.io.File
 

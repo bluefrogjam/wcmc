@@ -30,5 +30,11 @@ abstract class Writer[T] {
     * @param outputStream
     */
   def writeFooter(outputStream: OutputStream) = {}
+
+  /**
+    * the writers extension
+    * @return
+    */
+  def extension:String
 }
 

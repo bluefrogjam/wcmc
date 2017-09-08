@@ -23,7 +23,7 @@ import scala.collection.mutable
   * Created by wohlgemuth on 8/14/17.
   */
 @Component
-@Profile(Array("backend-mona"))
+@Profile(Array("carrot.targets.mona"))
 class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
   @Value("${mona.rest.server.user}")

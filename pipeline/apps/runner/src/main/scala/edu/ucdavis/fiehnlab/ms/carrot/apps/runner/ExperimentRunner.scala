@@ -33,7 +33,7 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
   val experimentTXTReader: ExperimentTXTReader = null
 
   @Autowired
-  val writer:Writer[Sample] = null
+  val writer: Writer[Sample] = null
 
   override def run(args: String*): Unit = {
     if (args.length < 1) {
@@ -45,10 +45,10 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
     logger.info(s"trying to work with file: ${expFile.getAbsolutePath}")
     if (!expFile.exists()) {
       logger.info("trying to load file remotely")
-      if(resourceLoader.exists(args.head)) {
+      if (resourceLoader.exists(args.head)) {
         expFile = resourceLoader.loadAsFile(args.head).get
       }
-      else{
+      else {
         throw new FileNotFoundException(s"sorry the specified file was neither found locally nor in any defined loaders. Missing file name is: ${args.head}. Defined loaders in context are: ${resourceLoaders}")
       }
     }
@@ -59,8 +59,13 @@ class ExperimentRunner extends CommandLineRunner with LazyLogging {
 
     val outFile: FileOutputStream = new FileOutputStream(resultFile)
 
-    val results = workflow.process(experimentTXTReader.read(new FileInputStream(expFile)),writer)
-    IOUtils.copy(results, outFile)
+    val results = workflow.process(experimentTXTReader.read(new FileInputStream(expFile)))
+
+    results.classes.foreach { c =>
+      c.samples.foreach { s =>
+        writer.write(outFile, s)
+      }
+    }
 
     outFile.flush()
     outFile.close()

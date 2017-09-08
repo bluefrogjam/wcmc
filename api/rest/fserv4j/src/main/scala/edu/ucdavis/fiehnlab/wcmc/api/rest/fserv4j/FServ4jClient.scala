@@ -31,7 +31,7 @@ class FServ4jClient extends RemoteLoader {
   @Value("${wcms.api.rest.fserv4j.port:8080}")
   val port: Int = 80
 
-  @Value("${wcms.api.rest.fserv4j.root:rest}")
+  @Value("${wcms.api.rest.fserv4j.root:rest/file}")
   val root: String = ""
 
   /**
