@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.stereotype.Component
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -44,6 +45,7 @@ class SpringTaskSchedulerTest extends WordSpec {
 
   }
 }
+
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
@@ -77,4 +79,5 @@ class SpringTestApp {
   def workflow(properties: WorkflowProperties, writer: Writer[Sample], experimentTXTReader: Reader[Experiment]): LCMSPositiveModeTargetWorkflow[Double] = {
     new LCMSPositiveModeTargetWorkflow(properties)
   }
+
 }
