@@ -55,7 +55,6 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File, override va
       } else Iterator.empty
     }
 
-    logger.info(s"${children}")
     Seq(file) ++: children.flatMap(walkTree)
   }
 }

@@ -1,20 +1,17 @@
 package edu.ucdavis.fiehnlab.wcmc.apps.server
 
-import java.io.File
-
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, LocalLoader}
+import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccessConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{CentralWorkflowConfig, WorkflowProperties}
 import edu.ucdavis.fiehnlab.wcmc.schedule.api.SpringTaskSchedulerConfiguration
 import edu.ucdavis.fiehnlab.wcmc.schedule.server.SchedulingController
-import edu.ucdavis.fiehnlab.wcmc.server.fserv.controller.FServController
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import edu.ucdavis.fiehnlab.wcmc.fserv.controller.FServController
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
-import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.http.MediaType
 import org.springframework.security.config.annotation.web.builders.WebSecurity

@@ -243,7 +243,7 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
         val count = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.count(_.isInstanceOf[GapFilledTarget[Double]])
         logger.info(s"replaced value count: ${count}")
 
-        count shouldBe (256)
+        count shouldBe (258)
       }
       "validate the result" in {
 

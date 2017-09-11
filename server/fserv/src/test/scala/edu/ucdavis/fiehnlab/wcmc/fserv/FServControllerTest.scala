@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.server.fserv
+package edu.ucdavis.fiehnlab.wcmc.fserv
 
 import java.io.File
 import java.nio.file.{Files, Paths}
@@ -6,6 +6,7 @@ import java.nio.file.{Files, Paths}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
+import edu.ucdavis.fiehnlab.wcmc.fserv.app.FServ
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.scalatest.matchers.ShouldMatchers
@@ -14,7 +15,7 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http._
 import org.springframework.test.context.TestContextManager
@@ -27,7 +28,7 @@ import scala.io.Source
   * Created by wohlgemuth on 7/7/17.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes=Array(classOf[FServ]))
 class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers {
   @Value("${wcms.server.fserv.directory:storage}")
   val directory: String = null

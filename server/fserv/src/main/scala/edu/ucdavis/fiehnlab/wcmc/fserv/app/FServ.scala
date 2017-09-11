@@ -1,16 +1,17 @@
-package edu.ucdavis.fiehnlab.wcmc.server.fserv.app
+package edu.ucdavis.fiehnlab.wcmc.fserv.app
 
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
+import edu.ucdavis.fiehnlab.wcmc.fserv.controller.FServController
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
-import org.springframework.context.annotation.{Bean, Configuration, Import}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 import org.springframework.http.MediaType
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.{EnableWebSecurity, WebSecurityConfigurerAdapter}
@@ -38,6 +39,7 @@ class FServ extends WebMvcConfigurerAdapter{
 }
 @Configuration
 @EnableWebSecurity
+@ComponentScan(basePackageClasses= Array(classOf[FServController]))
 class FServSecurity extends WebSecurityConfigurerAdapter with LazyLogging{
 
 

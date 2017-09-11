@@ -22,7 +22,7 @@ import scala.io.Source
 
 /*
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[edu.ucdavis.fiehnlab.wcmc.server.fserv.app.FServ], classOf[FServ4jClientConfiguration]))
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[edu.ucdavis.fiehnlab.wcmc.fserv.app.FServ], classOf[FServ4jClientConfiguration]))
 class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {
 
   override protected def beforeEach(): Unit = {

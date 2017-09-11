@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.server.fserv.controller
+package edu.ucdavis.fiehnlab.wcmc.fserv.controller
 
 import java.io._
 import javax.annotation.PostConstruct
@@ -24,7 +24,7 @@ import scala.collection.JavaConverters._
 @RequestMapping(value = Array("/rest/file"))
 class FServController extends LazyLogging {
 
-  @Value("${wcms.server.fserv.directory:storage}")
+  @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null
 
   @Autowired

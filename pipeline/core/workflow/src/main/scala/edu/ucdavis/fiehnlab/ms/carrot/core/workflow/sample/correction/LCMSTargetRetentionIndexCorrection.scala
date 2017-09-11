@@ -20,27 +20,27 @@ import org.springframework.stereotype.Component
 @Component
 class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess, properties.trackChanges) with LazyLogging {
 
-  @Value("${wcms.pipeline.workflow.config.correction.peak.mass.accuracy:0.005}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.005}")
   val massAccuracySetting: Double = 0.005
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
     * and will depend on inject volume for thes e reasons
     */
-  @Value("${wcms.pipeline.workflow.config.correction.peak.intensity:10000}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:10000}")
   val minPeakIntensity: Float =10000
 
   /**
     * minimum amount of standards, which have to be defined for this method to work
     */
-  @Value("${wcms.pipeline.workflow.config.correction.regression.polynom:5}")
+  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
   var minimumDefinedStandard: Int = 5
 
   /**
     * this defines how many standards we need to find on minimum
     * for a retention index correction method to be successful
     */
-  @Value("${wcms.pipeline.workflow.config.correction.regression.polynom:5}")
+  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
   var minimumFoundStandards: Int = 16
 
   /**
@@ -52,18 +52,18 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     *
     * This setting needs to be provided in seconds
     */
-  @Value("${wcms.pipeline.workflow.config.correction.groupStandard:10}")
+  @Value("${wcmc.pipeline.workflow.config.correction.groupStandard:10}")
   var groupCloseByRetentionIndexStandardDifference: Int = 10
   /**
     * how many data points are required for the linear regression at the beginning and the end of the curve
     */
-  @Value("${wcms.pipeline.workflow.config.correction.regression.linear:2}")
+  @Value("${wcmc.pipeline.workflow.config.correction.regression.linear:2}")
   val linearSamples: Int = 2
 
   /**
     * what order is the polynomial regression
     */
-  @Value("${wcms.pipeline.workflow.config.correction.regression.polynom:5}")
+  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
   val polynomialOrder: Int = 5
 
   /**

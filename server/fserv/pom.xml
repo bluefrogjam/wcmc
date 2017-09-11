@@ -12,10 +12,6 @@
     <groupId>edu.ucdavis.fiehnlab.wcmc.server</groupId>
     <artifactId>fserv</artifactId>
 
-    <description>This is a simple REST based server to store and located files from clients and allows for an easy
-        gateway to distributed file storage
-    </description>
-
     <dependencies>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.utilities</groupId>

@@ -14,6 +14,7 @@ import scala.collection.JavaConverters._
   * and will require a bean of the type taskScheduler to ensure
   * it's successful operation
   */
+@CrossOrigin
 @RestController
 @RequestMapping(value = Array("/rest/schedule"))
 class SchedulingController extends LazyLogging {
