@@ -5,16 +5,31 @@ import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Component
 
 /**
   * writes the quantified sample as a txt file
   *
   * @tparam T
   */
-class QuantifiedSampleTxtWriter[T](seperator: String = ",") extends Writer[Sample] with LazyLogging {
+@Component
+@Profile(Array("carrot.output.writer.txt"))
+class QuantifiedSampleTxtWriter[T] extends Writer[Sample] with LazyLogging {
+
+  @Value("${carrot.output.writer.txt.separator:,}")
+  val seperator: String = ","
 
   var lineCounter: Int = 0
 
+
+  /**
+    * writes the footer, if supported
+    *
+    * @param outputStream
+    */
+  override def writeFooter(outputStream: OutputStream): Unit = super.writeFooter(outputStream)
 
   /**
     * writes the given sample to the output stream
@@ -40,6 +55,7 @@ class QuantifiedSampleTxtWriter[T](seperator: String = ",") extends Writer[Sampl
         if (lineCounter == 0) {
 
           def writeLine(header: String, value: Target => String) = {
+            logger.trace(s"writing header: ${header}")
             out.write(header)
             out.write(seperator)
 
@@ -47,6 +63,7 @@ class QuantifiedSampleTxtWriter[T](seperator: String = ",") extends Writer[Sampl
             sortedTargets.zipWithIndex.foreach { quantifiedSpectra =>
               val target = quantifiedSpectra._1
 
+              logger.trace(s"writing value: ${value(target)}")
               out.write(value(target))
 
               if (quantifiedSpectra._2 < data.quantifiedTargets.size - 1) {
@@ -60,7 +77,7 @@ class QuantifiedSampleTxtWriter[T](seperator: String = ",") extends Writer[Sampl
           }
 
 
-          writeLine("target", target => target.name.getOrElse(target.retentionIndex).toString)
+          writeLine("target", target => target.name.getOrElse(f"${target.retentionIndex}%1.2f_${target.precursorMass.getOrElse(0.0)}%1.4f").toString)
           writeLine("mass", target => f"${target.precursorMass.getOrElse(0.0)}%1.4f")
           writeLine("retention time (s)", target => f"${target.retentionIndex}%1.2f")
           writeLine("retention time (min)", target => f"${target.retentionTimeInMinutes}%1.2f")

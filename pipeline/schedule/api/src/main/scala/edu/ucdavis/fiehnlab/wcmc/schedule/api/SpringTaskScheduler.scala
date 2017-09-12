@@ -64,6 +64,8 @@ class SpringTaskScheduler extends TaskScheduler with LazyLogging {
     val result = workflow.process(experiment)
 
     storage.store(result,task)
+
+    //send mail to user that result is done
   }
 }
 
