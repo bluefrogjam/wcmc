@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" data-ng-app="app">
+    <head>
+        <title>Carrot Scheduler</title>
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="styles/bootstrap.css" />
+        <link rel="stylesheet" href="styles/font-awesome.css" />
+        <link rel="stylesheet" href="styles/handsontable.full.css">
+        <link rel="stylesheet" href="styles/theme-simple.css" />
+        <link rel="stylesheet" href="styles/main.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+
+        <base href="/">
+        <meta charset="utf-8">
+    </head>
+
+    <body>
+        <!-- Navigation -->
+        <header class="navbar navbar-default" role="navigation" data-ng-controller="NavigationController">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" ng-click="navCollapsed = !navCollapsed">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Carrot Scheduler</a>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- Main content -->
+        <div class="container" id="page-wrapper" data-ng-controller="MainController">
+            <div style="position: relative; left: 50px; white-space: nowrap; overflow: visible;">
+                <select
+                    style="width: 150px;"
+                    data-ng-repeat="col in columnSelectors"
+                    data-ng-model="selectedColumn[$index]"
+                    data-ng-change="updateColumnName($index)">
+
+                    <!-- <option data-ng-value="col">{{col}}</option> -->
+                    <option value="" selected>Select Column</option>
+                    <option disabled="disabled">────────</option>
+                    <option data-ng-repeat="option in columnOptions">{{option}}</option>
+                </select>
+            </div>
+
+            <hot-table
+                hot-id="scheduler"
+                settings="settings"
+                col-headers="true"
+                row-headers="true"
+                min-cols="4"
+                min-rows="5"
+                col-widths="150"
+                allow-html="true"
+                datarows="data">
+            </hot-table>
+            <br />
+
+            <div class="form-group">
+                <label for="taskName">Task Name</label>
+                <input type="text" class="form-control" id="taskName" placeholder="Task Name" ng-model="task.name">
+            </div>
+
+            <div class="form-group">
+                <label for="acquisitionMethod">Acquisition Method</label>
+                <select
+                    id="acquisitionMethod"
+                    class="form-control"
+                    data-ng-model="task.acquisitionMethod"
+                    ng-options="x for x in acquisitionMethodOptions">
+                </select>
+            </div>
+
+            <div ng-if="!success">
+                <button type="button" class="btn btn-primary" ng-click="submit()" ng-disabled="running">
+                    <span ng-if="running" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
+                    <span>Submit</span>
+                </button>
+            </div>
+
+            <div class="alert alert-danger" role="alert" ng-show="error">
+                <h4 class="text-danger"><i class="fa fa-exclamation-triangle"></i> Error!</h4>
+                {{error}}
+            </div>
+
+            <div class="alert alert-success" role="alert" ng-show="success">
+                <h4 class="text-success"><i class="fa fa-check-circle-o"></i> Success!</h4>
+                Your processing task was submitted successfully with task ID: {{success.result}}
+            </div>
+        </div>
+    
+
+        <!-- Javascript -->
+        <script src="scripts/angular.js"></script>
+        <script src="scripts/angular-animate.js"></script>
+        <script src="scripts/ui-bootstrap-tpls.js"></script>
+        <script src="scripts/handsontable.full.js"></script>
+        <script src="scripts/ngHandsontable.js"></script>
+        <script src="scripts/app.js"></script>
+    </body>
+</html>

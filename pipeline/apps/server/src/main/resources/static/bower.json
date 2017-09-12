@@ -1,0 +1,27 @@
+{
+    "name": "fiehnlab-theme",
+    "version": "0.0.1",
+    "authors": [
+        "Sajjan Singh Mehta <ssmehta@ucdavis.edu>"
+    ],
+    "description": "",
+
+    "dependencies": {
+        "angular": "1.5.8",
+        "angular-animate": "1.5.8",
+        "angular-touch": "1.5.8",
+        "angular-bootstrap": "2.4.0",
+        "ngHandsontable": "0.13.0",
+        "handsontable": "^0.28.4",
+        
+        "bootstrap": "3.3.7",
+        "jquery": "3.1.1",
+        "fontawesome": "4.7.0"
+    },
+
+    "ignore": [
+        ".DS_Store",
+        ".git",
+        ".gitignore"
+    ]
+}
