@@ -74,7 +74,7 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
             headers[idx] = $scope.selectedColumn[idx];
 
             instance.updateSettings({colHeaders: headers});
-        }
+        };
 
 
         $scope.submit = function() {
@@ -114,6 +114,7 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
             var task = {
                 samples: [],
                 name: $scope.task.email,
+                email: $scope.task.email,
                 acquisitionMethod: {chromatographicMethod: {name: $scope.task.acquisitionMethod}}
             };
 
