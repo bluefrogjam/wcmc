@@ -166,7 +166,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       monaSpectrumRestClient.login(username,password)
       monaSpectrumRestClient.list().foreach(s => monaSpectrumRestClient.delete(s.id))
 
-      val acquisitionMethod:AcquisitionMethod = new AcquisitionMethod(None)
+      val acquisitionMethod:AcquisitionMethod = AcquisitionMethod(None)
       library.add(testTarget,acquisitionMethod)
         library.load(acquisitionMethod).size shouldBe 1
 
