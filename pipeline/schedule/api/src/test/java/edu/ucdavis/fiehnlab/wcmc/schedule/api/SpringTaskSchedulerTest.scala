@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.stereotype.Component
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -38,7 +37,7 @@ class SpringTaskSchedulerTest extends WordSpec {
 
     "submit" in {
 
-      val task = Task("test", AcquisitionMethod(None), Seq(SampleToProcess("B5_P20Lipids_Pos_QC000.abf", None)))
+      val task = Task("test","test@test.de", AcquisitionMethod(None), Seq(SampleToProcess("B5_P20Lipids_Pos_QC000.abf","None","None","None", null)))
 
       scheduler.submit(task)
     }

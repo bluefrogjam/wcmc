@@ -47,7 +47,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers {
       }
 
       "submit" in {
-        val task = Task("test", AcquisitionMethod(None), Array.empty[SampleToProcess])
+        val task = Task("test", "test@test.de",AcquisitionMethod(None), Array.empty[SampleToProcess])
 
         val result:ResponseEntity[Map[String,String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String,String]])
 

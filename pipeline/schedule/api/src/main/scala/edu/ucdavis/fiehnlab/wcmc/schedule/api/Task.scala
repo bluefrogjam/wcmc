@@ -33,7 +33,7 @@ case class Task(
   * @param fileName
   * @param matrix
   */
-case class SampleToProcess(fileName: String, matrix: Option[Matrix])
+case class SampleToProcess(fileName: String, className: String, comment: String, label: String, matrix: Matrix)
 
 /**
   * provides a simple interface to store results somewhere
