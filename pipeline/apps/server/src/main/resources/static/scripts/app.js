@@ -6,7 +6,7 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
         $scope.navCollapsed = true;
     }])
 
-    .controller('MainController', ['$scope', '$timeout', 'HttpService', 'hotRegisterer', function($scope, $timeout, HttpService, hotRegisterer) {
+    .controller('MainController', ['$scope', '$timeout', '$filter', 'HttpService', 'hotRegisterer', function($scope, $timeout, $filter, HttpService, hotRegisterer) {
 
         /**
          * Syncs the select fields with the HandsOnTable column headers
@@ -96,8 +96,8 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
                 return;
             }
 
-            if (angular.isUndefined($scope.task.name)) {
-                $scope.error = 'No task name provided!';
+            if (angular.isUndefined($scope.task.email)) {
+                $scope.error = 'No email address provided!';
                 return;
             }
 
@@ -113,9 +113,16 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
             // Task object to submit
             var task = {
                 samples: [],
-                name: $scope.task.name,
+                name: $scope.task.email,
                 acquisitionMethod: {chromatographicMethod: {name: $scope.task.acquisitionMethod}}
             };
+
+            // Add task name
+            if (angular.isDefined($scope.task.name) && $scope.task.name != '') {
+                task.name += '_'+ $scope.task.name;
+            } else {
+                task.name += '_'+ $filter('date')(new Date(), 'yyyyMMddHHmmss');
+            }
 
             // Check file existence for each row and update the row header with the result
             var rowLabels = instance.getRowHeader();
