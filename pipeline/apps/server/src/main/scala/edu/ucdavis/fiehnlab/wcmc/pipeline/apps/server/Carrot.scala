@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.apps.server
+package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTar
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{CentralWorkflowConfig, WorkflowProperties}
 import edu.ucdavis.fiehnlab.wcmc.schedule.api.SpringTaskSchedulerConfiguration
 import edu.ucdavis.fiehnlab.wcmc.schedule.server.SchedulingController
-import edu.ucdavis.fiehnlab.wcmc.fserv.controller.FServController
+import edu.ucdavis.fiehnlab.wcmc.server.fserv.controller.FServController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -21,7 +21,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 /**
   * Created by wohlgemuth on 9/7/17.
   */
-@SpringBootApplication(scanBasePackageClasses = Array(classOf[SchedulingController], classOf[SpringTaskSchedulerConfiguration], classOf[FServController], classOf[CentralWorkflowConfig], classOf[MonaLibraryAccessConfiguration],classOf[Carrot]))
+@SpringBootApplication(scanBasePackageClasses = Array(classOf[FServController], classOf[SchedulingController], classOf[SpringTaskSchedulerConfiguration], classOf[CentralWorkflowConfig], classOf[MonaLibraryAccessConfiguration], classOf[Carrot]))
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class Carrot {
 
@@ -34,31 +34,29 @@ class Carrot {
   }
 }
 
+object Carrot extends App {
+  val app = new SpringApplication(classOf[Carrot])
+  app.setWebEnvironment(true)
+  val context = app.run(args: _*)
+
+}
+
 @Configuration
 class CarrotCors extends WebMvcConfigurerAdapter {
 
-  override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {
-    configurer.favorPathExtension(false).favorParameter(false).parameterName("mediaType").ignoreAcceptHeader(false).useJaf(false).defaultContentType(MediaType.APPLICATION_JSON).mediaType("json", MediaType.APPLICATION_JSON)
-  }
+	override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {
+		configurer.favorPathExtension(false).favorParameter(false).parameterName("mediaType").ignoreAcceptHeader(false).useJaf(false).defaultContentType(MediaType.APPLICATION_JSON).mediaType("json", MediaType.APPLICATION_JSON)
+	}
 
-  override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")
+	override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")
 }
 
 @Configuration
 @EnableWebSecurity
 class CarrotSecurity extends WebSecurityConfigurerAdapter with LazyLogging {
 
-
-  override def configure(web: WebSecurity): Unit = {
-    logger.warn("we are allowing unregulated access to this service!")
-    web.ignoring().antMatchers("/**")
-  }
-}
-
-
-object Carrot extends App {
-  val app = new SpringApplication(classOf[Carrot])
-  app.setWebEnvironment(true)
-  val context = app.run(args: _*)
-
+	override def configure(web: WebSecurity): Unit = {
+		logger.warn("we are allowing unregulated access to this service!")
+		web.ignoring().antMatchers("/**")
+	}
 }

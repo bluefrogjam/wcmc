@@ -6,7 +6,7 @@ import java.nio.file.{Files, Paths}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.wcmc.fserv.app.FServ
+import edu.ucdavis.fiehnlab.wcmc.server.fserv.app.FServ
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.scalatest.matchers.ShouldMatchers

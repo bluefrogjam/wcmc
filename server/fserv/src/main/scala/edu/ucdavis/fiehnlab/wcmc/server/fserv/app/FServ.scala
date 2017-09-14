@@ -1,11 +1,11 @@
-package edu.ucdavis.fiehnlab.wcmc.fserv.app
+package edu.ucdavis.fiehnlab.wcmc.server.fserv.app
 
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.wcmc.fserv.controller.FServController
+import edu.ucdavis.fiehnlab.wcmc.server.fserv.controller.FServController
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
@@ -18,8 +18,8 @@ import org.springframework.security.config.annotation.web.configuration.{EnableW
 import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, CorsRegistry, WebMvcConfigurerAdapter}
 
 /**
-  * Created by wohlgemuth on 7/7/17.
-  */
+	* Created by wohlgemuth on 7/7/17.
+	*/
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 @Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
@@ -37,18 +37,6 @@ class FServ extends WebMvcConfigurerAdapter{
 
   override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")
 }
-@Configuration
-@EnableWebSecurity
-@ComponentScan(basePackageClasses= Array(classOf[FServController]))
-class FServSecurity extends WebSecurityConfigurerAdapter with LazyLogging{
-
-
-  override def configure(web: WebSecurity): Unit = {
-    logger.warn("we are allowing unregulated access to this service!")
-    web.ignoring().antMatchers("/**")
-  }
-}
-
 
 object FServ extends App {
 
@@ -56,4 +44,16 @@ object FServ extends App {
   app.setWebEnvironment(true)
   val context = app.run(args: _*)
 
+}
+
+@Configuration
+@EnableWebSecurity
+@ComponentScan(basePackageClasses= Array(classOf[FServController]))
+class FServSecurity extends WebSecurityConfigurerAdapter with LazyLogging{
+
+
+	override def configure(web: WebSecurity): Unit = {
+		logger.warn("we are allowing unregulated access to this service!")
+		web.ignoring().antMatchers("/**")
+	}
 }
