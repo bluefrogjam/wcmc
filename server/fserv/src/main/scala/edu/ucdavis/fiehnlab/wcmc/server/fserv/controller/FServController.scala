@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.fserv.controller
+package edu.ucdavis.fiehnlab.wcmc.server.fserv.controller
 
 import java.io._
 import javax.annotation.PostConstruct

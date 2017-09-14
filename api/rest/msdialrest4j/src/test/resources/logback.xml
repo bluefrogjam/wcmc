@@ -10,7 +10,7 @@
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
-    <logger name="edu.ucdavis.fiehnlab.wcms.api.rest.msdialrest4j" level="debug" additivity="false">
+    <logger name="edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 </configuration>

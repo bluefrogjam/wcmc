@@ -5,7 +5,7 @@ import java.io._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import edu.ucdavis.fiehnlab.wcms.utilities.ZipUtil
+import edu.ucdavis.fiehnlab.wcmc.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
