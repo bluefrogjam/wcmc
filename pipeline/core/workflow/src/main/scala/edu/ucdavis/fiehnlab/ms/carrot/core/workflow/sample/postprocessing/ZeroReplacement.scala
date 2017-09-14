@@ -12,6 +12,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePP
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 /**
@@ -146,6 +147,8 @@ class ZeroReplacementProperties {
   *
   * @param properties
   */
+@Component
+@Profile(Array("carrot.processing.replacement.simple"))
 class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends ZeroReplacement(properties) {
   /**
     * replaces the given value, with the best possible value
