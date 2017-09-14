@@ -12,6 +12,8 @@ case class Task(
 
                  name: String,
 
+                 email: String,
+
                  /**
                    * the exact acquisition method we would like to use
                    * with this task
@@ -31,19 +33,21 @@ case class Task(
   * @param fileName
   * @param matrix
   */
-case class SampleToProcess(fileName: String, matrix: Option[Matrix])
+case class SampleToProcess(fileName: String, className: String, comment: String, label: String, matrix: Matrix)
 
 /**
   * provides a simple interface to store results somewhere
   * once the computation has finished
   */
-trait ResultStorage{
+trait ResultStorage {
   /**
     * store the given experiment
+    *
     * @param experiment
     */
-  def store(experiment: Experiment, task:Task)
+  def store(experiment: Experiment, task: Task)
 }
+
 /**
   * provides us access with scheduling a task in the system
   */
@@ -55,7 +59,7 @@ trait TaskScheduler {
     * identified by the task id
     */
   @Autowired
-  val storage:ResultStorage = null
+  val storage: ResultStorage = null
 
   /**
     * runs this provided task
@@ -70,7 +74,7 @@ trait TaskScheduler {
   * a task scheduler which offers some more functionality
   * if you require this
   */
-trait AdvancedTaskScheduler extends TaskScheduler{
+trait AdvancedTaskScheduler extends TaskScheduler {
 
   /**
     * the task has finished
@@ -106,8 +110,9 @@ trait AdvancedTaskScheduler extends TaskScheduler{
 
   /**
     * returns the current queue of the scheduler
+    *
     * @return
     */
-  def queue:Seq[String]
+  def queue: Seq[String]
 
 }

@@ -19,11 +19,11 @@ case class ChromatographicMethod(
   * @param organ
   */
 case class Matrix(
-               identifier: Option[String],
-               species: Option[String],
-               organ: Option[String],
-               treatments: Option[Seq[Treatment]] = None
-            )
+                   identifier: String,
+                   species: String,
+                   organ: String,
+                   treatments: Seq[Treatment]
+                 )
 
 case class AcquisitionMethod(chromatographicMethod: Option[ChromatographicMethod])
 
@@ -35,5 +35,5 @@ case class AcquisitionMethod(chromatographicMethod: Option[ChromatographicMethod
   */
 class Treatment(
                  val name: String,
-                 val value: Option[Any]
+                 val value: Any
                )

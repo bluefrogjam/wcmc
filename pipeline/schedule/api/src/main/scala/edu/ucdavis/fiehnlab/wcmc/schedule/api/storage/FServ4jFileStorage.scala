@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.schedule.api.storage
 
 import java.io.{File, FileOutputStream}
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.store.result.fserv4j"))
-class FServ4jFileStorage extends ResultStorage{
+class FServ4jFileStorage extends ResultStorage with LazyLogging{
 
   @Autowired
   val writer:Writer[Sample] = null
@@ -35,8 +36,7 @@ class FServ4jFileStorage extends ResultStorage{
 
     val file = new File(dir,s"${task.name}.${writer.extension}")
 
-    file.deleteOnExit()
-
+    logger.info(s"storing temporary data at: ${file}")
     val out = new FileOutputStream(file)
 
     writer.writeHeader(out)
@@ -52,5 +52,8 @@ class FServ4jFileStorage extends ResultStorage{
     out.close()
 
     fServ4jClient.upload(file,Some(s"${task.name}.${writer.extension}"))
+
+    logger.info("delete temp file")
+    file.delete()
   }
 }

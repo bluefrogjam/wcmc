@@ -17,8 +17,6 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
 import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
 
-import scala.io.Source
-
 /**
   * Created by wohlgemuth on 7/8/16.
   */
@@ -222,7 +220,7 @@ class PositiveModeTargetedWorkflowTestConfiguration {
   }
 
   @Bean
-  def workflow(properties: WorkflowProperties, writer: Writer[Sample], experimentTXTReader: Reader[Experiment]): LCMSPositiveModeTargetWorkflow[Double] = {
+  def workflow(properties: WorkflowProperties): LCMSPositiveModeTargetWorkflow[Double] = {
     new LCMSPositiveModeTargetWorkflow(properties)
   }
 }

@@ -66,8 +66,8 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 
       val out = new FileOutputStream("target/test.txt")
 
-      val seperator = "\t"
-      val writer = new QuantifiedSampleTxtWriter[Double](seperator)
+      val seperator = ","
+      val writer = new QuantifiedSampleTxtWriter[Double]
 
       writer.writeHeader(out)
       results.foreach{
