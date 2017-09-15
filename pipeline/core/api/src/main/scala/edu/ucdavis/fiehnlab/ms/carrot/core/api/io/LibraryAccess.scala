@@ -2,7 +2,10 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
 import java.io._
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Target}
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 
 import scala.io.Source
 
@@ -14,18 +17,19 @@ trait LibraryAccess[T <: Target] {
 
   /**
     * loads all the spectra from the library
+    * applicable for the given acquistion method
     *
     * @return
     */
-  def load: Iterable[T]
+  def load(acquisitionMethod: AcquisitionMethod): Iterable[T]
 
   /**
     * adds a new target to the internal list of targets
     *
     * @param target
     */
-  def add(target: T): Unit = {
-    add(Seq(target))
+  def add(target: T,acquisitionMethod: AcquisitionMethod): Unit = {
+    add(Seq(target),acquisitionMethod)
   }
 
   /**
@@ -33,7 +37,7 @@ trait LibraryAccess[T <: Target] {
     *
     * @param targets
     */
-  def add(targets: Iterable[T])
+  def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod)
 }
 
 /**
@@ -41,14 +45,14 @@ trait LibraryAccess[T <: Target] {
   *
   * @param file
   */
-class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\t") extends LibraryAccess[T] {
+class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\t") extends LibraryAccess[T] with LazyLogging{
 
   /**
     * loads all the spectra from the library
     *
     * @return
     */
-  override def load: Iterable[T] = {
+  override def load(acquisitionMethod: AcquisitionMethod): Iterable[T] = {
     val result = Source.fromFile(file).getLines().collect {
 
       case x: String =>
@@ -57,43 +61,65 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
           val temp = x.split(seperator)
 
           if (temp.length == 3) {
-            new RetentionIndexTarget {
-              override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
+            new Target {
+              override val precursorMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
-              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
+              override val retentionIndex: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
-              override val required: Boolean = false
+              override val requiredForCorrection: Boolean = false
+              override val isRetentionIndexStandard: Boolean = false
+              /**
+                * is this a confirmed target
+                */
+              override val confirmed: Boolean = true
+              /**
+                * associated spectrum propties if applicable
+                */
+              override val spectrum: Option[SpectrumProperties] = None
             }
           }
           else if (temp.length == 2) {
-            new RetentionIndexTarget {
-              override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
+            new Target {
+              override val precursorMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = None
-              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
+              override val retentionIndex: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
-              override val required: Boolean = false
+              override val requiredForCorrection: Boolean = false
+              override val isRetentionIndexStandard: Boolean = false
+              override val confirmed: Boolean = true
+              override val spectrum: Option[SpectrumProperties] = None
+
             }
           }
           else if (temp.length == 4) {
-            new RetentionIndexTarget {
-              override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
+            new Target {
+              override val precursorMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
-              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
+              override val retentionIndex: Double = temp(0).toDouble * 60
               override val inchiKey: Option[String] = None
-              override val required: Boolean = temp(3).toBoolean
+              override val requiredForCorrection: Boolean = false
+              override val isRetentionIndexStandard: Boolean = temp(3).toBoolean
+              override val confirmed: Boolean = true
+              override val spectrum: Option[SpectrumProperties] = None
+
             }
           }
           else if (temp.length == 5) {
-            new RetentionIndexTarget {
-              override val monoIsotopicMass: Option[Double] = Some(temp(1).toDouble)
+            new Target {
+              override val retentionIndex: Double = temp(0).toDouble * 60
+              override val precursorMass: Option[Double] = Some(temp(1).toDouble)
               override val name: Option[String] = Some(temp(2))
-              override val retentionTimeInSeconds: Double = temp(0).toDouble * 60
-              override val required: Boolean = temp(3).toBoolean
-              override val inchiKey: Option[String] = Some(temp(4))
+              override val inchiKey: Option[String] = None
+              override val requiredForCorrection: Boolean = false
+              override val isRetentionIndexStandard: Boolean = temp(4).toBoolean
+              override val confirmed: Boolean = true
+              override val spectrum: Option[SpectrumProperties] = None
+
             }
           }
 
           else {
+            logger.info(s"target line is: ${temp.mkString(" ")}")
             throw new IOException("unsupported file format discovered!")
           }
         }
@@ -109,28 +135,15 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     *
     * @param targets
     */
-  override def add(targets: Iterable[T]): Unit = {
+  override def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod): Unit = {
 
+    logger.info(s"updating library at: ${file.getAbsolutePath}")
     val out = new FileWriter(file, true)
 
     targets.foreach { target =>
 
-      val required = target match {
-        case x: RetentionIndexTarget => x.required
-        case _ => ""
-      }
-
-
       out.write(
-        s"""|${target.retentionTimeInSeconds}
-               |$seperator
-               |${target.monoIsotopicMass}
-               |$seperator${target.name.getOrElse("unknown")}
-               |$seperator
-               |$required
-               |$seperator
-               |${target.inchiKey.getOrElse("")}
-               |\n""".stripMargin
+        s"""${target.retentionIndex}$seperator${target.precursorMass.get}$seperator${target.name.getOrElse("unknown")}$seperator${target.requiredForCorrection}$seperator${target.inchiKey.getOrElse("")}\n"""
       )
     }
 

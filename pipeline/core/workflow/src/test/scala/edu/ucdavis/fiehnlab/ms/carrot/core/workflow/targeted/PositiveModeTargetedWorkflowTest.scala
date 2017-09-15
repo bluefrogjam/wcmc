@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{Reader, SampleLoader, Writer}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event.{PreProcessingBeginEvent, QuantificationFinishedEvent, WorkflowEvent, WorkflowEventListener}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event.{QuantificationFinishedEvent, WorkflowEvent, WorkflowEventListener}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentReaderTxTProperties, ExperimentTXTReader, QuantifiedSampleTxtWriter}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{Workflow, WorkflowProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
-
-import scala.io.Source
 
 /**
   * Created by wohlgemuth on 7/8/16.
@@ -32,6 +30,9 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
 
   @Autowired
   val listener: TestWorkflowEventListener = null
+
+  @Autowired
+  val reader:ExperimentTXTReader = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -60,7 +61,7 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
           workflow.eventListeners should not be empty
         }
 
-        val result = workflow.process(experimentDefinition)
+        val result = workflow.process(reader.read(experimentDefinition))
 
         "result is not null" in {
           result should not be null
@@ -70,13 +71,7 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
           listener.quantifiedExperiment should not be null
         }
 
-        s"content is of size ${expectedContentSize()}" in {
-          val content = Source.fromInputStream(result).getLines().toList
-
-          content.size shouldBe expectedContentSize
-        }
-
-        "provide validation" when {
+        "provide validation" must {
 
           val samples: Seq[QuantifiedSample[Double]] = listener.quantifiedExperiment.classes.flatMap(_.samples).collect {
             case sample: QuantifiedSample[Double] => sample
@@ -206,8 +201,6 @@ class TestWorkflowEventListener extends WorkflowEventListener with LazyLogging {
 		  quantifiedExperiment = event.experiment
 	  }
 
-    case event: PreProcessingBeginEvent => logger.debug("PreProcessing...")
-
     case _ => logger.info(s"received event: ${workflowEvent}")
   }
 }
@@ -227,7 +220,7 @@ class PositiveModeTargetedWorkflowTestConfiguration {
   }
 
   @Bean
-  def workflow(properties: WorkflowProperties, writer: Writer[Sample], experimentTXTReader: Reader[Experiment]): LCMSPositiveModeTargetWorkflow[Double] = {
-    new LCMSPositiveModeTargetWorkflow(properties, writer, experimentTXTReader)
+  def workflow(properties: WorkflowProperties): LCMSPositiveModeTargetWorkflow[Double] = {
+    new LCMSPositiveModeTargetWorkflow(properties)
   }
 }

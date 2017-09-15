@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.math
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{AccurateMassSupport, Feature, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
 
 /**
   * Created by wohlgemuth on 6/22/16.
@@ -17,22 +17,27 @@ object MassAccuracy extends LazyLogging {
     * @return
     */
   def findClosestIon(spectra: Feature, targetMass: Double): Option[Ion] = {
-//    logger.trace(s"outdated method, refactor! ${spectra.scanNumber} and looking for ${targetMass}")
     spectra match {
-      case x: MSSpectra =>
-        Some(x.ions.minBy(p => Math.abs(p.mass - targetMass)))
+      case x: MSSpectra if x.spectrum.isDefined =>
+          if(x.spectrum.get.ions.isEmpty){
+            logger.warn(s"${x} has no IONS!")
+            None
+          }
+          else {
+            Some(x.spectrum.get.ions.minBy(p => Math.abs(p.mass - targetMass)))
+          }
+
       case x: Feature =>
         x.massOfDetectedFeature
     }
-
   }
 
-  def calculateMassErrorPPM(spectra: Feature, target: Target, massWindow: Double = 0): Option[Double] = {
-    if (target.monoIsotopicMass.isDefined) {
-      val error = calculateMassError(spectra, target, massWindow)
+  def calculateMassErrorPPM(spectra: AccurateMassSupport, target: Target): Option[Double] = {
+    if (target.precursorMass.isDefined) {
+      val error = calculateMassError(spectra, target)
 
       if (error.isDefined) {
-        Some(error.get / target.monoIsotopicMass.get * 1000000)
+        Some(error.get / target.precursorMass.get * 1000000)
       }
       else {
         None
@@ -48,17 +53,16 @@ object MassAccuracy extends LazyLogging {
     *
     * @param spectra
     * @param target
-    * @param massWindow
     * @return
     */
-  def calculateMassError(spectra: Feature, target: Target, massWindow: Double = 0): Option[Double] = {
-    if (target.monoIsotopicMass.isDefined) {
-      val mass = target.monoIsotopicMass.get
+  def calculateMassError(spectra: AccurateMassSupport, target: Target): Option[Double] = {
+    if (target.precursorMass.isDefined) {
+      val mass = target.precursorMass.get
 
-      val ion = findClosestIon(spectra, mass)
+      val ion = spectra.accurateMass
 
       if (ion.isDefined) {
-        Some(Math.abs(mass - ion.get.mass))
+        Some(Math.abs(mass - ion.get))
       }
       else {
         None
@@ -69,17 +73,4 @@ object MassAccuracy extends LazyLogging {
       None
     }
   }
-
-	def closestIonFromRawData(rawdata: CorrectedSample, targetMass: Double, needsReplacement: QuantifiedTarget[Double], massAccuracy: Double): Option[Ion] = {
-		val ions = rawdata.spectra.collect {
-			case spec: MSSpectra =>
-				spec.ions.filter(ion =>
-					targetMass - massAccuracy < needsReplacement.monoIsotopicMass.get &&
-						needsReplacement.monoIsotopicMass.get < targetMass + massAccuracy)
-		}
-		logger.warn(s"collection: ${ions}")
-
-			//.minBy(p => Math.abs (p.massOfDetectedFeature.get.mass - targetMass))
-		Some(Ion(0,0))
-	}
 }

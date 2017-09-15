@@ -13,17 +13,8 @@
 			<Unit>nanoSecs</Unit>
 			<Category>TOF</Category>
 		</Actual>
-		<Actual ActualID="369">
-			<DisplayName>Range Length</DisplayName>
-			<DataType>3</DataType>
-			<DisplayFormat>0</DisplayFormat>
-			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
-			<Unit>nanoSecs</Unit>
-			<Category>TOF</Category>
-		</Actual>
 		<Actual ActualID="30">
-			<DisplayName>High Vac</DisplayName>
+			<DisplayName>Quad Vac</DisplayName>
 			<DataType>6</DataType>
 			<DisplayFormat>1</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
@@ -39,24 +30,6 @@
 			<DisplayDigits>3</DisplayDigits>
 			<Unit>Torr</Unit>
 			<Category>Diagnostics</Category>
-		</Actual>
-		<Actual ActualID="345">
-			<DisplayName>Pulse Width</DisplayName>
-			<DataType>3</DataType>
-			<DisplayFormat>0</DisplayFormat>
-			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
-			<Unit>nanoSecs</Unit>
-			<Category>Detector</Category>
-		</Actual>
-		<Actual ActualID="353">
-			<DisplayName>Pulse Delay</DisplayName>
-			<DataType>3</DataType>
-			<DisplayFormat>0</DisplayFormat>
-			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
-			<Unit>nanoSecs</Unit>
-			<Category>Detector</Category>
 		</Actual>
 		<Actual ActualID="169">
 			<DisplayName>PMT</DisplayName>
@@ -135,7 +108,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Source</Category>
 		</Actual>
@@ -144,7 +117,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Source</Category>
 		</Actual>
@@ -153,7 +126,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Source</Category>
 		</Actual>
@@ -162,7 +135,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Source</Category>
 		</Actual>
@@ -239,7 +212,7 @@
 			<Category>Source</Category>
 		</Actual>
 		<Actual ActualID="209">
-			<DisplayName>Oct DC1</DisplayName>
+			<DisplayName>Oct1 DC</DisplayName>
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
@@ -270,8 +243,8 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>1</DisplayDigits>
-			<Unit>Volts</Unit>
+			<DisplayDigits>0</DisplayDigits>
+			<Unit>0=False,1=True</Unit>
 			<Category>Optics 1</Category>
 		</Actual>
 		<Actual ActualID="321">
@@ -279,7 +252,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>4</DisplayDigits>
+			<DisplayDigits>0</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Optics 1</Category>
 		</Actual>
@@ -297,7 +270,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>amu</Unit>
 			<Category>Quad</Category>
 		</Actual>
@@ -306,7 +279,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Quad</Category>
 		</Actual>
@@ -315,7 +288,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Quad</Category>
 		</Actual>
@@ -369,7 +342,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>psig</Unit>
 			<Category>Cell</Category>
 		</Actual>
@@ -387,7 +360,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Cell</Category>
 		</Actual>
@@ -396,7 +369,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Cell</Category>
 		</Actual>
@@ -405,7 +378,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Cell</Category>
 		</Actual>
@@ -414,16 +387,16 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Cell</Category>
 		</Actual>
 		<Actual ActualID="233">
-			<DisplayName>Oct DC2</DisplayName>
+			<DisplayName>Oct2 DC</DisplayName>
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Optics 2</Category>
 		</Actual>
@@ -441,7 +414,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Optics 2</Category>
 		</Actual>
@@ -450,7 +423,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Optics 2</Category>
 		</Actual>
@@ -459,7 +432,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>2</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Optics 2</Category>
 		</Actual>
@@ -468,7 +441,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>2</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Optics 2</Category>
 		</Actual>
@@ -477,7 +450,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>2</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Optics 2</Category>
 		</Actual>
@@ -486,7 +459,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>2</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Optics 2</Category>
 		</Actual>
@@ -540,7 +513,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>TOF</Category>
 		</Actual>
@@ -576,7 +549,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Diagnostics</Category>
 		</Actual>
@@ -585,7 +558,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Volts</Unit>
 			<Category>Diagnostics</Category>
 		</Actual>
@@ -617,7 +590,7 @@
 			<Category>Instrument State</Category>
 		</Actual>
 		<Actual ActualID="28">
-			<DisplayName>Vaporizor</DisplayName>
+			<DisplayName>Vaporizor/Sheath Gas Temp</DisplayName>
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
@@ -644,7 +617,7 @@
 			<Category>Source</Category>
 		</Actual>
 		<Actual ActualID="105">
-			<DisplayName>Charging Voltage</DisplayName>
+			<DisplayName>Charging/Nozzle Voltage</DisplayName>
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
@@ -666,7 +639,7 @@
 			<DataType>6</DataType>
 			<DisplayFormat>0</DisplayFormat>
 			<DisplayEffects>0</DisplayEffects>
-			<DisplayDigits>0</DisplayDigits>
+			<DisplayDigits>1</DisplayDigits>
 			<Unit>Voltage</Unit>
 			<Category>Cell</Category>
 		</Actual>
@@ -679,7 +652,7 @@
 			<Unit>0=1,1=2,2=3,3=>3,4=Unk</Unit>
 			<Category>Cell</Category>
 		</Actual>
-		<Actual ActualID="121">
+		<Actual ActualID="33">
 			<DisplayName>Corona</DisplayName>
 			<DataType>5</DataType>
 			<DisplayFormat>0</DisplayFormat>
@@ -687,6 +660,78 @@
 			<DisplayDigits>1</DisplayDigits>
 			<Unit>uA</Unit>
 			<Category>Source</Category>
+		</Actual>
+		<Actual ActualID="45">
+			<DisplayName>Sheath Gas Flow</DisplayName>
+			<DataType>6</DataType>
+			<DisplayFormat>0</DisplayFormat>
+			<DisplayEffects>0</DisplayEffects>
+			<DisplayDigits>1</DisplayDigits>
+			<Unit>l/min</Unit>
+			<Category>Source</Category>
+		</Actual>
+		<Actual ActualID="17">
+			<DisplayName>Number of Transients</DisplayName>
+			<DataType>6</DataType>
+			<DisplayFormat>0</DisplayFormat>
+			<DisplayEffects>0</DisplayEffects>
+			<DisplayDigits>0</DisplayDigits>
+			<Unit></Unit>
+			<Category>Instrument State</Category>
+		</Actual>
+		<Actual ActualID="85">
+			<DisplayName>Funnel DC</DisplayName>
+			<DataType>5</DataType>
+			<DisplayFormat>0</DisplayFormat>
+			<DisplayEffects>0</DisplayEffects>
+			<DisplayDigits>1</DisplayDigits>
+			<Unit>Volts</Unit>
+			<Category>Ion Funnel</Category>
+		</Actual>
+		<Actual ActualID="77">
+			<DisplayName>Funnel Delta HP</DisplayName>
+			<DataType>5</DataType>
+			<DisplayFormat>0</DisplayFormat>
+			<DisplayEffects>0</DisplayEffects>
+			<DisplayDigits>1</DisplayDigits>
+			<Unit>Volts</Unit>
+			<Category>Ion Funnel</Category>
+		</Actual>
+		<Actual ActualID="78">
+			<DisplayName>Funnel Delta LP</DisplayName>
+			<DataType>5</DataType>
+			<DisplayFormat>0</DisplayFormat>
+			<DisplayEffects>0</DisplayEffects>
+			<DisplayDigits>1</DisplayDigits>
+			<Unit>Volts</Unit>
+			<Category>Ion Funnel</Category>
+		</Actual>
+		<Actual ActualID="79">
+			<DisplayName>Funnel RF HP</DisplayName>
+			<DataType>5</DataType>
+			<DisplayFormat>0</DisplayFormat>
+			<DisplayEffects>0</DisplayEffects>
+			<DisplayDigits>1</DisplayDigits>
+			<Unit>Volts</Unit>
+			<Category>Ion Funnel</Category>
+		</Actual>
+		<Actual ActualID="80">
+			<DisplayName>Funnel RF LP</DisplayName>
+			<DataType>5</DataType>
+			<DisplayFormat>0</DisplayFormat>
+			<DisplayEffects>0</DisplayEffects>
+			<DisplayDigits>1</DisplayDigits>
+			<Unit>Volts</Unit>
+			<Category>Ion Funnel</Category>
+		</Actual>
+		<Actual ActualID="86">
+			<DisplayName>Slicer Position</DisplayName>
+			<DataType>6</DataType>
+			<DisplayFormat>0</DisplayFormat>
+			<DisplayEffects>0</DisplayEffects>
+			<DisplayDigits>0</DisplayDigits>
+			<Unit></Unit>
+			<Category>Optics 2</Category>
 		</Actual>
 	</Actuals>
 </ActualsDef>

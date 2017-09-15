@@ -1,9 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow
 
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.acquisition.AcquisitionLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.{CachedMSDialRestProcesser, MSDialRestProcessor}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.CachedMSDialRestProcesser
+import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
 import org.springframework.context.annotation._
 
 /**
@@ -11,6 +13,7 @@ import org.springframework.context.annotation._
   */
 @Configuration
 @Import(Array(classOf[WorkflowConfig]))
+@ComponentScan(basePackageClasses = Array(classOf[DelegatingResourceLoader],classOf[AcquisitionLoader]))
 class CentralWorkflowConfig {
 
   /**
@@ -34,6 +37,6 @@ class CentralWorkflowConfig {
     * @return
     */
   @Bean
-  def msdialRest: MSDialRestProcessor = new CachedMSDialRestProcesser
+  def msdialRest:MSDialRestProcessor = new CachedMSDialRestProcesser()
 
 }

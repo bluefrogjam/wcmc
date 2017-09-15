@@ -13,11 +13,11 @@ class MSSpectraTest extends WordSpec {
     val spectra = testSpectraWith2Ions
 
     "basePeak" in {
-      assert(spectra.basePeak.mass == 100)
+      assert(spectra.spectrum.get.basePeak.mass == 100)
     }
 
     "splash" in {
-      assert(spectra.splash != null)
+      assert(spectra.spectrum.get.splash != null)
     }
 
   }

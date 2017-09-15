@@ -5,7 +5,7 @@ import java.io.File
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RetentionIndexTarget, Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentTXTReader, QuantifiedSampleTxtWriter}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{PostProcessing, SimpleZeroReplacement, ZeroReplacementProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
@@ -41,7 +41,7 @@ class MyConfiguration extends LazyLogging {
 
   @Bean
   def workflow(workflowProperties: WorkflowProperties, reader: ExperimentTXTReader): LCMSPositiveModeTargetWorkflow[Double] = {
-    new LCMSPositiveModeTargetWorkflow[Double](workflowProperties, writer, reader)
+    new LCMSPositiveModeTargetWorkflow[Double](workflowProperties)
   }
 
   @Bean
@@ -53,7 +53,7 @@ class MyConfiguration extends LazyLogging {
     * @return
     */
   @Bean
-  def correctionStandardList(resourceLoader: DelegatingResourceLoader): LibraryAccess[RetentionIndexTarget] = new TxtStreamLibraryAccess[RetentionIndexTarget](resourceLoader.loadAsFile("retentionIndexStandards.txt").get)
+  def correctionStandardList(resourceLoader: DelegatingResourceLoader): LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("retentionIndexStandards.txt").get)
 
   /**
     * our defined library of library targets
@@ -69,8 +69,13 @@ class MyConfiguration extends LazyLogging {
   @Bean
   def zeroReplacement(properties: WorkflowProperties): PostProcessing[Double] = new SimpleZeroReplacement(properties)
 
+
+/*
+  @Bean
+  def postprocessing:java.util.List[PostProcessing[Double]] = new util.ArrayList[PostProcessing[Double]]()
+  */
   @Bean(name = Array("quantification"))
-  def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties, quantificationPostProcessing)
+  def quantification(properties: WorkflowProperties, libraryAccess: LibraryAccess[Target], quantificationPostProcessing: java.util.List[PostProcessing[Double]]): QuantifyByHeightProcess = new QuantifyByHeightProcess(libraryAccess, properties)
 
 	@Bean
 	def spectrumMinimizer: Option[SpectrumMinimizer] = Some(new SpectrumMinimizer())

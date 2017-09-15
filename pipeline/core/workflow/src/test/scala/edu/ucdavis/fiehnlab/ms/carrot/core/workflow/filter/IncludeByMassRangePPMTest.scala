@@ -1,8 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import org.scalatest.WordSpec
 import edu.ucdavis.fiehnlab.ms.carrot.core.api._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import org.scalatest.WordSpec
 
 /**
   * Created by wohlg on 7/14/2016.
@@ -13,20 +14,50 @@ class IncludeByMassRangePPMTest extends WordSpec {
 
     "include this spectra" in{
       val filter = new IncludeByMassRangePPM(new Target {
-        override val monoIsotopicMass: Option[Double] = Some(100.3242)
+        override val precursorMass: Option[Double] = Some(100.3242)
         override val name: Option[String] = None
         override val inchiKey: Option[String] = None
-        override val retentionTimeInSeconds: Double = 0
+        override val retentionIndex: Double = 0
+        /**
+          * is this a confirmed target
+          */
+        override val confirmed: Boolean = false
+        /**
+          * is this target required for a successful retention index correction
+          */
+        override val requiredForCorrection: Boolean = false
+        /**
+          * is this a retention index correction standard
+          */
+        override val isRetentionIndexStandard: Boolean = false
+        /**
+          * associated spectrum propties if applicable
+          */
+        override val spectrum: Option[SpectrumProperties] = None
       },5)
       assert(filter.include(testAccurateMassSpectraWith4Ions2))
     }
 
     "but not this spectra" in {
       val filter = new IncludeByMassRangePPM(new Target {
-        override val monoIsotopicMass: Option[Double] = Some(100.3249)
+        override val precursorMass: Option[Double] = Some(100.3249)
         override val name: Option[String] = None
         override val inchiKey: Option[String] = None
-        override val retentionTimeInSeconds: Double = 0
+        override val retentionIndex: Double = 0
+        /**
+          * is this a confirmed target
+          */
+        override val confirmed: Boolean = false
+        /**
+          * is this target required for a successful retention index correction
+          */
+        override val requiredForCorrection: Boolean = false
+        /**
+          * is this a retention index correction standard
+          */
+        override val isRetentionIndexStandard: Boolean = false
+
+        override val spectrum: Option[SpectrumProperties] = None
       },5)
       assert(!filter.include(testAccurateMassSpectraWith4Ions2))
     }

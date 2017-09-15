@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
@@ -11,16 +11,17 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
-import org.springframework.boot.test.context.{SpringBootTest, TestConfiguration}
-import org.springframework.context.annotation.Bean
-import org.springframework.test.context.TestContextManager
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlg on 7/13/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height"))
 class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers{
 
   @Autowired
@@ -29,11 +30,11 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrection = null
 
+
   @Autowired
   val annotation: LCMSTargetAnnotationProcess = null
 
   @Autowired
-  @Qualifier("quantification")
   val quantify: QuantifyByHeightProcess = null
 
   @Autowired
@@ -59,8 +60,13 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
           replaced = simpleZeroReplacement.process(sample)
 
 
-	      replaced.spectra match {
-		      case x: GapFilledSpectra[Double] => logger.info(s"spectra: ${x}")
+        replaced.spectra.foreach{ x =>
+          logger.info(s"spectra: ${x}")
+        }
+
+        logger.info("---")
+        replaced.quantifiedTargets.foreach{ x=>
+          logger.info(s"target: ${x}")
         }
 
         //all spectra should be the same count as the targets
@@ -71,9 +77,9 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   }
 }
 
-@TestConfiguration
-class GapFillingConfigTest {
+@Configuration
+class SimpleZeroReplacementConfiguration{
 
-	@Bean
-	def simpleZeroReplacement(properties: WorkflowProperties): SimpleZeroReplacement = new SimpleZeroReplacement(properties)
+  @Bean
+  def zeroReplacement(workflowProperties: WorkflowProperties):SimpleZeroReplacement = new SimpleZeroReplacement(workflowProperties)
 }

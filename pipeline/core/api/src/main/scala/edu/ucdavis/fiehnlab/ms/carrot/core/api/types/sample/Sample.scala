@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 
 /**
   * Defines a basic sample, which needs to be processed
@@ -58,7 +57,7 @@ trait CorrectedSample extends ProcessedSample {
   /**
     * these are all the targets, which were used for the retention index correction
     */
-  val featuresUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]]
+  val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]]
 
   /**
     * the associated spectra, which are now corrected
@@ -101,13 +100,15 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging {
   val quantifiedTargets: Seq[QuantifiedTarget[T]]
 }
 
+trait GapFilledSample[T] extends  QuantifiedSample[T] {
 
-/**
-  * a corrected spectra
-  */
-trait CorrectedSpectra {
-  val retentionIndex: Double
+  /**
+    * which file was used for the gap filling
+    */
+  val gapFilledWithFile:String
 }
+
+
 
 /**
   * an annotated spectra
@@ -149,7 +150,6 @@ trait QuantifiedSpectra[T] extends AnnotatedSpectra {
 
   override def toString = s"QuantifiedSpectra(quantifiedValue=$quantifiedValue, target=$target)"
 }
-
 trait GapFilledSpectra[T] extends QuantifiedSpectra[T]{
 
   /**
@@ -179,7 +179,7 @@ trait QuantifiedTarget[T] extends Target {
     */
   val spectra: Option[_ <: Feature with QuantifiedSpectra[T]]
 
-  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=${name.getOrElse("Unknown")}, rt=$retentionTimeInSeconds)"
+  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex"
 }
 
 /**
@@ -196,9 +196,9 @@ trait GapFilledTarget[T] extends QuantifiedTarget[T]{
   /**
     * to avoid that somebody can overwrite this value in an implementation and sets it to NONE, which might break expected behaviour.
     */
-  final override val spectra: Option[_ <: Feature with GapFilledSpectra[T]] = Some(spectraUsedForReplacement)
+  lazy final override val spectra: Option[_ <: Feature with GapFilledSpectra[T]] = Some(spectraUsedForReplacement)
 
-  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionTimeInSeconds, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
+  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
 
 }
 

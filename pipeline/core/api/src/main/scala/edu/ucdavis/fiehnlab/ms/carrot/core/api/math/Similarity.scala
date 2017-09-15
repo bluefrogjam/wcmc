@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.math
 import edu.ucdavis.fiehnlab.Spectrum
 import edu.ucdavis.fiehnlab.math.similarity.CompositeSimilarity
 import edu.ucdavis.fiehnlab.math.spectrum.BinByRoundingMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SimilaritySupport}
 import edu.ucdavis.fiehnlab.util.Utilities
 
 /**
@@ -18,8 +18,8 @@ object Similarity {
     * @param library
     * @return
     */
-  def compute(unknown: MSSpectra, library: MSSpectra, algorithm: edu.ucdavis.fiehnlab.math.similarity.Similarity = new CompositeSimilarity): Double = {
-    algorithm.compute(convertSpectra(unknown.spectraString), convertSpectra(library.spectraString))
+  def compute(unknown: SimilaritySupport, library: SimilaritySupport, algorithm: edu.ucdavis.fiehnlab.math.similarity.Similarity = new CompositeSimilarity): Double = {
+    algorithm.compute(convertSpectra(unknown.spectrum.get.spectraString), convertSpectra(library.spectrum.get.spectraString))
   }
 
 

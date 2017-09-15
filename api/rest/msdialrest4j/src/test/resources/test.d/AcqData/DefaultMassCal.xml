@@ -9,24 +9,24 @@
         <NumberOfCoefficients>2</NumberOfCoefficients>
         <ValueUseFlags>0</ValueUseFlags>
         <Values>
-          <Value Number="1">0.000572955829929458</Value>
-          <Value Number="2">1281.81202165366</Value>
+          <Value Number="1">0.000574398458971192</Value>
+          <Value Number="2">1022.31164340113</Value>
         </Values>
       </Step>
       <Step Number="2">
         <CalibrationTechnique>ExternalReference</CalibrationTechnique>
         <CalibrationFormula>Polynomial</CalibrationFormula>
         <NumberOfCoefficients>8</NumberOfCoefficients>
-        <ValueUseFlags>2730</ValueUseFlags>
+        <ValueUseFlags>58</ValueUseFlags>
         <Values>
-          <Value Number="1">20247.9727781406</Value>
-          <Value Number="2">92339.1101442752</Value>
-          <Value Number="3">1.3201780101564E-07</Value>
-          <Value Number="4">-3.30363032885993E-16</Value>
-          <Value Number="5">1.80085909219383E-25</Value>
-          <Value Number="6">-3.92295306571422E-35</Value>
-          <Value Number="7">3.83365588062153E-45</Value>
-          <Value Number="8">-1.40216571795247E-55</Value>
+          <Value Number="1">19940.8332977943</Value>
+          <Value Number="2">68941.2485998208</Value>
+          <Value Number="3">1.67290767723601E-07</Value>
+          <Value Number="4">-6.85393162619524E-16</Value>
+          <Value Number="5">1.85421268853349E-20</Value>
+          <Value Number="6">-1.28177564199529E-25</Value>
+          <Value Number="7">0</Value>
+          <Value Number="8">0</Value>
         </Values>
       </Step>
     </DefaultCalibration>
@@ -37,22 +37,22 @@
         <NumberOfCoefficients>2</NumberOfCoefficients>
         <ValueUseFlags>0</ValueUseFlags>
         <Values>
-          <Value Number="1">0.00057253</Value>
-          <Value Number="2">1011.13</Value>
+          <Value Number="1">0.000574458921364437</Value>
+          <Value Number="2">1020.44625555818</Value>
         </Values>
       </Step>
       <Step Number="2">
         <CalibrationTechnique>ExternalReference</CalibrationTechnique>
         <CalibrationFormula>Polynomial</CalibrationFormula>
         <NumberOfCoefficients>8</NumberOfCoefficients>
-        <ValueUseFlags>2730</ValueUseFlags>
+        <ValueUseFlags>29</ValueUseFlags>
         <Values>
-          <Value Number="1">20248.1096599166</Value>
-          <Value Number="2">92339.3054078425</Value>
-          <Value Number="3">0</Value>
-          <Value Number="4">0</Value>
-          <Value Number="5">0</Value>
-          <Value Number="6">0</Value>
+          <Value Number="1">19523.9269836685</Value>
+          <Value Number="2">71386.1622968926</Value>
+          <Value Number="3">0.00474442459230432</Value>
+          <Value Number="4">-2.02197141500579E-11</Value>
+          <Value Number="5">5.25937124353997E-16</Value>
+          <Value Number="6">-3.36922483278198E-21</Value>
           <Value Number="7">0</Value>
           <Value Number="8">0</Value>
         </Values>

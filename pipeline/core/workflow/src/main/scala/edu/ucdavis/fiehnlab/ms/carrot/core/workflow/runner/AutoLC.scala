@@ -1,8 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.runner
 
-import org.springframework.boot.SpringApplication
-import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
-
 /**
 	* Created by diego on 7/14/2017.
 	*/

@@ -3,11 +3,12 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 import java.io.{BufferedWriter, File, FileWriter}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.utilities.SpectrumMinimizer
+import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcmc.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
-import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, HttpStatus}
+import org.springframework.http._
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 
@@ -19,17 +20,14 @@ import org.springframework.web.client.RestOperations
 @Component
 class MSDialRestProcessor extends LazyLogging {
 
-	@Value("${wcmc.api.rest.msdialrest4j.host}") // no default value to be able to override from runner.
+  @Value("${wcms.api.rest.msdialrest4j.host:128.120.143.101}")
   val host: String = ""
 
-	@Value("${wcmc.api.rest.msdialrest4j.port:80}") // no default value to be able to override from runner.
+  @Value("${wcms.api.rest.msdialrest4j.port:80}")
   val port: Int = 80
 
   @Autowired
   val restTemplate: RestOperations = null
-
-	@Autowired
-	val minimizer: Option[SpectrumMinimizer] = null
 
   protected def url = s"http://${host}:${port}"
 
@@ -47,7 +45,7 @@ class MSDialRestProcessor extends LazyLogging {
     //if directory and ends with .d zip file
     val (toUpload, temp) = if (input.isDirectory && input.getName.endsWith(".d")) {
 
-	    val temp = File.createTempFile("wcmc", ".zip")
+      val temp = File.createTempFile("wcms", ".zip")
       ZipUtil.zipDir(input.getAbsolutePath, temp.getAbsolutePath, s"${input.getName}")
       (temp, true)
     }
@@ -141,12 +139,7 @@ class MSDialRestProcessor extends LazyLogging {
         out.flush()
         out.close()
 
-	      //minimize and return
-	      var miniFile = file
-	      if(minimizer.isDefined) {
-		      miniFile = minimizer.get.minimize(file)
-	      }
-	      miniFile
+        file
       }
       else {
         throw new MSDialException(result)
@@ -210,4 +203,51 @@ class MSDialRestProcessor extends LazyLogging {
 		request
 	}
 
+}
+
+/**
+  * exspected server response
+  *
+  * @param filename
+  * @param link
+  * @param message
+  * @param error
+  */
+case class ServerResponse(filename: String, link: String, message: String, error: String)
+
+/**
+  * an msdial exception if something goes wrong
+  *
+  * @param result
+  */
+class MSDialException(result: ResponseEntity[ServerResponse]) extends Exception
+
+/**
+  * utilizes our FServer to cache processing results somewhere on the file system o
+  */
+class CachedMSDialRestProcesser extends MSDialRestProcessor{
+
+  @Autowired
+  val fServ4jClient:FServ4jClient = null
+
+  @Autowired
+  val resourceLoader:ResourceLoader = null
+  /**
+    * processes the input file and includes caching support
+    * if enabled
+    *
+    * @param input
+    * @return
+    */
+  override def process(input: File): File = {
+
+    val newFile = s"${input.getName}.processed"
+
+    if(!resourceLoader.exists(newFile)){
+      logger.info(s"file: ${input.getName} requires processing and will be stored as ${newFile}")
+      fServ4jClient.upload(super.process(input),name = Some(newFile))
+    }
+
+    resourceLoader.loadAsFile(newFile).get
+  }
 }
