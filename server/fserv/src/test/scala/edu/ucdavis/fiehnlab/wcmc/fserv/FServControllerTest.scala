@@ -30,7 +30,7 @@ import scala.io.Source
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes=Array(classOf[FServ]))
 class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers {
-  @Value("${wcms.server.fserv.directory:storage}")
+  @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null
 
   @LocalServerPort
@@ -80,7 +80,7 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 				//ensure the file was created
 				new File(s"${directory}/YoMama.txt").exists() should be(true)
 
-        Source.fromFile(new File(s"${directory}/YoMama.txt")).getLines().toSeq.size should be(Source.fromInputStream(new ClassPathResource("/test.txt").getInputStream).getLines().toSeq.size)
+        Source.fromFile(new File(s"${directory}/YoMama.txt")).getLines().toSeq.size should be(Source.fromInputStream(new ClassPathResource("/YoMama.txt").getInputStream).getLines().toSeq.size)
 
 
       }
