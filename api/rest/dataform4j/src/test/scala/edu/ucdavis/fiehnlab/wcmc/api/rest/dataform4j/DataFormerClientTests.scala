@@ -43,17 +43,3 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
 		}
 	}
 }
-
-@SpringBootConfiguration
-@ComponentScan
-class DataFormerClientConfiguration {
-	@Bean
-	def dfClient: DataFormerClient = new DataFormerClient()
-
-	@Bean
-	def restTemplate: RestTemplate = new RestTemplate()
-
-	@Bean
-	def resourceLoader: RemoteLoader = new FServ4jClient()
-
-}
