@@ -21,17 +21,17 @@ import org.springframework.web.client._
 @Component
 class FServ4jClient extends RemoteLoader {
 
-  @Autowired
-  val template: RestOperations = null
+//  @Autowired
+  val template: RestOperations = new RestTemplate()
 
 
-  @Value("${wcmc.api.rest.fserv4j.host:127.0.0.1}")
+  @Value("${wcms.api.rest.fserv4j.host:127.0.0.1}")
   val host: String = ""
 
-  @Value("${wcmc.api.rest.fserv4j.port:8080}")
+  @Value("${wcms.api.rest.fserv4j.port:8080}")
   val port: Int = 80
 
-  @Value("${wcmc.api.rest.fserv4j.root:rest}")
+  @Value("${wcms.api.rest.fserv4j.root:rest/file}")
   val root: String = ""
 
   /**
@@ -125,6 +125,8 @@ class FServ4jClient extends RemoteLoader {
       headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
       val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
+
+      logger.info(s"uploading too: ${url}")
       val result = template.exchange(s"$url/upload", HttpMethod.POST, requestEntity, classOf[Any])
 
       if (result.getStatusCode != HttpStatus.OK) {
@@ -132,7 +134,7 @@ class FServ4jClient extends RemoteLoader {
       }
 
     } else {
-      throw new FileNotFoundException(file.getAbsolutePath)
+      throw new FileNotFoundException(s"file was not found locally: ${file.getAbsolutePath}")
     }
   }
 }

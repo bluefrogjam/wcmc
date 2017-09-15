@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
-import org.springframework.context.annotation.{Bean, Configuration}
+import com.typesafe.scalalogging.LazyLogging
+import org.springframework.context.annotation.{Bean, Configuration, Primary}
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.web.client.RestTemplate
 
@@ -12,7 +13,7 @@ import org.springframework.web.client.RestTemplate
   * Created by wohlgemuth on 7/11/17.
   */
 @Configuration
-class CaseClassToJSONSerializationConfiguration {
+class CaseClassToJSONSerializationConfiguration extends LazyLogging{
 
   @Bean
   def objectMapper: ObjectMapper = {
@@ -30,8 +31,10 @@ class CaseClassToJSONSerializationConfiguration {
     mapper
   }
 
+  @Primary
   @Bean
   def restTemplate: RestTemplate = {
+    logger.info("creating custom template with Jackson for scala support")
     val rest: RestTemplate = new RestTemplate()
     rest.getMessageConverters.add(0, mappingJacksonHttpMessageConverter)
     rest

@@ -68,7 +68,7 @@
 
 
 		<dependency>
-			<groupId>edu.ucdavis.fiehnlab.utilities</groupId>
+			<groupId>edu.ucdavis.fiehnlab.wcmc.utilities</groupId>
 			<artifactId>compress</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>

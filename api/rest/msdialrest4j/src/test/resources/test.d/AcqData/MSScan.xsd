@@ -46,6 +46,8 @@
 			<xs:element name="FragmentationMode" type="xs:int" minOccurs="0"/>	
 			<xs:element name="IsFragmentorDynamic" type="xs:int" minOccurs="0"/>
 			<xs:element name="IsCollisionEnergy" type="xs:int" minOccurs="0"/>	
+			<xs:element name="ChromScaleFactor" type="xs:double" minOccurs="0"/>
+			<xs:element name="XSpecificParamType" type="XSpecificParamType" minOccurs="0"/>
 			<xs:element name="Padding" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>

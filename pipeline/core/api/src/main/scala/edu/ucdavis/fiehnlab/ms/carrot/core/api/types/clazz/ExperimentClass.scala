@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.Matrix
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 
 /**
@@ -13,23 +14,9 @@ final case class ExperimentClass(
                                   samples: Seq[_ <: Sample],
 
                                   /**
-                                    * optional name for this class
+                                    * matrix metadata for this class
                                     */
-                                  name: Option[String] = None,
+                                  matrix: Option[Matrix]
 
-                                  /**
-                                    * name of the organ
-                                    */
-                                  organ: Option[String] = None,
-
-                                  /**
-                                    * species name
-                                    */
-                                  species: Option[String] = None,
-
-                                  /**
-                                    * associated treamtnets
-                                    */
-                                  treatments: Option[Seq[String]] = None
                                 )
 

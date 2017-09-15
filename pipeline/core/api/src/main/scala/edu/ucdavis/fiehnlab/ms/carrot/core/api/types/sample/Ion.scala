@@ -3,17 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample
 /**
   * defines an ion
   */
-case class Ion(
-           /**
-             * the m/z of this ion
-             */
-            mass: Double,
-
-           /**
-             * the intensity of this ion
-             */
-            intensity: Float
-         ) {
+case class Ion(mass: Double, intensity: Double) {
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[Ion]
 

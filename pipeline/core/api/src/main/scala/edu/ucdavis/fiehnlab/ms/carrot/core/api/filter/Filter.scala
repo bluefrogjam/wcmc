@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 /**
   * Created by wohlg_000 on 4/22/2016.
   */
-trait Filter[T <: Feature] extends LazyLogging {
+trait Filter[T] extends LazyLogging {
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded

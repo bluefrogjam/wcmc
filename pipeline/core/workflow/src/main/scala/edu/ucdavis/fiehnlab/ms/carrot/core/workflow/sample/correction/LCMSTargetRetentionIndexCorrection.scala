@@ -18,10 +18,10 @@ import org.springframework.stereotype.Component
   * targeted retention index correction, should be refactored to be a super class to make things easier
   */
 @Component
-class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[RetentionIndexTarget], properties: WorkflowProperties) extends AnnotationProcess[RetentionIndexTarget, Sample, CorrectedSample](libraryAccess, properties.trackChanges) with LazyLogging {
+class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess, properties.trackChanges) with LazyLogging {
 
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
-  val massAccuracySetting: Double = 0.015
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.005}")
+  val massAccuracySetting: Double = 0.005
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
@@ -40,7 +40,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     * this defines how many standards we need to find on minimum
     * for a retention index correction method to be successful
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.regression.minimumStandards:10}")
+  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
   var minimumFoundStandards: Int = 16
 
   /**
@@ -99,19 +99,16 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     * @param spectra
     * @return
     */
-  def findBestHit(standard: RetentionIndexTarget, spectra: Seq[_ <: Feature]): TargetAnnotation[RetentionIndexTarget, Feature] = {
+  def findBestHit(standard: Target, spectra: Seq[_ <: Feature]): TargetAnnotation[Target, Feature] = {
 
-    //sort by accuracy first
+    //sort by mass error. The smaller the error the better
     val sortedByAccuracy = spectra.sortBy { spectra =>
-      val mass = standard.monoIsotopicMass.get
-      val bestIon = MassAccuracy.findClosestIon(spectra, mass /*, correctionSettings.massAccuracy*/).get
-      val distance = Math.abs(mass - bestIon.mass)
 
       //that's our distance
-      distance
+      MassAccuracy.calculateMassError(spectra,standard)
     }
     //return the closest mass distance wise
-    TargetAnnotation[RetentionIndexTarget, Feature](standard, sortedByAccuracy.head)
+    TargetAnnotation[Target, Feature](standard, sortedByAccuracy.head)
   }
 
   /**
@@ -120,7 +117,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     * @param matches
     * @return
     */
-  def optimize(matches: Seq[TargetAnnotation[RetentionIndexTarget, Feature]]): Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = {
+  def optimize(matches: Seq[TargetAnnotation[Target, Feature]]): Seq[TargetAnnotation[Target, Feature]] = {
     logger.debug(s"\t=> matches before optimization: ${matches.size}")
     val result = matches.zipWithIndex.collect {
       case (target, position) =>
@@ -129,10 +126,10 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
           target
         }
         else {
-          val min = target.target.retentionTimeInSeconds - groupCloseByRetentionIndexStandardDifference
-          val max = target.target.retentionTimeInSeconds + groupCloseByRetentionIndexStandardDifference
+          val min = target.target.retentionIndex - groupCloseByRetentionIndexStandardDifference
+          val max = target.target.retentionIndex + groupCloseByRetentionIndexStandardDifference
           val previousTarget = matches(position - 1)
-          val previousTime = previousTarget.target.retentionTimeInSeconds
+          val previousTime = previousTarget.target.retentionIndex
           val result = previousTime >= min && previousTime <= max
 
           if (result) {
@@ -159,7 +156,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
         }
     }.collect {
       //filter nulls from the original collect
-      case target: TargetAnnotation[RetentionIndexTarget, Feature] => target
+      case target: TargetAnnotation[Target, Feature] => target
     }
 
     logger.debug(s"\tmatches after optimization: ${result.size}")
@@ -172,7 +169,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     * @param optimizedMatches
     * @return
     */
-  def verifyAnnotations(optimizedMatches: Seq[TargetAnnotation[RetentionIndexTarget, Feature]], input: Sample) = {
+  def verifyAnnotations(optimizedMatches: Seq[TargetAnnotation[Target, Feature]], input: Sample) = {
     if (optimizedMatches.map(_.target).toSet.size != optimizedMatches.size) {
       new StandardAnnotatedTwice(s"one of the standards, was annotated twice in sample ${input.fileName}!")
     }
@@ -184,12 +181,16 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     * @param input
     * @return
     */
-  override def process(input: Sample, targets: Iterable[RetentionIndexTarget]): CorrectedSample = {
+  override def process(input: Sample, target: Iterable[Target]): CorrectedSample = {
 
-	  logger.info(s"correcting sample: ${input.name} with ${targets.size} standards")
+    val targets = target.filter(_.isRetentionIndexStandard)
+    logger.debug(s"correction sample: ${input} with ${targets.size} defined standards")
 
     if (targets.size < minimumDefinedStandard) {
       throw new NotEnoughStandardsDefinedException(s"we require a defined minimum of ${minimumDefinedStandard} retention index standard for this correction to work. But only ${targets.size} standards were provided")
+    }
+    else {
+      logger.info(s"${targets.size} standards were defined")
     }
 
 
@@ -199,17 +200,17 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     /**
       * find possible matches for our specified standards
       */
-    val matches: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = targets.toSeq.sortBy(_.retentionTimeInMinutes).par.collect {
+    val matches: Seq[TargetAnnotation[Target, Feature]] = targets.toSeq.sortBy(_.retentionTimeInMinutes).collect {
 
       //find a possible match
-      case target: RetentionIndexTarget =>
-        logger.info(s"looking for matches for ${target.name.get}")
+      case target: Target =>
+        logger.debug(s"looking for matches for ${target}")
         val result = findMatch(target, input.spectra, filters)
 
         //nothing found, return null
         if (result.isEmpty) {
-          if (target.required) {
-            throw new RequiredStandardNotFoundException(s"this standard ${target} was not found during the detection phase, but it's required. Sample was ${input.fileName}")
+          if (target.requiredForCorrection) {
+            throw new RequiredStandardNotFoundException(s"this target ${target} was not found during the detection phase, but it's required. Sample was ${input.fileName}")
           }
           else {
             logger.debug("\t=>\tno hits found for this standard")
@@ -218,8 +219,8 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
         }
         //1 found, perfect
         else if (result.size == 1) {
-          logger.debug(s"\t=>\t${result.head} found for this standard")
-          TargetAnnotation[RetentionIndexTarget, Feature](target, result.head)
+          logger.debug(s"\t=>\t${result.head} found for this target")
+          TargetAnnotation[Target, Feature](target, result.head)
         }
         //otherwise let's find the best hit
         else {
@@ -228,11 +229,12 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
         }
     }.collect {
         //just a quick filter so we only return objects of type hit
-        case hit: TargetAnnotation[RetentionIndexTarget, Feature] =>
-          logger.debug(s"annotated: ${hit.target} with ${hit.annotation}")
+        case hit: TargetAnnotation[Target, Feature] =>
+          logger.info(s"annotated: ${hit.target.name.getOrElse("Unknown")}/${hit.target.retentionIndex}/${hit.target.precursorMass.getOrElse(0)} with ${hit.annotation.retentionTimeInSeconds}/${hit.annotation.massOfDetectedFeature.get.mass}")
           hit
       }.seq
 
+    logger.info(s"${matches.size} possible matches for RI markers were found")
     //do some optimization for us
     val optimizedMatches = optimize(matches)
 
@@ -254,7 +256,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     *
     * @param possibleHits
     */
-  def verifyCount(possibleHits: Seq[TargetAnnotation[RetentionIndexTarget, Feature]], input: Sample) = {
+  def verifyCount(possibleHits: Seq[TargetAnnotation[Target, Feature]], input: Sample) = {
     //ensure we found enough standards
     if (possibleHits.size < minimumFoundStandards) {
       throw new NotEnoughStandardsFoundException(s"sorry we did not find enough standards in this sample: ${input.fileName} for a successful correction. We only found ${possibleHits.size}, but require ${minimumFoundStandards}")
@@ -269,14 +271,14 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     * @param regression
     * @return
     */
-  def doCorrection(possibleHits: Seq[TargetAnnotation[RetentionIndexTarget, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample): CorrectedSample = {
+  def doCorrection(possibleHits: Seq[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample): CorrectedSample = {
 
-    val x: Array[Double] = possibleHits.map(_.target.retentionTimeInSeconds.toDouble).toArray
+    val x: Array[Double] = possibleHits.map(_.target.retentionIndex.toDouble).toArray
     val y: Array[Double] = possibleHits.map(_.annotation.retentionTimeInSeconds.toDouble).toArray
 
     regression.calibration(x, y)
 
-    logger.debug(s"${regression.toString}\n")
+    logger.info(s"${regression.toString}\n")
 
     val correctedSpectra: Seq[_ <: Feature with CorrectedSpectra] = sampleToCorrect.spectra.map(x => SpectraHelper.addCorrection(x,regression.computeY(x.retentionTimeInSeconds)))
 
@@ -293,7 +295,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
       override val spectra: Seq[_ <: Feature with CorrectedSpectra] = correctedSpectra
 
       //the original data, this sample is based on
-      override val featuresUsedForCorrection: Seq[TargetAnnotation[RetentionIndexTarget, Feature]] = possibleHits
+      override val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]] = possibleHits
       override val regressionCurve: Regression = regression
       override val fileName: String = sampleToCorrect.fileName
     }
@@ -305,7 +307,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     *
     * @param possibleHits
     */
-  def verifyOrder(possibleHits: Seq[TargetAnnotation[RetentionIndexTarget, Feature]], input: Sample) = {
+  def verifyOrder(possibleHits: Seq[TargetAnnotation[Target, Feature]], input: Sample) = {
     //brian would suggest to delete standards, which are out of order in case they are the same compound with different ionisations and come very close together
     if (!possibleHits.sliding(2).forall(x => x.head.annotation.retentionTimeInSeconds < x.last.annotation.retentionTimeInSeconds)) {
       throw new StandardsNotInOrderException(s"one or more standards where not annotated in ascending order of there retention times! Sample was ${input.fileName}")

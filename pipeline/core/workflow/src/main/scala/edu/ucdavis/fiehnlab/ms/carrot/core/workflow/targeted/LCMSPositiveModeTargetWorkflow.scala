@@ -13,14 +13,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostPr
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantificationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{LCMSProperties, Workflow, WorkflowProperties}
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
 
 /**
   * a postive mode based LCMS target workflow
   */
-class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowProperties, writer: Writer[Sample], reader: Reader[Experiment]) extends Workflow[T](properties, writer, reader) {
+class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowProperties) extends Workflow[T](properties) {
 
   @Autowired
   val lcmsLCMSProperties: LCMSProperties = null
@@ -29,11 +29,14 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
   val correction: LCMSTargetRetentionIndexCorrection = null
 
   @Autowired
-  @Qualifier("quantification")
   val quantificationProcess: QuantificationProcess[T] = null
 
   @Autowired(required = false)
   val preProcessor: java.util.List[PreProcessor] = new util.ArrayList[PreProcessor]()
+
+
+  @Autowired(required = false)
+  val postProcessor: java.util.List[PostProcessing[T]] = new util.ArrayList[PostProcessing[T]]()
 
   @Autowired
   val annotate: LCMSTargetAnnotationProcess = null
@@ -43,7 +46,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
       logger.info(s"quantify sample: $s")
       var temp = quantificationProcess.process(s)
 
-      logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen datatype: $s")
+      logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen data type: $s")
       quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
         logger.info(s"executing: $x")
         temp = x.process(temp)
@@ -165,6 +168,21 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired()(properties: WorkflowPropert
     */
   override protected def postProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): AnnotatedSample = sample match {
     //TODO do nothing for now
-    case s: AnnotatedSample => s
+    case s: QuantifiedSample[T] =>
+      if (postProcessor.isEmpty) {
+        s
+      }
+      else {
+        //TODO could be done more elegant with a fold, but no time to play with it
+        val iterator = postProcessor.asScala.sortBy(_.priortiy).reverseIterator
+        var temp = iterator.next().process(s)
+
+        while (iterator.hasNext) {
+          temp = iterator.next().process(temp)
+        }
+
+        temp
+      }
+
   }
 }

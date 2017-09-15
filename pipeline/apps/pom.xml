@@ -14,8 +14,8 @@
 	<version>1.0.16-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>splasher</module>
         <module>runner</module>
+        <module>server</module>
     </modules>
 
 

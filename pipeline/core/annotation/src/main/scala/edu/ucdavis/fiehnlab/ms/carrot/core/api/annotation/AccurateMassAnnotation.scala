@@ -21,7 +21,7 @@ class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float =
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
         logger.debug(s"checking mass: ${mass}")
 
@@ -68,7 +68,7 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
         logger.debug(s"checking mass: ${mass}")
 
@@ -123,12 +123,12 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with La
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
 
-        correctedSpectra match{
+        correctedSpectra match {
 
-          case x:Feature if x.massOfDetectedFeature.isDefined =>
+          case x: Feature if x.massOfDetectedFeature.isDefined =>
             val ion = x.massOfDetectedFeature.get
             val error = mass - ion.mass
             val ppm = Math.abs(error / mass * 1000000)
@@ -148,7 +148,6 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with La
 }
 
 
-
 /**
   * considered to be a match, if the accurate mass of the spectra is in the range of
   *
@@ -166,7 +165,7 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
         logger.debug(s"checking mass: ${mass}")
 
@@ -176,8 +175,8 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
         logger.debug(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
-          case x: MSSpectra =>
-            x.relativeSpectra.exists { ion: Ion =>
+          case x: MSSpectra if x.spectrum.isDefined =>
+            x.spectrum.get.relativeSpectra.exists { ion: Ion =>
 
               logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
@@ -213,7 +212,7 @@ class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minInten
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
         logger.debug(s"checking mass: ${mass}")
 
@@ -223,8 +222,8 @@ class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minInten
         logger.debug(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
-          case x: MSSpectra =>
-            x.ions.exists { ion: Ion =>
+          case x: MSSpectra if x.spectrum.isDefined =>
+            x.spectrum.get.ions.exists { ion: Ion =>
 
               logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
@@ -261,14 +260,14 @@ class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int) extends Annotat
     * @return
     */
   override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
-    librarySpectra.monoIsotopicMass match {
+    librarySpectra.precursorMass match {
       case Some(mass) =>
 
-        correctedSpectra match{
-          case x:MSSpectra =>
+        correctedSpectra match {
+          case x: MSSpectra if x.spectrum.isDefined =>
             logger.debug(s"checking mass: ${mass}")
 
-            x.ions.exists { ion: Ion =>
+            x.spectrum.get.ions.exists { ion: Ion =>
               val error = mass - ion.mass
               val ppm = Math.abs(error / mass * 1000000)
               logger.debug(s"\t=> error: ${error} and ppm: ${ppm}")

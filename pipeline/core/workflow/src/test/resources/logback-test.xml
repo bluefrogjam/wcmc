@@ -3,25 +3,10 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
-	        <Pattern>%date{ISO8601} %level %line --- [%thread] %logger{5} - %msg%n%ex</Pattern>
+	        <Pattern>%date{ISO8601} %level --- %logger{5} - %msg%n%ex</Pattern>
         </layout>
     </appender>
-	<logger name="org.springframework" level="info"/>
-	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core" level="info"/>
-    <!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.io" level="info"/>-->
-    <!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.filter" level="info"/>-->
-	<!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.io.mzxml" level="trace"/>-->
-	<!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation" level="info"/>-->
-	<!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io" level="info"/>-->
-	<!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.msdial" level="info"/>-->
-	<!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample" level="info"/>-->
-	<!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing" level="info"/>-->
-	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing" level="debug"/>
-	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction" level="info"/>
-	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation" level="info"/>
-	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation" level="info"/>
-	<logger name="edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j" level="debug"/>
-	<logger name="edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j" level="debug"/>
+	<logger name="edu.ucdavis.fiehnlab.ms.carrot" level="info"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

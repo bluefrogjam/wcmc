@@ -4,7 +4,6 @@ import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.DeconvolutedSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
 
@@ -34,7 +33,7 @@ class SampleTXTWriter(separator: String = "\t", noneReplacements: String = "NA")
 
         sortedSpectra.foreach {
           case decSpec: MSSpectra =>
-            val line = f"${decSpec.scanNumber}%d\t${decSpec.retentionTimeInMinutes}%1.5f\t${decSpec.basePeak.mass}%1.5f\t${decSpec.basePeak.intensity}%1.5f\t${decSpec.purity.getOrElse(-1.0)}%1.5f\t${decSpec.ions.mkString(" ")}%s\n"
+            val line = f"${decSpec.scanNumber}%d\t${decSpec.retentionTimeInMinutes}%1.5f\t${decSpec.spectrum.get.basePeak.mass}%1.5f\t${decSpec.spectrum.get.basePeak.intensity}%1.5f\t${decSpec.purity.getOrElse(-1.0)}%1.5f\t${decSpec.spectrum.get.ions.mkString(" ")}%s\n"
             out.write(line)
           case _ =>
             logger.debug("not a spectra, was a feature!")
@@ -48,4 +47,11 @@ class SampleTXTWriter(separator: String = "\t", noneReplacements: String = "NA")
 //        out.flush()
     }
   }
+
+  /**
+    * the writers extension
+    *
+    * @return
+    */
+  override def extension: String = "txt"
 }

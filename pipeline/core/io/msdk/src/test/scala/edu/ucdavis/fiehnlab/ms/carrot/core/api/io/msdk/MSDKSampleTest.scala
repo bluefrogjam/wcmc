@@ -23,6 +23,7 @@ class MSDKSampleTest extends WordSpec {
       "fileName" in {
         assert(delegate.fileName != null)
       }
+
     }
 
 

@@ -4,6 +4,7 @@ import java.io.InputStream
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{Reader, SampleLoader}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.Matrix
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ProxySample
@@ -35,7 +36,7 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
     /**
       * converts the data, groups by class and assemble as an experiment
       */
-    val result = Experiment(Source.fromInputStream(inputStream).getLines().toSeq.par.collect {
+    val result = Experiment(Source.fromInputStream(inputStream).getLines().toSeq.collect {
       case line: String =>
         if (!line.startsWith("#")) {
           val data = line.split(properties.delimiter)
@@ -55,7 +56,7 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
       .filter(_ != null) // leave nulls out
       .groupBy(k => k._1) // group by class index (from experiment file)
       .mapValues(v => v.map(_._2)) // for each group extract the filename from the tuple (created in groupBy)
-      .map(tuple => ExperimentClass(tuple._2, Some(tuple._1))).toSeq) // for each value create an ExperimentClass from the tuple data
+      .map(tuple => ExperimentClass(tuple._2, Some(new Matrix(tuple._1, "None", "None",Seq.empty)))).toSeq) // for each value create an ExperimentClass from the tuple data
 
     if (result.classes.isEmpty) throw new RuntimeException("no classes for the experiment are defined!")
 

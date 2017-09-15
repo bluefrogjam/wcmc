@@ -59,10 +59,28 @@
             <artifactId>jackson-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.utilities</groupId>
+            <artifactId>compress</artifactId>
+	        <version>1.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
-            <artifactId>compress</artifactId>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.utilities</groupId>
+            <artifactId>casetojson</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
