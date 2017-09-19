@@ -25,7 +25,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 @Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
 class FServ extends WebMvcConfigurerAdapter{
 
-  @Value("${wcms.server.fserv.directory:storage}")
+  @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null
 
   @Bean
@@ -38,7 +38,7 @@ class FServ extends WebMvcConfigurerAdapter{
   override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")
 }
 
-object FServ extends App {
+object FServer extends App {
 
   val app = new SpringApplication(classOf[FServ])
   app.setWebEnvironment(true)

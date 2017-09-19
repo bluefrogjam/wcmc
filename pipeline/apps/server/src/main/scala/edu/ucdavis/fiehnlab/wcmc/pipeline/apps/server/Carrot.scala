@@ -21,7 +21,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 /**
   * Created by wohlgemuth on 9/7/17.
   */
-@SpringBootApplication(scanBasePackageClasses = Array(classOf[FServController], classOf[SchedulingController], classOf[SpringTaskSchedulerConfiguration], classOf[CentralWorkflowConfig], classOf[MonaLibraryAccessConfiguration], classOf[Carrot]))
+@SpringBootApplication(scanBasePackageClasses = Array(/*classOf[FServController],*/ classOf[SchedulingController], classOf[SpringTaskSchedulerConfiguration], classOf[CentralWorkflowConfig], classOf[MonaLibraryAccessConfiguration], classOf[Carrot]))
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class Carrot {
 
