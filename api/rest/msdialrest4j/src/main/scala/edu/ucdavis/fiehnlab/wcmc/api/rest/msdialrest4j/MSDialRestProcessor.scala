@@ -20,10 +20,10 @@ import org.springframework.web.client.RestOperations
 @Component
 class MSDialRestProcessor extends LazyLogging {
 
-  @Value("${wcms.api.rest.msdialrest4j.host:128.120.143.101}")
+  @Value("${wcmc.api.rest.msdialrest4j.host:128.120.143.101}")
   val host: String = ""
 
-  @Value("${wcms.api.rest.msdialrest4j.port:80}")
+  @Value("${wcmc.api.rest.msdialrest4j.port:80}")
   val port: Int = 80
 
   @Autowired

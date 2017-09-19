@@ -49,6 +49,7 @@ class DataFormerClient extends LazyLogging {
 
 			Map("abf" -> abfFile, "mzml" -> mzmlFile)
 		} catch {
+			case ex: UploadException =>
 			Map("abf" -> null, "mzml" -> null)
 		}
 	}
@@ -93,7 +94,7 @@ class DataFormerClient extends LazyLogging {
 	}
 }
 
-class uploadException(message: String) extends Exception(message) {}
+class UploadException(message: String) extends Exception(message) {}
 class DownloadException(message: String) extends Exception(message) {}
 
 object FileType extends Enumeration {

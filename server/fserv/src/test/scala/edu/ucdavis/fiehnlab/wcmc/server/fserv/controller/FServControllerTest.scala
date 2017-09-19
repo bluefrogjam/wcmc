@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.fserv
+package edu.ucdavis.fiehnlab.wcmc.server.fserv.controller
 
 import java.io.File
 import java.nio.file.{Files, Paths}
@@ -8,14 +8,13 @@ import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.app.FServ
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.{WordSpec, ShouldMatchers}
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.context.annotation.{Bean, Configuration, Import}
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http._
 import org.springframework.test.context.TestContextManager

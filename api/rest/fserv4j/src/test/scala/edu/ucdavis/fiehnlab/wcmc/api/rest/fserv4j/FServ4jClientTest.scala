@@ -29,7 +29,7 @@ class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfter
     new File(s"$directory/test.txt").delete()
   }
 
-  @Value("${wcms.server.fserv.directory:storage}")
+  @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null
 
   @Autowired

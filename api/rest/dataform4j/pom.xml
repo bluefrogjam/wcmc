@@ -16,17 +16,14 @@
 
 	<dependencies>
 		<dependency>
-			<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.typesafe.scala-logging/scala-logging_2.11 -->
 		<dependency>
 			<groupId>com.typesafe.scala-logging</groupId>
 			<artifactId>scala-logging_2.11</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -39,20 +36,17 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-scala_2.11 -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-scala_2.11</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
@@ -65,7 +59,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>edu.ucdavis.fiehnlab.server</groupId>
+			<groupId>edu.ucdavis.fiehnlab.wcmc.server</groupId>
 			<artifactId>fserv</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
