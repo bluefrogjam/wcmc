@@ -6,9 +6,9 @@ import java.nio.file.{Files, Paths}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.wcmc.server.fserv.app.FServ
+import edu.ucdavis.fiehnlab.wcmc.server.fserv.FServ
 import org.junit.runner.RunWith
-import org.scalatest.{WordSpec, ShouldMatchers}
+import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
@@ -27,7 +27,7 @@ import scala.io.Source
 	* Created by wohlgemuth on 7/7/17.
 	*/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes=Array(classOf[FServ]))
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes=Array(classOf[FServ]))
 class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers {
   @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null

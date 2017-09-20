@@ -1,12 +1,16 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
+import java.io.File
+
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.RemoteLoader
+import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import edu.ucdavis.fiehnlab.wcmc.server.fserv.app.FServ
+import edu.ucdavis.fiehnlab.wcmc.server.fserv.{FServ, FServSecurity}
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
@@ -18,16 +22,13 @@ import org.springframework.web.client.RestTemplate
 	* Created by diego on 8/31/2017.
 	*/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[DataFormerClientConfiguration], classOf[FServ]))
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[FServ], classOf[FServSecurity], classOf[DataFormerClientConfiguration]))
 class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLogging {
 	@Autowired
 	val dfClient: DataFormerClient = null
 
 	@Autowired
-	val fserv: FServ4jClient = null
-
-	@Autowired
-	val resourceLoader: RemoteLoader = null
+	val resourceLoader: RecursiveDirectoryResourceLoader = null
 
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -44,9 +45,9 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
 	}
 }
 
-//@SpringBootConfiguration
 @Configuration
 @ComponentScan
+@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class DataFormerClientConfiguration {
 	@Bean
 	def dfClient: DataFormerClient = new DataFormerClient()
@@ -55,5 +56,8 @@ class DataFormerClientConfiguration {
 	def restTemplate: RestTemplate = new RestTemplate()
 
 	@Bean
-	def resourceLoader: RemoteLoader = new FServ4jClient()
+	def fserv4j: FServ4jClient = new FServ4jClient()
+
+	@Bean
+	def resourceLoader: RecursiveDirectoryResourceLoader = new RecursiveDirectoryResourceLoader(new File("/h/p20repo"))
 }

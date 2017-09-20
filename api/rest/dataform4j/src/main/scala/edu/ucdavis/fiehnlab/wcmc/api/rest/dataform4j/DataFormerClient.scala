@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
+import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate
 	*
 	* sends a raw data file to DataFormer rest service to be converted into .abf and .mzml and then sends the result to fserv
 	*/
+@Component
 class DataFormerClient extends LazyLogging {
 	@Value("${wcmc.api.rest.dataformer.host:128.120.143.101}")
 	val host: String = ""
@@ -24,12 +26,12 @@ class DataFormerClient extends LazyLogging {
 	val port: Int = 9090
 
 	@Autowired
-	var fserv4j: FServ4jClient = null
+	val fserv4j: FServ4jClient = null
 
-	@Autowired
-	var restTemplate: RestTemplate = null
+//	@Autowired
+	val restTemplate: RestTemplate = new RestTemplate()
 
-	protected def url = s"http://${host}/${port}"
+	protected def url = s"http://${host}:${port}"
 
 	def convert(file: File): Map[String, File] = {
 		var abfFile: File = null
@@ -54,6 +56,7 @@ class DataFormerClient extends LazyLogging {
 		}
 	}
 
+
 	def upload(file: File): String = {
 		val map = new LinkedMultiValueMap[String, AnyRef]
 		map.add("file", new FileSystemResource(file))
@@ -61,6 +64,10 @@ class DataFormerClient extends LazyLogging {
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
 		val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
+
+		logger.debug(s"uploading to: $url/rest/upload")
+		logger.debug(s"params: $requestEntity")
+
 		val result = restTemplate.exchange(s"$url/rest/upload", HttpMethod.POST, requestEntity, classOf[String])
 
 		if(result.getStatusCode == HttpStatus.OK) {
