@@ -17,6 +17,7 @@
 
 	<modules>
 		<module>fserv</module>
+		<module>fservapp</module>
 	</modules>
 
 

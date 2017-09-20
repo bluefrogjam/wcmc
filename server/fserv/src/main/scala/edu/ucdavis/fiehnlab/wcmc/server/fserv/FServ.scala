@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.server.fserv.app
+package edu.ucdavis.fiehnlab.wcmc.server.fserv
 
 import java.io.File
 
@@ -9,8 +9,8 @@ import edu.ucdavis.fiehnlab.wcmc.server.fserv.controller.FServController
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 import org.springframework.http.MediaType
 import org.springframework.security.config.annotation.web.builders.WebSecurity
@@ -38,19 +38,10 @@ class FServ extends WebMvcConfigurerAdapter{
   override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")
 }
 
-object FServer extends App {
-
-  val app = new SpringApplication(classOf[FServ])
-  app.setWebEnvironment(true)
-  val context = app.run(args: _*)
-
-}
-
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackageClasses= Array(classOf[FServController]))
-class FServSecurity extends WebSecurityConfigurerAdapter with LazyLogging{
-
+class FServSecurity extends WebSecurityConfigurerAdapter with LazyLogging {
 
 	override def configure(web: WebSecurity): Unit = {
 		logger.warn("we are allowing unregulated access to this service!")
