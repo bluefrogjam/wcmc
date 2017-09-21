@@ -1,10 +1,11 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
-import java.io.{BufferedOutputStream, File, FileOutputStream}
+import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
+import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
@@ -28,34 +29,59 @@ class DataFormerClient extends LazyLogging {
 	@Autowired
 	val fserv4j: FServ4jClient = null
 
-//	@Autowired
 	val restTemplate: RestTemplate = new RestTemplate()
 
 	protected def url = s"http://${host}:${port}"
 
-	def convert(file: File): Map[String, File] = {
+	def convert(filename: String): Map[String, String] = {
 		var abfFile: File = null
 		var mzmlFile: File = null
 
-		logger.debug(s"processing file: ${file.getName}")
-		try {
-			var uploaded = upload(file)
-			logger.debug(s"uploaded msg: ${uploaded}")
+		var file: Option[InputStream] = null
 
-			abfFile = download(file, FileType.ABF)
-			logger.debug(s"abfFile: ${abfFile.length()}")
-
-			mzmlFile = download(file, FileType.MZML)
-			logger.debug(s"mzmlFile: ${mzmlFile.length()}")
+		if (fserv4j.exists(filename)) {
+			file = fserv4j.download(filename)
+		} else {
+			Map("abf" -> null, "mzml" -> null, "error" -> s"Can't download file ${filename} from file server")
+		}
 
 
-			Map("abf" -> abfFile, "mzml" -> mzmlFile)
-		} catch {
-			case ex: UploadException =>
+		if (file.isEmpty) {
 			Map("abf" -> null, "mzml" -> null)
+		} else {
+			var tmpfile = new File(filename)
+
+			IOUtils.copyLarge(file.get, new FileOutputStream(tmpfile))
+
+			logger.debug(s"processing file: ${filename}")
+			try {
+				var uploaded = upload(tmpfile)
+				logger.debug(s"uploaded msg: ${uploaded}")
+
+				abfFile = download(tmpfile, FileType.ABF)
+				logger.debug(s"abfFile: ${abfFile.length()}")
+				fserv4j.upload(abfFile)
+				logger.debug(s"${abfFile} added to FileServer")
+
+				mzmlFile = download(tmpfile, FileType.MZML)
+				logger.debug(s"mzmlFile: ${mzmlFile.length()}")
+				fserv4j.upload(mzmlFile)
+				logger.debug(s"${mzmlFile} added to FileServer")
+
+				Map("abf" -> abfFile.getName, "mzml" -> mzmlFile.getName)
+			} catch {
+				case uex: UploadException =>
+					Map("abf" -> null, "mzml" -> null, "error" -> uex.getMessage)
+				case dex: DownloadException =>
+					Map("abf" -> null, "mzml" -> null, "error" -> dex.getMessage)
+			}
 		}
 	}
 
+	def writeBytes(data: Stream[Byte], file: File): Unit = {
+		val target = new BufferedOutputStream(new FileOutputStream(file))
+		try data.foreach(target.write(_)) finally target.close()
+	}
 
 	def upload(file: File): String = {
 		val map = new LinkedMultiValueMap[String, AnyRef]
@@ -65,10 +91,10 @@ class DataFormerClient extends LazyLogging {
 
 		val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
 
-		logger.debug(s"uploading to: $url/rest/upload")
+		logger.debug(s"uploading to: $url/rest/conversion/upload")
 		logger.debug(s"params: $requestEntity")
 
-		val result = restTemplate.exchange(s"$url/rest/upload", HttpMethod.POST, requestEntity, classOf[String])
+		val result = restTemplate.exchange(s"$url/rest/conversion/upload", HttpMethod.POST, requestEntity, classOf[String])
 
 		if(result.getStatusCode == HttpStatus.OK) {
 			val token = result.getBody
