@@ -32,7 +32,7 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
 
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 
-	"edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" should {
+	"edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" ignore {
 		"upload a raw data file" in {
 			val rawfile = resourceLoader.loadAsFile("B5_P20Lipids_Pos_QC029.d.zip")
 			rawfile should not be null
