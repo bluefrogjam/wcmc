@@ -6,7 +6,7 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
         $scope.navCollapsed = true;
     }])
 
-    .controller('MainController', ['$scope', '$timeout', '$filter', 'HttpService', 'hotRegisterer', function($scope, $timeout, $filter, HttpService, hotRegisterer) {
+    .controller('MainController', ['$scope', '$window','$timeout', '$filter', 'HttpService', 'hotRegisterer', function($scope, $window, $timeout, $filter, HttpService, hotRegisterer) {
 
         /**
          * Syncs the select fields with the HandsOnTable column headers
@@ -18,7 +18,7 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
                 $scope.columnSelectors = instance.getColHeader();
                 $scope.selectedColumn = instance.getColHeader();
 
-                $scope.columnOptions = ['Sample File Name', 'Class', 'Organ', 'Species']
+                $scope.columnOptions = ['Sample File Name', 'Class', 'Organ', 'Species', 'Comment', 'Label']
 
                 $scope.selectedColumn.forEach(function(col) {
                     for (var i in $scope.columnOptions) {
@@ -36,7 +36,7 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
         $scope.settings = {
             contextMenu: true,
             afterRender: updateColumnSelectors,
-            colHeaders: ['Sample File Name', 'Class', 'Organ', 'Species']
+            colHeaders: ['Sample File Name', 'Class', 'Organ', 'Species', 'Comment', 'Label']
         };
 
         /**
@@ -49,7 +49,7 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
          */
         $scope.columnSelectors = [];
         $scope.selectedColumn = [];
-        $scope.columnOptions = ['Sample File Name', 'Class', 'Organ', 'Species']
+        $scope.columnOptions = ['Sample File Name', 'Class', 'Organ', 'Species', 'Comment', 'Label']
 
         /**
          * Acquisition method options
@@ -57,11 +57,18 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
         $scope.acquisitionMethodOptions = [
             'Lipidomics', 'HILIC'
         ];
+        $scope.platformOptions = [
+            'LC-MS', 'QC-MS'
+        ];
 
         /**
          * Task object
          */
         $scope.task = {};
+
+        $scope.reset = function() {
+          $window.location.reload();
+        }
 
 
         /**
@@ -89,6 +96,8 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
             var classCol = headers.indexOf('Class');
             var speciesCol = headers.indexOf('Species');
             var organCol = headers.indexOf('Organ');
+            var commentCol = headers.indexOf('Comment');
+            var labelCol = headers.indexOf('Label');
 
             // Validate form
             if (fileNameCol == -1) {
@@ -100,22 +109,28 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
                 $scope.error = 'No email address provided!';
                 return;
             }
-
+            if (angular.isUndefined($scope.task.platform)) {
+                $scope.error = 'No platform selected!';
+                return;
+            }
             if (angular.isUndefined($scope.task.acquisitionMethod)) {
                 $scope.error = 'No acquisition method selected!';
                 return;
             }
 
-
             $scope.running = true;
-
 
             // Task object to submit
             var task = {
                 samples: [],
                 name: $scope.task.email,
+<<<<<<< HEAD
+                acquisitionMethod: {chromatographicMethod: {name: $scope.task.acquisitionMethod}},
+                platform: {platform: {name: $scope.task.platform}}
+=======
                 email: $scope.task.email,
                 acquisitionMethod: {chromatographicMethod: {name: $scope.task.acquisitionMethod}}
+>>>>>>> f05899db69ea1a326ecfa28f6baf2e87a69ef894
             };
 
             // Add task name
@@ -144,7 +159,10 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
                                 matrix.species = x[speciesCol]
                             if (organCol > -1)
                                 matrix.organ = x[organCol]
-
+                            if (commentCol > -1)
+                                matrix.comment = x[commentCol]
+                            if (labelCol > -1)
+                                matrix.label = x[labelCol]
                             if (!angular.equals(matrix, {}))
                                 sample.matrix = matrix;
 
