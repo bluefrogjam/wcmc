@@ -22,10 +22,16 @@ import org.springframework.web.client.RestOperations
 class MSDialRestProcessor extends LazyLogging {
 
   @Value("${wcmc.api.rest.msdialrest4j.host:128.120.143.101}")
-  val host: String = ""
+  val msdresthost: String = ""
 
   @Value("${wcmc.api.rest.msdialrest4j.port:80}")
-  val port: Int = 80
+  val msdrestport: Int = 0
+
+  @Value("${wcmc.api.rest.msdialrest4j.host:128.120.143.101}")
+  val dfhost: String = ""
+
+  @Value("${wcmc.api.rest.msdialrest4j.port:9090}")
+  val dfport: Int = 0
 
   @Autowired
   val dataformer: DataFormerClient = null
@@ -33,7 +39,8 @@ class MSDialRestProcessor extends LazyLogging {
   @Autowired
   val restTemplate: RestOperations = null
 
-  protected def url = s"http://${host}:${port}"
+  protected def msdresturl = s"http://${msdresthost}:${msdrestport}"
+  protected def dfurl = s"http://${dfhost}:${dfport}"
 
   /**
     * processes the input file and includes caching support
@@ -49,8 +56,10 @@ class MSDialRestProcessor extends LazyLogging {
     //if directory and ends with .d zip file
     val (toUpload, temp) = if (input.isDirectory && input.getName.endsWith(".d")) {
 
-      val temp = File.createTempFile("wcms", ".zip")
+      val temp = new File(s"${input.getName}.zip")
+      temp.deleteOnExit()
       ZipUtil.zipDir(input.getAbsolutePath, temp.getAbsolutePath, s"${input.getName}")
+
       (temp, true)
     }
     else {
@@ -83,7 +92,7 @@ class MSDialRestProcessor extends LazyLogging {
     * @return
     */
   protected def upload(file: File): (String, String) = {
-    logger.debug(s"uploading file: ${file} to ${url}")
+    logger.debug(s"uploading file: ${file} to ${msdresturl}")
 
     import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
     import org.springframework.util.LinkedMultiValueMap
@@ -94,7 +103,7 @@ class MSDialRestProcessor extends LazyLogging {
     headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
     val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-    val result = restTemplate.exchange(s"$url/rest/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
+    val result = restTemplate.exchange(s"$msdresturl/rest/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
 
     if(result.getStatusCode == HttpStatus.OK) {
       val token = result.getBody.filename
@@ -127,12 +136,12 @@ class MSDialRestProcessor extends LazyLogging {
     * @return
     */
   protected def download(id: String, token: String): File = {
-    val result = restTemplate.exchange(s"$url/rest/deconvolution/status/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
+    val result = restTemplate.exchange(s"$msdresturl/rest/deconvolution/status/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
-      val resultId = result.getBody.link.split("/").last
+//      val resultId = result.getBody.link.split("/").last
 
-      val download = restTemplate.exchange(s"$url/rest/deconvolution/result/${id}",HttpMethod.GET, createAuthRequest(token), classOf[String])
+      val download = restTemplate.exchange(s"$msdresturl/rest/deconvolution/result/${id}",HttpMethod.GET, createAuthRequest(token), classOf[String])
 
       if (download.getStatusCode == HttpStatus.OK) {
 
@@ -161,7 +170,7 @@ class MSDialRestProcessor extends LazyLogging {
 	  * @param token
     */
   protected def convert(id: String, token: String): String = {
-    val result = restTemplate.exchange(s"$url/rest/conversion/convert/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
+    val result = restTemplate.exchange(s"$msdresturl/rest/conversion/convert/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       logger.debug("conversion succeeded")
@@ -182,7 +191,7 @@ class MSDialRestProcessor extends LazyLogging {
     * @return
     */
   protected def schedule(id: String, token: String): String = {
-    val result = restTemplate.exchange(s"$url/rest/deconvolution/schedule/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
+    val result = restTemplate.exchange(s"$msdresturl/rest/deconvolution/schedule/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       logger.debug("conversion succeeded, not conversion required")
