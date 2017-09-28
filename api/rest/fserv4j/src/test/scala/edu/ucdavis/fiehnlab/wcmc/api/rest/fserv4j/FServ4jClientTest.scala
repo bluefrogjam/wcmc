@@ -5,7 +5,11 @@ import java.io.{File, FileWriter}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
+<<<<<<< HEAD
 import edu.ucdavis.fiehnlab.wcmc.fserv.app.FServ
+=======
+import edu.ucdavis.fiehnlab.wcmc.server.fserv.{FServ, FServSecurity}
+>>>>>>> master
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -22,14 +26,14 @@ import scala.io.Source
   */
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ], classOf[FServ4jClientConfiguration]))
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ], classOf[FServSecurity], classOf[FServ4jClientConfiguration]))
 class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {
 
   override protected def beforeEach(): Unit = {
     new File(s"$directory/test.txt").delete()
   }
 
-  @Value("${wcms.server.fserv.directory:storage}")
+  @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null
 
   @Autowired

@@ -35,7 +35,7 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc.api</groupId>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
             <artifactId>fserv4j</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

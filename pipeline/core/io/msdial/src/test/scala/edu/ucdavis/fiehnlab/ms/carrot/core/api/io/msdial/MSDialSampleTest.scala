@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
 import org.scalatest.WordSpec
 
 /**
   * Created by wohlg_000 on 5/7/2016.
   */
-class MSDialSampleTest extends WordSpec {
+class MSDialSampleTest extends WordSpec with LazyLogging {
 
   val sample = new MSDialSample(getClass.getResourceAsStream("/msdial-msms-lc.msdial"), "msdial-msms-lc.msdial")
 

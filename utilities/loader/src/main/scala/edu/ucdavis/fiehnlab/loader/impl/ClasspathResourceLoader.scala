@@ -38,4 +38,6 @@ class ClasspathResourceLoader extends LocalLoader {
       case Failure(_) => false
     }
   }
+
+	override def priority: Int = super.priority + 10
 }

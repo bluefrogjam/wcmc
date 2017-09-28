@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
 object MassAccuracy extends LazyLogging {
 
   /**
-    * returns the ion in this spectra, which is closest to the target mass, in the defined window
+    * returns the ion in this spectrum, which is closest mass to the target mass, in the defined window
     *
     * @param spectra
     * @param targetMass

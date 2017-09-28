@@ -3,12 +3,10 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j
 import java.io.{ByteArrayInputStream, File, FileNotFoundException, InputStream}
 import java.util
 
-import edu.ucdavis.fiehnlab.loader.{RemoteLoader, ResourceLoader}
-import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.cache.annotation.Cacheable
+import edu.ucdavis.fiehnlab.loader.RemoteLoader
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
-import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client._
@@ -25,13 +23,13 @@ class FServ4jClient extends RemoteLoader {
   val template: RestOperations = new RestTemplate()
 
 
-  @Value("${wcms.api.rest.fserv4j.host:127.0.0.1}")
+  @Value("${wcmc.api.rest.fserv4j.host:127.0.0.1}")
   val host: String = ""
 
-  @Value("${wcms.api.rest.fserv4j.port:8080}")
+  @Value("${wcmc.api.rest.fserv4j.port:8080}")
   val port: Int = 80
 
-  @Value("${wcms.api.rest.fserv4j.root:rest/file}")
+  @Value("${wcmc.api.rest.fserv4j.root:rest/file}")
   val root: String = ""
 
   /**

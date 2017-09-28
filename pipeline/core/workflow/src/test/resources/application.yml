@@ -16,13 +16,14 @@ workflow.files.targets: "/targets_full.txt"
 #    massAccuracy: 150
 #    retentionIndexWindow: 200
 
-wcms:
+wcmc:
   api:
     rest:
       msdialrest4j:
         host: 128.120.143.101
         port: 80
 
+loaders.recursive.baseDirectory: h:/p20repo
 
 mona:
   rest:

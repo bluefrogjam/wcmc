@@ -239,7 +239,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowPropertie
     * @return
     */
   override def process(input: CorrectedSample, targets: Iterable[Target]): AnnotatedSample = {
-
+	  logger.info(s"Annotating sample: ${input.name}")
 
     /**
       * internal recursive function to find all possible annotations in the sample
