@@ -93,7 +93,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
       val lib = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
       val method = acquisitionLoader.load(loader.getSample(sampleNames.head)).get
       val targetsToAdd = lib.load(method)
-      targetLibrary.add(targetsToAdd, method)
+      targetLibrary.add(targetsToAdd, method,None)
 
     }
     "ensure our targets are defined" in {

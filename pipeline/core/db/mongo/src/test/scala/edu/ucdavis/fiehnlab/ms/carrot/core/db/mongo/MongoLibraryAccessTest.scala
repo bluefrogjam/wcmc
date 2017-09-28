@@ -68,7 +68,7 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
 
         override val spectrum: Option[SpectrumProperties] = None
 
-      },acquistionMethod)
+      },acquistionMethod,None)
 
       library.load(acquistionMethod).size should be(1)
 
@@ -105,7 +105,7 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
 
         override val spectrum: Option[SpectrumProperties] = None
 
-      },acquistionMethod)
+      },acquistionMethod,None)
 
       library.load(acquistionMethod).size should be(2)
 
@@ -142,7 +142,7 @@ class MongoLibraryAccessTest extends WordSpec with BeforeAndAfterEach with Shoul
 
         override val spectrum: Option[SpectrumProperties] = None
 
-      },acquistionMethod)
+      },acquistionMethod,None)
 
       library.load(acquistionMethod).size should be(3)
 
