@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 
 import java.io.File
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -20,7 +21,7 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[MSDialRestProcessorConfig]))
-class MSDialRestProcessorTest extends WordSpec with ShouldMatchers{
+class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatchers {
 
   @Autowired
   val mSDialRestProcessor:MSDialRestProcessor = null

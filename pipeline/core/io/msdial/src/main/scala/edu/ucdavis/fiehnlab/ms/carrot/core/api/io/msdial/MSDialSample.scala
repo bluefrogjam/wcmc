@@ -10,8 +10,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sampl
 import scala.io.Source
 
 /**
-  * creates a new msdial sample from the given file
-  */
+	* creates a new msdial sample from the given file
+	*/
 object MSDialSample {
   def apply(name: String, file: File): MSDialSample = {
     if (file.getName.endsWith("gz")) {
@@ -24,10 +24,10 @@ object MSDialSample {
 }
 
 /**
-  *
-  * @param inputStream
-  * @param fileName
-  */
+	*
+	* @param inputStream
+	* @param fileName
+	*/
 class MSDialSample(inputStream: InputStream, override val fileName: String) extends Sample with LazyLogging {
 
   protected val nameIdentifier: String = "name"
@@ -69,7 +69,7 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
   protected val totalScoreIdentifier: String = "total score"
   protected val spectraIdentifier: String = "spectra"
 
-  override val spectra: Seq[Feature] = readFile(inputStream)
+	override val spectra: Seq[Feature] = readFile(inputStream)
 
   /**
     * parse the given input stream and returns a list of spectra object
@@ -96,13 +96,13 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
     }
   }
 
-  /**
-    * assembles a spectra, based on the provided read line
-    *
-    * @param dataMap
-    * @return
-    */
-  def buildSpectra(dataMap: Map[String, String]): Feature = {
+	/**
+		* assembles a spectra, based on the provided read line
+		*
+		* @param dataMap
+		* @return
+		*/
+	def buildSpectra(dataMap: Map[String, String]): Feature = {
 
     if (!dataMap.keySet.contains(spectraIdentifier)) {
       /**

@@ -198,7 +198,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     val filters: SequentialAnnotate = new SequentialAnnotate(massAccuracy :: massIntensity :: List())
 
     /**
-      * find possible matches for our specified targets
+      * find possible matches for our specified standards
       */
     val matches: Seq[TargetAnnotation[Target, Feature]] = targets.toSeq.sortBy(_.retentionTimeInMinutes).collect {
 
@@ -213,7 +213,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
             throw new RequiredStandardNotFoundException(s"this target ${target} was not found during the detection phase, but it's required. Sample was ${input.fileName}")
           }
           else {
-            logger.debug("\t=>\tno hits found for this target")
+            logger.debug("\t=>\tno hits found for this standard")
             None
           }
         }
@@ -224,12 +224,10 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
         }
         //otherwise let's find the best hit
         else {
-          logger.debug(s"\t=>\t${result.size} hits found for this target")
+          logger.debug(s"\t=>\t${result.size} hits found for this standard")
           findBestHit(target, result)
         }
-    }
-
-      .collect {
+    }.collect {
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[Target, Feature] =>
           logger.info(s"annotated: ${hit.target.name.getOrElse("Unknown")}/${hit.target.retentionIndex}/${hit.target.precursorMass.getOrElse(0)} with ${hit.annotation.retentionTimeInSeconds}/${hit.annotation.massOfDetectedFeature.get.mass}")

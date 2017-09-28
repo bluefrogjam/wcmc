@@ -8,7 +8,7 @@
     </appender>
 	<logger name="edu.ucdavis.fiehnlab.ms.carrot" level="info"/>
 
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

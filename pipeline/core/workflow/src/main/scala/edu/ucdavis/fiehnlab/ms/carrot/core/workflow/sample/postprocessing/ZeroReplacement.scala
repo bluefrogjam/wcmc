@@ -20,43 +20,44 @@ import org.springframework.stereotype.Component
   */
 abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProcessing[Double](properties) with LazyLogging {
 
-  @Autowired
-  val zeroReplacementProperties: ZeroReplacementProperties = null
+	@Autowired
+	val zeroReplacementProperties: ZeroReplacementProperties = null
 
-  @Autowired
-  val sampleLoader: SampleLoader = null
-  @Autowired
-  val correction: LCMSTargetRetentionIndexCorrection = null
+	@Autowired
+	val sampleLoader: SampleLoader = null
 
-  /**
-    * replaces the given value, with the best possible value
-    * based on the provided configuration settings
-    *
-    * @param needsReplacement
-    * @param sample
-    * @param rawdata
-    * @return
-    */
-  def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double]
+	@Autowired
+	val correction: LCMSTargetRetentionIndexCorrection = null
 
-  /**
-    * actually processes the item
-    *
-    * @param sample
-    * @return
-    */
-  final override def doProcess(sample: QuantifiedSample[Double]): QuantifiedSample[Double] = {
+	/**
+		* replaces the given value, with the best possible value
+		* based on the provided configuration settings
+		*
+		* @param needsReplacement
+		* @param sample
+		* @param rawdata
+		* @return
+		*/
+	def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double]
+
+	/**
+		* actually processes the item
+		*
+		* @param sample
+		* @return
+		*/
+	final override def doProcess(sample: QuantifiedSample[Double]): QuantifiedSample[Double] = {
 
     //contains a bug doing unnessescary search against the server. A collect first would be more appropriate
     //to check if a file exist
     val rawdata: Option[Sample] = zeroReplacementProperties.fileExtension.collect {
 
-      case extension: String =>
-        val fileNameToLoad = sample.name + "." + extension
-        logger.debug(s"attempting to load file: ${fileNameToLoad}")
+			case extension: String =>
+				val fileNameToLoad = sample.name + "." + extension
+				logger.debug(s"attempting to load file: ${fileNameToLoad}")
 
-        try {
-          val result = sampleLoader.loadSample(fileNameToLoad)
+				try {
+					val result = sampleLoader.loadSample(fileNameToLoad)
 
           if (result.isDefined) {
             logger.info(s"loaded rawdata file: ${result.get}")
@@ -68,11 +69,11 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
         }
     }.collectFirst { case p: Sample => p }
 
-    if (rawdata.isDefined) {
-      logger.info(s"replacing data with: ${rawdata}")
-      val correctedRawData: CorrectedSample = correction.doCorrection(sample.featuresUsedForCorrection, rawdata.get, sample.regressionCurve, sample)
+		if (rawdata.isDefined) {
+			logger.info(s"replacing data with: ${rawdata.get}")
+			val correctedRawData: CorrectedSample = correction.doCorrection(sample.featuresUsedForCorrection, rawdata.get, sample.regressionCurve, sample)
 
-      logger.info(s"corrected data for: ${correctedRawData}")
+			logger.info(s"corrected data for: ${correctedRawData.name}")
 
       val replacedSpectra: Seq[QuantifiedTarget[Double]] = sample.quantifiedTargets.map { target =>
         if (target.quantifiedValue.isDefined) {
@@ -116,25 +117,25 @@ abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProce
 @ConfigurationProperties(prefix = "zero-replacement")
 class ZeroReplacementProperties {
 
-  /**
-    * replacement is enabled
-    */
-  var enabled: Boolean = true
+	/**
+		* replacement is enabled
+		*/
+	var enabled: Boolean = true
 
   /**
     * window used for noise calculations in seconds, if 0 the whole chromatography will be used
     */
   var noiseWindowInSeconds: Int = 0
 
-  /**
-    * the defined retention index correction for the peak detection during the replacement
-    */
-  var retentionIndexWindowForPeakDetection: Double = 12
+	/**
+		* the defined retention index correction for the peak detection during the replacement
+		*/
+	var retentionIndexWindowForPeakDetection: Double = 12
 
-  /**
-    * utilized mass accuracy for searches in ppm
-    */
-  var massAccuracyPPM: Double = 30
+	/**
+		* utilized mass accuracy for searches in ppm
+		*/
+	var massAccuracyPPM: Double = 30
 
   /**
     * extension of our rawdata files, to be used for replacement
@@ -150,17 +151,17 @@ class ZeroReplacementProperties {
 @Component
 @Profile(Array("carrot.processing.replacement.simple"))
 class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends ZeroReplacement(properties) {
-  /**
-    * replaces the given value, with the best possible value
-    * based on the provided configuration settings
-    *
-    * @param needsReplacement
-    * @param sample
-    * @param rawdata
-    * @return
-    */
-  override def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
-    val receivedTarget = needsReplacement
+	/**
+		* replaces the given value, with the best possible value
+		* based on the provided configuration settings
+		*
+		* @param needsReplacement
+		* @param sample
+		* @param rawdata
+		* @return
+		*/
+	override def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
+		val receivedTarget = needsReplacement
 
     val filterByMass = new IncludeByMassRangePPM(receivedTarget, zeroReplacementProperties.massAccuracyPPM)
     val filterByRetentionIndexNoise = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionTimeInSeconds, zeroReplacementProperties.noiseWindowInSeconds)

@@ -17,6 +17,6 @@ class IncludeByRetentionIndexTimeWindow(val timeInSeconds: Double, val window: D
     val min = timeInSeconds - window
     val max = timeInSeconds + window
 
-    spectra.retentionIndex > min && spectra.retentionIndex < max
+    spectra.retentionIndex >= min && spectra.retentionIndex < max
   }
 }

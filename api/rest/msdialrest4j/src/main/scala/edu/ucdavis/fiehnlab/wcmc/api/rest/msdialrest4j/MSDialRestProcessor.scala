@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 
-import java.io._
+import java.io.{BufferedWriter, File, FileWriter}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import edu.ucdavis.fiehnlab.wcms.utilities.ZipUtil
+import edu.ucdavis.fiehnlab.wcmc.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
@@ -20,10 +20,10 @@ import org.springframework.web.client.RestOperations
 @Component
 class MSDialRestProcessor extends LazyLogging {
 
-  @Value("${wcms.api.rest.msdialrest4j.host:128.120.143.101}")
+  @Value("${wcmc.api.rest.msdialrest4j.host:128.120.143.101}")
   val host: String = ""
 
-  @Value("${wcms.api.rest.msdialrest4j.port:80}")
+  @Value("${wcmc.api.rest.msdialrest4j.port:80}")
   val port: Int = 80
 
   @Autowired

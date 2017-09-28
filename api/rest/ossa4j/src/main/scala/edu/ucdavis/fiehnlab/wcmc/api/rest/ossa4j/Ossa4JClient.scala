@@ -11,10 +11,10 @@ import org.springframework.web.client.RestOperations
 @Component
 class Ossa4JClient extends LazyLogging{
 
-  @Value("${wcms.api.rest.ossa4j.host:127.0.0.1}")
+  @Value("${wcmc.api.rest.ossa4j.host:127.0.0.1}")
   val host: String = ""
 
-  @Value("${wcms.api.rest.ossa4j.port:8080}")
+  @Value("${wcmc.api.rest.ossa4j.port:8080}")
   val port: Int = 80
 
   @Autowired
