@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
-import java.io.File
-
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.{FServ, FServSecurity}
@@ -16,8 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.databind.ObjectMapper
 
 /**
 	* Created by diego on 8/31/2017.

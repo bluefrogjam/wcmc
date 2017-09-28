@@ -158,7 +158,7 @@ object FileType extends Enumeration {
 
 @Configuration
 class DataFormerConfiguration extends LazyLogging {
-	@Value("${wcmc.api.rest.dataformer.conversiontimeout:30}")
+	@Value("${wcmc.api.rest.dataformer.conversiontimeout:60}")
 	val conversionTimeout: Int = 0
 
 	@Bean

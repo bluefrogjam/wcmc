@@ -5,6 +5,7 @@ import java.io.{BufferedWriter, File, FileWriter}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
+import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.FileSystemResource
@@ -25,6 +26,9 @@ class MSDialRestProcessor extends LazyLogging {
 
   @Value("${wcmc.api.rest.msdialrest4j.port:80}")
   val port: Int = 80
+
+  @Autowired
+  val dataformer: DataFormerClient = null
 
   @Autowired
   val restTemplate: RestOperations = null
