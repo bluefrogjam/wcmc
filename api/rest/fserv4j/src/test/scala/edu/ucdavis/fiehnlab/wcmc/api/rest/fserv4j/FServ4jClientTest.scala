@@ -5,11 +5,7 @@ import java.io.{File, FileWriter}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-<<<<<<< HEAD
-import edu.ucdavis.fiehnlab.wcmc.fserv.app.FServ
-=======
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.{FServ, FServSecurity}
->>>>>>> master
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
