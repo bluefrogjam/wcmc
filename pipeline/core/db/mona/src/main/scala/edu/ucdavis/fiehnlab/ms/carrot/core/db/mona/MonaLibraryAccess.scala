@@ -49,7 +49,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * based on the given method this will evaluate to a query against the system to provide us with valid targets
     * for annotation and identification
     */
-  def query(acquistionMethod: AcquisitionMethod): String = ""
+  def query(acquistionMethod: AcquisitionMethod): String = s"""(tags.text=="${generateLibraryIdentifier(acquistionMethod)}")"""
 
   /**
     * loads all the spectra from the library
@@ -153,7 +153,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         },
         splash = null,
         submitter = associateWithSubmitter(),
-        tags = Array(Tags(ruleBased = false, "carrot")),
+        tags = (Tags(ruleBased = false, "carrot") :: associateWithLibrary(acquistionMethod).tag :: List() ).toArray,
         authors = Array(),
         library = associateWithLibrary(acquistionMethod)
       )
@@ -293,7 +293,28 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @return
     */
-  def associateWithLibrary(acquistionMethod: AcquisitionMethod): Library = null
+  def associateWithLibrary(acquistionMethod: AcquisitionMethod): Library = {
+    val identifier = generateLibraryIdentifier(acquistionMethod)
+
+    Library(
+      id = identifier,
+      library = identifier,
+      description = "generated based on carrot data processing",
+      link = null,
+      tag = Tags(ruleBased = false, text = identifier)
+    )
+  }
+
+  def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = {
+    if (acquisitionMethod.chromatographicMethod.isDefined) {
+
+      //just use the name for now to keep things easy
+      acquisitionMethod.chromatographicMethod.get.name
+    }
+    else {
+      "default"
+    }
+  }
 
   /**
     * converts a spectrum to a target
@@ -358,8 +379,8 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     MonaLibraryTarget(
       spectrumProperties,
       name = Option(name),
-      retentionIndex = retentionIndex.get.value.asInstanceOf[Double],
-      retentionTimeInSeconds = retentionTime.get.value.asInstanceOf[Double],
+      retentionIndex = retentionIndex.get.value.toString.toDouble,
+      retentionTimeInSeconds = retentionTime.get.value.toString.toDouble,
       inchiKey = Option(inchi),
       precursorMass = Option(precursorIon.get.value.asInstanceOf[Double]),
       confirmed = if (confirmed.isDefined) confirmed.get.value.asInstanceOf[Boolean] else false,

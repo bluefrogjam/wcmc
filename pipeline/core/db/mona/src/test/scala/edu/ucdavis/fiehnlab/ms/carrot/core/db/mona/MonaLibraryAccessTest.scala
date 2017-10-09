@@ -5,9 +5,10 @@ import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationC
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
+import org.scalatest.concurrent.Eventually
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -24,7 +25,7 @@ import scala.collection.JavaConverters._
 
 @SpringBootTest
 @ActiveProfiles(Array("carrot.targets.mona"))
-class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging{
+class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually {
   val testTarget = new Target {
     /**
       * a name for this spectra
@@ -120,12 +121,11 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
   }
 
 
-
   @Value("${mona.rest.server.user}")
-  val username:String = null
+  val username: String = null
 
   @Value("${mona.rest.server.password}")
-  val password:String = null
+  val password: String = null
 
   @Autowired
   val library: MonaLibraryAccess = null
@@ -134,19 +134,19 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
   val userRepo: UserRepository = null
 
   @Autowired
-  val monaSpectrumRestClient:MonaSpectrumRestClient = null
+  val monaSpectrumRestClient: MonaSpectrumRestClient = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "MonaLibraryAccessTest" should {
 
     "create user to authenticate" in {
-      val result = userRepo.save(User(username,password, Array(Role("ADMIN")).toList.asJava))
+      val result = userRepo.save(User(username, password, Array(Role("ADMIN")).toList.asJava))
     }
 
     "generateTarget" in {
 
-      val result = library.generateSpectrum(testTarget,new AcquisitionMethod(None),None)
+      val result = library.generateSpectrum(testTarget, new AcquisitionMethod(None), None)
 
       result.isDefined shouldBe true
 
@@ -163,15 +163,42 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "be possible to add and load targets" in {
-      monaSpectrumRestClient.login(username,password)
+      monaSpectrumRestClient.login(username, password)
       monaSpectrumRestClient.list().foreach(s => monaSpectrumRestClient.delete(s.id))
 
-      val acquisitionMethod:AcquisitionMethod = AcquisitionMethod(None)
-      library.add(testTarget,acquisitionMethod,None)
-        library.load(acquisitionMethod).size shouldBe 1
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(None)
+      library.add(testTarget, acquisitionMethod, None)
 
-        library.add(testTarget2,acquisitionMethod,None)
+      eventually {
+        library.load(acquisitionMethod).size shouldBe 1
+      }
+      library.add(testTarget2, acquisitionMethod, None)
+
+      eventually {
         library.load(acquisitionMethod).size shouldBe 2
+      }
+
+    }
+
+    "be possible to add and load targets from a different library" in {
+
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      library.add(testTarget, acquisitionMethod, None)
+      eventually {
+        library.load(acquisitionMethod).size shouldBe 1
+      }
+      library.add(testTarget2, acquisitionMethod, None)
+      eventually {
+        library.load(acquisitionMethod).size shouldBe 2
+      }
+
+      eventually {
+        library.load(AcquisitionMethod(None)).size shouldBe 2
+      }
+      eventually {
+        monaSpectrumRestClient.list().size shouldBe 4
+      }
+
 
     }
 
