@@ -12,9 +12,7 @@
     <artifactId>schedule</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>api</module>
-        <module>server</module>
-
+        <module>rest</module>
     </modules>
 
 </project>
