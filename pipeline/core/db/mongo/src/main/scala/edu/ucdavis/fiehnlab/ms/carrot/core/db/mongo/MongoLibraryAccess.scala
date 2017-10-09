@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{IonMode, Target, Unknown}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{IonMode, Sample, Target, Unknown}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.data.annotation.Id
@@ -22,7 +22,7 @@ import scala.collection.JavaConverters._
   * Created by wohlgemuth on 8/7/17.
   */
 @Component
-@Profile(Array("backend-mongo"))
+@Profile(Array("carrot.targets.mongo"))
 class MongoLibraryAccess @Autowired()(libraryRepository: ILibraryRepository, libraryName: String) extends LibraryAccess[Target] with LazyLogging {
   /**
     * loads all the spectra from the library
@@ -91,13 +91,13 @@ class MongoLibraryAccess @Autowired()(libraryRepository: ILibraryRepository, lib
     *
     * @param targets
     */
-  override def add(targets: Iterable[Target],acquistionMethod:AcquisitionMethod): Unit = {
+  override def add(targets: Iterable[Target],acquistionMethod:AcquisitionMethod,sample:Option[Sample]): Unit = {
 
     val lib = libraryRepository.findOneByName(libraryName)
 
     if (lib == null) {
       generateNoneExistingLibrary()
-      add(targets,acquistionMethod:AcquisitionMethod)
+      add(targets,acquistionMethod:AcquisitionMethod,sample)
     }
     else {
       logger.info(s"added ${targets.size} to ${lib}")

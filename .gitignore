@@ -1,28 +1,12 @@
 target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-
-!/.mvn/wrapper/maven-wrapper.jar
-
 .idea/
 *.iml
 .idea
-
-tmp/
-**/runner/*result.txt*
 
 #data files
 **/*.abf
 **/*.d/
 **/*.mzXML
 **/*.mzML
-**/*.mzxml
-**/*.mzml
 !**/msdialrest4j/src/test/resources/*.abf
 !**/msdialrest4j/src/test/resources/*.d/

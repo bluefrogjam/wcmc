@@ -120,7 +120,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param t
     * @return
     */
-  def generateSpectrum(t: Target, acquistionMethod: AcquisitionMethod): Option[Spectrum] = {
+  def generateSpectrum(t: Target, acquistionMethod: AcquisitionMethod, sample: Option[Sample]): Option[Spectrum] = {
     val compound = Compound(
       inchi = null,
       inchiKey = t.inchiKey.orNull,
@@ -132,7 +132,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       score = null
     )
 
-    val metaData: Array[MetaData] = generateAcquisitonInfo(generateDefaultMetaData(t), acquistionMethod)
+    val metaData: Array[MetaData] = generateAcquisitonInfo(generateDefaultMetaData(t, sample), acquistionMethod)
 
     //attach the acquisition method metadata now
     Some(
@@ -155,13 +155,13 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         submitter = associateWithSubmitter(),
         tags = Array(Tags(ruleBased = false, "carrot")),
         authors = Array(),
-        library = associateWithLibrary()
+        library = associateWithLibrary(acquistionMethod)
       )
     )
 
   }
 
-  private def generateDefaultMetaData(t: Target) = {
+  private def generateDefaultMetaData(t: Target, sample: Option[Sample]) = {
     val metaData = Array(
       MetaData(
         category = "none",
@@ -246,6 +246,29 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         url = null,
         value = if (t.spectrum.isDefined) s"MS${t.spectrum.get.msLevel}" else "MS1"
       )
+      ,
+      MetaData(
+        category = "origin",
+        computed = false,
+        hidden = false,
+        name = "fileName",
+        score = null,
+        unit = null,
+        url = null,
+        value = if (sample.isDefined) s"${sample.get.fileName}" else "Unknown"
+      )
+
+      ,
+      MetaData(
+        category = "origin",
+        computed = false,
+        hidden = false,
+        name = "sampleName",
+        score = null,
+        unit = null,
+        url = null,
+        value = if (sample.isDefined) s"${sample.get.name}" else "Unknown"
+      )
 
 
     )
@@ -270,7 +293,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @return
     */
-  def associateWithLibrary(): Library = null
+  def associateWithLibrary(acquistionMethod: AcquisitionMethod): Library = null
 
   /**
     * converts a spectrum to a target
@@ -297,6 +320,12 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       case "MS2" => 2
       case "MS3" => 3
       case "MS4" => 4
+      case "MS5" => 5
+      case "MS6" => 6
+      case "MS7" => 7
+      case "MS8" => 8
+      case "MS9" => 9
+      case "MS10" => 10
 
     }
 
@@ -358,12 +387,12 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @param targets
     */
-  override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod): Unit = {
+  override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
     monaSpectrumRestClient.login(username, password)
 
     targets.foreach {
       t =>
-        val spectrum: Option[Spectrum] = generateSpectrum(t, acquisitionMethod)
+        val spectrum: Option[Spectrum] = generateSpectrum(t, acquisitionMethod, sample)
 
         if (spectrum.isDefined) {
           val spec = spectrum.get
