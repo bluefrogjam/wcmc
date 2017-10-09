@@ -1,7 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
-import java.io.FileNotFoundException
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}

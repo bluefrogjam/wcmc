@@ -26,7 +26,7 @@ class SpectrumMinimizerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
 	new TestContextManager(this.getClass).prepareTestInstance(this)
 
-	"Minimize" should {
+	"Minimize" ignore {
 		val file = new File("h:/tmp/B5_P20Lipids_Pos_NIST01.msdial")
 
 		val miniFile = minimizer.get.minimize(file)

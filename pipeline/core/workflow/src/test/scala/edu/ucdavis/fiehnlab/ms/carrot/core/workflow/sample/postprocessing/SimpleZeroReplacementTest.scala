@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height"))
+@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height","carrot.processing.replacement.simple"))
 class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers{
 
   @Autowired
@@ -75,11 +75,4 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
     }
 
   }
-}
-
-@Configuration
-class SimpleZeroReplacementConfiguration{
-
-  @Bean
-  def zeroReplacement(workflowProperties: WorkflowProperties):SimpleZeroReplacement = new SimpleZeroReplacement(workflowProperties)
 }
