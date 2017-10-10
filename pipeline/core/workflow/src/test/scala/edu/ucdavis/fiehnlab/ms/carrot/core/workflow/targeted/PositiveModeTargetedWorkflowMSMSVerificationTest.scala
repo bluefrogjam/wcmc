@@ -44,7 +44,7 @@ class MethodConfig{
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height"))
+@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height","carrot.processing.replacement.simple"))
 class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -150,7 +150,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height"))
+@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height","carrot.processing.replacement.simple"))
 class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec with LazyLogging {
 
   @Autowired
