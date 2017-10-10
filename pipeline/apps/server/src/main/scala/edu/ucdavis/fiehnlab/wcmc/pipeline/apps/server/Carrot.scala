@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccessConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.ScheduleConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{CentralWorkflowConfig, WorkflowProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.CentralWorkflowConfig
 import edu.ucdavis.fiehnlab.wcmc.schedule.server.controller.SchedulingController
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.controller.FServController
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,8 +29,8 @@ class Carrot {
   val resourceLoader: DelegatingResourceLoader = null
 
   @Bean
-  def workflow(properties: WorkflowProperties): LCMSPositiveModeTargetWorkflow[Double] = {
-    new LCMSPositiveModeTargetWorkflow(properties)
+  def workflow: LCMSPositiveModeTargetWorkflow[Double] = {
+    new LCMSPositiveModeTargetWorkflow()
   }
 }
 

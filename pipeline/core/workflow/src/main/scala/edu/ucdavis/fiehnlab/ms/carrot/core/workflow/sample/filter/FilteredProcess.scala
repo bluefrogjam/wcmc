@@ -4,13 +4,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.Process
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{ProcessedSample, Sample}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
   * Defines a process, which filters certain spectra out of the sample
   */
-class FilteredProcess @Autowired()(val filters: List[Filter[Feature]], val properties: WorkflowProperties) extends Process[Sample, ProcessedSample] {
+class FilteredProcess @Autowired()(val filters: List[Filter[Feature]]) extends Process[Sample, ProcessedSample] {
 
   /**
     * iterates over all the defiend filters and removes certain data from the sample

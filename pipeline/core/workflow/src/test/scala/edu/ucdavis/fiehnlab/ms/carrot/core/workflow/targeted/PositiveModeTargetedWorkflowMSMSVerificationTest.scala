@@ -11,7 +11,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
@@ -53,9 +52,6 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
 
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
-
-  @Autowired
-  val properties: WorkflowProperties = null
 
   @Autowired
   val listener: TestWorkflowEventListener = null
@@ -162,9 +158,6 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
 
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
-
-  @Autowired
-  val properties: WorkflowProperties = null
 
   @Autowired
   val listener: TestWorkflowEventListener = null
