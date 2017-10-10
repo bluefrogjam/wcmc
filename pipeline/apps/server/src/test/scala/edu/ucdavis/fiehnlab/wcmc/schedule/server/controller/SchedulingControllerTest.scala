@@ -1,7 +1,7 @@
-package edu.ucdavis.fiehnlab.wcmc.schedule.server
+package edu.ucdavis.fiehnlab.wcmc.schedule.server.controller
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, ResultStorage, SampleToProcess, Task}
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -9,12 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.context.embedded.LocalServerPort
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.web.client.RestTemplate
 
 /**

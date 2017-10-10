@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccessConfiguratio
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.ScheduleConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.CentralWorkflowConfig
-import edu.ucdavis.fiehnlab.wcmc.schedule.server.controller.SchedulingController
+import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller.SchedulingController
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.controller.FServController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
