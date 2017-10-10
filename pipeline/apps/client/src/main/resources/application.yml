@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: carrot.targets.mona
+
+#where is the carrot scheduler located
+carrot:
+  rest:
+    server:
+      port: 50000
+
+#where is the mona backend for carrot located
+mona:
+  rest:
+    server:
+      user: admin
+      password: admin
+      host: 127.0.0.1
+      port: 11111

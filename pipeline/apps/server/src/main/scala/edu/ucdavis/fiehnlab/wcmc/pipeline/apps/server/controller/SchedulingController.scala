@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.schedule.server.controller
+package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, Task, TaskScheduler}
