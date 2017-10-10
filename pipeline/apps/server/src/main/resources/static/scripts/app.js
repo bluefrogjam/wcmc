@@ -124,13 +124,9 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
             var task = {
                 samples: [],
                 name: $scope.task.email,
-<<<<<<< HEAD
+                email: $scope.task.email,
                 acquisitionMethod: {chromatographicMethod: {name: $scope.task.acquisitionMethod}},
                 platform: {platform: {name: $scope.task.platform}}
-=======
-                email: $scope.task.email,
-                acquisitionMethod: {chromatographicMethod: {name: $scope.task.acquisitionMethod}}
->>>>>>> f05899db69ea1a326ecfa28f6baf2e87a69ef894
             };
 
             // Add task name
