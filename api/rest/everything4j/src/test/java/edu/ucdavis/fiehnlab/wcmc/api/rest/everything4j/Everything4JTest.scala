@@ -6,7 +6,7 @@ import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{ComponentScan, Configuration}
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 
 /**
@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TestConfig]))
+@ActiveProfiles(Array("wcmc.api.rest.everything4j"))
 class Everything4JTest extends WordSpec  with ShouldMatchers with BeforeAndAfterEach with LazyLogging{
 
   @Autowired
