@@ -1,18 +1,15 @@
 package edu.ucdavis.fiehnlab.ms.carrot.apps.runner
 
-import java.io.File
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentTXTReader, QuantifiedSampleTxtWriter}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.CentralWorkflowConfig
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.QuantifiedSampleTxtWriter
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{PostProcessing, SimpleZeroReplacement, ZeroReplacementProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{CentralWorkflowConfig, WorkflowProperties}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.utilities.SpectrumMinimizer
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -40,8 +37,8 @@ class MyConfiguration extends LazyLogging {
 	val directory: String = ""
 
   @Bean
-  def workflow(workflowProperties: WorkflowProperties, reader: ExperimentTXTReader): LCMSPositiveModeTargetWorkflow[Double] = {
-    new LCMSPositiveModeTargetWorkflow[Double](workflowProperties)
+  def workflow: LCMSPositiveModeTargetWorkflow[Double] = {
+    new LCMSPositiveModeTargetWorkflow[Double]()
   }
 
   @Bean
@@ -63,11 +60,9 @@ class MyConfiguration extends LazyLogging {
   @Bean
   def libraryAccess(resourceLoader: DelegatingResourceLoader): LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get)
 
-  @Autowired
-  val workflowProperties: WorkflowProperties = null
 
   @Bean
-  def zeroReplacement(properties: WorkflowProperties): PostProcessing[Double] = new SimpleZeroReplacement(properties)
+  def zeroReplacement: PostProcessing[Double] = new SimpleZeroReplacement()
 
 	@Bean
 	def spectrumMinimizer: Option[SpectrumMinimizer] = Some(new SpectrumMinimizer())

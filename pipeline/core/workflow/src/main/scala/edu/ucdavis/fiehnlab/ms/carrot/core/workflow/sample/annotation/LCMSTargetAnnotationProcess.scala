@@ -8,7 +8,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, R
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
@@ -19,7 +18,7 @@ import scala.collection.immutable.ListMap
   * Created by wohlgemuth on 6/23/16.
   */
 @Component
-class LCMSTargetAnnotationProcess @Autowired()(val properties: WorkflowProperties, val targets: LibraryAccess[Target], val lcmsProperties: LCMSTargetAnnotationProperties) extends AnnotationProcess[Target, CorrectedSample, AnnotatedSample](targets, properties.trackChanges) with LazyLogging {
+class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSTargetAnnotationProperties) extends AnnotationProcess[Target, CorrectedSample, AnnotatedSample](targets) with LazyLogging {
 
   /**
     * are we in debug mode, adds some sorting and prettifying for debug messages

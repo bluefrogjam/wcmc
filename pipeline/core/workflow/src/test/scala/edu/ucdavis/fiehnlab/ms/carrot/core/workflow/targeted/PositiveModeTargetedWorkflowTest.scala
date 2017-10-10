@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event.{QuantificationFinishedEvent, WorkflowEvent, WorkflowEventListener}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.{ExperimentReaderTxTProperties, ExperimentTXTReader, QuantifiedSampleTxtWriter}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{Workflow, WorkflowProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,9 +24,6 @@ abstract class PositiveModeTargetedWorkflowTest extends WordSpec with Matchers w
 
   @Autowired
   val workflow: Workflow[Double] = null
-
-  @Autowired
-  val properties: WorkflowProperties = null
 
   @Autowired
   val listener: TestWorkflowEventListener = null
@@ -220,7 +217,7 @@ class PositiveModeTargetedWorkflowTestConfiguration {
   }
 
   @Bean
-  def workflow(properties: WorkflowProperties): LCMSPositiveModeTargetWorkflow[Double] = {
-    new LCMSPositiveModeTargetWorkflow(properties)
+  def workflow: LCMSPositiveModeTargetWorkflow[Double] = {
+    new LCMSPositiveModeTargetWorkflow
   }
 }

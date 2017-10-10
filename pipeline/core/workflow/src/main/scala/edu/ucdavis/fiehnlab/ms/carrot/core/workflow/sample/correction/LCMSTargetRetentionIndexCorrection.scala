@@ -8,7 +8,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception._
 import edu.ucdavis.fiehnlab.ms.carrot.math.CombinedRegression
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component
   * targeted retention index correction, should be refactored to be a super class to make things easier
   */
 @Component
-class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess, properties.trackChanges) with LazyLogging {
+class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[Target]) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess) with LazyLogging {
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.005}")
   val massAccuracySetting: Double = 0.005
