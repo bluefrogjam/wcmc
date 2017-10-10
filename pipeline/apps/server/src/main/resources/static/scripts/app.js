@@ -216,14 +216,14 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
         this.checkFileStatus = function(filename, successCallback, errorCallback) {
             $http({
                 method : 'GET',
-                url : 'http://trashcan.fiehnlab.ucdavis.edu:8080/rest/file/exists/'+ filename
+                url : '/rest/file/exists/'+ filename
             }).then(successCallback, errorCallback);
         };
 
         this.submitTask = function(task, successCallback, errorCallback) {
             $http({
                 method : 'POST',
-                url : 'http://trashcan.fiehnlab.ucdavis.edu:50000/rest/schedule/submit',
+                url : '/rest/schedule/submit',
                 data: task,
                 headers: {
                     'Content-Type': 'application/json'

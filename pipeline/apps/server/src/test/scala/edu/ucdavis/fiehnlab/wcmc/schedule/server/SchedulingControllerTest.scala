@@ -1,24 +1,28 @@
-package edu.ucdavis.fiehnlab.wcmc.schedule.server.controller
+package edu.ucdavis.fiehnlab.wcmc.schedule.server
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, ResultStorage, SampleToProcess, Task}
+import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.context.embedded.LocalServerPort
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
+import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.web.client.RestTemplate
 
 /**
   * Created by wohlgemuth on 8/28/17.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class SchedulingControllerTest extends WordSpec with ShouldMatchers {
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = Array(classOf[Carrot]))
+class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLogging{
 
   @LocalServerPort
   private val port: Int = 0
@@ -34,7 +38,14 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers {
 
       "queue" in {
 
-        val result = template.getForObject(s"http://localhost:${port}/rest/schedule/queue", classOf[Array[String]])
+        val url = s"http://localhost:${port}/rest/schedule/queue"
+
+        logger.info(s"url: $url")
+
+        while(true){
+          Thread.sleep(1000)
+        }
+        val result = template.getForObject(url, classOf[Array[String]])
 
         result.size shouldBe 1
       }
@@ -139,9 +150,4 @@ class TestTaskScheduler extends AdvancedTaskScheduler{
     * @return
     */
   override def queue: Seq[String] = Seq("TaskA")
-}
-@SpringBootApplication
-@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class SchedulingControllerConfigTest {
-
 }
