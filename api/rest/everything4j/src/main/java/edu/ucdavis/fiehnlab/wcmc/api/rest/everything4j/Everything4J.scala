@@ -9,7 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.RemoteLoader
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.{Configuration, Import}
+import org.springframework.context.annotation.{Configuration, Import, Profile}
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriUtils
 
@@ -17,6 +17,7 @@ import org.springframework.web.util.UriUtils
   * Created by wohlgemuth on 10/10/17.
   */
 @Component
+@Profile(Array("wcmc.api.rest.everything4j"))
 class Everything4J extends RemoteLoader with LazyLogging{
 
   @Value("${wcmc.api.rest.everything4j.host:luna.fiehnlab.ucdavis.edu}")
