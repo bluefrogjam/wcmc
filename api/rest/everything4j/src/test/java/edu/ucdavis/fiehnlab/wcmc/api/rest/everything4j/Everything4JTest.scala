@@ -4,8 +4,9 @@ import com.typesafe.scalalogging.LazyLogging
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
@@ -43,8 +44,7 @@ class Everything4JTest extends WordSpec  with ShouldMatchers with BeforeAndAfter
   }
 }
 
-@Configuration
-@ComponentScan
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class TestConfig{
 
 }

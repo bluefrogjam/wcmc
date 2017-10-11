@@ -6,9 +6,8 @@ import java.net.{URI, URL}
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.RemoteLoader
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.{Configuration, Import}
+import org.springframework.context.annotation.Configuration
 
 /**
   * Created by wohlgemuth on 10/10/17.
@@ -64,7 +63,7 @@ class Everything4J extends RemoteLoader with LazyLogging{
 }
 
 @Configuration
-@Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
+//@Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
 class Everything4JConfiguration
 
 case class Results(

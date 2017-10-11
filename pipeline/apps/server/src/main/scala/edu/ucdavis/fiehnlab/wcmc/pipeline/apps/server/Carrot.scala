@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.ScheduleConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.CentralWorkflowConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.controller.FServController
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -26,7 +26,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
   classOf[MonaLibraryAccessConfiguration],
   classOf[CarrotCors],
   classOf[CarrotSecurity],
-  classOf[CaseClassToJSONSerializationConfiguration]), exclude =Array(classOf[DataSourceAutoConfiguration])
+  classOf[CaseClassToJSONSerializationAutoConfiguration]), exclude =Array(classOf[DataSourceAutoConfiguration])
 )
 class Carrot {
 
