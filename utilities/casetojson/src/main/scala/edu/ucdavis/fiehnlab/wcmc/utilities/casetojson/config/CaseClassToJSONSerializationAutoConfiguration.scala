@@ -5,19 +5,23 @@ import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, Ser
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.typesafe.scalalogging.LazyLogging
+import org.springframework.boot.autoconfigure._
+import org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration
 import org.springframework.context.annotation.{Bean, Configuration, Primary}
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.RestTemplate;
 
 /**
   * Created by wohlgemuth on 7/11/17.
   */
 @Configuration
-class CaseClassToJSONSerializationConfiguration extends LazyLogging{
+@AutoConfigureAfter(Array(classOf[WebClientAutoConfiguration.RestTemplateConfiguration]))
+class CaseClassToJSONSerializationAutoConfiguration extends LazyLogging{
 
   @Bean
   def objectMapper: ObjectMapper = {
 
+    logger.info("creating custom object mapper...")
     val mapper = new ObjectMapper() with ScalaObjectMapper
 
     mapper.registerModule(DefaultScalaModule)
@@ -33,16 +37,16 @@ class CaseClassToJSONSerializationConfiguration extends LazyLogging{
 
   @Primary
   @Bean
-  def restTemplate: RestTemplate = {
+  def restTemplate(mappingJackson2HttpMessageConverter: MappingJackson2HttpMessageConverter): RestTemplate = {
     logger.info("creating custom template with Jackson for scala support")
     val rest: RestTemplate = new RestTemplate()
-    rest.getMessageConverters.add(0, mappingJacksonHttpMessageConverter)
+    rest.getMessageConverters.add(0, mappingJackson2HttpMessageConverter)
     rest
   }
 
 
   @Bean
-  def mappingJacksonHttpMessageConverter: MappingJackson2HttpMessageConverter = {
+  def mappingJacksonHttpMessageConverter(objectMapper: ObjectMapper): MappingJackson2HttpMessageConverter = {
     val converter: MappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter()
     converter.setObjectMapper(objectMapper)
     converter

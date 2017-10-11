@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, Task, TaskScheduler}
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Configuration, Import}
 import org.springframework.web.bind.annotation._
@@ -111,7 +111,7 @@ class SchedulingController extends LazyLogging {
 
 
 @Configuration
-@Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
+@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class SchedulingControllerConfig {
 
 }

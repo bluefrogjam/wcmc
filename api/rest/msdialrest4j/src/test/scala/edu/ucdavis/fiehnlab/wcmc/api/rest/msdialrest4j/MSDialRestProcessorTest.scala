@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -68,6 +68,6 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
+@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class MSDialRestProcessorConfig {
 }
