@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 import org.springframework.test.context.TestContextManager
-
 /**
   * Created by wohlgemuth on 10/11/17.
   */
@@ -36,7 +34,6 @@ class CaseClassToJSONSerializationAutoConfigurationTest extends FunSuite {
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class CaseClassToJSONSerializationAutoConfigurationTestConfig
 
 case class TestToSerialize(name:String)

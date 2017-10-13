@@ -6,16 +6,16 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.boot.autoconfigure._
-import org.springframework.boot.autoconfigure.web.WebClientAutoConfiguration
 import org.springframework.context.annotation.{Bean, Configuration, Primary}
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestTemplate
+import org.springframework.core.{Ordered => SpringOrdered}
 
 /**
   * Created by wohlgemuth on 7/11/17.
   */
 @Configuration
-@AutoConfigureAfter(Array(classOf[WebClientAutoConfiguration.RestTemplateConfiguration]))
+@AutoConfigureOrder(SpringOrdered.HIGHEST_PRECEDENCE)
 class CaseClassToJSONSerializationAutoConfiguration extends LazyLogging{
 
   @Bean
