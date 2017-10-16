@@ -26,17 +26,11 @@ class CentralWorkflowConfig {
   def resourceSampleLoader(resourceLoader: DelegatingResourceLoader): ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(resourceLoader)
 
   /**
-    * where to find remote files
-    * @return
-    */
-  @Bean
-  def remoteLoader: FServ4jClient = new FServ4jClient
-
-  /**
     * which msdial rest processor to use to convert abf samples
     * @return
     */
   @Bean
+  @Primary
   def msdialRest:MSDialRestProcessor = new CachedMSDialRestProcesser()
 
 }
