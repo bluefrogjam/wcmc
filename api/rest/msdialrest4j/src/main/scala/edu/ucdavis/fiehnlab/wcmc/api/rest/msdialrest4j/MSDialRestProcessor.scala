@@ -7,10 +7,17 @@ import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcmc.utilities.ZipUtil
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
+
+@Configuration
+@ComponentScan
+class MSDialRestProcessorAutoconfiguration{
+
+}
 
 /**
   * Created by wohlgemuth on 6/16/17.
