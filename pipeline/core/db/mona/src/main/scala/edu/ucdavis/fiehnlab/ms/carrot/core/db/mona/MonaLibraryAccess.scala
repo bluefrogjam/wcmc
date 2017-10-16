@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
 import java.util.Date
+import java.util.concurrent.{ExecutorService, Executors}
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
@@ -14,6 +15,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.context.annotation._
+import org.springframework.http.{HttpEntity, HttpMethod}
 import org.springframework.stereotype.Component
 
 import scala.collection.mutable
@@ -25,6 +27,8 @@ import scala.collection.mutable
 @Component
 @Profile(Array("carrot.targets.mona"))
 class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
+
+  private val executionService:ExecutorService = Executors.newFixedThreadPool(1)
 
   @Value("${mona.rest.server.user}")
   val username: String = null
@@ -423,6 +427,13 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
           throw new TargetGenerationNotSupportedException(s"not possible to generate a target here, due to lack of metadata. Please ensure that you provide all required information", t)
         }
     }
+
+    //let a process in the background update all the statistics
+    executionService.submit(new Runnable {
+      override def run(): Unit = {
+        monaSpectrumRestClient.regenerateStatistics
+      }
+    })
   }
 }
 
