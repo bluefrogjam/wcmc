@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccessConfiguration
+import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccessAutoConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.ScheduleConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.CentralWorkflowConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
@@ -19,15 +19,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 /**
   * Created by wohlgemuth on 9/7/17.
   */
-@SpringBootApplication(scanBasePackageClasses = Array(
-  classOf[ScheduleConfig],
-  classOf[FServController],
-  classOf[CentralWorkflowConfig],
-  classOf[MonaLibraryAccessConfiguration],
-  classOf[CarrotCors],
-  classOf[CarrotSecurity],
-  classOf[CaseClassToJSONSerializationAutoConfiguration]), exclude =Array(classOf[DataSourceAutoConfiguration])
-)
+@SpringBootApplication( exclude =Array(classOf[DataSourceAutoConfiguration]))
 class Carrot {
 
   /**

@@ -15,7 +15,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.context.annotation._
-import org.springframework.http.{HttpEntity, HttpMethod}
 import org.springframework.stereotype.Component
 
 import scala.collection.mutable
@@ -441,9 +440,9 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
   * loads additional required beans for this to work
   */
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[MonaSpectrumRestClient]))
+@ComponentScan(basePackageClasses = Array(classOf[MonaSpectrumRestClient],classOf[MonaLibraryAccess]))
 @Import(Array(classOf[RestClientConfig]))
-class MonaLibraryAccessConfiguration
+class MonaLibraryAccessAutoConfiguration
 
 /**
   * this defines a valid mona based target in the system

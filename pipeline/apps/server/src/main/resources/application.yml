@@ -15,4 +15,4 @@ mona:
       port: 80
 
 server:
-  port: 8080
+  port: 18080
