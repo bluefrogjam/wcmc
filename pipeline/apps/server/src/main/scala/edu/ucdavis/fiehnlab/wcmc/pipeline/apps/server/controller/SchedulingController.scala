@@ -2,9 +2,8 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, Task, TaskScheduler}
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Configuration, Import}
+import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation._
 
 import scala.collection.JavaConverters._
@@ -18,6 +17,12 @@ import scala.collection.JavaConverters._
 @RestController
 @RequestMapping(value = Array("/rest/schedule"))
 class SchedulingController extends LazyLogging {
+
+  /**
+    * the actual used implementation of the scheduler
+    */
+  @Autowired
+  val taskScheduler: TaskScheduler = null
 
   /**
     * runs this provided task
@@ -56,7 +61,6 @@ class SchedulingController extends LazyLogging {
       Map("result" -> "not supported")
   }
 
-
   /**
     * the task has been scheduled
     *
@@ -70,7 +74,6 @@ class SchedulingController extends LazyLogging {
     case _ =>
       Map("result" -> "not supported")
   }
-
 
   /**
     * the task is currently running
@@ -100,18 +103,10 @@ class SchedulingController extends LazyLogging {
       List.empty[String].asJava
   }
 
-
-  /**
-    * the actual used implementation of the scheduler
-    */
-  @Autowired
-  val taskScheduler: TaskScheduler = null
-
 }
 
 
 @Configuration
-@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class SchedulingControllerConfig {
 
 }

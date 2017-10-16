@@ -26,9 +26,9 @@ class LibraryController {
   def addTarget(@RequestBody target: AddTarget): Unit = {
 
     val ionMode: IonMode = target.mode.toLowerCase match {
-      case "+" => PositiveMode
-      case "positive" => PositiveMode
-      case _ => NegativeMode
+      case "+" => PositiveMode()
+      case "positive" => PositiveMode()
+      case _ => NegativeMode()
     }
 
     libraryAccess.add(
