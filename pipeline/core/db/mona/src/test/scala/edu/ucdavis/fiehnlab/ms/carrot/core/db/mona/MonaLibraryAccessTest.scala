@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Chromat
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{ShouldMatchers, WordSpec, time}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.collection.JavaConverters._
+import org.scalatest.time.SpanSugar._
 
 /**
   * Created by wohlgemuth on 8/14/17.
@@ -169,12 +170,12 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(None)
       library.add(testTarget, acquisitionMethod, None)
 
-      eventually {
+      eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 1
       }
       library.add(testTarget2, acquisitionMethod, None)
 
-      eventually {
+      eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 2
       }
 
@@ -184,18 +185,18 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
       library.add(testTarget, acquisitionMethod, None)
-      eventually {
+      eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 1
       }
       library.add(testTarget2, acquisitionMethod, None)
-      eventually {
+      eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 2
       }
 
-      eventually {
+      eventually(timeout(5 seconds)) {
         library.load(AcquisitionMethod(None)).size shouldBe 2
       }
-      eventually {
+      eventually (timeout(5 seconds)){
         monaSpectrumRestClient.list().size shouldBe 4
       }
 
