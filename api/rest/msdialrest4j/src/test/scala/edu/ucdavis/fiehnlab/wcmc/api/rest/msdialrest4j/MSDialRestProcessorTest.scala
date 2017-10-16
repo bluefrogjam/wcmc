@@ -68,6 +68,5 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class MSDialRestProcessorConfig {
 }

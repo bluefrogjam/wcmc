@@ -67,7 +67,6 @@ class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@ComponentScan(basePackageClasses = Array(classOf[MSDialRestProcessor],classOf[FServ4jClient],classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class ABFSampleTestConfig {
 
 }
