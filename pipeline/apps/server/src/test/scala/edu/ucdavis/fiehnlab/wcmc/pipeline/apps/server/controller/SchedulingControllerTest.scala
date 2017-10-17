@@ -1,9 +1,11 @@
-package edu.ucdavis.fiehnlab.wcmc.schedule.server
+package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
-import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, ResultStorage, Task}
+import org.springframework.stereotype.Component
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, ResultStorage, SampleToProcess, Task}
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -12,7 +14,6 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.web.client.RestTemplate
@@ -42,9 +43,6 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
 
         logger.info(s"url: $url")
 
-        while(true){
-          Thread.sleep(1000)
-        }
         val result = template.getForObject(url, classOf[Array[String]])
 
         result.size shouldBe 1
@@ -90,6 +88,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
     }
   }
 }
+
 
 @Component
 class TestStorage extends ResultStorage{
