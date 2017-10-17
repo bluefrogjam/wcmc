@@ -19,6 +19,8 @@
 	    <module>dataform4j</module>
         <module>msdialrest4j</module>
         <module>ossa4j</module>
+        <module>ontology4j</module>
+        <module>everything4j</module>
     </modules>
 
 

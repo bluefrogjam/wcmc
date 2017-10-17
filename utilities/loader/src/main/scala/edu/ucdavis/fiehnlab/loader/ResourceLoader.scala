@@ -39,7 +39,7 @@ trait ResourceLoader extends LazyLogging {
 	  val loaded = try {
 			  load(name)
 	  } catch {
-		  case error: IOException => { logger.error(s"Error in ${this.getClass.getSimpleName} = ${error.getMessage}")}
+		  case error: Exception => { logger.debug(s"Error in ${this.getClass.getSimpleName} = ${error.getMessage}")}
 		  None
 	  }
 

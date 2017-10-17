@@ -11,7 +11,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
@@ -45,7 +44,7 @@ class MethodConfig{
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height"))
+@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height","carrot.processing.replacement.simple"))
 class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -53,9 +52,6 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
 
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
-
-  @Autowired
-  val properties: WorkflowProperties = null
 
   @Autowired
   val listener: TestWorkflowEventListener = null
@@ -93,7 +89,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
       val lib = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
       val method = acquisitionLoader.load(loader.getSample(sampleNames.head)).get
       val targetsToAdd = lib.load(method)
-      targetLibrary.add(targetsToAdd, method)
+      targetLibrary.add(targetsToAdd, method,None)
 
     }
     "ensure our targets are defined" in {
@@ -154,7 +150,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height"))
+@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height","carrot.processing.replacement.simple"))
 class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -162,9 +158,6 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
 
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
-
-  @Autowired
-  val properties: WorkflowProperties = null
 
   @Autowired
   val listener: TestWorkflowEventListener = null

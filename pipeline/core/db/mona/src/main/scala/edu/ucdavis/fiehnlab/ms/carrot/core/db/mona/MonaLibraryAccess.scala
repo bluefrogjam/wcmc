@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
 import java.util.Date
+import java.util.concurrent.{ExecutorService, Executors}
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
@@ -26,6 +27,8 @@ import scala.collection.mutable
 @Profile(Array("carrot.targets.mona"))
 class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
+  private val executionService: ExecutorService = Executors.newFixedThreadPool(1)
+
   @Value("${mona.rest.server.user}")
   val username: String = null
 
@@ -49,7 +52,8 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * based on the given method this will evaluate to a query against the system to provide us with valid targets
     * for annotation and identification
     */
-  def query(acquistionMethod: AcquisitionMethod): String = ""
+  def query(acquistionMethod: AcquisitionMethod): String =
+    s"""(tags.text=="${generateLibraryIdentifier(acquistionMethod)}")"""
 
   /**
     * loads all the spectra from the library
@@ -120,7 +124,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param t
     * @return
     */
-  def generateSpectrum(t: Target, acquistionMethod: AcquisitionMethod): Option[Spectrum] = {
+  def generateSpectrum(t: Target, acquistionMethod: AcquisitionMethod, sample: Option[Sample]): Option[Spectrum] = {
     val compound = Compound(
       inchi = null,
       inchiKey = t.inchiKey.orNull,
@@ -132,7 +136,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       score = null
     )
 
-    val metaData: Array[MetaData] = generateAcquisitonInfo(generateDefaultMetaData(t), acquistionMethod)
+    val metaData: Array[MetaData] = generateAcquisitonInfo(generateDefaultMetaData(t, sample), acquistionMethod)
 
     //attach the acquisition method metadata now
     Some(
@@ -153,15 +157,15 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         },
         splash = null,
         submitter = associateWithSubmitter(),
-        tags = Array(Tags(ruleBased = false, "carrot")),
+        tags = (Tags(ruleBased = false, "carrot") :: associateWithLibrary(acquistionMethod).tag :: List()).toArray,
         authors = Array(),
-        library = associateWithLibrary()
+        library = associateWithLibrary(acquistionMethod)
       )
     )
 
   }
 
-  private def generateDefaultMetaData(t: Target) = {
+  private def generateDefaultMetaData(t: Target, sample: Option[Sample]) = {
     val metaData = Array(
       MetaData(
         category = "none",
@@ -246,6 +250,29 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         url = null,
         value = if (t.spectrum.isDefined) s"MS${t.spectrum.get.msLevel}" else "MS1"
       )
+      ,
+      MetaData(
+        category = "origin",
+        computed = false,
+        hidden = false,
+        name = "fileName",
+        score = null,
+        unit = null,
+        url = null,
+        value = if (sample.isDefined) s"${sample.get.fileName}" else "Unknown"
+      )
+
+      ,
+      MetaData(
+        category = "origin",
+        computed = false,
+        hidden = false,
+        name = "sampleName",
+        score = null,
+        unit = null,
+        url = null,
+        value = if (sample.isDefined) s"${sample.get.name}" else "Unknown"
+      )
 
 
     )
@@ -270,7 +297,28 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @return
     */
-  def associateWithLibrary(): Library = null
+  def associateWithLibrary(acquistionMethod: AcquisitionMethod): Library = {
+    val identifier = generateLibraryIdentifier(acquistionMethod)
+
+    Library(
+      id = identifier,
+      library = identifier,
+      description = "generated based on carrot data processing",
+      link = null,
+      tag = Tags(ruleBased = false, text = identifier)
+    )
+  }
+
+  def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = {
+    if (acquisitionMethod.chromatographicMethod.isDefined) {
+
+      //just use the name for now to keep things easy
+      acquisitionMethod.chromatographicMethod.get.name
+    }
+    else {
+      "default"
+    }
+  }
 
   /**
     * converts a spectrum to a target
@@ -297,6 +345,12 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       case "MS2" => 2
       case "MS3" => 3
       case "MS4" => 4
+      case "MS5" => 5
+      case "MS6" => 6
+      case "MS7" => 7
+      case "MS8" => 8
+      case "MS9" => 9
+      case "MS10" => 10
 
     }
 
@@ -329,8 +383,8 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     MonaLibraryTarget(
       spectrumProperties,
       name = Option(name),
-      retentionIndex = retentionIndex.get.value.asInstanceOf[Double],
-      retentionTimeInSeconds = retentionTime.get.value.asInstanceOf[Double],
+      retentionIndex = retentionIndex.get.value.toString.toDouble,
+      retentionTimeInSeconds = retentionTime.get.value.toString.toDouble,
       inchiKey = Option(inchi),
       precursorMass = Option(precursorIon.get.value.asInstanceOf[Double]),
       confirmed = if (confirmed.isDefined) confirmed.get.value.asInstanceOf[Boolean] else false,
@@ -358,12 +412,12 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @param targets
     */
-  override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod): Unit = {
+  override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
     monaSpectrumRestClient.login(username, password)
 
     targets.foreach {
       t =>
-        val spectrum: Option[Spectrum] = generateSpectrum(t, acquisitionMethod)
+        val spectrum: Option[Spectrum] = generateSpectrum(t, acquisitionMethod, sample)
 
         if (spectrum.isDefined) {
           val spec = spectrum.get
@@ -373,6 +427,26 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
           throw new TargetGenerationNotSupportedException(s"not possible to generate a target here, due to lack of metadata. Please ensure that you provide all required information", t)
         }
     }
+
+    //let a process in the background update all the statistics
+    executionService.submit(new Runnable {
+      override def run(): Unit = {
+        monaSpectrumRestClient.regenerateStatistics
+      }
+    })
+  }
+
+
+  /**
+    * deletes a specified target from the library
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: Target, acquisitionMethod: AcquisitionMethod): Unit = {
+    val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
+
+    this.monaSpectrumRestClient.delete(spectrum.get.id)
   }
 }
 
@@ -380,9 +454,9 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
   * loads additional required beans for this to work
   */
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[MonaSpectrumRestClient]))
+@ComponentScan(basePackageClasses = Array(classOf[MonaSpectrumRestClient], classOf[MonaLibraryAccess]))
 @Import(Array(classOf[RestClientConfig]))
-class MonaLibraryAccessConfiguration
+class MonaLibraryAccessAutoConfiguration
 
 /**
   * this defines a valid mona based target in the system
@@ -451,5 +525,7 @@ case class MonaLibraryTarget(
     * required since targets expects a spectrum, while its being optional on the carrot level
     */
   override val spectrum = Option(msmsSpectrum)
+
+
 
 }

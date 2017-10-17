@@ -130,7 +130,6 @@ class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfter
 }
 
 @Configuration
-@ComponentScan
 class FServ4jClientConfiguration {
 
   @Bean
