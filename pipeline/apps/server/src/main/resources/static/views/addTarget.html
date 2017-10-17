@@ -33,12 +33,14 @@
 
 <div class="form-group">
     <label for="acquisitionMethod">Acquisition Method</label>
-    <select
-            id="acquisitionMethod"
-            class="form-control"
-            data-ng-model="target.library"
-            ng-options="x for x in acquisitionMethodOptions">
-    </select>
+    <input type="text"
+           id="acquisitionMethod"
+           class="form-control"
+           ng-model="target.library"
+           placeholder="Acquisition Method"
+           uib-typeahead="x for x in acquisitionMethodOptions | filter:$viewValue"
+           typeahead-show-hint="true"
+           typeahead-min-length="0">
 </div>
 
 <div class="form-group">
