@@ -33,6 +33,13 @@ trait LibraryAccess[T <: Target] {
   }
 
   /**
+    * deletes a specified target from the library
+    * @param target
+    * @param acquisitionMethod
+    */
+  def delete(target: T, acquisitionMethod: AcquisitionMethod) : Unit
+
+  /**
     * adds a list of targets
     *
     * @param targets
@@ -142,10 +149,34 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
 
     targets.foreach { target =>
 
-      out.write(
-        s"""${target.retentionIndex}$seperator${target.precursorMass.get}$seperator${target.name.getOrElse("unknown")}$seperator${target.requiredForCorrection}$seperator${target.inchiKey.getOrElse("")}\n"""
-      )
+      writeTarget(out, target)
     }
+
+    out.flush()
+    out.close()
+  }
+
+  private def writeTarget(out: FileWriter, target: T) = {
+    out.write(
+      s"""${target.retentionIndex}$seperator${target.precursorMass.get}$seperator${target.name.getOrElse("unknown")}$seperator${target.requiredForCorrection}$seperator${target.inchiKey.getOrElse("")}\n"""
+    )
+  }
+
+  /**
+    * deletes a specified target from the library
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = {
+
+    logger.info(s"updating library at: ${file.getAbsolutePath}")
+    val out = new FileWriter(file, false)
+
+    load(acquisitionMethod).filterNot(_.equals(target)).foreach{ x =>
+      writeTarget(out,x)
+    }
+
 
     out.flush()
     out.close()

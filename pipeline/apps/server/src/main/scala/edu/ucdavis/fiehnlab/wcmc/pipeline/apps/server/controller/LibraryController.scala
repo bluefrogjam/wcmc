@@ -22,7 +22,7 @@ class LibraryController {
   /**
     * this adds a new target to the specified library
     */
-  @RequestMapping(value = Array("/"), method = Array(RequestMethod.POST))
+  @RequestMapping(value = Array(""), method = Array(RequestMethod.POST))
   def addTarget(@RequestBody target: AddTarget): Unit = {
 
     val ionMode: IonMode = target.mode.toLowerCase match {
@@ -85,7 +85,7 @@ class LibraryController {
     )
   }
 
-  @RequestMapping(value = Array("/"), method = Array(RequestMethod.GET))
+  @RequestMapping(value = Array(""), method = Array(RequestMethod.GET))
   def listLibraries(): List[Target] = {
     List.empty
   }

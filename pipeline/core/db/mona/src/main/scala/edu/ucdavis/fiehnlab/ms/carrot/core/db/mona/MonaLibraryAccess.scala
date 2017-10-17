@@ -27,7 +27,7 @@ import scala.collection.mutable
 @Profile(Array("carrot.targets.mona"))
 class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
-  private val executionService:ExecutorService = Executors.newFixedThreadPool(1)
+  private val executionService: ExecutorService = Executors.newFixedThreadPool(1)
 
   @Value("${mona.rest.server.user}")
   val username: String = null
@@ -52,7 +52,8 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * based on the given method this will evaluate to a query against the system to provide us with valid targets
     * for annotation and identification
     */
-  def query(acquistionMethod: AcquisitionMethod): String = s"""(tags.text=="${generateLibraryIdentifier(acquistionMethod)}")"""
+  def query(acquistionMethod: AcquisitionMethod): String =
+    s"""(tags.text=="${generateLibraryIdentifier(acquistionMethod)}")"""
 
   /**
     * loads all the spectra from the library
@@ -156,7 +157,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         },
         splash = null,
         submitter = associateWithSubmitter(),
-        tags = (Tags(ruleBased = false, "carrot") :: associateWithLibrary(acquistionMethod).tag :: List() ).toArray,
+        tags = (Tags(ruleBased = false, "carrot") :: associateWithLibrary(acquistionMethod).tag :: List()).toArray,
         authors = Array(),
         library = associateWithLibrary(acquistionMethod)
       )
@@ -434,13 +435,26 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       }
     })
   }
+
+
+  /**
+    * deletes a specified target from the library
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: Target, acquisitionMethod: AcquisitionMethod): Unit = {
+    val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
+
+    this.monaSpectrumRestClient.delete(spectrum.get.id)
+  }
 }
 
 /**
   * loads additional required beans for this to work
   */
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[MonaSpectrumRestClient],classOf[MonaLibraryAccess]))
+@ComponentScan(basePackageClasses = Array(classOf[MonaSpectrumRestClient], classOf[MonaLibraryAccess]))
 @Import(Array(classOf[RestClientConfig]))
 class MonaLibraryAccessAutoConfiguration
 
@@ -511,5 +525,7 @@ case class MonaLibraryTarget(
     * required since targets expects a spectrum, while its being optional on the carrot level
     */
   override val spectrum = Option(msmsSpectrum)
+
+
 
 }

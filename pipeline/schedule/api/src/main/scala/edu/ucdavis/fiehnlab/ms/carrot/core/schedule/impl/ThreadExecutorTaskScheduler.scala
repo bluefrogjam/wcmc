@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule.impl
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{Task, TaskRunner, TaskScheduler}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.core.task.TaskExecutor

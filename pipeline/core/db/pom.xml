@@ -12,7 +12,6 @@
     <artifactId>db</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>mongo</module>
         <module>mona</module>
     </modules>
 

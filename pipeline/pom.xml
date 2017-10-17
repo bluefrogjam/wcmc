@@ -17,8 +17,8 @@
 
     <modules>
         <module>core</module>
-        <module>apps</module>
         <module>schedule</module>
+        <module>apps</module>
     </modules>
 
 </project>
