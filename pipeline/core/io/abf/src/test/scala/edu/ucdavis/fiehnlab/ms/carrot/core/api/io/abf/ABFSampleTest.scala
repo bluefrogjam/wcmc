@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSMSSpectra
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowConfig
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by wohlgemuth on 7/12/17.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[ABFSampleTestConfig],classOf[WorkflowConfig]))
+@SpringBootTest()
 class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
 
   @Autowired
@@ -67,7 +67,6 @@ class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@ComponentScan(basePackageClasses = Array(classOf[MSDialRestProcessor],classOf[FServ4jClient],classOf[CaseClassToJSONSerializationConfiguration]))
 class ABFSampleTestConfig {
 
 }

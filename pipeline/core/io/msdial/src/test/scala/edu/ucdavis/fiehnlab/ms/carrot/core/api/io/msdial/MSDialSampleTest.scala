@@ -13,7 +13,7 @@ class MSDialSampleTest extends WordSpec with LazyLogging {
 
   "MSDialSampleTest" should {
     "able to read all the spectra" in {
-      assert(sample.spectra.size == 3619)
+      assert(sample.spectra.size == 4525)
     }
 
     "ensure that all spectra have the correct properties" in {

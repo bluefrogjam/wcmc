@@ -58,6 +58,7 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
 
   override def toString = f"Target(name=${name.getOrElse("None")}, retentionTime=$retentionTimeInMinutes (min), retentionTime=$retentionIndex (s), inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${precursorMass.getOrElse("None")})"
 
+  /**
   override def equals(obj: scala.Any): Boolean = {
     obj match {
       case x: Target =>
@@ -66,6 +67,8 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
     }
   }
 
+    */
+
   /**
     * associated accurate mass
     *
@@ -73,6 +76,21 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
     */
   override def accurateMass: Option[Double] = precursorMass
 
+
+  override def equals(that: Any): Boolean =
+    that match {
+      case that: Target =>
+        (that.name, this.name) match {
+          case (Some(thatName), Some(thisName)) if thatName == thisName =>
+            (that.precursorMass, this.precursorMass) match {
+              case (Some(thatMass), Some(thisMass)) if thatMass == thatMass =>
+                that.retentionIndex == this.retentionIndex
+              case _ => false
+            }
+          case _ => false
+        }
+      case _ => false
+    }
 }
 
 /**

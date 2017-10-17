@@ -22,11 +22,13 @@
             <artifactId>workflow</artifactId>
             <version>1.0.16-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
-            <artifactId>server</artifactId>
+            <artifactId>api</artifactId>
             <version>1.0.16-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
             <artifactId>fserv4j</artifactId>
@@ -37,6 +39,12 @@
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
             <artifactId>mona</artifactId>
             <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
+            <artifactId>everything4j</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -66,5 +74,12 @@
             <artifactId>hibernate-validator</artifactId>
             <version>5.2.4.Final</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

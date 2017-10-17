@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessorAutoconfiguration

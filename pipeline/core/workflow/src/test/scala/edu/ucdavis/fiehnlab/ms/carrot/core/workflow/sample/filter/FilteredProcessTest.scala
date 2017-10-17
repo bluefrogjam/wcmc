@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import org.scalatest.WordSpec
 
 /**
@@ -18,8 +17,7 @@ class FilteredProcessTest extends WordSpec {
       val filteredProcess = new FilteredProcess(
         List(new Filter[Feature]() {
           override def include(spectra: Feature): Boolean = true
-        }),
-        new WorkflowProperties
+        })
       )
 
       val result = filteredProcess.process(testSampleWith1Spectra)
@@ -31,8 +29,7 @@ class FilteredProcessTest extends WordSpec {
       val filteredProcess = new FilteredProcess(
         List(new Filter[Feature]() {
           override def include(spectra: Feature): Boolean = false
-        }),
-        new WorkflowProperties
+        })
       )
 
       val result = filteredProcess.process(testSampleWith1Spectra)
@@ -50,8 +47,7 @@ class FilteredProcessTest extends WordSpec {
           new Filter[Feature]() {
             override def include(spectra: Feature): Boolean = true
           }
-        ),
-        new WorkflowProperties
+        )
       )
 
       val result = filteredProcess.process(testSampleWith1Spectra)

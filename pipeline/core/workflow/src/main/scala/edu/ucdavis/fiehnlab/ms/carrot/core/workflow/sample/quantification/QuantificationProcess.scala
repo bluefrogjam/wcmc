@@ -9,7 +9,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Sample, Target, _}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Primary, Profile}
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Component
   * quantifies a sample, so it's ready to be exported
   */
 
-abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess, properties.trackChanges) with LazyLogging {
+abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess) with LazyLogging {
 
   @Autowired(required = false)
   val postprocessingInstructions: java.util.List[PostProcessing[T]] = new util.ArrayList[PostProcessing[T]]()
@@ -174,7 +173,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], pr
   */
 @Component
 @Profile(Array("carrot.report.quantify.height"))
-class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends QuantificationProcess[Double](libraryAccess, properties) {
+class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends QuantificationProcess[Double](libraryAccess) {
 
   /**
     * computes the height by utilizing the mass from the target
@@ -193,7 +192,7 @@ class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target],
   */
 @Component
 @Profile(Array("quantify-by-scan"))
-class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target], properties: WorkflowProperties) extends QuantificationProcess[Int](libraryAccess, properties) {
+class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends QuantificationProcess[Int](libraryAccess) {
 
   /**
     * computes the height by utilizing the mass from the target
