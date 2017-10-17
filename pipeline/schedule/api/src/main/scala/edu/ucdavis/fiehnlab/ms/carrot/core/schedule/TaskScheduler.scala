@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
+
 /**
   * provides us access with scheduling a task in the system.
   */

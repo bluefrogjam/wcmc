@@ -4,9 +4,9 @@ import java.io.{File, FileOutputStream}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile

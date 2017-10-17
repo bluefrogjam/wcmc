@@ -1,7 +1,8 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, Task, TaskScheduler}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, TaskScheduler}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation._

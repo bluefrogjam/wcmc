@@ -8,7 +8,6 @@ import org.springframework.context.annotation.{ComponentScan, Configuration, Imp
   */
 @Configuration
 @ComponentScan
-@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class WorkflowConfig {
 
 }

@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by wohlgemuth on 7/12/17.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[ABFSampleTestConfig],classOf[WorkflowConfig]))
+@SpringBootTest()
 class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
 
   @Autowired

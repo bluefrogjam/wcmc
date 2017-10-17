@@ -172,11 +172,13 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(250)
       }
       library.add(testTarget2, acquisitionMethod, None)
 
       eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 2
+        Thread.sleep(250)
       }
 
     }
@@ -187,17 +189,21 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       library.add(testTarget, acquisitionMethod, None)
       eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(250)
       }
       library.add(testTarget2, acquisitionMethod, None)
       eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 2
+        Thread.sleep(250)
       }
 
       eventually(timeout(5 seconds)) {
         library.load(AcquisitionMethod(None)).size shouldBe 2
+        Thread.sleep(250)
       }
       eventually (timeout(5 seconds)){
         monaSpectrumRestClient.list().size shouldBe 4
+        Thread.sleep(250)
       }
 
 

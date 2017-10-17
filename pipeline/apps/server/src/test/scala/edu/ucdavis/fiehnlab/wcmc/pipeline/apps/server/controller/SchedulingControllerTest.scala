@@ -1,11 +1,10 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, ResultStorage, Task}
-import org.springframework.stereotype.Component
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, SampleToProcess, Task}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{SampleToProcess, Task}
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.AdvancedTaskScheduler
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -14,6 +13,7 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Component
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.web.client.RestTemplate
