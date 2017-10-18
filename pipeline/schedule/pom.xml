@@ -13,8 +13,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>api</module>
-        <module>server</module>
-
     </modules>
 
 </project>

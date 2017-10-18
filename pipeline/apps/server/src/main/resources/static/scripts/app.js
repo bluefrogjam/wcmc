@@ -1,12 +1,28 @@
 'use strict';
 
-angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
+angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable'])
+
+    .config(function($routeProvider) {
+        $routeProvider
+            .when('/', {
+                templateUrl: 'views/schedule.html',
+                controller: 'SchedulerController'
+            })
+            .when('/addTarget', {
+                templateUrl: 'views/addTarget.html',
+                controller: 'TargetController'
+            })
+            .when('/addLibrary', {
+                templateUrl: 'views/addLibrary.html',
+                controller: 'TargetController'
+            });
+    })
 
     .controller('NavigationController', ['$scope', function($scope) {
         $scope.navCollapsed = true;
     }])
 
-    .controller('MainController', ['$scope', '$window','$timeout', '$filter', 'HttpService', 'hotRegisterer', function($scope, $window, $timeout, $filter, HttpService, hotRegisterer) {
+    .controller('SchedulerController', ['$scope', '$window','$timeout', '$filter', 'HttpService', 'hotRegisterer', function($scope, $window, $timeout, $filter, HttpService, hotRegisterer) {
 
         /**
          * Syncs the select fields with the HandsOnTable column headers
@@ -18,7 +34,7 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
                 $scope.columnSelectors = instance.getColHeader();
                 $scope.selectedColumn = instance.getColHeader();
 
-                $scope.columnOptions = ['Sample File Name', 'Class', 'Organ', 'Species', 'Comment', 'Label']
+                $scope.columnOptions = ['Sample File Name', 'Class', 'Organ', 'Species', 'Comment', 'Label'];
 
                 $scope.selectedColumn.forEach(function(col) {
                     for (var i in $scope.columnOptions) {
@@ -49,17 +65,17 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
          */
         $scope.columnSelectors = [];
         $scope.selectedColumn = [];
-        $scope.columnOptions = ['Sample File Name', 'Class', 'Organ', 'Species', 'Comment', 'Label']
+        $scope.columnOptions = ['Sample File Name', 'Class', 'Organ', 'Species', 'Comment', 'Label'];
 
         /**
          * Acquisition method options
          */
-        $scope.acquisitionMethodOptions = [
-            'Lipidomics', 'HILIC'
-        ];
-        $scope.platformOptions = [
-            'LC-MS', 'QC-MS'
-        ];
+        HttpService.getAcquisitionMethods(function(data) {
+            $scope.acquisitionMethodOptions = data;
+        });
+        HttpService.getPlatforms(function(data) {
+            $scope.platformOptions = data;
+        });
 
         /**
          * Task object
@@ -68,7 +84,7 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
 
         $scope.reset = function() {
           $window.location.reload();
-        }
+        };
 
 
         /**
@@ -124,13 +140,9 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
             var task = {
                 samples: [],
                 name: $scope.task.email,
-<<<<<<< HEAD
+                email: $scope.task.email,
                 acquisitionMethod: {chromatographicMethod: {name: $scope.task.acquisitionMethod}},
                 platform: {platform: {name: $scope.task.platform}}
-=======
-                email: $scope.task.email,
-                acquisitionMethod: {chromatographicMethod: {name: $scope.task.acquisitionMethod}}
->>>>>>> f05899db69ea1a326ecfa28f6baf2e87a69ef894
             };
 
             // Add task name
@@ -154,15 +166,15 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
                             var matrix = {};
 
                             if (classCol > -1)
-                                matrix.identifier = x[classCol]
+                                matrix.identifier = x[classCol];
                             if (speciesCol > -1)
-                                matrix.species = x[speciesCol]
+                                matrix.species = x[speciesCol];
                             if (organCol > -1)
-                                matrix.organ = x[organCol]
+                                matrix.organ = x[organCol];
                             if (commentCol > -1)
-                                matrix.comment = x[commentCol]
+                                matrix.comment = x[commentCol];
                             if (labelCol > -1)
-                                matrix.label = x[labelCol]
+                                matrix.label = x[labelCol];
                             if (!angular.equals(matrix, {}))
                                 sample.matrix = matrix;
 
@@ -189,12 +201,12 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
                 }
             });
 
-            // Submit the task
+            // Submit the task, waiting until all checks are complete
             var submitTask = function() {
                 if (checkCount < $scope.data.length) {
                     $timeout(submitTask, 1000);
                 } else {
-                    HttpService.submitTask(
+                    HttpService.submitJob(
                         task,
                         function(data) {
                             $scope.success = data.data;
@@ -212,6 +224,148 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
         };
     }])
 
+
+    .controller('TargetController', ['$scope', '$window','$timeout', '$filter', 'HttpService', 'hotRegisterer', function($scope, $window, $timeout, $filter, HttpService, hotRegisterer) {
+
+        /**
+         * Acquisition method options
+         */
+        HttpService.getAcquisitionMethods(function(data) {
+            $scope.acquisitionMethodOptions = data;
+        });
+        HttpService.getPlatforms(function(data) {
+            $scope.platformOptions = data;
+        });
+
+        /**
+         * HandsOnTable settings
+         */
+        $scope.settings = {
+            contextMenu: true
+            // colHeaders: ['Target Name', 'Precursor m/z', 'Retention Index', 'RI Standard']
+        };
+
+        /**
+         * Table data for library mode
+         */
+        $scope.data = [];
+
+        /**
+         * Target object for single target mode
+         */
+        $scope.target = {};
+
+        $scope.reset = function() {
+            $window.location.reload();
+        };
+
+
+        $scope.submitSingleTarget = function() {
+            $scope.error = undefined;
+
+            if (angular.isUndefined($scope.target.targetName)) {
+                $scope.error = 'No target name provided!';
+                return;
+            }
+            if (angular.isUndefined($scope.target.precursor)) {
+                $scope.error = 'No precursor m/z provided!';
+                return;
+            }
+            if (angular.isUndefined($scope.target.retentionTime)) {
+                $scope.error = 'No retention time provided!';
+                return;
+            }
+            if (angular.isUndefined($scope.target.library)) {
+                $scope.error = 'No acquisition method selected!';
+                return;
+            }
+            if (angular.isUndefined($scope.target.mode)) {
+                $scope.error = 'No ionization mode selected!';
+                return;
+            }
+
+            HttpService.submitTarget($scope.target);
+        };
+
+
+        $scope.submitLibrary = function() {
+            $scope.error = undefined;
+
+            if (angular.isUndefined($scope.target.library)) {
+                $scope.error = 'No acquisition method selected!';
+                return;
+            }
+            if (angular.isUndefined($scope.target.mode)) {
+                $scope.error = 'No ionization mode selected!';
+                return;
+            }
+
+            function isRowEmpty(row) {
+                var values = Object.values(row).filter(function(x) { return x != null && x != ""; });
+                return angular.equals($scope.data[i], {}) || values.length == 0;
+            }
+
+            // Validate data table
+            var instance = hotRegisterer.getInstance('library');
+            var rowLabels = instance.getRowHeader();
+
+            for (var i = 0; i < $scope.data.length; i++) {
+                // Ignore empty rows
+                if (!isRowEmpty($scope.data[i])) {
+                    // Error if a required field is missing
+                    if (angular.isUndefined($scope.data[i].targetName) ||
+                        angular.isUndefined($scope.data[i].precursor) ||
+                        angular.isUndefined($scope.data[i].retentionTime)) {
+
+                        rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
+                        instance.updateSettings({rowHeaders: rowLabels});
+
+                        $scope.error = 'Please ensure that all targets are completed!'
+                    } else {
+                        rowLabels[i] = i + 1;
+                        instance.updateSettings({rowHeaders: rowLabels});
+                    }
+                }
+            }
+
+            if (angular.isDefined($scope.error)) {
+                return;
+            }
+
+            // Submit
+            var totalCount = 0, successCount = 0;
+
+            for (var i = 0; i < $scope.data.length; i++) {
+                // Ignore empty rows
+                if (!isRowEmpty($scope.data[i])) {
+                    $scope.data[i].library = $scope.target.library;
+                    $scope.data[i].mode = $scope.target.mode;
+                    totalCount++;
+
+                    HttpService.submitTarget(
+                        $scope.data[i],
+                        function(data) {
+                            rowLabels[i] = '<i class="fa fa-check text-success" aria-hidden="true"></i>';
+                            instance.updateSettings({rowHeaders: rowLabels});
+
+                            successCount++;
+                        },
+                        function(data) {
+                            rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
+                            instance.updateSettings({rowHeaders: rowLabels});
+                        }
+                    );
+                }
+            }
+
+            if (totalCount == successCount) {
+                $scope.success = true;
+            } else {
+                $scope.error = 'Only '+ successCount +' / '+ totalCount +' targets were successfully submitted.'
+            }
+        };
+    }])
+
     /**
      * Service to perform HTTP requests
      */
@@ -219,19 +373,38 @@ angular.module('app', ['ngAnimate', 'ui.bootstrap', 'ngHandsontable'])
 
         this.checkFileStatus = function(filename, successCallback, errorCallback) {
             $http({
-                method : 'GET',
-                url : 'http://trashcan.fiehnlab.ucdavis.edu:8080/rest/file/exists/'+ filename
+                method: 'GET',
+                url: '/rest/file/exists/'+ filename
             }).then(successCallback, errorCallback);
         };
 
-        this.submitTask = function(task, successCallback, errorCallback) {
+        this.submitJob = function(task, successCallback, errorCallback) {
             $http({
-                method : 'POST',
-                url : 'http://trashcan.fiehnlab.ucdavis.edu:50000/rest/schedule/submit',
+                method: 'POST',
+                url: '/rest/schedule/submit',
                 data: task,
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }).then(successCallback, errorCallback);
+        };
+
+        this.submitTarget = function(target, successCallback, errorCallback) {
+            $http({
+                method: 'POST',
+                url: '/rest/library',
+                data: target,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(successCallback, errorCallback);
+        };
+
+        this.getPlatforms = function(successCallback, errorCallback) {
+            successCallback(['LC-MS', 'GC-MS']);
+        };
+
+        this.getAcquisitionMethods = function(successCallback, errorCallback) {
+            successCallback(['Lipidomics', 'HILIC', 'CSH']);
         };
     }]);

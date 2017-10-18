@@ -18,7 +18,7 @@ import scala.collection.JavaConverters._
 /**
   * Implementations of this class, will provide us with detailed workflows how to process and annotate data, depending on platform, etc
   */
-abstract class Workflow[T](val properties: WorkflowProperties) extends ItemProcessor[Experiment, Experiment] with LazyLogging {
+abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with LazyLogging {
 
   @Autowired(required = false)
   val postActions: java.util.Collection[PostAction] = new util.ArrayList()

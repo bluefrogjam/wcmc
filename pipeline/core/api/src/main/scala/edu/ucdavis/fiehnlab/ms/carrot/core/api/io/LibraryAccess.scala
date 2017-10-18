@@ -4,7 +4,7 @@ import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 
 import scala.io.Source
@@ -28,16 +28,23 @@ trait LibraryAccess[T <: Target] {
     *
     * @param target
     */
-  def add(target: T,acquisitionMethod: AcquisitionMethod): Unit = {
-    add(Seq(target),acquisitionMethod)
+  def add(target: T,acquisitionMethod: AcquisitionMethod,sample:Option[Sample]): Unit = {
+    add(Seq(target),acquisitionMethod,sample)
   }
+
+  /**
+    * deletes a specified target from the library
+    * @param target
+    * @param acquisitionMethod
+    */
+  def delete(target: T, acquisitionMethod: AcquisitionMethod) : Unit
 
   /**
     * adds a list of targets
     *
     * @param targets
     */
-  def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod)
+  def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod,sample:Option[Sample] = None)
 }
 
 /**
@@ -135,17 +142,41 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     *
     * @param targets
     */
-  override def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod): Unit = {
+  override def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod,sample:Option[Sample]): Unit = {
 
     logger.info(s"updating library at: ${file.getAbsolutePath}")
     val out = new FileWriter(file, true)
 
     targets.foreach { target =>
 
-      out.write(
-        s"""${target.retentionIndex}$seperator${target.precursorMass.get}$seperator${target.name.getOrElse("unknown")}$seperator${target.requiredForCorrection}$seperator${target.inchiKey.getOrElse("")}\n"""
-      )
+      writeTarget(out, target)
     }
+
+    out.flush()
+    out.close()
+  }
+
+  private def writeTarget(out: FileWriter, target: T) = {
+    out.write(
+      s"""${target.retentionIndex}$seperator${target.precursorMass.get}$seperator${target.name.getOrElse("unknown")}$seperator${target.requiredForCorrection}$seperator${target.inchiKey.getOrElse("")}\n"""
+    )
+  }
+
+  /**
+    * deletes a specified target from the library
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = {
+
+    logger.info(s"updating library at: ${file.getAbsolutePath}")
+    val out = new FileWriter(file, false)
+
+    load(acquisitionMethod).filterNot(_.equals(target)).foreach{ x =>
+      writeTarget(out,x)
+    }
+
 
     out.flush()
     out.close()

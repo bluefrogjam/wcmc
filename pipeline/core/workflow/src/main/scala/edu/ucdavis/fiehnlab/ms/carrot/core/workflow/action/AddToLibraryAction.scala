@@ -129,7 +129,7 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
             targets.add(
               newTarget
 
-              , acquisitionMethod
+              , acquisitionMethod,None
             )
           }
           else {

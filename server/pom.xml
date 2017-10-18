@@ -18,7 +18,8 @@
 	<modules>
 		<module>fserv</module>
 		<module>fservapp</module>
-	</modules>
+        <module>dataformserv</module>
+    </modules>
 
 
 </project>

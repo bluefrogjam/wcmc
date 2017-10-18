@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 /**
   * annotates the spectra against the given library hits
   */
-abstract class AnnotationProcess[T <: Target, I <: Sample, O <: Sample](targets: LibraryAccess[T], trackChanges: Boolean) extends Process[I, O]() {
+abstract class AnnotationProcess[T <: Target, I <: Sample, O <: Sample](targets: LibraryAccess[T]) extends Process[I, O]() {
 
   @Autowired
   val acquisitionLoader: AcquisitionLoader = null
