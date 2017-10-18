@@ -1,13 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
-import java.io.FileNotFoundException
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +15,7 @@ import org.springframework.stereotype.Component
 /**
   * Created by wohlg on 7/11/2016.
   */
-abstract class ZeroReplacement(properties: WorkflowProperties) extends PostProcessing[Double](properties) with LazyLogging {
+abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
 
 	@Autowired
 	val zeroReplacementProperties: ZeroReplacementProperties = null
@@ -146,11 +143,10 @@ class ZeroReplacementProperties {
 /**
   * Finds the noise value for a peak and substract it from the local maximum for the provided ion and mass
   *
-  * @param properties
   */
 @Component
 @Profile(Array("carrot.processing.replacement.simple"))
-class SimpleZeroReplacement @Autowired()(properties: WorkflowProperties) extends ZeroReplacement(properties) {
+class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 	/**
 		* replaces the given value, with the best possible value
 		* based on the provided configuration settings

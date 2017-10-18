@@ -13,7 +13,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
@@ -24,7 +24,7 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height"))
+@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height","carrot.processing.replacement.simple"))
 class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 
 

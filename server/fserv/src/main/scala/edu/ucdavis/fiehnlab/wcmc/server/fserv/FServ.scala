@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.controller.FServController
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationConfiguration
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 	*/
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Import(Array(classOf[CaseClassToJSONSerializationConfiguration]))
+@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class FServ extends WebMvcConfigurerAdapter{
 
   @Value("${wcmc.server.fserv.directory:storage}")
