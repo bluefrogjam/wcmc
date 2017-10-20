@@ -1,22 +1,20 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 
-import java.io.{BufferedWriter, File, FileWriter}
+import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
-import edu.ucdavis.fiehnlab.wcmc.utilities.ZipUtil
+import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.{ComponentScan, Configuration}
-import org.springframework.core.io.FileSystemResource
-import org.springframework.http._
+import org.springframework.http.{HttpEntity, HttpMethod, ResponseEntity, _}
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 
 @Configuration
 @ComponentScan
-class MSDialRestProcessorAutoconfiguration{
+class MSDialRestProcessorAutoconfiguration {
 
 }
 
@@ -28,26 +26,22 @@ class MSDialRestProcessorAutoconfiguration{
 @Component
 class MSDialRestProcessor extends LazyLogging {
 
-  @Value("${wcmc.api.rest.msdialrest4j.host:128.120.143.101}")
+  @Value("${wcmc.api.rest.msdialrest4j.host:phobos.fiehnlab.ucdavis.edu}")
   val msdresthost: String = ""
 
   @Value("${wcmc.api.rest.msdialrest4j.port:80}")
   val msdrestport: Int = 0
 
-  @Value("${wcmc.api.rest.msdialrest4j.host:128.120.143.101}")
-  val dfhost: String = ""
-
-  @Value("${wcmc.api.rest.msdialrest4j.port:9090}")
-  val dfport: Int = 0
+  @Autowired
+  val fServ4jClient: FServ4jClient = null
 
   @Autowired
-  val dataformer: DataFormerClient = null
+  val resourceLoader: ResourceLoader = null
 
   @Autowired
   val restTemplate: RestOperations = null
 
   protected def msdresturl = s"http://${msdresthost}:${msdrestport}"
-  protected def dfurl = s"http://${dfhost}:${dfport}"
 
   /**
     * processes the input file and includes caching support
@@ -56,63 +50,102 @@ class MSDialRestProcessor extends LazyLogging {
     * @param input
     * @return
     */
-  //@Cacheable(value = Array("msdial-rest-cache"),key = "{input.getName()}")
   def process(input: File): File = {
-
     logger.debug(s"processing file: ${input}")
-    //if directory and ends with .d zip file
-    val (toUpload, temp) = if (input.isDirectory && input.getName.endsWith(".d")) {
 
-      val temp = new File(s"${input.getName}.zip")
-      temp.deleteOnExit()
-      ZipUtil.zipDir(input.getAbsolutePath, temp.getAbsolutePath, s"${input.getName}")
+    var msdialFile: File = new File(input.getName.substring(input.getName.indexOf(".")).concat(".msdial"))
 
-      (temp, true)
-    }
-    else {
-      (input, false)
-    }
+    if (fServ4jClient.exists(input.getName)) {
+      logger.debug(s"File ${input.getName} is on fileserver, skipping upload")
+      val response = restTemplate.getForEntity(s"$msdresturl/rest/deconvolution/process/${input.getName}", classOf[ServerResponse])
 
-    try {
-      //upload
-      val (uploadId, token) = upload(toUpload)
-      logger.debug(s"Got sample ID $uploadId for $toUpload")
+      if (response.getStatusCode == HttpStatus.OK) {
+        logger.warn(s"response: ${response.getBody.filename}")
+      }
 
-      //schedule
-      val scheduleId = schedule(uploadId, token)
+      IOUtils.copyLarge(fServ4jClient.download(msdialFile.getName).get, new FileOutputStream(msdialFile))
 
-      //download processed id
-      download(scheduleId, token)
-    }
-    finally {
-      if (temp) {
-        logger.debug(s"removing temp file: ${temp}")
-        toUpload.delete()
+      msdialFile
+    } else {
+      try {
+        val (link, token) = upload(input)
+
+        val id = link.substring(link.lastIndexOf("/") + 1)
+        logger.debug(s"\t\tlink: ${link}")
+
+        val conversion = convert(id, token)
+
+        val deconv = schedule(id, token)
+        logger.debug(s"\t\tdeconvolution: ${deconv}")
+
+        val download = restTemplate.exchange(s"$msdresturl/rest/deconvolution/result/${id}", HttpMethod.GET, createAuthRequest(token), classOf[String])
+
+        if (download.getStatusCode == HttpStatus.OK) {
+          val out = new BufferedWriter(new FileWriter(msdialFile))
+          out.write(download.getBody)
+          out.flush()
+          out.close()
+        }
+        msdialFile
+      } catch {
+        case ex: MSDialException =>
+          throw new Exception(ex.getMessage)
       }
     }
+
+    //    //if directory and ends with .d zip file
+    //    val (toUpload, temp) = if (input.isDirectory && input.getName.endsWith(".d")) {
+    //
+    //      val temp = new File(s"${input.getName}.zip")
+    //      temp.deleteOnExit()
+    //      ZipUtil.zipDir(input.getAbsolutePath, temp.getAbsolutePath, s"${input.getName}")
+    //
+    //      (temp, true)
+    //    }
+    //    else {
+    //      (input, false)
+    //    }
+    //
+    //    try {
+    //      //upload
+    //      val (uploadId, token) = upload(toUpload)
+    //      logger.debug(s"Got sample ID $uploadId for $toUpload")
+    //
+    //      //schedule
+    //      val scheduleId = schedule(uploadId, token)
+    //
+    //      //download processed id
+    //      download(scheduleId, token)
+    //    }
+    //    finally {
+    //      if (temp) {
+    //        logger.debug(s"removing temp file: ${temp}")
+    //        toUpload.delete()
+    //      }
+    //    }
   }
 
   /**
     * uploads a given file to the server
     *
     * @param file
-    * @return
+    * @return a tuple like (link to next step, auth token)
     */
-  protected def upload(file: File): (String, String) = {
+  def upload(file: File): (String, String) = {
     logger.debug(s"uploading file: ${file} to ${msdresturl}")
 
     import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
     import org.springframework.util.LinkedMultiValueMap
 
     val map = new LinkedMultiValueMap[String, AnyRef]
-    map.add("file", new FileSystemResource(file))
+    map.add("file", file)
     val headers = new HttpHeaders
     headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
     val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
     val result = restTemplate.exchange(s"$msdresturl/rest/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
 
-    if(result.getStatusCode == HttpStatus.OK) {
+    if (result.getStatusCode == HttpStatus.OK) {
       val token = result.getBody.filename
       logger.info(s"filename = $token")
 
@@ -124,12 +157,10 @@ class MSDialRestProcessor extends LazyLogging {
           logger.debug("upload succeeded, not conversion required")
           (result.getBody.link.split("/").last, token)
         }
-      }
-      else {
+      } else {
         throw new MSDialException(result)
       }
-    }
-    else{
+    } else {
       logger.warn(s"received result was: ${result}")
       throw new MSDialException(result)
     }
@@ -139,16 +170,16 @@ class MSDialRestProcessor extends LazyLogging {
     * was this process finished
     *
     * @param id
-	  * @param token
+    * @param token
     * @return
     */
   protected def download(id: String, token: String): File = {
     val result = restTemplate.exchange(s"$msdresturl/rest/deconvolution/status/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
-//      val resultId = result.getBody.link.split("/").last
+      //      val resultId = result.getBody.link.split("/").last
 
-      val download = restTemplate.exchange(s"$msdresturl/rest/deconvolution/result/${id}",HttpMethod.GET, createAuthRequest(token), classOf[String])
+      val download = restTemplate.exchange(s"$msdresturl/rest/deconvolution/result/${id}", HttpMethod.GET, createAuthRequest(token), classOf[String])
 
       if (download.getStatusCode == HttpStatus.OK) {
 
@@ -160,12 +191,10 @@ class MSDialRestProcessor extends LazyLogging {
         out.close()
 
         file
-      }
-      else {
+      } else {
         throw new MSDialException(result)
       }
-    }
-    else {
+    } else {
       throw new MSDialException(result)
     }
   }
@@ -174,14 +203,14 @@ class MSDialRestProcessor extends LazyLogging {
     * convert the given file, if it was a .d file or so to an abf file
     *
     * @param id
-	  * @param token
+    * @param token
     */
   protected def convert(id: String, token: String): String = {
     val result = restTemplate.exchange(s"$msdresturl/rest/conversion/convert/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       logger.debug("conversion succeeded")
-	    result.getBody.link.split("/").last
+      result.getBody.link.split("/").last
     }
     else {
       throw new MSDialException(result)
@@ -209,19 +238,20 @@ class MSDialRestProcessor extends LazyLogging {
     }
   }
 
-	/**
-		* Creates an HttpEntity with an Authorization header to call the rest server
-		* @param token authorization token returned by the upload endpoint
-		* @return
-		*/
-	protected def createAuthRequest(token: String): HttpEntity[String] = {
-		// creating authorized request
-		val headers: HttpHeaders = new HttpHeaders()
-		headers.add("Authorization", s"Bearer $token")
+  /**
+    * Creates an HttpEntity with an Authorization header to call the rest server
+    *
+    * @param token authorization token returned by the upload endpoint
+    * @return
+    */
+  protected def createAuthRequest(token: String): HttpEntity[String] = {
+    // creating authorized request
+    val headers: HttpHeaders = new HttpHeaders()
+    headers.add("Authorization", token)
 
-		val request: HttpEntity[String] = new HttpEntity("parameters", headers)
-		request
-	}
+    val request: HttpEntity[String] = new HttpEntity("parameters", headers)
+    request
+  }
 
 }
 
@@ -240,18 +270,14 @@ case class ServerResponse(filename: String, link: String, message: String, error
   *
   * @param result
   */
-class MSDialException(result: ResponseEntity[ServerResponse]) extends Exception
+class MSDialException(result: ResponseEntity[ServerResponse]) extends Exception {
+  override def getMessage: String = result.getBody.message + "\n" + result.getBody.error
+}
 
 /**
   * utilizes our FServer to cache processing results somewhere on the file system o
   */
-class CachedMSDialRestProcesser extends MSDialRestProcessor{
-
-  @Autowired
-  val fServ4jClient:FServ4jClient = null
-
-  @Autowired
-  val resourceLoader:ResourceLoader = null
+class CachedMSDialRestProcesser extends MSDialRestProcessor {
   /**
     * processes the input file and includes caching support
     * if enabled
@@ -263,9 +289,9 @@ class CachedMSDialRestProcesser extends MSDialRestProcessor{
 
     val newFile = s"${input.getName}.processed"
 
-    if(!resourceLoader.exists(newFile)){
+    if (!resourceLoader.exists(newFile)) {
       logger.info(s"file: ${input.getName} requires processing and will be stored as ${newFile}")
-      fServ4jClient.upload(super.process(input),name = Some(newFile))
+      fServ4jClient.upload(super.process(input), name = Some(newFile))
     }
 
     resourceLoader.loadAsFile(newFile).get
