@@ -28,7 +28,7 @@ class FServController extends LazyLogging {
   val directory: String = null
 
   @Autowired
-  val resourceLoader: java.util.List[LocalLoader] = null
+  val resourceLoader: java.util.List[ResourceLoader] = null
 
   @PostConstruct
   def init = {
@@ -92,7 +92,7 @@ class FServController extends LazyLogging {
   @RequestMapping(path = Array("/download/{file:.+}"), method = Array(RequestMethod.GET), produces = Array(MediaType.APPLICATION_OCTET_STREAM_VALUE))
   @throws[IOException]
   def download(@PathVariable("file") param: String): ResponseEntity[InputStreamResource] = {
-    for (loader: ResourceLoader <- resourceLoader.asScala) {
+    for (loader: ResourceLoader <- resourceLoader.asScala.sortBy(_.priority)) {
       val file = loader.load(param)
 
       if (file.isDefined) {
@@ -115,7 +115,7 @@ class FServController extends LazyLogging {
   @throws[IOException]
   def exists(@PathVariable("file") param: String, responseBody: HttpServletResponse): java.util.Map[String, _ <: Any] = {
     logger.info(s"checking if file exists: ${param}")
-    for (loader: ResourceLoader <- resourceLoader.asScala) {
+    for (loader: ResourceLoader <- resourceLoader.asScala.sortBy(_.priority)) {
       logger.info(s"checking loader: ${loader}")
       if (loader.exists(param)) {
         logger.info(s"found file: ${param}")
