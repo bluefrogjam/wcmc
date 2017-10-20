@@ -448,6 +448,15 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
     this.monaSpectrumRestClient.delete(spectrum.get.id)
   }
+
+  /**
+    * returns all associated acuqisiton methods for this library
+    *
+    * @return
+    */
+  override def libraries: List[AcquisitionMethod] = {
+    val url = s"${}"
+  }
 }
 
 /**
