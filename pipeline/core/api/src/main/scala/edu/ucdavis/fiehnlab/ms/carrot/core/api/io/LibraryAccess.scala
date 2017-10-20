@@ -45,6 +45,12 @@ trait LibraryAccess[T <: Target] {
     * @param targets
     */
   def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod,sample:Option[Sample] = None)
+
+  /**
+    * returns all associated acuqisiton methods for this library
+    * @return
+    */
+  def libraries : List[AcquisitionMethod]
 }
 
 /**
@@ -53,6 +59,13 @@ trait LibraryAccess[T <: Target] {
   * @param file
   */
 class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\t") extends LibraryAccess[T] with LazyLogging{
+
+  /**
+    * returns all associated acuqisiton methods for this library
+    *
+    * @return
+    */
+  override def libraries: List[AcquisitionMethod] = AcquisitionMethod(None) :: List()
 
   /**
     * loads all the spectra from the library
