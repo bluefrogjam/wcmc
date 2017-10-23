@@ -129,4 +129,11 @@ class DelegatingResourceLoader extends ResourceLoader {
 
 trait LocalLoader extends ResourceLoader
 
-trait RemoteLoader extends ResourceLoader
+trait RemoteLoader extends ResourceLoader {
+
+  /**
+    * is a server allowed to use this one for lookup
+    * functionality
+    */
+  def isLookupEnabled():Boolean
+}
