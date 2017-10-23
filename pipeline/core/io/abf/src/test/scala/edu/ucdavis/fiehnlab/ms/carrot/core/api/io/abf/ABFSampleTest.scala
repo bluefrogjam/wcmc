@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.{Bean, ComponentScan}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
@@ -68,5 +68,9 @@ class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class ABFSampleTestConfig {
-
+  @Bean
+  def client:FServ4jClient = new FServ4jClient(
+    "127.0.0.1",
+    8080
+  )
 }

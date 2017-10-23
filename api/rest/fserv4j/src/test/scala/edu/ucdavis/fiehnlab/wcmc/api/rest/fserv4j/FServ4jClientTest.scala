@@ -21,6 +21,16 @@ import scala.io.Source
   * Created by wohlgemuth on 7/9/17.
   */
 
+@Configuration
+class FServ4JClientTestConfiguration{
+
+  @Bean
+  def client:FServ4jClient = new FServ4jClient(
+    "127.0.0.1",
+    11113
+  )
+}
+
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ], classOf[FServSecurity], classOf[FServ4jClientConfiguration]))
 class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {

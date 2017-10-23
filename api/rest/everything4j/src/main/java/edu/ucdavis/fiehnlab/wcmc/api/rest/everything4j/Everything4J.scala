@@ -12,13 +12,13 @@ import org.springframework.context.annotation.Configuration
 /**
   * Created by wohlgemuth on 10/10/17.
   */
-class Everything4J extends RemoteLoader with LazyLogging{
+class Everything4J(host:String = "luna.fiehnlab.ucdavis.edu",port:Int = 80,enableLookup:Boolean = true) extends RemoteLoader with LazyLogging{
 
-  @Value("${wcmc.api.rest.everything4j.host:luna.fiehnlab.ucdavis.edu}")
-  val host: String = ""
-
-  @Value("${wcmc.api.rest.everything4j.port:80}")
-  val port: Int = 80
+  /**
+    * is a server allowed to use this one for lookup
+    * functionality
+    */
+  override def isLookupEnabled(): Boolean = enableLookup
 
   @Autowired
   val objectMapper:ObjectMapper = null
