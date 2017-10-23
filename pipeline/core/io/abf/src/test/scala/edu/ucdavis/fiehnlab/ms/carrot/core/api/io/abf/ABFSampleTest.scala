@@ -70,7 +70,7 @@ class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
 class ABFSampleTestConfig {
   @Bean
   def client:FServ4jClient = new FServ4jClient(
-    "127.0.0.1",
-    8080
+    "testserv.fiehnlab.ucdavis.edu",
+    80
   )
 }
