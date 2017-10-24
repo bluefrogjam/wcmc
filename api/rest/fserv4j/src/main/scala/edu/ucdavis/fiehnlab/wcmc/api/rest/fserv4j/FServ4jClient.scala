@@ -4,10 +4,8 @@ import java.io.{ByteArrayInputStream, File, FileNotFoundException, InputStream}
 import java.util
 
 import edu.ucdavis.fiehnlab.loader.RemoteLoader
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
-import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client._
 
@@ -16,21 +14,16 @@ import org.springframework.web.client._
   * a local or remote network
   * Created by wohlgemuth on 7/9/17.
   */
-@Component
-class FServ4jClient extends RemoteLoader {
+class FServ4jClient(host:String = "127.0.0.1",port:Int = 80, enableLookup:Boolean = false,root:String="rest/file") extends RemoteLoader {
 
-//  @Autowired
+  /**
+    * is a server allowed to use this one for lookup
+    * functionality
+    */
+  override def isLookupEnabled(): Boolean = enableLookup
+
+  //  @Autowired
   val template: RestOperations = new RestTemplate()
-
-
-  @Value("${wcmc.api.rest.fserv4j.host:127.0.0.1}")
-  val host: String = ""
-
-  @Value("${wcmc.api.rest.fserv4j.port:8080}")
-  val port: Int = 80
-
-  @Value("${wcmc.api.rest.fserv4j.root:rest/file}")
-  val root: String = ""
 
   /**
     * generates the url for us to access the server
@@ -106,6 +99,13 @@ class FServ4jClient extends RemoteLoader {
         false
     }
   }
+
+  /**
+    * priority of the loader
+    *
+    * @return
+    */
+  override def priority = -1000
 
   /**
     * uploads the given file to the server
