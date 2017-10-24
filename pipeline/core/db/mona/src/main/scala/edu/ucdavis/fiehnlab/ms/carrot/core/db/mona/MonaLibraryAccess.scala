@@ -456,6 +456,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     */
   override def libraries: List[AcquisitionMethod] = {
     val url = s"${}"
+    List.empty
   }
 }
 
