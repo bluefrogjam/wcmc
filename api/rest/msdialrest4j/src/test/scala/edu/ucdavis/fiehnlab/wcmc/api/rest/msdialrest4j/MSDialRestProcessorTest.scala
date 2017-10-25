@@ -1,16 +1,18 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 
-import java.io.File
+import java.io.{File, FileOutputStream}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
+import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
+import org.apache.commons.io.IOUtils
 import org.junit.runner.RunWith
+import org.scalatest.concurrent.Eventually
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
@@ -21,44 +23,61 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[MSDialRestProcessorConfig]))
-class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatchers {
+class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatchers with Eventually {
 
   @Autowired
-  val mSDialRestProcessor:MSDialRestProcessor = null
+  val mSDialRestProcessor: MSDialRestProcessor = null
+
+  @Autowired
+  val fserv4j: FServ4jClient = null
+
+  def sha256Hash(text: String): String = String.format("%064x", new java.math.BigInteger(1, java.security.MessageDigest.getInstance("SHA-256").digest(text.getBytes("UTF-8"))))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "MSDialRestProcessorTest" ignore {
+  "MSDialRestProcessorTest" should {
 
     "process" must {
-
-      "process a .d file" in {
-
-        val input = new File(getClass.getResource("/test.d").toURI)
+      "an Agilent .d file" in {
+        val input = new File("testA.d.zip")
 
         val output = mSDialRestProcessor.process(input)
+        logger.warn(s"OUTPUT: ${output}")
 
-        val resultLines = Source.fromFile(output).getLines().toSeq
+        output shouldBe defined
+        output.get shouldBe a [File]
+        output.get.getName shouldEqual "testA.msdial"
 
-        resultLines.head.split("\t") should contain ("Name")
-        resultLines.head.split("\t") should contain ("ScanAtLeft")
+        val resultLines = Source.fromFile(output.get).getLines().toSeq
+        output.get.deleteOnExit()
+        resultLines.head.split("\t") should contain("Name")
+        resultLines.head.split("\t") should contain("ScanAtLeft")
 
-        resultLines.size should be (12)
+        resultLines.size should be(12)
       }
 
-      //fails currently with a 500 error, need to wait till diego is back from vacation to fix this
+      "return empty file for not zipped file" in {
+        val input = new File("B5_P20Lipids_Pos_QC029.d")
+        val output = intercept[Exception] {
+          mSDialRestProcessor.process(input)
+        }
+      }
+
       "process a .abf file" in {
-
-        val input = new File(getClass.getResource("/test.abf").toURI)
-
+        val input = new File("testA.abf")
         val output = mSDialRestProcessor.process(input)
+        logger.warn(s"OUTPUT: ${output}")
 
-        val resultLines = Source.fromFile(output).getLines().toSeq
+        output shouldBe defined
+        output.get shouldBe a[File]
+        output.get.getName shouldEqual "testA.msdial"
 
-        resultLines.head.split("\t") should contain ("Name")
-        resultLines.head.split("\t") should contain ("ScanAtLeft")
+        val resultLines = Source.fromFile(output.get).getLines().toSeq
 
-        resultLines.size should be (12)
+        resultLines.head.split("\t") should contain("Name")
+        resultLines.head.split("\t") should contain("ScanAtLeft")
+
+        resultLines.size should be(12)
       }
 
     }
@@ -66,7 +85,9 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
   }
 }
 
-@SpringBootApplication
+@Configuration
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class MSDialRestProcessorConfig {
+  @Bean
+  def fserv4j: FServ4jClient = new FServ4jClient("testfserv.fiehnlab.ucdavis.edu")
 }

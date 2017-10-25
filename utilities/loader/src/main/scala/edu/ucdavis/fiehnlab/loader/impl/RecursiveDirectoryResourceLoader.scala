@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.loader.impl
 
 import java.io.{File, FileInputStream, InputStream}
 
-import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
+import edu.ucdavis.fiehnlab.loader.LocalLoader
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -42,7 +42,7 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File, override va
 	override def loadAsFile(name: String): Option[File] = {
 		logger.debug(s"recursively load ${name} from ${directory}")
 
-		val files = walkTree(directory).filter(p => p.getAbsolutePath.endsWith(name))
+		val files = walkTree(directory).filter(p => p.getAbsolutePath.endsWith(name) && p.isFile)
 		files.headOption
 	}
 

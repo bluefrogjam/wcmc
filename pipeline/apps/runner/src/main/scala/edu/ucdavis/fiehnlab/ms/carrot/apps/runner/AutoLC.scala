@@ -8,7 +8,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.CentralWorkflowConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.QuantifiedSampleTxtWriter
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{PostProcessing, SimpleZeroReplacement, ZeroReplacementProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
-import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.utilities.SpectrumMinimizer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -63,9 +62,6 @@ class MyConfiguration extends LazyLogging {
 
   @Bean
   def zeroReplacement: PostProcessing[Double] = new SimpleZeroReplacement()
-
-	@Bean
-	def spectrumMinimizer: Option[SpectrumMinimizer] = Some(new SpectrumMinimizer())
 
 	@Bean
 	def zeroReplacementProperties: ZeroReplacementProperties = {
