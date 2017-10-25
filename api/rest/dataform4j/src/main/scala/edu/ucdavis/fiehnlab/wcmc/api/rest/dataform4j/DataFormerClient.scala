@@ -9,6 +9,8 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http._
@@ -158,6 +160,7 @@ object FileType extends Enumeration {
 
 
 @Configuration
+@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class DataFormerConfiguration extends LazyLogging {
   @Value("${wcmc.api.rest.dataformer.conversiontimeout:60}")
   val conversionTimeout: Int = 0
