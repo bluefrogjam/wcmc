@@ -4,6 +4,7 @@ import java.io.File
 
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
+import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.junit.runner.RunWith
@@ -60,4 +61,10 @@ class ResourceLoaderSampleLoaderTestConfiguration {
 
   @Bean
   def loader: ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(resourceLoader)
+
+  @Bean
+  def client:FServ4jClient = new FServ4jClient(
+    "testfserv.fiehnlab.ucdavis.edu",
+    80
+  )
 }
