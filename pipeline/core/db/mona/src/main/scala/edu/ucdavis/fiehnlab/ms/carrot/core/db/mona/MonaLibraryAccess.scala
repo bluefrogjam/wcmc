@@ -10,12 +10,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSp
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.TargetGenerationNotSupportedException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
+import org.springframework.web.client.RestTemplate
 
 import scala.collection.mutable
 
@@ -29,6 +30,8 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
   private val executionService: ExecutorService = Executors.newFixedThreadPool(1)
 
+  private val noneSpecifiedValue = "unknown"
+
   @Value("${mona.rest.server.user}")
   val username: String = null
 
@@ -41,6 +44,9 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
   @Autowired
   @Qualifier("monaRestServer")
   val monaRestServer: String = null
+
+  @Autowired
+  val restTemplate: RestTemplate = null
 
   @PostConstruct
   def init = {
@@ -309,15 +315,77 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     )
   }
 
-  def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = {
-    if (acquisitionMethod.chromatographicMethod.isDefined) {
+  /**
+    * generates a library identifier based on the given method
+    *
+    * @param acquisitionMethod
+    * @return
+    */
+  def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = acquisitionMethod.chromatographicMethod match {
 
-      //just use the name for now to keep things easy
-      acquisitionMethod.chromatographicMethod.get.name
-    }
-    else {
-      "default"
-    }
+    case Some(method) =>
+      val instrument = method.instrument match {
+        case Some(x) =>
+          x
+        case _ => noneSpecifiedValue
+      }
+
+      val column = method.column match {
+        case Some(x) =>
+          x
+        case _ => noneSpecifiedValue
+      }
+
+      val mode = method.ionMode match {
+        case Some(x) if x.isInstanceOf[PositiveMode] =>
+          "positive"
+        case Some(x) if x.isInstanceOf[NegativeMode] =>
+          "negative"
+        case _ =>
+          noneSpecifiedValue
+      }
+
+      s"${method.name}:${instrument}:${column}:${mode}"
+
+    case _ => s"default:$noneSpecifiedValue:$noneSpecifiedValue:$noneSpecifiedValue"
+  }
+
+
+  /**
+    * returns all associated acuqisiton methods for this library
+    *
+    * @return
+    */
+  override def libraries: Seq[AcquisitionMethod] = {
+    val url = s"${monaRestServer}/rest/tags/library"
+
+    val data = restTemplate.getForObject(url, classOf[Array[Tags]])
+
+    data.filter(!_.ruleBased).map { tag: Tags =>
+      val values: Array[String] = tag.text.split(":")
+
+
+      AcquisitionMethod(
+        values(0) match {
+          case "default" => None
+          case _ =>
+            val instrument = if (values(1) == noneSpecifiedValue) None else Option(values(1))
+            val column = if (values(2) == noneSpecifiedValue) None else Option(values(2))
+            val mode = if (values(3).toLowerCase == "positive") {
+              Some(PositiveMode())
+            }
+            else if (values(3).toLowerCase == "negative") {
+              Some(NegativeMode())
+            }
+            else {
+              None
+            }
+
+
+            Some(ChromatographicMethod(values(0), instrument, column, mode))
+        }
+      )
+    }.toSeq
   }
 
   /**
@@ -429,11 +497,14 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     }
 
     //let a process in the background update all the statistics
+    monaSpectrumRestClient.regenerateDownloads
     executionService.submit(new Runnable {
       override def run(): Unit = {
         monaSpectrumRestClient.regenerateStatistics
+
       }
     })
+
   }
 
 
@@ -449,15 +520,6 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     this.monaSpectrumRestClient.delete(spectrum.get.id)
   }
 
-  /**
-    * returns all associated acuqisiton methods for this library
-    *
-    * @return
-    */
-  override def libraries: List[AcquisitionMethod] = {
-    val url = s"${}"
-    List.empty
-  }
 }
 
 /**
@@ -535,7 +597,6 @@ case class MonaLibraryTarget(
     * required since targets expects a spectrum, while its being optional on the carrot level
     */
   override val spectrum = Option(msmsSpectrum)
-
 
 
 }
