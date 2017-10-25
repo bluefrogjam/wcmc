@@ -44,12 +44,10 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
         val output = mSDialRestProcessor.process(input)
         logger.warn(s"OUTPUT: ${output}")
 
-        output shouldBe defined
-        output.get shouldBe a [File]
-        output.get.getName shouldEqual "testA.msdial"
+        output.getName shouldEqual "testA.msdial"
 
-        val resultLines = Source.fromFile(output.get).getLines().toSeq
-        output.get.deleteOnExit()
+        val resultLines = Source.fromFile(output).getLines().toSeq
+        output.deleteOnExit()
         resultLines.head.split("\t") should contain("Name")
         resultLines.head.split("\t") should contain("ScanAtLeft")
 
@@ -68,11 +66,9 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
         val output = mSDialRestProcessor.process(input)
         logger.warn(s"OUTPUT: ${output}")
 
-        output shouldBe defined
-        output.get shouldBe a[File]
-        output.get.getName shouldEqual "testA.msdial"
+        output.getName shouldEqual "testA.msdial"
 
-        val resultLines = Source.fromFile(output.get).getLines().toSeq
+        val resultLines = Source.fromFile(output).getLines().toSeq
 
         resultLines.head.split("\t") should contain("Name")
         resultLines.head.split("\t") should contain("ScanAtLeft")

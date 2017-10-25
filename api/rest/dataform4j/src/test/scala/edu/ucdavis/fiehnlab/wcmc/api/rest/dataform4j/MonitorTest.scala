@@ -5,7 +5,7 @@ import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Ignore, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration}
@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[MonitorTestConfiguration]))
+@Ignore
 class MonitorTest extends WordSpec with LazyLogging with ShouldMatchers {
   @Autowired
   val monitor: Monitor = null
