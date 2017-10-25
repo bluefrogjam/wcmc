@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
+package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.rdmonitor
 
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
