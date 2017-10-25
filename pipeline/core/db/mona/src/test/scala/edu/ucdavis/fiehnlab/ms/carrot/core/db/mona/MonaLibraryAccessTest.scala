@@ -132,21 +132,11 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
   val library: MonaLibraryAccess = null
 
   @Autowired
-  val userRepo: UserRepository = null
-
-  @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "MonaLibraryAccessTest" should {
-
-
-    "create user to authenticate" in {
-      val result = userRepo.save(User(username, password, Array(Role("ADMIN")).toList.asJava))
-
-      result.username shouldBe username
-    }
 
     "delete existing data" in {
 
