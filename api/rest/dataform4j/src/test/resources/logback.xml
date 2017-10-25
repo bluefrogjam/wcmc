@@ -1,19 +1,17 @@
 <configuration scan="true" scanPeriod="30 seconds">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>[%d{HH:mm:ss.SSS} UTC || %date{"HH:mm:ss",PST} PST] [%-10.10thread] [%-30.30logger{0}] [%line] [%-5level] %msg%n</pattern>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%-30(%date{yyyy-MM-dd HH:mm:ss.SSS} %5level %-4line --- [%15thread]) %C{5} - %m%n%ex{short}
+            </Pattern>
         </encoder>
     </appender>
-
 
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
-    <logger name="edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j" level="debug" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-    <logger name="edu.ucdavis.fiehnlab.wcmc.server.fserv" level="warn" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
+
+    <!--<logger name="edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j" level="debug" additivity="false" />-->
+    <!--<logger name="edu.ucdavis.fiehnlab.wcmc.server.fserv" level="info" additivity="false" />-->
+    <!--<logger name="org.springframework.web.servlet.handler" level="warn" />-->
 </configuration>

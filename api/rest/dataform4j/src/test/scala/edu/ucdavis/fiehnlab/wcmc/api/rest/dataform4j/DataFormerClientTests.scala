@@ -2,63 +2,64 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
 import java.io.File
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import edu.ucdavis.fiehnlab.wcmc.server.fserv.{FServ, FServSecurity}
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
+import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.databind.ObjectMapper
 
 /**
-	* Created by diego on 8/31/2017.
-	*/
+  * Created by diego on 8/31/2017.
+  */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ], classOf[FServSecurity], classOf[DataFormerClientConfiguration]))
+@SpringBootTest
 class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLogging {
-	@Autowired
-	val dfClient: DataFormerClient = null
+  @Autowired
+  val dfClient: DataFormerClient = null
 
-	@LocalServerPort
-	val port: Int = 0
+  @LocalServerPort
+  val port: Int = 0
 
-	new TestContextManager(this.getClass).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
-	"edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" ignore  {
-		"upload a raw data file" in {
-            val mapper = new ObjectMapper
-            val filename = "B5_P20Lipids_Pos_QC000.d.zip"
+  "edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" should {
+    "fail for invalid file" in {
+      val filename = "not_found.d.zip"
+      val result = dfClient.convert(filename)
 
-			val result = dfClient.convert(filename)
-			logger.debug(s"result $result")
+      result should contain key "error"
+      result("error") shouldEqual (s"File ${filename} doesn't exist")
+    }
 
-            result should contain key "abf"
-            result should contain key "mzml"
-			result("abf") should equal (s"${filename.substring(0,filename.indexOf("."))}.abf")
-			result("mzml") should equal (s"${filename.substring(0,filename.indexOf("."))}.mzml")
+    "convert a raw data file (.d.zip)" in {
+      val mapper = new ObjectMapper
+      val filename = "B5_P20Lipids_Pos_QC000.d.zip"
 
-		}
-	}
+      val result = dfClient.convert(filename)
+
+      result should contain key "abf"
+      result should contain key "mzml"
+
+      val fileNoExt = filename.substring(0, filename.indexOf("."))
+
+      result("abf") should equal(s"${fileNoExt}.abf")
+      result("mzml") should equal(s"${fileNoExt}.mzml")
+
+      Array(".abf", ".d.zip", ".mzml").foreach(s => new File(fileNoExt + s).deleteOnExit())
+
+    }
+
+  }
 }
 
 @Configuration
-@Import(Array(classOf[DataFormerConfiguration]))
-@ComponentScan
-@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class DataFormerClientConfiguration {
-	@Bean
-	def dfClient: DataFormerClient = new DataFormerClient()
-
-	@Bean
-	def fserv4j: FServ4jClient = new FServ4jClient()
-
+@Import(Array(classOf[MonitorConfig]))
+class DataFormerClientTestConfiguration {
+  @Bean
+  def dfClient: DataFormerClient = new DataFormerClient()
 }
