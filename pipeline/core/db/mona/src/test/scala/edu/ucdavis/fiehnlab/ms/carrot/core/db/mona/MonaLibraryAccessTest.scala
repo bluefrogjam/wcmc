@@ -141,8 +141,23 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
   "MonaLibraryAccessTest" should {
 
+
     "create user to authenticate" in {
       val result = userRepo.save(User(username, password, Array(Role("ADMIN")).toList.asJava))
+
+      result.username shouldBe username
+    }
+
+    "delete existing data" in {
+
+      monaSpectrumRestClient.login(username, password)
+      monaSpectrumRestClient.list().foreach { x =>
+        monaSpectrumRestClient.delete(x.id)
+      }
+
+      monaSpectrumRestClient.list().size shouldBe 0
+
+      monaSpectrumRestClient.regenerateStatistics
     }
 
     "generateTarget" in {
@@ -161,6 +176,14 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       result.get.compound.head.inchiKey shouldBe "UDOOPSJCRMKSGL-ZHACJKMWSA-N"
 
+    }
+
+
+    "there should be 0 acquisition methods defined now" in {
+      eventually(timeout(5 seconds)) {
+        library.libraries.size shouldBe 0
+        Thread.sleep(250)
+      }
     }
 
     "be possible to add and load targets" in {
@@ -201,12 +224,17 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         library.load(AcquisitionMethod(None)).size shouldBe 2
         Thread.sleep(250)
       }
-      eventually (timeout(5 seconds)){
+      eventually(timeout(5 seconds)) {
         monaSpectrumRestClient.list().size shouldBe 4
         Thread.sleep(250)
       }
+    }
 
-
+    "there should be 2 acquisition methods defined now" in {
+      eventually(timeout(5 seconds)) {
+        library.libraries.size shouldBe 2
+        Thread.sleep(250)
+      }
     }
 
   }
