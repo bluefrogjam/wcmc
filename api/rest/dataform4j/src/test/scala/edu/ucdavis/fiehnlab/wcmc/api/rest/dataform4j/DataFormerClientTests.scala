@@ -54,7 +54,7 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
 }
 
 @Configuration
-@Import(Array(classOf[DataFormerConfiguration]))
+@Import(Array(classOf[DataFormerAutoConfiguration]))
 class DataFormerClientTestConfiguration {
   @Value("${wcmc.api.rest.fserv4j.host:testfserv.fiehnlab.ucdavis.edu}")
   val fservHost = ""
