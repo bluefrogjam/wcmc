@@ -1,28 +1,24 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.rdmonitor
 
-import java.io.File
+import java.io._
 import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.{FileVisitResult, Files, Path, SimpleFileVisitor}
+import java.nio.file._
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.CommandLineRunner
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.scheduling.annotation.{EnableScheduling, Scheduled}
 
 import scala.collection.mutable.ArrayBuffer
 
-@SpringBootApplication
-@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 @EnableScheduling
 class Monitor extends CommandLineRunner with LazyLogging {
   @Value("${wcmc.monitor.sourceFolder:h:\\p20repo}")
   val sourceFolder: String = null
 
   @Value("${wcmc.monitor.timestamp:0}")
-  val timestamp: Long = 0
+  var timestamp: Long = 0
 
   val rawDataFileExtensions: Seq[String] = Seq("d.zip", "raw", "wiff")
   private var rawFiles: ArrayBuffer[File] = ArrayBuffer.empty[File]
@@ -31,9 +27,17 @@ class Monitor extends CommandLineRunner with LazyLogging {
 
   }
 
-  @Scheduled(fixedRate = 60 * 1000)
+  @Scheduled(fixedRate = 5 * 1000)
   def monitor(): Unit = {
-    logger.info("The time is now {}", new Date())
+    val root = new File(sourceFolder)
+    val newFiles = getFiles(timestamp)
+    logger.info(s"files newer than ${new Date(timestamp)}:\n\t${newFiles.mkString("\n\t")}")
+    logger.debug(s"# files: ${newFiles.size}")
+
+    if(newFiles.nonEmpty) {
+      timestamp = root.listFiles().maxBy(_.lastModified()).lastModified()
+      logger.debug(s"updated timestamp to ${new Date(timestamp)}")
+    }
 
     //getFiles()
 
@@ -78,5 +82,4 @@ class Monitor extends CommandLineRunner with LazyLogging {
       Seq[File]()
     }
   }
-
 }
