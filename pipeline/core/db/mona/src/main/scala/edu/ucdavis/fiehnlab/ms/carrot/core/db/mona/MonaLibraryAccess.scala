@@ -174,10 +174,10 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         compound = Array(compound),
         id = t match {
           case x: MonaLibraryTarget =>
-            logger.info(s"associate id: ${x.id}")
+            logger.debug(s"associate id: ${x.id}")
             x.id
           case _ =>
-            logger.warn(s"no id defined! ${t}")
+            logger.debug(s"no id defined! ${t}")
             null
         },
         dateCreated = new Date(),
@@ -544,7 +544,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     //let a process in the background update all the statistics
     executionService.submit(new Runnable {
       override def run(): Unit = {
-        logger.warn("updating all statistics and downloads")
+        logger.debug("updating all statistics and downloads")
         monaSpectrumRestClient.regenerateDownloads
         monaSpectrumRestClient.regenerateStatistics
 
