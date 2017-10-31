@@ -85,6 +85,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
       logger.warn("building MONA library")
       monaSpectrumRestClient.login(username, password)
       monaSpectrumRestClient.list().foreach(p => monaSpectrumRestClient.delete(p.id))
+      monaSpectrumRestClient.list().size shouldBe 0
 
       val lib = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
       val method = acquisitionLoader.load(loader.getSample(sampleNames.head)).get

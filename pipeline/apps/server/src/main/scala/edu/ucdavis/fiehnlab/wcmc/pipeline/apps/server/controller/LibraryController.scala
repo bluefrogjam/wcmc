@@ -86,8 +86,13 @@ class LibraryController {
   }
 
   @RequestMapping(value = Array(""), method = Array(RequestMethod.GET))
-  def listLibraries(): List[Target] = {
-    List.empty
+  def listLibraries(): Seq[String] = {
+    libraryAccess.libraries.map{ x =>
+      x.chromatographicMethod match {
+        case Some(o) => o.name
+        case _ => "default"
+      }
+    }
   }
 }
 
