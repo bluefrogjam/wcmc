@@ -6,7 +6,8 @@ import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
-import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
+import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
+import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{GenericRestClient, MonaSpectrumRestClient}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.TargetGenerationNotSupportedException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
@@ -16,8 +17,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumPropertie
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 /**
@@ -48,11 +50,33 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
   @Autowired
   val restTemplate: RestTemplate = null
 
+  @Autowired
+  val loginService: LoginService = null
+
+  @Autowired
+  val userSerivce: GenericRestClient[Submitter, String] = null
+
   @PostConstruct
   def init = {
     logger.info(s"utilizing mona server for targets at: ${monaRestServer}")
-  }
 
+    val token = loginService.login(username, password).token
+
+    logger.info(s"login token is: ${token}")
+    monaSpectrumRestClient.login(token)
+    userSerivce.login(token)
+
+    val info = loginService.info(token)
+
+    info.roles.asScala.foreach { x =>
+      logger.info(s"role: ${x}")
+    }
+
+    logger.info(s"username: ${info.username}")
+    logger.info(s"from: ${info.validFrom}")
+    logger.info(s"to: ${info.validTo}")
+
+  }
 
   /**
     * based on the given method this will evaluate to a query against the system to provide us with valid targets
@@ -148,7 +172,14 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     Some(
       Spectrum(
         compound = Array(compound),
-        id = null,
+        id = t match {
+          case x: MonaLibraryTarget =>
+            logger.info(s"associate id: ${x.id}")
+            x.id
+          case _ =>
+            logger.warn(s"no id defined! ${t}")
+            null
+        },
         dateCreated = new Date(),
         lastUpdated = new Date(),
         metaData = metaData,
@@ -290,13 +321,22 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @return
     */
-  def associateWithSubmitter(): Submitter = Submitter(
-    id = "admin",
-    emailAddress = "admin@admin.ad",
-    firstName = "admin",
-    lastName = "admin",
-    institution = "admin"
-  )
+  def associateWithSubmitter(): Submitter = {
+    try {
+      userSerivce.get(username)
+    }
+    catch {
+      case e: HttpClientErrorException =>
+        logger.debug(s"observed an error, using dummy user! ${e.getMessage}",e)
+        Submitter(
+        username,
+        "none@provided.com",
+        username,
+        username,
+        "none"
+      )
+    }
+  }
 
   /**
     * in which library targets should be defined
@@ -345,9 +385,9 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
           noneSpecifiedValue
       }
 
-      s"${method.name}:${instrument}:${column}:${mode}"
+      s"${method.name} - ${instrument} - ${column} - ${mode}"
 
-    case _ => s"default:$noneSpecifiedValue:$noneSpecifiedValue:$noneSpecifiedValue"
+    case _ => s"default - $noneSpecifiedValue - $noneSpecifiedValue - $noneSpecifiedValue"
   }
 
 
@@ -362,7 +402,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     val data = restTemplate.getForObject(url, classOf[Array[Tags]])
 
     data.filter(!_.ruleBased).map { tag: Tags =>
-      val values: Array[String] = tag.text.split(":")
+      val values: Array[String] = tag.text.split(" - ")
 
 
       AcquisitionMethod(
@@ -449,12 +489,13 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       * our defined method
       */
     MonaLibraryTarget(
-      spectrumProperties,
+      id = x.id,
+      msmsSpectrum = spectrumProperties,
       name = Option(name),
       retentionIndex = retentionIndex.get.value.toString.toDouble,
       retentionTimeInSeconds = retentionTime.get.value.toString.toDouble,
       inchiKey = Option(inchi),
-      precursorMass = Option(precursorIon.get.value.asInstanceOf[Double]),
+      precursorMass = Option(precursorIon.get.value.toString.toDouble),
       confirmed = if (confirmed.isDefined) confirmed.get.value.asInstanceOf[Boolean] else false,
       requiredForCorrection = if (requiredForCorrection.isDefined) requiredForCorrection.get.value.asInstanceOf[Boolean] else false,
       isRetentionIndexStandard = if (isRetentionIndexStandard.isDefined) isRetentionIndexStandard.get.value.asInstanceOf[Boolean] else false,
@@ -481,7 +522,6 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param targets
     */
   override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
-    monaSpectrumRestClient.login(username, password)
 
     targets.foreach {
       t =>
@@ -496,10 +536,16 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
         }
     }
 
+    updateLibraries
+
+  }
+
+  private def updateLibraries = {
     //let a process in the background update all the statistics
-    monaSpectrumRestClient.regenerateDownloads
     executionService.submit(new Runnable {
       override def run(): Unit = {
+        logger.warn("updating all statistics and downloads")
+        monaSpectrumRestClient.regenerateDownloads
         monaSpectrumRestClient.regenerateStatistics
 
       }
@@ -507,17 +553,25 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
   }
 
-
   /**
     * deletes a specified target from the library
     *
     * @param target
     * @param acquisitionMethod
     */
-  override def delete(target: Target, acquisitionMethod: AcquisitionMethod): Unit = {
-    val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
+  override def delete(t: Target, acquisitionMethod: AcquisitionMethod): Unit = {
+    t match {
+      case target: MonaLibraryTarget =>
+        val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
 
-    this.monaSpectrumRestClient.delete(spectrum.get.id)
+        logger.info(s"us defined: ${spectrum.isDefined}")
+        logger.info(s"spectrum id: ${spectrum.get.id}")
+        this.monaSpectrumRestClient.delete(spectrum.get.id)
+
+        updateLibraries
+      case _ =>
+        logger.warn(s"${t} is not of the right type! Type is ${t.getClass}")
+    }
   }
 
 }
@@ -528,7 +582,11 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 @Configuration
 @ComponentScan(basePackageClasses = Array(classOf[MonaSpectrumRestClient], classOf[MonaLibraryAccess]))
 @Import(Array(classOf[RestClientConfig]))
-class MonaLibraryAccessAutoConfiguration
+class MonaLibraryAccessAutoConfiguration {
+
+  @Bean
+  def submitterService: GenericRestClient[Submitter, String] = new GenericRestClient[Submitter, String]("rest/submitters")
+}
 
 /**
   * this defines a valid mona based target in the system
@@ -543,6 +601,7 @@ class MonaLibraryAccessAutoConfiguration
   * @param isRetentionIndexStandard
   */
 case class MonaLibraryTarget(
+                              id: String,
 
                               /**
                                 * associate msms spectrum

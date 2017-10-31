@@ -2,16 +2,18 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
+import org.scalatest.concurrent.Eventually
+import org.scalatest.time.SpanSugar._
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.web.client.RestTemplate
 
@@ -20,7 +22,7 @@ import org.springframework.web.client.RestTemplate
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
-class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLogging {
+class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually{
 
 
   @LocalServerPort
@@ -36,11 +38,20 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
   "LibraryControllerTest" should {
 
+    "delete all data" in {
+      libraryAccess.libraries.foreach { x =>
+        libraryAccess.load(x).foreach { y =>
+          libraryAccess.delete(y, x)
+        }
+      }
+    }
     "have no library" in {
-      val libraries: List[String] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[List[String]])
+      val libraries: Array[String] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[String]])
+      eventually(timeout(15 seconds)) {
 
-      libraries.size shouldBe 0
-
+        libraries.size shouldBe 0
+        Thread.sleep(250)
+      }
     }
 
     "add 1 target to the library test" in {
@@ -55,10 +66,14 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "have 1 library" in {
-      val libraries: List[String] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[List[String]])
+      eventually(timeout(915 seconds)) {
 
-      libraries.size shouldBe 1
+      val libraries: Array[String] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[String]])
 
+
+        libraries.size shouldBe 1
+        Thread.sleep(250)
+      }
     }
 
     "add 1 target to the library test 2" in {
@@ -74,10 +89,14 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "have 2 libraries" in {
-      val libraries: List[String] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[List[String]])
+      eventually(timeout(15 seconds)) {
 
-      libraries.size shouldBe 2
+      val libraries: Array[String] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[String]])
 
+
+        libraries.size shouldBe 2
+        Thread.sleep(250)
+      }
     }
 
   }

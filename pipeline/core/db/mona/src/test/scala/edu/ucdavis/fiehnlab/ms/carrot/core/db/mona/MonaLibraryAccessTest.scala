@@ -2,23 +2,19 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.repository.UserRepository
-import edu.ucdavis.fiehnlab.mona.backend.core.auth.types.{Role, User}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{ShouldMatchers, WordSpec, time}
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.scalatest.time.SpanSugar._
+import org.scalatest.{ShouldMatchers, WordSpec}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-
-import scala.collection.JavaConverters._
-import org.scalatest.time.SpanSugar._
 
 /**
   * Created by wohlgemuth on 8/14/17.
@@ -122,37 +118,20 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
   }
 
 
-  @Value("${mona.rest.server.user}")
-  val username: String = null
-
-  @Value("${mona.rest.server.password}")
-  val password: String = null
-
   @Autowired
   val library: MonaLibraryAccess = null
 
   @Autowired
-  val monaSpectrumRestClient: MonaSpectrumRestClient = null
+  val client: MonaSpectrumRestClient = null
+
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "MonaLibraryAccessTest" should {
 
-    "delete existing data" in {
-
-      monaSpectrumRestClient.login(username, password)
-      monaSpectrumRestClient.list().foreach { x =>
-        monaSpectrumRestClient.delete(x.id)
-      }
-
-      monaSpectrumRestClient.list().size shouldBe 0
-
-      monaSpectrumRestClient.regenerateStatistics
-    }
-
     "generateTarget" in {
 
-      val result = library.generateSpectrum(testTarget, new AcquisitionMethod(None), None)
+      val result = library.generateSpectrum(testTarget, AcquisitionMethod(None), None)
 
       result.isDefined shouldBe true
 
@@ -168,6 +147,20 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     }
 
+    "delete existing data" in {
+      library.libraries.foreach { x =>
+        logger.info(s"deleting library: ${x}")
+        library.load(x).foreach { y =>
+          logger.info(s"deleting spectra: ${y} in ${x}")
+          library.delete(y, x)
+        }
+      }
+      eventually(timeout(5 seconds)) {
+        client.list().size shouldBe 0
+        Thread.sleep(250)
+      }
+    }
+
 
     "there should be 0 acquisition methods defined now" in {
       eventually(timeout(5 seconds)) {
@@ -177,8 +170,6 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "be possible to add and load targets" in {
-      monaSpectrumRestClient.login(username, password)
-      monaSpectrumRestClient.list().foreach(s => monaSpectrumRestClient.delete(s.id))
 
       val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(None)
       library.add(testTarget, acquisitionMethod, None)
@@ -215,13 +206,21 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         Thread.sleep(250)
       }
       eventually(timeout(5 seconds)) {
-        monaSpectrumRestClient.list().size shouldBe 4
+
+        val count: Int = library.libraries.map { x =>
+          library.load(x).map { y =>
+            1
+          }.sum
+        }.sum
+
+        count shouldBe 4
+
         Thread.sleep(250)
       }
     }
 
     "there should be 2 acquisition methods defined now" in {
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(90 seconds)) {
         library.libraries.size shouldBe 2
         Thread.sleep(250)
       }
