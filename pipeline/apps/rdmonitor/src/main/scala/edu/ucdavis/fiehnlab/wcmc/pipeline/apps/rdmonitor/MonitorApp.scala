@@ -1,6 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
-
-import org.springframework.boot.SpringApplication
+package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.rdmonitor
 
 object MonitorApp {
   def main(args: Array[String]): Unit = {
