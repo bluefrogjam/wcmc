@@ -12,6 +12,7 @@
     <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
     <artifactId>api</artifactId>
 
+    <description>Provides a basic implementation of the scheduling system, using local threads</description>
 
     <dependencies>
         <dependency>
