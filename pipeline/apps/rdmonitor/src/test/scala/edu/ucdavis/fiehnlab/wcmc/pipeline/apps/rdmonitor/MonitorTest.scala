@@ -5,16 +5,15 @@ import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
 import org.junit.runner.RunWith
-import org.scalatest.{Ignore, ShouldMatchers, WordSpec}
+import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[MonitorTestConfiguration]))
-@Ignore
+@SpringBootTest(classes = Array(classOf[MonitorTestConfig]))
 class MonitorTest extends WordSpec with LazyLogging with ShouldMatchers {
   @Autowired
   val monitor: Monitor = null
@@ -58,4 +57,8 @@ class MonitorTest extends WordSpec with LazyLogging with ShouldMatchers {
       strFiles should not contain ("B5_SA0259_P20Lipids_Pos_1FV_2392_MSMS.d")
     }
   }
+}
+
+@SpringBootApplication(exclude = Array(classOf[MonitorAutoConfiguration]))
+class MonitorTestConfig {
 }

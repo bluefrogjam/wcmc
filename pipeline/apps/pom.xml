@@ -14,7 +14,6 @@
 	<version>1.0.16-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-
         <module>runner</module>
         <module>server</module>
         <module>client</module>
