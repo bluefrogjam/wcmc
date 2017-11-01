@@ -147,27 +147,19 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     }
 
-    "delete existing data" in {
-      library.libraries.foreach { x =>
-        logger.info(s"deleting library: ${x}")
-        library.load(x).foreach { y =>
-          logger.info(s"deleting spectra: ${y} in ${x}")
-          library.delete(y, x)
-        }
+    "resset database ussing mona client" in {
+      client.list().foreach{ x=>
+        client.delete(x.id)
       }
+      client.regenerateStatistics
+      client.regenerateDownloads
+
       eventually(timeout(5 seconds)) {
         client.list().size shouldBe 0
         Thread.sleep(250)
       }
     }
 
-
-    "there should be 0 acquisition methods defined now" in {
-      eventually(timeout(5 seconds)) {
-        library.libraries.size shouldBe 0
-        Thread.sleep(250)
-      }
-    }
 
     "be possible to add and load targets" in {
 
@@ -226,6 +218,28 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       }
     }
 
+
+    "delete acquisition method" in {
+      library.libraries.foreach { x =>
+        logger.info(s"deleting library: ${x}")
+        library.load(x).foreach { y =>
+          logger.info(s"deleting spectra: ${y} in ${x}")
+          library.delete(y, x)
+        }
+      }
+      eventually(timeout(5 seconds)) {
+        client.list().size shouldBe 0
+        Thread.sleep(250)
+      }
+    }
+
+
+    "there should be 0 acquisition methods defined now" in {
+      eventually(timeout(5 seconds)) {
+        library.libraries.size shouldBe 0
+        Thread.sleep(250)
+      }
+    }
   }
 }
 
