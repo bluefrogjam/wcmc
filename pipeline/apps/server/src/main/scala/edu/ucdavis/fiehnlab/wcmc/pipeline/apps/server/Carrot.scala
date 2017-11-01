@@ -2,6 +2,8 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
+import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -17,6 +19,8 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 @SpringBootApplication( exclude =Array(classOf[DataSourceAutoConfiguration]))
 class Carrot {
 
+  @Value("${server.port}")
+  val port:Integer = null
   /**
     * should be done over a profile TODO
     *
@@ -26,6 +30,11 @@ class Carrot {
   def workflow: LCMSPositiveModeTargetWorkflow[Double] = {
     new LCMSPositiveModeTargetWorkflow()
   }
+
+  @Bean
+  def client:FServ4jClient = new FServ4jClient(
+    "localhost",port
+  )
 }
 
 object Carrot extends App {

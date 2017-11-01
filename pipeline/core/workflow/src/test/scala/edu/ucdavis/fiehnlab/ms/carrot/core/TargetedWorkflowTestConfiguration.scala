@@ -42,9 +42,10 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
   @Bean
   def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
 
+
   @Bean
   def client:FServ4jClient = new FServ4jClient(
-    "127.0.0.1",
-    8080
+    "testfserv.fiehnlab.ucdavis.edu",
+    80
   )
 }

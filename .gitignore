@@ -4,9 +4,5 @@ target/
 .idea
 
 #data files
-**/*.abf
-**/*.d/
-**/*.mzXML
-**/*.mzML
 !**/msdialrest4j/src/test/resources/*.abf
 !**/msdialrest4j/src/test/resources/*.d/

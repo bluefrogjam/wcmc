@@ -49,7 +49,7 @@ class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
 
 
     "msms sample" in {
-      val name  = "B5_SA0259_P20Lipids_Pos_1FV_2392_MSMS.abf"
+      val name  = "B5_SA0262_P20Lipids_Pos_1FV_2404_MSMS.abf"
       val sample = new ABFSample(name,loader.loadAsFile(name).get,client)
 
       sample.spectra should not be empty
@@ -70,7 +70,7 @@ class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
 class ABFSampleTestConfig {
   @Bean
   def client:FServ4jClient = new FServ4jClient(
-    "testserv.fiehnlab.ucdavis.edu",
+    "testfserv.fiehnlab.ucdavis.edu",
     80
   )
 }

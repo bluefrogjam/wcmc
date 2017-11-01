@@ -71,7 +71,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
          * Acquisition method options
          */
         HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data;
+            $scope.acquisitionMethodOptions = data.data;
         });
         HttpService.getPlatforms(function(data) {
             $scope.platformOptions = data;
@@ -231,7 +231,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
          * Acquisition method options
          */
         HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data;
+            $scope.acquisitionMethodOptions = data.data;
         });
         HttpService.getPlatforms(function(data) {
             $scope.platformOptions = data;
@@ -405,6 +405,13 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         };
 
         this.getAcquisitionMethods = function(successCallback, errorCallback) {
-            successCallback(['Lipidomics', 'HILIC', 'CSH']);
+            //successCallback(['Lipidomics', 'HILIC', 'CSH']);
+            $http({
+                method: 'GET',
+                url: '/rest/library',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(successCallback, errorCallback);
         };
     }]);
