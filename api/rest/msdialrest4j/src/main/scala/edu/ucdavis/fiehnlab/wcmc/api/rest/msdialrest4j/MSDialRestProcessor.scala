@@ -13,6 +13,9 @@ import org.springframework.http.{HttpEntity, HttpMethod, ResponseEntity, _}
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 
+import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
+import org.springframework.util.LinkedMultiValueMap
+
 @Configuration
 @ComponentScan
 class MSDialRestProcessorAutoconfiguration {
@@ -51,7 +54,7 @@ class MSDialRestProcessor extends LazyLogging {
     * @param input
     * @return
     */
-  def process(input: File): Option[File] = {
+  def process(input: File): File = {
     logger.debug(s"processing file: ${input}")
 
     var msdialFile: File = new File(input.getName.substring(0, input.getName.indexOf(".")).concat(".msdial"))
@@ -59,25 +62,26 @@ class MSDialRestProcessor extends LazyLogging {
     if (input.isDirectory) {
       throw new Exception("can't process a folder")
     } else {
-      if (fServ4jClient.exists(input.getName)) {
-        logger.debug(s"File ${input.getName} is on fileserver, skipping upload")
-        val response = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/process/${input.getName}", classOf[ServerResponse])
+      logger.debug(s"File ${input.getName} is on fileserver, skipping upload")
+      val response = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/process/${input.getName}", classOf[ServerResponse])
 
-        if (response.getStatusCode != HttpStatus.OK) {
-          logger.warn(s"response: ${response.getBody.filename}")
-          None
-        } else {
-          val fout = new FileOutputStream(msdialFile)
+      if (response.getStatusCode != HttpStatus.OK) {
+        logger.warn(s"response: ${response.getBody.filename}")
+        throw new MSDialException(response)
+      } else {
+        val fout = new FileOutputStream(msdialFile)
 
+        try {
           IOUtils.copyLarge(fServ4jClient.download(msdialFile.getName).get, fout)
+          msdialFile
+        }
+        finally {
           fout.flush()
           fout.close()
 
-          Option(msdialFile)
         }
-      } else {
-        None
       }
+
     }
   }
 
@@ -89,9 +93,6 @@ class MSDialRestProcessor extends LazyLogging {
     */
   def upload(file: File): (String, String) = {
     logger.debug(s"uploading file: ${file} to ${msdresturl}")
-
-    import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
-    import org.springframework.util.LinkedMultiValueMap
 
     val map = new LinkedMultiValueMap[String, AnyRef]
     map.add("file", file)
@@ -241,15 +242,15 @@ class CachedMSDialRestProcesser extends MSDialRestProcessor {
     * @param input
     * @return
     */
-  override def process(input: File): Option[File] = {
+  override def process(input: File): File = {
 
     val newFile = s"${input.getName}.processed"
 
     if (!resourceLoader.exists(newFile)) {
       logger.info(s"file: ${input.getName} requires processing and will be stored as ${newFile}")
-      fServ4jClient.upload(super.process(input).get, name = Some(newFile))
+      fServ4jClient.upload(super.process(input), name = Some(newFile))
     }
 
-    resourceLoader.loadAsFile(newFile)
+    resourceLoader.loadAsFile(newFile).get
   }
 }

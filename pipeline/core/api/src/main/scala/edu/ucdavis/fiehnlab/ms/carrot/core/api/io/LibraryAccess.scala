@@ -50,7 +50,7 @@ trait LibraryAccess[T <: Target] {
     * returns all associated acuqisiton methods for this library
     * @return
     */
-  def libraries : List[AcquisitionMethod]
+  def libraries : Seq[AcquisitionMethod]
 }
 
 /**
@@ -65,7 +65,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     *
     * @return
     */
-  override def libraries: List[AcquisitionMethod] = AcquisitionMethod(None) :: List()
+  override def libraries: Seq[AcquisitionMethod] = AcquisitionMethod(None) :: List()
 
   /**
     * loads all the spectra from the library
