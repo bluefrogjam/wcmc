@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation._
 @CrossOrigin
 @RestController
 @RequestMapping(value = Array("/rest/library"))
-class LibraryController {
+class LibraryController extends LazyLogging {
 
   @Autowired
   val libraryAccess: LibraryAccess[Target] = null
@@ -25,69 +26,27 @@ class LibraryController {
   @RequestMapping(value = Array(""), method = Array(RequestMethod.POST))
   def addTarget(@RequestBody target: AddTarget): Unit = {
 
-    val ionMode: IonMode = target.mode.toLowerCase match {
-      case "+" => PositiveMode()
-      case "positive" => PositiveMode()
-      case _ => NegativeMode()
-    }
+    val t = target.buildTarget
 
-    libraryAccess.add(
-      new Target {
-        /**
-          * the unique inchi key for this spectra
-          */
-        override val inchiKey: Option[String] = None
-        /**
-          * retention time in seconds of this target
-          */
-        override val retentionIndex: Double = target.retentionTime
-        /**
-          * is this a confirmed target
-          */
-        override val confirmed: Boolean = true
-        /**
-          * the mono isotopic mass of this spectra
-          */
-        override val precursorMass: Option[Double] = Some(target.precursor)
-        /**
-          * a name for this spectra
-          */
-        override val name: Option[String] = Some(target.targetName)
-        /**
-          * is this target required for a successful retention index correction
-          */
-        override val requiredForCorrection: Boolean = false
-        /**
-          * is this a retention index correction standard
-          */
-        override val isRetentionIndexStandard: Boolean = target.riMarker
-        /**
-          * associated spectrum propties if applicable
-          */
-        override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
-          /**
-            * a list of model ions used during the deconvolution
-            */
-          override val modelIons: Option[Seq[Double]] = None
-          /**
-            * all the defined ions for this spectra
-            */
-          override val ions: Seq[Ion] = Seq(Ion(target.precursor, 100.0))
-          /**
-            * the msLevel of this spectra
-            */
-          override val msLevel: Short = 1
-        })
-      },
-      AcquisitionMethod(Some(ChromatographicMethod(
-        name = target.library, None, None, ionMode = Some(ionMode)))),
-      None
-    )
+    val method = target.buildMethod
+
+    val existingTargets = libraryAccess.load(method)
+
+    if (!existingTargets.exists(_.eq(t))) {
+      libraryAccess.add(
+        t,
+        method,
+        None
+      )
+    }
+    else {
+      logger.info(s"target already existed: ${t}")
+    }
   }
 
   @RequestMapping(value = Array(""), method = Array(RequestMethod.GET))
   def listLibraries(): Seq[String] = {
-    libraryAccess.libraries.map{ x =>
+    libraryAccess.libraries.map { x =>
       x.chromatographicMethod match {
         case Some(o) => o.name
         case _ => "default"
@@ -96,4 +55,86 @@ class LibraryController {
   }
 }
 
-case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String, riMarker: Boolean, mode: String)
+case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String, riMarker: Boolean, mode: String) {
+
+  /**
+    * builds the associated acquition method
+    *
+    * @return
+    */
+  def buildMethod: AcquisitionMethod = {
+    val target: AddTarget = this
+
+
+    val ionMode: IonMode = target.mode.toLowerCase match {
+      case "+" => PositiveMode()
+      case "positive" => PositiveMode()
+      case _ => NegativeMode()
+    }
+
+    AcquisitionMethod(
+      Some(
+        ChromatographicMethod(
+          name = target.library, None, None, ionMode = Some(ionMode)
+        )
+      )
+    )
+  }
+
+  /**
+    * builds a target out of the given information
+    *
+    * @return
+    */
+  def buildTarget: Target = {
+    val target: AddTarget = this
+
+    new Target {
+      /**
+        * the unique inchi key for this spectra
+        */
+      override val inchiKey: Option[String] = None
+      /**
+        * retention time in seconds of this target
+        */
+      override val retentionIndex: Double = target.retentionTime
+      /**
+        * is this a confirmed target
+        */
+      override val confirmed: Boolean = true
+      /**
+        * the mono isotopic mass of this spectra
+        */
+      override val precursorMass: Option[Double] = Some(target.precursor)
+      /**
+        * a name for this spectra
+        */
+      override val name: Option[String] = Some(target.targetName)
+      /**
+        * is this target required for a successful retention index correction
+        */
+      override val requiredForCorrection: Boolean = false
+      /**
+        * is this a retention index correction standard
+        */
+      override val isRetentionIndexStandard: Boolean = target.riMarker
+      /**
+        * associated spectrum propties if applicable
+        */
+      override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+        /**
+          * a list of model ions used during the deconvolution
+          */
+        override val modelIons: Option[Seq[Double]] = None
+        /**
+          * all the defined ions for this spectra
+          */
+        override val ions: Seq[Ion] = Seq(Ion(target.precursor, 100.0))
+        /**
+          * the msLevel of this spectra
+          */
+        override val msLevel: Short = 1
+      })
+    }
+  }
+}
