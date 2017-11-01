@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
+package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.rdmonitor
 
 import java.io.File
 import java.util.Date
@@ -58,10 +58,4 @@ class MonitorTest extends WordSpec with LazyLogging with ShouldMatchers {
       strFiles should not contain ("B5_SA0259_P20Lipids_Pos_1FV_2392_MSMS.d")
     }
   }
-}
-
-@Configuration
-class MonitorTestConfiguration {
-  @Bean
-  def monitor: Monitor = new Monitor
 }
