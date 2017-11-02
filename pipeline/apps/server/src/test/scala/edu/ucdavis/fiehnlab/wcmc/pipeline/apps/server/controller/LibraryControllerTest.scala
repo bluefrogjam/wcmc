@@ -39,7 +39,9 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "delete all data" in {
       libraryAccess.libraries.foreach { x =>
+        logger.info(s"loading ${x}")
         libraryAccess.load(x).foreach { y =>
+          logger.info(s"deleting ${y} in ${x}")
           libraryAccess.delete(y, x)
         }
       }
@@ -99,7 +101,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
       }
     }
 
-    "does not add the same library again" in {
+    "does not add the same spectra to the library again" in {
 
       val target = AddTarget(
         targetName = "target-2",
@@ -118,6 +120,8 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
         val after = libraryAccess.load(target.buildMethod).size
 
         after shouldBe before
+
+        Thread.sleep(250)
       }
     }
 
