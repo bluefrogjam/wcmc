@@ -32,7 +32,9 @@ class LibraryController extends LazyLogging {
 
     val existingTargets = libraryAccess.load(method)
 
-    if (!existingTargets.exists(_.eq(t))) {
+    logger.info(s"library contains currently ${existingTargets.size} targets")
+
+    if (!existingTargets.exists(_.equals(t))) {
       libraryAccess.add(
         t,
         method,
