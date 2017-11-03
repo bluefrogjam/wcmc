@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.rdmonitor
+package edu.ucdavis.fiehnlab.wcmc.server.rdmonitor
 
 import org.springframework.boot.SpringApplication
 
