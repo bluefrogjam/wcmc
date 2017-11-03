@@ -3,18 +3,18 @@ package edu.ucdavis.fiehnlab.wcmc.server.rdmonitor
 import java.io._
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
-import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.server.rdmonitor.api.{FileEventListener, NewFileEvent}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.CommandLineRunner
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.{EnableScheduling, Scheduled}
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
 
-@EnableScheduling
 @Component
 class Monitor extends CommandLineRunner with LazyLogging {
   @Value("${wcmc.monitor.sourceFolder:/storage}")
@@ -30,9 +30,8 @@ class Monitor extends CommandLineRunner with LazyLogging {
 
   override def run(args: String*): Unit = {}
 
-  @Scheduled(fixedRate = 60*60*24 * 1000) // sec * mins * hrs * milis2secs = daily
+  @Scheduled(fixedRate = 60*60*24 * 1000) // run daily
   def monitor(): Unit = {
-    val root = new File(sourceFolder)
     searchFiles(timestamp)
   }
 
@@ -73,3 +72,8 @@ class Monitor extends CommandLineRunner with LazyLogging {
     }
   }
 }
+
+@Configuration
+@ConditionalOnProperty(value = Array("scheduling.enabled"), havingValue = "true", matchIfMissing = true)
+@EnableScheduling
+class SchedulingConfiguration{}
