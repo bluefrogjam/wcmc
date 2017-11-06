@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>apps</artifactId>
-        <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
-        <version>1.0.16-SNAPSHOT</version>
+        <artifactId>server</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -46,35 +46,15 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
-            <artifactId>dataform4j</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.typesafe.scala-logging</groupId>
+            <artifactId>scala-logging_2.11</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
-            <artifactId>fserv4j</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.2</version>
         </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>edu.ucdavis.fiehnlab.wcmc.server</groupId>-->
-        <!--<artifactId>fserv</artifactId>-->
-        <!--<version>1.0-SNAPSHOT</version>-->
-        <!--<scope>test</scope>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>edu.ucdavis.fiehnlab.utilities</groupId>-->
-        <!--<artifactId>compress</artifactId>-->
-        <!--<version>1.0-SNAPSHOT</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>edu.ucdavis.fiehnlab.utilities</groupId>-->
-        <!--<artifactId>casetojson</artifactId>-->
-        <!--<version>1.0-SNAPSHOT</version>-->
-        <!--</dependency>-->
     </dependencies>
 
 </project>

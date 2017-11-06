@@ -22,13 +22,14 @@ case class Ion(mass: Double, intensity: Double) {
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
 }
+
 /**
   * which ion mode the spectra is
   */
-sealed trait IonMode
+class IonMode(val mode: String)
 
-case class PositiveMode() extends IonMode
+case class PositiveMode() extends IonMode("positive")
 
-case class NegativeMode() extends IonMode
+case class NegativeMode() extends IonMode("negative")
 
-case class Unknown() extends IonMode
+case class Unknown() extends IonMode("unknown")
