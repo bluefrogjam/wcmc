@@ -257,6 +257,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
         $scope.reset = function() {
             $window.location.reload();
+            $scope.submitting = $scope.success = $scope.error = false;
         };
 
 
@@ -284,7 +285,19 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                 return;
             }
 
-            HttpService.submitTarget($scope.target);
+            $scope.submitting = true;
+
+            HttpService.submitTarget(
+                $scope.target,
+                function (data) {
+                    $scope.submitting = false;
+                    $scope.success = true;
+                },
+                function (data) {
+                    $scope.submitting = false;
+                    $scope.error = data;
+                }
+            );
         };
 
 
@@ -333,7 +346,8 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             }
 
             // Submit
-            var totalCount = 0, successCount = 0;
+            var totalCount = 0, successCount = 0, errorCount = 0;
+            $scope.submitting = true;
 
             for (var i = 0; i < $scope.data.length; i++) {
                 // Ignore empty rows
@@ -353,16 +367,28 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
+
+                            errorCount++;
                         }
                     );
                 }
             }
 
-            if (totalCount == successCount) {
-                $scope.success = true;
-            } else {
-                $scope.error = 'Only '+ successCount +' / '+ totalCount +' targets were successfully submitted.'
-            }
+            var submitLibrary = function() {
+                if (successCount + errorCount < totalCount) {
+                    $timeout(submitLibrary, 1000);
+                } else {
+                    $scope.submitting = false;
+
+                    if (totalCount == successCount) {
+                        $scope.success = true;
+                    } else {
+                        $scope.error = 'Only '+ successCount +' / '+ totalCount +' targets were successfully submitted.'
+                    }
+                }
+            };
+
+            submitLibrary();
         };
     }])
 
@@ -405,7 +431,6 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         };
 
         this.getAcquisitionMethods = function(successCallback, errorCallback) {
-            //successCallback(['Lipidomics', 'HILIC', 'CSH']);
             $http({
                 method: 'GET',
                 url: '/rest/library',
