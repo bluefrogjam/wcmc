@@ -22,6 +22,7 @@ case class Ion(mass: Double, intensity: Double) {
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
 }
+
 /**
   * which ion mode the spectra is
   */
