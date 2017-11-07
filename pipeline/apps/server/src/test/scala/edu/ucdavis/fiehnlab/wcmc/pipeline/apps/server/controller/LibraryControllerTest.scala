@@ -125,5 +125,14 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
       }
     }
 
+
+    "able to load targets by library" in {
+
+      val result = template.getForObject(s"http://localhost:${port}/rest/library/test 2",classOf[Array[Target]])
+
+      logger.info(s"result ${result}")
+    }
+
+
   }
 }
