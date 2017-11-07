@@ -47,14 +47,19 @@ class LibraryController extends LazyLogging {
   }
 
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.GET))
-  def listTargets(@PathVariable("library") id: String) : Iterable[Target] = {
+  def listTargets(@PathVariable("library") id: String): Iterable[Target] = {
 
-    libraryAccess.libraries.collectFirst {
-      case x:AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == id =>
+    val result = libraryAccess.libraries.collectFirst {
+      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == id =>
         libraryAccess.load(x)
     }
 
-    Seq.empty[Target]
+    if (result.isDefined) {
+      result.get
+    }
+    else {
+      Seq.empty[Target]
+    }
   }
 
   @RequestMapping(value = Array(""), method = Array(RequestMethod.GET))

@@ -128,9 +128,15 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "able to load targets by library" in {
 
-      val result = template.getForObject(s"http://localhost:${port}/rest/library/test 2",classOf[Array[Target]])
+      val result = template.getForObject(s"http://localhost:${port}/rest/library/test 2",classOf[Array[Map[Any,Any]]])
 
       logger.info(s"result ${result}")
+      result.foreach{ x =>
+        logger.info(s"entry: ${x}")
+
+      }
+
+      result.length should not be 0
     }
 
 
