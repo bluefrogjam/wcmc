@@ -71,7 +71,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
          * Acquisition method options
          */
         HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data.data;
+            $scope.acquisitionMethodOptions = data;
         });
         HttpService.getPlatforms(function(data) {
             $scope.platformOptions = data;
@@ -141,7 +141,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                 samples: [],
                 name: $scope.task.email,
                 email: $scope.task.email,
-                acquisitionMethod: {chromatographicMethod: {name: $scope.task.acquisitionMethod}},
+                acquisitionMethod: $scope.task.acquisitionMethod,
                 platform: {platform: {name: $scope.task.platform}}
             };
 
@@ -231,7 +231,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
          * Acquisition method options
          */
         HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data.data;
+            $scope.acquisitionMethodOptions = data;
         });
         HttpService.getPlatforms(function(data) {
             $scope.platformOptions = data;
@@ -261,6 +261,56 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         };
 
 
+        var validateAcquisitionMode = function() {
+            if (angular.isUndefined($scope.target.selectedMethod)) {
+                $scope.error = 'No acquisition method selected!';
+                return false;
+            }
+
+            // Handle a custom library name
+            if (typeof $scope.target.selectedMethod == 'string') {
+                var titles = $scope.acquisitionMethodOptions.map(function(x) { return x.title; });
+
+                // Check whether user actually selected an existing method that didn't get selected properly
+                if (titles.indexOf($scope.target.selectedMethod) > -1) {
+                    var method = $scope.acquisitionMethodOptions[titles.indexOf($scope.target.library)];
+                    $scope.target.library = method.chromatographicMethod.name;
+                    $scope.target.mode = method.chromatographicMethod.ionMode.mode;
+                    return true;
+                }
+
+                // Check that a user selected an ion mode
+                else if (angular.isDefined($scope.target.mode)) {
+                    $scope.target.library = $scope.target.selectedMethod;
+                    return true;
+                }
+
+                // If not, check that (positive) or (negative) is found in the library name
+                else if ($scope.target.selectedMethod.toLowerCase().indexOf('(positive)') > 0 ||
+                         $scope.target.selectedMethod.toLowerCase().indexOf('(negative)') > 0) {
+
+                    $scope.target.library = $scope.target.selectedMethod.replace(/\(positive\)/ig, '').replace(/\(negative\)/ig, '').trim();
+                    $scope.target.mode = ($scope.target.selectedMethod.toLowerCase().indexOf('(positive)') > 0) ? 'positive' : 'negative';
+                }
+
+                // Otherwise, error
+                else {
+                    $scope.error = 'No ionization mode selected!';
+                    return false;
+                }
+            }
+
+            // Handle an acquisition method object
+            else {
+                $scope.target.library = $scope.target.selectedMethod.chromatographicMethod.name;
+                $scope.target.mode = $scope.target.selectedMethod.chromatographicMethod.ionMode.mode;
+                return true;
+            }
+
+            return true;
+        }
+
+
         $scope.submitSingleTarget = function() {
             $scope.error = undefined;
 
@@ -276,12 +326,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                 $scope.error = 'No retention time provided!';
                 return;
             }
-            if (angular.isUndefined($scope.target.library)) {
-                $scope.error = 'No acquisition method selected!';
-                return;
-            }
-            if (angular.isUndefined($scope.target.mode)) {
-                $scope.error = 'No ionization mode selected!';
+            if (!validateAcquisitionMode()) {
                 return;
             }
 
@@ -304,12 +349,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         $scope.submitLibrary = function() {
             $scope.error = undefined;
 
-            if (angular.isUndefined($scope.target.library)) {
-                $scope.error = 'No acquisition method selected!';
-                return;
-            }
-            if (angular.isUndefined($scope.target.mode)) {
-                $scope.error = 'No ionization mode selected!';
+            if (!validateAcquisitionMode()) {
                 return;
             }
 
@@ -437,6 +477,26 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(successCallback, errorCallback);
+            }).then(function(data) {
+                successCallback(data.data.map(function(x) {
+                    // Combine name and ion mode for selections
+                    x.title = x.chromatographicMethod.name;
+
+                    if (x.chromatographicMethod.ionMode != null) {
+                        x.title += ' ('+ x.chromatographicMethod.ionMode.mode +')';
+                    }
+
+                    return x;
+                }));
+            }, errorCallback);
         };
-    }]);
+    }])
+
+    /**
+     * Angular filter to get type of variable
+     */
+    .filter('getType', function() {
+        return function(obj) {
+            return typeof obj;
+        };
+    });
