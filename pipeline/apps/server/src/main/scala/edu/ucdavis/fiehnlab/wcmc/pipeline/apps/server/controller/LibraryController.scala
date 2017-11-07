@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Chromat
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation._
 
 /**
@@ -39,6 +40,7 @@ class LibraryController extends LazyLogging {
     }
     else {
       logger.info(s"target already existed: $t")
+      throw new ResourceAlreadyExistException
     }
   }
 
@@ -47,8 +49,19 @@ class LibraryController extends LazyLogging {
     *
     * @param target
     */
-  @RequestMapping(value = Array(""), method = Array(RequestMethod.PUT))
-  def updateTarget(@RequestBody target: UpdateTarget): Unit = {
+  @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.PUT))
+  def updateTarget(@PathVariable("library") id: String,@RequestBody target: Target): Unit = {
+    val result = libraryAccess.libraries.collectFirst {
+      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == id =>
+        x
+    }
+
+    if(result.isDefined){
+      libraryAccess.update(target,result.get)
+    }
+    else{
+      throw new ResourceNotFoundException
+    }
 
   }
 
@@ -75,6 +88,11 @@ class LibraryController extends LazyLogging {
   }
 }
 
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class ResourceNotFoundException extends RuntimeException
+
+@ResponseStatus(value = HttpStatus.CONFLICT)
+class ResourceAlreadyExistException extends RuntimeException
 /**
   * utilized to update fields of the given target
   *
