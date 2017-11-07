@@ -43,7 +43,6 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
   @Value("${carrot.msms.generate.library.accurateMass.window:5}")
   val accurateMassWindow: Double = 700
 
-
   @Value("${carrot.msms.generate.library.intensity.min:0}")
   val minimumRequiredIntensity: Double = 700
 
@@ -93,7 +92,7 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -101,7 +100,7 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * the mono isotopic mass of this spectra
               */
@@ -109,15 +108,15 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */

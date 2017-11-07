@@ -70,23 +70,23 @@ object Test {
     */
   sealed case class MSLibrarySpectraImpl(
                                           override val retentionIndex: Double,
-                                          override val name: Option[String],
-                                          override val inchiKey: Option[String],
+                                          override var name: Option[String],
+                                          override var inchiKey: Option[String],
                                           override val precursorMass: Option[Double],
                                           io: Seq[Ion]
                                         ) extends Target {
     /**
       * is this a confirmed target
       */
-    override val confirmed: Boolean = false
+    override var confirmed: Boolean = false
     /**
       * is this target required for a successful retention index correction
       */
-    override val requiredForCorrection: Boolean = false
+    override var requiredForCorrection: Boolean = false
     /**
       * is this a retention index correction standard
       */
-    override val isRetentionIndexStandard: Boolean = false
+    override var isRetentionIndexStandard: Boolean = false
 
     override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
       /**

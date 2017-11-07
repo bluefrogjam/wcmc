@@ -33,6 +33,13 @@ trait LibraryAccess[T <: Target] {
   }
 
   /**
+    * this will update the existing target with the provided values
+    * @param target
+    * @param acquisitionMethod
+    */
+  def update(target: T, acquisitionMethod: AcquisitionMethod):Boolean
+
+  /**
     * deletes a specified target from the library
     * @param target
     * @param acquisitionMethod
@@ -83,15 +90,15 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
           if (temp.length == 3) {
             new Target {
               override val precursorMass: Option[Double] = Some(temp(1).toDouble)
-              override val name: Option[String] = Some(temp(2))
+              override var name: Option[String] = Some(temp(2))
               override val retentionIndex: Double = temp(0).toDouble * 60
-              override val inchiKey: Option[String] = None
-              override val requiredForCorrection: Boolean = false
-              override val isRetentionIndexStandard: Boolean = false
+              override var inchiKey: Option[String] = None
+              override var requiredForCorrection: Boolean = false
+              override var isRetentionIndexStandard: Boolean = false
               /**
                 * is this a confirmed target
                 */
-              override val confirmed: Boolean = true
+              override var confirmed: Boolean = true
               /**
                 * associated spectrum propties if applicable
                 */
@@ -101,12 +108,12 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
           else if (temp.length == 2) {
             new Target {
               override val precursorMass: Option[Double] = Some(temp(1).toDouble)
-              override val name: Option[String] = None
+              override var name: Option[String] = None
               override val retentionIndex: Double = temp(0).toDouble * 60
-              override val inchiKey: Option[String] = None
-              override val requiredForCorrection: Boolean = false
-              override val isRetentionIndexStandard: Boolean = false
-              override val confirmed: Boolean = true
+              override var inchiKey: Option[String] = None
+              override var requiredForCorrection: Boolean = false
+              override var isRetentionIndexStandard: Boolean = false
+              override var confirmed: Boolean = true
               override val spectrum: Option[SpectrumProperties] = None
 
             }
@@ -114,12 +121,12 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
           else if (temp.length == 4) {
             new Target {
               override val precursorMass: Option[Double] = Some(temp(1).toDouble)
-              override val name: Option[String] = Some(temp(2))
+              override var name: Option[String] = Some(temp(2))
               override val retentionIndex: Double = temp(0).toDouble * 60
-              override val inchiKey: Option[String] = None
-              override val requiredForCorrection: Boolean = false
-              override val isRetentionIndexStandard: Boolean = temp(3).toBoolean
-              override val confirmed: Boolean = true
+              override var inchiKey: Option[String] = None
+              override var requiredForCorrection: Boolean = false
+              override var isRetentionIndexStandard: Boolean = temp(3).toBoolean
+              override var confirmed: Boolean = true
               override val spectrum: Option[SpectrumProperties] = None
 
             }
@@ -128,11 +135,11 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
             new Target {
               override val retentionIndex: Double = temp(0).toDouble * 60
               override val precursorMass: Option[Double] = Some(temp(1).toDouble)
-              override val name: Option[String] = Some(temp(2))
-              override val inchiKey: Option[String] = None
-              override val requiredForCorrection: Boolean = false
-              override val isRetentionIndexStandard: Boolean = temp(4).toBoolean
-              override val confirmed: Boolean = true
+              override var name: Option[String] = Some(temp(2))
+              override var inchiKey: Option[String] = None
+              override var requiredForCorrection: Boolean = false
+              override var isRetentionIndexStandard: Boolean = temp(4).toBoolean
+              override var confirmed: Boolean = true
               override val spectrum: Option[SpectrumProperties] = None
 
             }
@@ -194,4 +201,12 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     out.flush()
     out.close()
   }
+
+  /**
+    * this will update the existing target with the provided values
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean = false
 }

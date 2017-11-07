@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
@@ -70,7 +71,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
     "have 1 library" in {
       eventually(timeout(15 seconds)) {
 
-        val libraries: Array[String] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[String]])
+        val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
 
 
         libraries.size shouldBe 1
@@ -93,7 +94,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
     "have 2 libraries" in {
       eventually(timeout(15 seconds)) {
 
-        val libraries: Array[String] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[String]])
+        val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
 
 
         libraries.size shouldBe 2

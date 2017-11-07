@@ -6,10 +6,11 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
   * Defines a target for a targeted based approach
   */
 trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSupport {
+
   /**
     * a name for this spectra
     */
-  val name: Option[String]
+  var name: Option[String]
 
   /**
     * the specified ionmode for this target. By default we should always assume that it's positive
@@ -34,7 +35,7 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
   /**
     * the unique inchi key for this spectra
     */
-  val inchiKey: Option[String]
+  var inchiKey: Option[String]
 
   /**
     * the mono isotopic mass of this spectra
@@ -44,17 +45,17 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
   /**
     * is this a confirmed target
     */
-  val confirmed: Boolean
+  var confirmed: Boolean
 
   /**
     * is this target required for a successful retention index correction
     */
-  val requiredForCorrection: Boolean
+  var requiredForCorrection: Boolean
 
   /**
     * is this a retention index correction standard
     */
-  val isRetentionIndexStandard: Boolean
+  var isRetentionIndexStandard: Boolean
 
   override def toString = f"Target(name=${name.getOrElse("None")}, retentionTime=$retentionTimeInMinutes (min), retentionTime=$retentionIndex (s), inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${precursorMass.getOrElse("None")})"
 

@@ -42,6 +42,17 @@ class LibraryController extends LazyLogging {
     }
   }
 
+  /**
+    * updates a given target
+    *
+    * @param target
+    */
+  @RequestMapping(value = Array(""), method = Array(RequestMethod.PUT))
+  def updateTarget(@RequestBody target: UpdateTarget): Unit = {
+
+  }
+
+
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.GET))
   def listTargets(@PathVariable("library") id: String): Iterable[Target] = {
 
@@ -64,6 +75,23 @@ class LibraryController extends LazyLogging {
   }
 }
 
+/**
+  * utilized to update fields of the given target
+  *
+  * @param target
+  */
+case class UpdateTarget(target: Target, library: String)
+
+/**
+  * specific class to add a target
+  *
+  * @param targetName
+  * @param precursor
+  * @param retentionTime
+  * @param library
+  * @param riMarker
+  * @param mode
+  */
 case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String, riMarker: Boolean, mode: String) {
 
   /**
@@ -84,6 +112,7 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
     AcquisitionMethod(
       Some(
         ChromatographicMethod(
+          //TODO possibile bug later down the line, due to explicietly set to none for instrument and column
           name = target.library, None, None, ionMode = Some(ionMode)
         )
       )
@@ -102,7 +131,7 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
       /**
         * the unique inchi key for this spectra
         */
-      override val inchiKey: Option[String] = None
+      override var inchiKey: Option[String] = None
       /**
         * retention time in seconds of this target
         */
@@ -110,7 +139,7 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
       /**
         * is this a confirmed target
         */
-      override val confirmed: Boolean = true
+      override var confirmed: Boolean = true
       /**
         * the mono isotopic mass of this spectra
         */
@@ -118,15 +147,15 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
       /**
         * a name for this spectra
         */
-      override val name: Option[String] = Some(target.targetName)
+      override var name: Option[String] = Some(target.targetName)
       /**
         * is this target required for a successful retention index correction
         */
-      override val requiredForCorrection: Boolean = false
+      override var requiredForCorrection: Boolean = false
       /**
         * is this a retention index correction standard
         */
-      override val isRetentionIndexStandard: Boolean = target.riMarker
+      override var isRetentionIndexStandard: Boolean = target.riMarker
       /**
         * associated spectrum propties if applicable
         */

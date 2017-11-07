@@ -300,7 +300,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
   /**
     * the unique inchi key for this spectra
     */
-  override val inchiKey: Option[String] = needsReplacement.inchiKey
+  override var inchiKey: Option[String] = needsReplacement.inchiKey
   /**
     * retention time in seconds of this target
     */
@@ -308,7 +308,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
   /**
     * a name for this spectra
     */
-  override val name: Option[String] = needsReplacement.name
+  override var name: Option[String] = needsReplacement.name
   /**
     * the mono isotopic mass of this spectra
     */
@@ -316,15 +316,15 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
   /**
     * is this a confirmed target
     */
-  override val confirmed: Boolean = needsReplacement.confirmed
+  override var confirmed: Boolean = needsReplacement.confirmed
   /**
     * is this target required for a successful retention index correction
     */
-  override val requiredForCorrection: Boolean = needsReplacement.requiredForCorrection
+  override var requiredForCorrection: Boolean = needsReplacement.requiredForCorrection
   /**
     * is this a retention index correction standard
     */
-  override val isRetentionIndexStandard: Boolean = needsReplacement.isRetentionIndexStandard
+  override var isRetentionIndexStandard: Boolean = needsReplacement.isRetentionIndexStandard
   /**
     * retention time in seconds of this target
     */

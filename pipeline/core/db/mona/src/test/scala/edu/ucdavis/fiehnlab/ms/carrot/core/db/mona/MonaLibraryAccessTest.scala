@@ -27,7 +27,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     /**
       * a name for this spectra
       */
-    override val name: Option[String] = None
+    override var name: Option[String] = None
     /**
       * retention time in seconds of this target
       */
@@ -35,7 +35,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     /**
       * the unique inchi key for this spectra
       */
-    override val inchiKey: Option[String] = Option("UDOOPSJCRMKSGL-ZHACJKMWSA-N")
+    override var inchiKey: Option[String] = Option("UDOOPSJCRMKSGL-ZHACJKMWSA-N")
     /**
       * the mono isotopic mass of this spectra
       */
@@ -43,15 +43,15 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     /**
       * is this a confirmed target
       */
-    override val confirmed: Boolean = false
+    override var confirmed: Boolean = false
     /**
       * is this target required for a successful retention index correction
       */
-    override val requiredForCorrection: Boolean = true
+    override var requiredForCorrection: Boolean = true
     /**
       * is this a retention index correction standard
       */
-    override val isRetentionIndexStandard: Boolean = true
+    override var isRetentionIndexStandard: Boolean = true
     /**
       * associated spectrum propties if applicable
       */
@@ -74,7 +74,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     /**
       * a name for this spectra
       */
-    override val name: Option[String] = None
+    override var name: Option[String] = None
     /**
       * retention time in seconds of this target
       */
@@ -82,7 +82,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     /**
       * the unique inchi key for this spectra
       */
-    override val inchiKey: Option[String] = Option("UDOOPSJCRMKSGL-ZHACJKMWSA-N")
+    override var inchiKey: Option[String] = Option("UDOOPSJCRMKSGL-ZHACJKMWSA-N")
     /**
       * the mono isotopic mass of this spectra
       */
@@ -90,15 +90,15 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     /**
       * is this a confirmed target
       */
-    override val confirmed: Boolean = false
+    override var confirmed: Boolean = false
     /**
       * is this target required for a successful retention index correction
       */
-    override val requiredForCorrection: Boolean = true
+    override var requiredForCorrection: Boolean = true
     /**
       * is this a retention index correction standard
       */
-    override val isRetentionIndexStandard: Boolean = true
+    override var isRetentionIndexStandard: Boolean = true
     /**
       * associated spectrum propties if applicable
       */
@@ -129,26 +129,9 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
   "MonaLibraryAccessTest" should {
 
-    "generateTarget" in {
-
-      val result = library.generateSpectrum(testTarget, AcquisitionMethod(None), None)
-
-      result.isDefined shouldBe true
-
-      result.get.spectrum shouldBe "100.021000:123.12300 224.083700:1231.02100"
-
-      result.get.compound.length shouldBe 1
-
-      result.get.compound.head.names.length shouldBe 1
-
-      result.get.compound.head.names.head.name shouldBe s"unknown_100.0000_224.0837"
-
-      result.get.compound.head.inchiKey shouldBe "UDOOPSJCRMKSGL-ZHACJKMWSA-N"
-
-    }
 
     "resset database ussing mona client" in {
-      client.list().foreach{ x=>
+      client.list().foreach { x =>
         client.delete(x.id)
       }
       client.regenerateStatistics
@@ -218,7 +201,141 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       }
     }
 
+    "able to update the name of a spectrum" in {
+      val spectra = library.load(AcquisitionMethod(None))
 
+      val target = spectra.head
+
+      target.name = Option("12345")
+
+      library.update(target, AcquisitionMethod(None))
+
+      eventually(timeout(90 seconds)) {
+        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "12345" }
+
+        updatedSpectra.size shouldBe 1
+      }
+    }
+
+
+    "able to update the inchi key of a spectrum" in {
+      val spectra = library.load(AcquisitionMethod(None))
+
+      val target = spectra.head
+
+      target.inchiKey = Option("QNAYBMKLOCPYGJ-REOHCLBHSA-N")
+
+      library.update(target, AcquisitionMethod(None))
+
+      eventually(timeout(90 seconds)) {
+        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.inchiKey.isDefined }.filter { x => x.inchiKey.get == "QNAYBMKLOCPYGJ-REOHCLBHSA-N" }
+
+        updatedSpectra.size shouldBe 1
+      }
+    }
+
+    "able to update the confirmed status a spectrum to true" in {
+      val spectra = library.load(AcquisitionMethod(None))
+
+      val target = spectra.head
+      target.confirmed = true
+      target.name = Option("123456")
+
+      library.update(target, AcquisitionMethod(None))
+
+      eventually(timeout(90 seconds)) {
+        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
+
+        updatedSpectra.confirmed shouldBe true
+      }
+
+    }
+
+    "able to update the confirmed status a spectrum to false" in {
+      val spectra = library.load(AcquisitionMethod(None))
+
+      val target = spectra.head
+      target.confirmed = false
+      target.name = Option("123456")
+
+      library.update(target, AcquisitionMethod(None))
+
+      eventually(timeout(90 seconds)) {
+        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
+
+        updatedSpectra.confirmed shouldBe false
+      }
+
+    }
+
+
+    "able to update the retention index status of a spectrum to false" in {
+      val spectra = library.load(AcquisitionMethod(None))
+
+      val target = spectra.head
+      target.isRetentionIndexStandard = false
+      target.name = Option("123456")
+
+      library.update(target, AcquisitionMethod(None))
+
+      eventually(timeout(90 seconds)) {
+        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
+
+        updatedSpectra.isRetentionIndexStandard shouldBe false
+      }
+
+    }
+
+    "able to update the retention index status of a spectrum to true" in {
+      val spectra = library.load(AcquisitionMethod(None))
+
+      val target = spectra.head
+      target.isRetentionIndexStandard = true
+      target.name = Option("123456")
+
+      library.update(target, AcquisitionMethod(None))
+
+      eventually(timeout(90 seconds)) {
+        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
+
+        updatedSpectra.isRetentionIndexStandard shouldBe true
+      }
+
+    }
+
+    "able to update the retention index requiered status of a spectrum to false" in {
+      val spectra = library.load(AcquisitionMethod(None))
+
+      val target = spectra.head
+      target.requiredForCorrection = false
+      target.name = Option("123456")
+
+      library.update(target, AcquisitionMethod(None))
+
+      eventually(timeout(90 seconds)) {
+        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
+
+        updatedSpectra.requiredForCorrection shouldBe false
+      }
+
+    }
+
+    "able to update the retention index required status of a spectrum to true" in {
+      val spectra = library.load(AcquisitionMethod(None))
+
+      val target = spectra.head
+      target.requiredForCorrection = true
+      target.name = Option("123456")
+
+      library.update(target, AcquisitionMethod(None))
+
+      eventually(timeout(90 seconds)) {
+        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
+
+        updatedSpectra.requiredForCorrection shouldBe true
+      }
+
+    }
     "delete acquisition method" in {
       library.libraries.foreach { x =>
         logger.info(s"deleting library: ${x}")

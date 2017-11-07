@@ -37,21 +37,21 @@ class RetentionIndexAnnotationTest extends WordSpec {
 
         new Target {
           override val precursorMass: Option[Double] = None
-          override val name: Option[String] = None
-          override val inchiKey: Option[String] = None
+          override var name: Option[String] = None
+          override var inchiKey: Option[String] = None
           override val retentionIndex: Double = 204.5f
           /**
             * is this a confirmed target
             */
-          override val confirmed: Boolean = false
+          override var confirmed: Boolean = false
           /**
             * is this target required for a successful retention index correction
             */
-          override val requiredForCorrection: Boolean = false
+          override var requiredForCorrection: Boolean = false
           /**
             * is this a retention index correction standard
             */
-          override val isRetentionIndexStandard: Boolean = false
+          override var isRetentionIndexStandard: Boolean = false
           /**
             * associated spectrum propties if applicable
             */
@@ -93,21 +93,21 @@ class RetentionIndexAnnotationTest extends WordSpec {
 
         new Target {
           override val precursorMass: Option[Double] = None
-          override val name: Option[String] = None
-          override val inchiKey: Option[String] = None
+          override var name: Option[String] = None
+          override var inchiKey: Option[String] = None
           override val retentionIndex: Double = 205.5f
           /**
             * is this a confirmed target
             */
-          override val confirmed: Boolean = false
+          override var confirmed: Boolean = false
           /**
             * is this target required for a successful retention index correction
             */
-          override val requiredForCorrection: Boolean = false
+          override var requiredForCorrection: Boolean = false
           /**
             * is this a retention index correction standard
             */
-          override val isRetentionIndexStandard: Boolean = false
+          override var isRetentionIndexStandard: Boolean = false
 
           override val spectrum = Option(new SpectrumProperties {
             override val ions: Seq[Ion] = Seq.empty
