@@ -15,21 +15,21 @@ class IncludeByMassRangePPMTest extends WordSpec {
     "include this spectra" in{
       val filter = new IncludeByMassRangePPM(new Target {
         override val precursorMass: Option[Double] = Some(100.3242)
-        override val name: Option[String] = None
-        override val inchiKey: Option[String] = None
+        override var name: Option[String] = None
+        override var inchiKey: Option[String] = None
         override val retentionIndex: Double = 0
         /**
           * is this a confirmed target
           */
-        override val confirmed: Boolean = false
+        override var confirmed: Boolean = false
         /**
           * is this target required for a successful retention index correction
           */
-        override val requiredForCorrection: Boolean = false
+        override var requiredForCorrection: Boolean = false
         /**
           * is this a retention index correction standard
           */
-        override val isRetentionIndexStandard: Boolean = false
+        override var isRetentionIndexStandard: Boolean = false
         /**
           * associated spectrum propties if applicable
           */
@@ -41,21 +41,21 @@ class IncludeByMassRangePPMTest extends WordSpec {
     "but not this spectra" in {
       val filter = new IncludeByMassRangePPM(new Target {
         override val precursorMass: Option[Double] = Some(100.3249)
-        override val name: Option[String] = None
-        override val inchiKey: Option[String] = None
+        override var name: Option[String] = None
+        override var inchiKey: Option[String] = None
         override val retentionIndex: Double = 0
         /**
           * is this a confirmed target
           */
-        override val confirmed: Boolean = false
+        override var confirmed: Boolean = false
         /**
           * is this target required for a successful retention index correction
           */
-        override val requiredForCorrection: Boolean = false
+        override var requiredForCorrection: Boolean = false
         /**
           * is this a retention index correction standard
           */
-        override val isRetentionIndexStandard: Boolean = false
+        override var isRetentionIndexStandard: Boolean = false
 
         override val spectrum: Option[SpectrumProperties] = None
       },5)

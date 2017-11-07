@@ -34,21 +34,21 @@ class MassAccuracyTest extends WordSpec {
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(100.3241, 100))
           }, new Target {
             override val precursorMass: Option[Double] = Some(100.3242)
-            override val name: Option[String] = None
-            override val inchiKey: Option[String] = None
+            override var name: Option[String] = None
+            override var inchiKey: Option[String] = None
             override val retentionIndex: Double = 0
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             override val spectrum: Option[SpectrumProperties] = None
 
           })
@@ -73,21 +73,21 @@ class MassAccuracyTest extends WordSpec {
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(100.3241, 100))
           }, new Target {
             override val precursorMass: Option[Double] = Some(100.3242)
-            override val name: Option[String] = None
-            override val inchiKey: Option[String] = None
+            override var name: Option[String] = None
+            override var inchiKey: Option[String] = None
             override val retentionIndex: Double = 0
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             override val spectrum: Option[SpectrumProperties] = None
 
           })
@@ -114,21 +114,21 @@ class MassAccuracyTest extends WordSpec {
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(100.3241, 100))
           }, new Target {
             override val precursorMass: Option[Double] = Some(100.3242)
-            override val name: Option[String] = None
-            override val inchiKey: Option[String] = None
+            override var name: Option[String] = None
+            override var inchiKey: Option[String] = None
             override val retentionIndex: Double = 0
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             override val spectrum: Option[SpectrumProperties] = None
 
           })
@@ -153,21 +153,21 @@ class MassAccuracyTest extends WordSpec {
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(1567.6401, 100))
           }, new Target {
             override val precursorMass: Option[Double] = Some(1567.59330)
-            override val name: Option[String] = None
-            override val inchiKey: Option[String] = None
+            override var name: Option[String] = None
+            override var inchiKey: Option[String] = None
             override val retentionIndex: Double = 0
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             override val spectrum: Option[SpectrumProperties] = None
 
           })
@@ -193,21 +193,21 @@ class MassAccuracyTest extends WordSpec {
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(1567.5459, 100))
           }, new Target {
             override val precursorMass: Option[Double] = Some(1567.59330)
-            override val name: Option[String] = None
-            override val inchiKey: Option[String] = None
+            override var name: Option[String] = None
+            override var inchiKey: Option[String] = None
             override val retentionIndex: Double = 0
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             override val spectrum: Option[SpectrumProperties] = None
 
           })
@@ -233,21 +233,21 @@ class MassAccuracyTest extends WordSpec {
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(1567.5459, 100))
           }, new Target {
             override val precursorMass: Option[Double] = Some(1567.59330)
-            override val name: Option[String] = None
-            override val inchiKey: Option[String] = None
+            override var name: Option[String] = None
+            override var inchiKey: Option[String] = None
             override val retentionIndex: Double = 0
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
 
             override val spectrum: Option[SpectrumProperties] = None
 

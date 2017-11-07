@@ -19,7 +19,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -27,7 +27,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -35,15 +35,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -53,7 +53,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -61,7 +61,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -69,15 +69,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -92,7 +92,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -100,7 +100,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -108,15 +108,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -126,7 +126,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -134,7 +134,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -142,15 +142,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -165,7 +165,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -173,7 +173,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -181,15 +181,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -199,7 +199,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -207,7 +207,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -215,15 +215,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -239,7 +239,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -247,7 +247,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -255,15 +255,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -273,7 +273,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -281,7 +281,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -289,15 +289,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -313,7 +313,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -321,7 +321,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -329,15 +329,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -347,7 +347,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -355,7 +355,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -363,15 +363,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -386,7 +386,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = Option("1234567-12345-1")
+            override var inchiKey: Option[String] = Option("1234567-12345-1")
             /**
               * retention time in seconds of this target
               */
@@ -394,7 +394,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -402,15 +402,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -420,7 +420,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = None
+            override var inchiKey: Option[String] = None
             /**
               * retention time in seconds of this target
               */
@@ -428,7 +428,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -436,15 +436,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -460,7 +460,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = Option("1234567-12345-1")
+            override var inchiKey: Option[String] = Option("1234567-12345-1")
             /**
               * retention time in seconds of this target
               */
@@ -468,7 +468,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -476,15 +476,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -494,7 +494,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String]  = Option("1234567-12345-1")
+            override var inchiKey: Option[String]  = Option("1234567-12345-1")
             /**
               * retention time in seconds of this target
               */
@@ -502,7 +502,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -510,15 +510,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -533,7 +533,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = Option("1234567-12345-1")
+            override var inchiKey: Option[String] = Option("1234567-12345-1")
             /**
               * retention time in seconds of this target
               */
@@ -541,7 +541,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -549,15 +549,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = Option("a")
+            override var name: Option[String] = Option("a")
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -567,7 +567,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String]  = Option("1234567-12345-1")
+            override var inchiKey: Option[String]  = Option("1234567-12345-1")
             /**
               * retention time in seconds of this target
               */
@@ -575,7 +575,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -583,15 +583,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = Option("a")
+            override var name: Option[String] = Option("a")
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -605,7 +605,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = Option("1234567-12345-1")
+            override var inchiKey: Option[String] = Option("1234567-12345-1")
             /**
               * retention time in seconds of this target
               */
@@ -613,7 +613,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -621,15 +621,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = None
+            override var name: Option[String] = None
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -639,7 +639,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String]  = Option("1234567-12345-1")
+            override var inchiKey: Option[String]  = Option("1234567-12345-1")
             /**
               * retention time in seconds of this target
               */
@@ -647,7 +647,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -655,15 +655,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = Option("a")
+            override var name: Option[String] = Option("a")
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -678,7 +678,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = Option("1234567-12345-1")
+            override var inchiKey: Option[String] = Option("1234567-12345-1")
             /**
               * retention time in seconds of this target
               */
@@ -686,7 +686,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -694,15 +694,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = Option("a")
+            override var name: Option[String] = Option("a")
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */
@@ -712,7 +712,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String]  = Option("1234567-12345-1")
+            override var inchiKey: Option[String]  = Option("1234567-12345-1")
             /**
               * retention time in seconds of this target
               */
@@ -720,7 +720,7 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = false
+            override var confirmed: Boolean = false
             /**
               * the mono isotopic mass of this spectra
               */
@@ -728,15 +728,15 @@ class TargetTest extends WordSpec with ShouldMatchers {
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = Option("b")
+            override var name: Option[String] = Option("b")
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = false
+            override var requiredForCorrection: Boolean = false
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = false
+            override var isRetentionIndexStandard: Boolean = false
             /**
               * associated spectrum propties if applicable
               */

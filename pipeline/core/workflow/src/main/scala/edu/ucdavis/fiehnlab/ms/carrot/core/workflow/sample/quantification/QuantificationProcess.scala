@@ -54,7 +54,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = myTarget.name
+            override var name: Option[String] = myTarget.name
             /**
               * retention time in seconds of this target
               */
@@ -62,7 +62,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = myTarget.inchiKey
+            override var inchiKey: Option[String] = myTarget.inchiKey
             /**
               * the mono isotopic mass of this spectra
               */
@@ -70,15 +70,15 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = myTarget.confirmed
+            override var confirmed: Boolean = myTarget.confirmed
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = myTarget.requiredForCorrection
+            override var requiredForCorrection: Boolean = myTarget.requiredForCorrection
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
+            override var isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
             /**
               * associated spectrum propties if applicable
               */
@@ -100,7 +100,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
             /**
               * a name for this spectra
               */
-            override val name: Option[String] = myTarget.name
+            override var name: Option[String] = myTarget.name
             /**
               * retention time in seconds of this target
               */
@@ -108,7 +108,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
             /**
               * the unique inchi key for this spectra
               */
-            override val inchiKey: Option[String] = myTarget.inchiKey
+            override var inchiKey: Option[String] = myTarget.inchiKey
             /**
               * the mono isotopic mass of this spectra
               */
@@ -116,15 +116,15 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
             /**
               * is this a confirmed target
               */
-            override val confirmed: Boolean = myTarget.confirmed
+            override var confirmed: Boolean = myTarget.confirmed
             /**
               * is this target required for a successful retention index correction
               */
-            override val requiredForCorrection: Boolean = myTarget.requiredForCorrection
+            override var requiredForCorrection: Boolean = myTarget.requiredForCorrection
             /**
               * is this a retention index correction standard
               */
-            override val isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
+            override var isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
             /**
               * associated spectrum propties if applicable
               */

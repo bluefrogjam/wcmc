@@ -35,26 +35,26 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
   private val noneSpecifiedValue = "unknown"
 
   @Value("${mona.rest.server.user}")
-  val username: String = null
+  private val username: String = null
 
   @Value("${mona.rest.server.password}")
-  val password: String = null
+  private val password: String = null
 
   @Autowired
-  val monaSpectrumRestClient: MonaSpectrumRestClient = null
+  private val monaSpectrumRestClient: MonaSpectrumRestClient = null
 
   @Autowired
   @Qualifier("monaRestServer")
-  val monaRestServer: String = null
+  private val monaRestServer: String = null
 
   @Autowired
-  val restTemplate: RestTemplate = null
+  private val restTemplate: RestTemplate = null
 
   @Autowired
-  val loginService: LoginService = null
+  private val loginService: LoginService = null
 
   @Autowired
-  val userSerivce: GenericRestClient[Submitter, String] = null
+  private val userSerivce: GenericRestClient[Submitter, String] = null
 
   @PostConstruct
   def init = {
@@ -92,7 +92,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     */
   override def load(acquistionMethod: AcquisitionMethod): Iterable[Target] = monaSpectrumRestClient.list(query = if (query(acquistionMethod) != "") Option(query(acquistionMethod)) else None).map { x => generateTarget(x) }
 
-  def generateAcquisitonInfo(data: Array[MetaData], acquistionMethod: AcquisitionMethod): Array[MetaData] = {
+  private def generateAcquisitonInfo(data: Array[MetaData], acquistionMethod: AcquisitionMethod): Array[MetaData] = {
 
     val buffer: mutable.Buffer[MetaData] = data.toBuffer
 
@@ -154,7 +154,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param t
     * @return
     */
-  def generateSpectrum(t: Target, acquistionMethod: AcquisitionMethod, sample: Option[Sample]): Option[Spectrum] = {
+  private def generateSpectrum(t: Target, acquistionMethod: AcquisitionMethod, sample: Option[Sample]): Option[Spectrum] = {
     val compound = Compound(
       inchi = null,
       inchiKey = t.inchiKey.orNull,
@@ -321,20 +321,20 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @return
     */
-  def associateWithSubmitter(): Submitter = {
+  private def associateWithSubmitter(): Submitter = {
     try {
       userSerivce.get(username)
     }
     catch {
       case e: HttpClientErrorException =>
-        logger.debug(s"observed an error, using dummy user! ${e.getMessage}",e)
+        logger.debug(s"observed an error, using dummy user! ${e.getMessage}", e)
         Submitter(
-        username,
-        "none@provided.com",
-        username,
-        username,
-        "none"
-      )
+          username,
+          "none@provided.com",
+          username,
+          username,
+          "none"
+        )
     }
   }
 
@@ -343,7 +343,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @return
     */
-  def associateWithLibrary(acquistionMethod: AcquisitionMethod): Library = {
+  private def associateWithLibrary(acquistionMethod: AcquisitionMethod): Library = {
     val identifier = generateLibraryIdentifier(acquistionMethod)
 
     Library(
@@ -361,7 +361,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param acquisitionMethod
     * @return
     */
-  def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = acquisitionMethod.chromatographicMethod match {
+  private def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = acquisitionMethod.chromatographicMethod match {
 
     case Some(method) =>
       val instrument = method.instrument match {
@@ -434,7 +434,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param x
     * @return
     */
-  def generateTarget(x: Spectrum): Target = {
+  private def generateTarget(x: Spectrum): Target = {
 
     val compound = x.compound.head
     val name = compound.names.head.name
@@ -574,6 +574,17 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     }
   }
 
+  /**
+    * this will update the existing target with the provided values
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def update(target: Target, acquisitionMethod: AcquisitionMethod) = {
+    val spectrum = generateSpectrum(target, acquisitionMethod,None).get
+    this.monaSpectrumRestClient.update(spectrum, spectrum.id)
+    true
+  }
 }
 
 /**
@@ -611,7 +622,7 @@ case class MonaLibraryTarget(
                               /**
                                 * a name for this spectra
                                 */
-                              override val name: Option[String],
+                              override var name: Option[String],
 
                               /**
                                 * retention time in seconds of this target
@@ -623,7 +634,7 @@ case class MonaLibraryTarget(
                               /**
                                 * the unique inchi key for this spectra
                                 */
-                              override val inchiKey: Option[String],
+                              override var inchiKey: Option[String],
 
                               /**
                                 * the mono isotopic mass of this spectra
@@ -633,17 +644,17 @@ case class MonaLibraryTarget(
                               /**
                                 * is this a confirmed target
                                 */
-                              override val confirmed: Boolean,
+                              override var confirmed: Boolean,
 
                               /**
                                 * is this target required for a successful retention index correction
                                 */
-                              override val requiredForCorrection: Boolean,
+                              override var requiredForCorrection: Boolean,
 
                               /**
                                 * is this a retention index correction standard
                                 */
-                              override val isRetentionIndexStandard: Boolean,
+                              override var isRetentionIndexStandard: Boolean,
 
                               /**
                                 * the specified ionmode for this target. By default we should always assume that it's positive
