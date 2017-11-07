@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccess
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
@@ -33,6 +34,9 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
   @Autowired
   val libraryAccess: LibraryAccess[Target] = null
+
+  @Autowired
+  val monaLibraryAccess:MonaLibraryAccess = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -138,6 +142,18 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
       }
 
       result.length should not be 0
+    }
+
+    "able to update " in {
+
+      val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
+
+      val lib = libraries.toSeq.head
+
+      val targets = monaLibraryAccess.load(lib)
+
+
+
     }
 
 
