@@ -35,14 +35,10 @@ class LibraryController extends LazyLogging {
     logger.info(s"library contains currently ${existingTargets.size} targets")
 
     if (!existingTargets.exists(_.equals(t))) {
-      libraryAccess.add(
-        t,
-        method,
-        None
-      )
+      libraryAccess.add(t, method, None)
     }
     else {
-      logger.info(s"target already existed: ${t}")
+      logger.info(s"target already existed: $t")
     }
   }
 
@@ -63,13 +59,8 @@ class LibraryController extends LazyLogging {
   }
 
   @RequestMapping(value = Array(""), method = Array(RequestMethod.GET))
-  def listLibraries(): Seq[String] = {
-    libraryAccess.libraries.map { x =>
-      x.chromatographicMethod match {
-        case Some(o) => o.name
-        case _ => "default"
-      }
-    }
+  def listLibraries(): Seq[AcquisitionMethod] = {
+    libraryAccess.libraries
   }
 }
 
@@ -156,3 +147,5 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
     }
   }
 }
+
+case class Library(name: String, ionMode: String)

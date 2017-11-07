@@ -39,14 +39,14 @@
     <input type="text"
            id="acquisitionMethod"
            class="form-control"
-           ng-model="target.library"
+           ng-model="target.selectedMethod"
            placeholder="Acquisition Method"
-           uib-typeahead="x for x in acquisitionMethodOptions | filter:$viewValue"
+           uib-typeahead="x as x.title for x in acquisitionMethodOptions | filter:$viewValue"
            typeahead-show-hint="true"
            typeahead-min-length="0">
 </div>
 
-<div class="form-group">
+<div class="form-group" ng-if="(target.selectedMethod | getType) == 'string'">
     <label for="mode">Mode</label>
     <select id="mode" class="form-control" data-ng-model="target.mode">
         <option value="positive">Positive</option>
