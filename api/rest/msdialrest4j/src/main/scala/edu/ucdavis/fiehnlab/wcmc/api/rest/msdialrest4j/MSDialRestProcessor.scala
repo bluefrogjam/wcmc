@@ -5,16 +5,13 @@ import java.io._
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import edu.ucdavis.fiehnlab.wcmc.utilities.ZipUtil
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.{ComponentScan, Configuration}
-import org.springframework.http.{HttpEntity, HttpMethod, ResponseEntity, _}
+import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType, ResponseEntity, _}
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
-
-import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType}
 import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.client.RestOperations
 
 @Configuration
 @ComponentScan
@@ -63,6 +60,12 @@ class MSDialRestProcessor extends LazyLogging {
       throw new Exception("can't process a folder")
     } else {
       logger.debug(s"File ${input.getName} is on fileserver, skipping upload")
+
+      //upload file if not on fileserver
+      if (fServ4jClient.exists(input.getName)) {
+        fServ4jClient.upload(input)
+      }
+
       val response = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/process/${input.getName}", classOf[ServerResponse])
 
       if (response.getStatusCode != HttpStatus.OK) {
@@ -74,8 +77,7 @@ class MSDialRestProcessor extends LazyLogging {
         try {
           IOUtils.copyLarge(fServ4jClient.download(msdialFile.getName).get, fout)
           msdialFile
-        }
-        finally {
+        } finally {
           fout.flush()
           fout.close()
 
