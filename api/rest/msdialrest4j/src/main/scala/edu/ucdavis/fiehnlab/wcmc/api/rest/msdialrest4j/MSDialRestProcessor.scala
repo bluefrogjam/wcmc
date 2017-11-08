@@ -62,9 +62,7 @@ class MSDialRestProcessor extends LazyLogging {
       logger.debug(s"File ${input.getName} is on fileserver, skipping upload")
 
       //upload file if not on fileserver
-      if (fServ4jClient.exists(input.getName)) {
-        fServ4jClient.upload(input)
-      }
+      upload(input)
 
       val response = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/process/${input.getName}", classOf[ServerResponse])
 

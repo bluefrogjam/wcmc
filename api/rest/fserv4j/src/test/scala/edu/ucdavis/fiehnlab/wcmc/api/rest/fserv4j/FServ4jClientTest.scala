@@ -5,6 +5,7 @@ import java.io.{File, FileWriter}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
+import edu.ucdavis.fiehnlab.wcmc.server.fserv.FServ
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -31,7 +32,7 @@ class FServ4JClientTestConfiguration{
 }
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ4jClientConfiguration]))
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ4jClientConfiguration],classOf[FServ]))
 class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {
 
   override protected def beforeEach(): Unit = {
