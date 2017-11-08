@@ -1,0 +1,26 @@
+{
+  "name": "binview",
+  "version": "0.0.1",
+  "authors": [],
+  "description": "Bin curation tool for BinBase",
+  "dependencies": {
+    "angular": "1.6.4",
+    "angular-animate": "1.6.4",
+    "angular-touch": "1.6.4",
+    "angular-bootstrap": "2.4.0",
+    "angular-datatables": "0.6.0",
+    "angular-loading-overlay": "^1.1.1",
+    "angular-route": "1.6.4",
+    "flot": "0.8.3",
+    "bootstrap": "3.3.7",
+    "jquery": "3.2.1",
+    "jQuery-contextMenu": "2.6.2",
+    "fontawesome": "4.7.0",
+    "d3": "^3.5.17"
+  },
+  "ignore": [
+    ".DS_Store",
+    ".git",
+    ".gitignore"
+  ]
+}

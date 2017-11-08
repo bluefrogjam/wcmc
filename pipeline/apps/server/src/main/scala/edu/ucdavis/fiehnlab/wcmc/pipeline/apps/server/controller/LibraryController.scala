@@ -50,7 +50,7 @@ class LibraryController extends LazyLogging {
     * @param target
     */
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.PUT))
-  def updateTarget(@PathVariable("library") id: String,@RequestBody target: Target): Unit = {
+  def updateTarget(@PathVariable("library") id: String, @RequestBody target: Target): Unit = {
     val result = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == id =>
         x
