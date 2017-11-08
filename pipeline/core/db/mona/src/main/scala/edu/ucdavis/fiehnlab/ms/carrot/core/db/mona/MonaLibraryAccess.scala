@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
 import java.util.Date
-import java.util.concurrent.{ExecutorService, Executors}
+import java.util.concurrent.{ExecutorService, Executors, Semaphore}
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
@@ -11,13 +11,13 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{Gener
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.TargetGenerationNotSupportedException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
-import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
+import org.springframework.web.client.RestTemplate
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -90,7 +90,10 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @return
     */
-  override def load(acquistionMethod: AcquisitionMethod): Iterable[Target] = monaSpectrumRestClient.list(query = if (query(acquistionMethod) != "") Option(query(acquistionMethod)) else None).map { x => generateTarget(x) }
+  override def load(acquistionMethod: AcquisitionMethod): Iterable[Target] = {
+     monaSpectrumRestClient.list(query = if (query(acquistionMethod) != "") Option(query(acquistionMethod)) else None).map { x => generateTarget(x) }
+
+  }
 
   private def generateAcquisitonInfo(data: Array[MetaData], acquistionMethod: AcquisitionMethod): Array[MetaData] = {
 
@@ -326,7 +329,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       userSerivce.get(username)
     }
     catch {
-      case e: HttpClientErrorException =>
+      case e: Exception =>
         logger.debug(s"observed an error, using dummy user! ${e.getMessage}", e)
         Submitter(
           username,
@@ -397,35 +400,38 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @return
     */
   override def libraries: Seq[AcquisitionMethod] = {
-    val url = s"${monaRestServer}/rest/tags/library"
 
-    val data = restTemplate.getForObject(url, classOf[Array[Tags]])
+      val url = s"${monaRestServer}/rest/tags/library"
 
-    data.filter(!_.ruleBased).map { tag: Tags =>
-      val values: Array[String] = tag.text.split(" - ")
+      val data = restTemplate.getForObject(url, classOf[Array[Tags]])
 
-
-      AcquisitionMethod(
-        values(0) match {
-          case "default" => None
-          case _ =>
-            val instrument = if (values(1) == noneSpecifiedValue) None else Option(values(1))
-            val column = if (values(2) == noneSpecifiedValue) None else Option(values(2))
-            val mode = if (values(3).toLowerCase == "positive") {
-              Some(PositiveMode())
-            }
-            else if (values(3).toLowerCase == "negative") {
-              Some(NegativeMode())
-            }
-            else {
-              None
-            }
+      data.filter(!_.ruleBased).map { tag: Tags =>
+        val values: Array[String] = tag.text.split(" - ")
 
 
-            Some(ChromatographicMethod(values(0), instrument, column, mode))
-        }
-      )
-    }.toSeq
+        AcquisitionMethod(
+          values(0) match {
+            case "default" => None
+            case _ =>
+              val instrument = if (values(1) == noneSpecifiedValue) None else Option(values(1))
+              val column = if (values(2) == noneSpecifiedValue) None else Option(values(2))
+              val mode = if (values(3).toLowerCase == "positive") {
+                Some(PositiveMode())
+              }
+              else if (values(3).toLowerCase == "negative") {
+                Some(NegativeMode())
+              }
+              else {
+                None
+              }
+
+
+              Some(ChromatographicMethod(values(0), instrument, column, mode))
+          }
+        )
+      }.toSeq
+
+
   }
 
   /**
@@ -523,6 +529,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     */
   override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
 
+    logger.info(s"adding ${targets.size} targets for method ${acquisitionMethod}")
     targets.foreach {
       t =>
         val spectrum: Option[Spectrum] = generateSpectrum(t, acquisitionMethod, sample)
@@ -544,13 +551,13 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     //let a process in the background update all the statistics
     executionService.submit(new Runnable {
       override def run(): Unit = {
-        logger.debug("updating all statistics and downloads")
-        monaSpectrumRestClient.regenerateDownloads
-        monaSpectrumRestClient.regenerateStatistics
+
+          logger.debug("updating all statistics and downloads")
+          monaSpectrumRestClient.regenerateStatistics
+          monaSpectrumRestClient.regenerateDownloads
 
       }
     })
-
   }
 
   /**
@@ -564,10 +571,12 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       case target: MonaLibraryTarget =>
         val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
 
-        logger.info(s"us defined: ${spectrum.isDefined}")
+        logger.info("delete begin")
+        logger.info(s"use defined: ${spectrum.isDefined}")
         logger.info(s"spectrum id: ${spectrum.get.id}")
         this.monaSpectrumRestClient.delete(spectrum.get.id)
 
+        logger.info("delete end")
         updateLibraries
       case _ =>
         logger.warn(s"${t} is not of the right type! Type is ${t.getClass}")
@@ -581,7 +590,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param acquisitionMethod
     */
   override def update(target: Target, acquisitionMethod: AcquisitionMethod) = {
-    val spectrum = generateSpectrum(target, acquisitionMethod,None).get
+    val spectrum = generateSpectrum(target, acquisitionMethod, None).get
     this.monaSpectrumRestClient.update(spectrum, spectrum.id)
     true
   }
