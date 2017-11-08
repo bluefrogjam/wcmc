@@ -47,6 +47,14 @@ trait LibraryAccess[T <: Target] {
   def delete(target: T, acquisitionMethod: AcquisitionMethod) : Unit
 
   /**
+    * deletes the complete library
+    */
+  def deleteAll : Unit = {
+    libraries.foreach{ x =>
+      load(x).foreach( y => delete(y,x))
+    }
+  }
+  /**
     * adds a list of targets
     *
     * @param targets

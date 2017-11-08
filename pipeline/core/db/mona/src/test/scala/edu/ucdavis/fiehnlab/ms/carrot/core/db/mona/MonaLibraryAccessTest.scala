@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest
 @ActiveProfiles(Array("carrot.targets.mona"))
-class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually {
+class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually with BeforeAndAfterEach {
   val testTarget = new Target {
     /**
       * a name for this spectra
@@ -139,7 +139,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       eventually(timeout(5 seconds)) {
         client.list().size shouldBe 0
-        Thread.sleep(250)
+        Thread.sleep(1000)
       }
     }
 
@@ -151,13 +151,13 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 1
-        Thread.sleep(250)
+        Thread.sleep(1000)
       }
       library.add(testTarget2, acquisitionMethod, None)
 
       eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 2
-        Thread.sleep(250)
+        Thread.sleep(1000)
       }
 
     }
@@ -168,17 +168,17 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       library.add(testTarget, acquisitionMethod, None)
       eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 1
-        Thread.sleep(250)
+        Thread.sleep(1000)
       }
       library.add(testTarget2, acquisitionMethod, None)
       eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 2
-        Thread.sleep(250)
+        Thread.sleep(1000)
       }
 
       eventually(timeout(5 seconds)) {
         library.load(AcquisitionMethod(None)).size shouldBe 2
-        Thread.sleep(250)
+        Thread.sleep(1000)
       }
       eventually(timeout(5 seconds)) {
 
@@ -190,174 +190,279 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
         count shouldBe 4
 
-        Thread.sleep(250)
+        Thread.sleep(1000)
       }
     }
 
     "there should be 2 acquisition methods defined now" in {
-      eventually(timeout(90 seconds)) {
+      eventually(timeout(15 seconds)) {
         library.libraries.size shouldBe 2
-        Thread.sleep(250)
+        Thread.sleep(1000)
       }
     }
 
     "able to update the name of a spectrum" in {
-      val spectra = library.load(AcquisitionMethod(None))
 
-      val target = spectra.head
+      library.deleteAll
+
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+
+      eventually(timeout(15 seconds)) {
+        library.libraries.size shouldBe 0
+        Thread.sleep(1000)
+      }
+      library.add(testTarget, acquisitionMethod, None)
+
+      eventually(timeout(5 seconds)) {
+        library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(1000)
+      }
+
+      val target = library.load(acquisitionMethod).head
 
       target.name = Option("12345")
 
-      library.update(target, AcquisitionMethod(None))
+      library.update(target, acquisitionMethod)
 
-      eventually(timeout(90 seconds)) {
-        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "12345" }
-
-        updatedSpectra.size shouldBe 1
+      eventually(timeout(15 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod).head
+        updatedSpectra.name.get shouldBe ("12345")
       }
+
     }
 
 
     "able to update the inchi key of a spectrum" in {
-      val spectra = library.load(AcquisitionMethod(None))
 
-      val target = spectra.head
+      library.deleteAll
+
+      eventually(timeout(15 seconds)) {
+        library.libraries.size shouldBe 0
+        client.list().size shouldBe 0
+        Thread.sleep(1000)
+      }
+
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+
+
+      library.add(testTarget, acquisitionMethod, None)
+
+      eventually(timeout(5 seconds)) {
+        library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(1000)
+
+      }
+
+
+      val target = library.load(acquisitionMethod).head
 
       target.inchiKey = Option("QNAYBMKLOCPYGJ-REOHCLBHSA-N")
 
-      library.update(target, AcquisitionMethod(None))
+      library.update(target, acquisitionMethod)
 
-      eventually(timeout(90 seconds)) {
-        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.inchiKey.isDefined }.filter { x => x.inchiKey.get == "QNAYBMKLOCPYGJ-REOHCLBHSA-N" }
-
-        updatedSpectra.size shouldBe 1
+      eventually(timeout(15 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod).head
+        updatedSpectra.inchiKey.get shouldBe ("QNAYBMKLOCPYGJ-REOHCLBHSA-N")
       }
+
     }
 
     "able to update the confirmed status a spectrum to true" in {
-      val spectra = library.load(AcquisitionMethod(None))
 
-      val target = spectra.head
+      library.deleteAll
+      eventually(timeout(15 seconds)) {
+        library.libraries.size shouldBe 0
+        client.list().size shouldBe 0
+
+        Thread.sleep(1000)
+      }
+
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+
+      library.add(testTarget, acquisitionMethod, None)
+
+      eventually(timeout(5 seconds)) {
+        library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(1000)
+      }
+
+      val target = library.load(acquisitionMethod).head
+
       target.confirmed = true
-      target.name = Option("123456")
 
-      library.update(target, AcquisitionMethod(None))
+      library.update(target, acquisitionMethod)
 
-      eventually(timeout(90 seconds)) {
-        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
-
+      eventually(timeout(15 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod).head
         updatedSpectra.confirmed shouldBe true
+        Thread.sleep(1000)
+
       }
 
     }
 
     "able to update the confirmed status a spectrum to false" in {
-      val spectra = library.load(AcquisitionMethod(None))
 
-      val target = spectra.head
-      target.confirmed = false
-      target.name = Option("123456")
+      library.deleteAll
+      eventually(timeout(15 seconds)) {
+        library.libraries.size shouldBe 0
+        client.list().size shouldBe 0
 
-      library.update(target, AcquisitionMethod(None))
-
-      eventually(timeout(90 seconds)) {
-        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
-
-        updatedSpectra.confirmed shouldBe false
+        Thread.sleep(1000)
       }
 
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      library.add(testTarget, acquisitionMethod, None)
+
+      eventually(timeout(15 seconds)) {
+        library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(1000)
+      }
+
+      val target = library.load(acquisitionMethod).head
+
+      target.confirmed = false
+
+      library.update(target, acquisitionMethod)
+
+      eventually(timeout(15 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod).head
+        updatedSpectra.confirmed shouldBe false
+        Thread.sleep(1000)
+
+      }
     }
 
 
     "able to update the retention index status of a spectrum to false" in {
-      val spectra = library.load(AcquisitionMethod(None))
 
-      val target = spectra.head
-      target.isRetentionIndexStandard = false
-      target.name = Option("123456")
+      library.deleteAll
+      eventually(timeout(15 seconds)) {
+        library.libraries.size shouldBe 0
+        client.list().size shouldBe 0
 
-      library.update(target, AcquisitionMethod(None))
+        Thread.sleep(1000)
+      }
 
-      eventually(timeout(90 seconds)) {
-        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      library.add(testTarget, acquisitionMethod, None)
 
-        updatedSpectra.isRetentionIndexStandard shouldBe false
+      eventually(timeout(15 seconds)) {
+        library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(1000)
+      }
+
+      val target = library.load(acquisitionMethod).head
+
+      target.isRetentionIndexStandard = true
+
+      library.update(target, acquisitionMethod)
+
+      eventually(timeout(15 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod).head
+        updatedSpectra.isRetentionIndexStandard shouldBe true
+        Thread.sleep(1000)
+
       }
 
     }
 
     "able to update the retention index status of a spectrum to true" in {
-      val spectra = library.load(AcquisitionMethod(None))
 
-      val target = spectra.head
+      library.deleteAll
+      eventually(timeout(15 seconds)) {
+        library.libraries.size shouldBe 0
+        client.list().size shouldBe 0
+
+        Thread.sleep(1000)
+      }
+
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      library.add(testTarget, acquisitionMethod, None)
+
+      eventually(timeout(15 seconds)) {
+        library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(1000)
+      }
+
+      val target = library.load(acquisitionMethod).head
+
       target.isRetentionIndexStandard = true
-      target.name = Option("123456")
 
-      library.update(target, AcquisitionMethod(None))
+      library.update(target, acquisitionMethod)
 
-      eventually(timeout(90 seconds)) {
-        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
-
+      eventually(timeout(15 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod).head
         updatedSpectra.isRetentionIndexStandard shouldBe true
-      }
+        Thread.sleep(1000)
 
+      }
     }
 
-    "able to update the retention index requiered status of a spectrum to false" in {
-      val spectra = library.load(AcquisitionMethod(None))
+    "able to update the retention index requiered status of a spectrum to true" in {
 
-      val target = spectra.head
-      target.requiredForCorrection = false
-      target.name = Option("123456")
+      library.deleteAll
+      eventually(timeout(15 seconds)) {
+        library.libraries.size shouldBe 0
+        client.list().size shouldBe 0
 
-      library.update(target, AcquisitionMethod(None))
-
-      eventually(timeout(90 seconds)) {
-        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
-
-        updatedSpectra.requiredForCorrection shouldBe false
+        Thread.sleep(1000)
       }
 
-    }
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      library.add(testTarget, acquisitionMethod, None)
 
-    "able to update the retention index required status of a spectrum to true" in {
-      val spectra = library.load(AcquisitionMethod(None))
+      eventually(timeout(15 seconds)) {
+        library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(1000)
+      }
 
-      val target = spectra.head
+      val target = library.load(acquisitionMethod).head
+
       target.requiredForCorrection = true
-      target.name = Option("123456")
 
-      library.update(target, AcquisitionMethod(None))
+      library.update(target, acquisitionMethod)
 
-      eventually(timeout(90 seconds)) {
-        val updatedSpectra = library.load(AcquisitionMethod(None)).filter { x => x.name.isDefined }.filter { x => x.name.get == "123456" }.head
-
+      eventually(timeout(15 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod).head
         updatedSpectra.requiredForCorrection shouldBe true
       }
 
     }
-    "delete acquisition method" in {
-      library.libraries.foreach { x =>
-        logger.info(s"deleting library: ${x}")
-        library.load(x).foreach { y =>
-          logger.info(s"deleting spectra: ${y} in ${x}")
-          library.delete(y, x)
-        }
-      }
-      eventually(timeout(5 seconds)) {
-        client.list().size shouldBe 0
-        Thread.sleep(250)
-      }
-    }
 
+    "able to update the retention index required status of a spectrum to false" in {
 
-    "there should be 0 acquisition methods defined now" in {
-      eventually(timeout(5 seconds)) {
+      library.deleteAll
+      eventually(timeout(15 seconds)) {
         library.libraries.size shouldBe 0
-        Thread.sleep(250)
+        client.list().size shouldBe 0
+
+        Thread.sleep(1000)
       }
+
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      library.add(testTarget, acquisitionMethod, None)
+
+      eventually(timeout(15 seconds)) {
+        library.load(acquisitionMethod).size shouldBe 1
+        Thread.sleep(1000)
+      }
+
+      val target = library.load(acquisitionMethod).head
+
+      target.requiredForCorrection = false
+
+      library.update(target, acquisitionMethod)
+
+      eventually(timeout(15 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod).head
+        updatedSpectra.requiredForCorrection shouldBe false
+      }
+
     }
   }
+
+  override protected def afterEach(): Unit = Thread.sleep(5000)
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
