@@ -52,12 +52,15 @@ class FServController extends LazyLogging {
 
     logger.info(s"uploaded file name is: ${name}")
     logger.info(s"content size is: ${uploadedFileRef.getSize}")
+    logger.info(s"directory: ${directory}")
 
     // Now create the output file on the server.
     val outputFile = new File(generateFilePath(fileName))
     var reader: InputStream = null
     var writer: FileOutputStream = null
     var totalBytes = 0L
+
+    logger.info(s"absolute path: ${outputFile.getAbsolutePath}")
 
     try {
       outputFile.createNewFile

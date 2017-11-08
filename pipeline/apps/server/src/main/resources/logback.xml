@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%msg%n</pattern>
+            <Pattern>%-30(%date{HH:mm:ss.SSS} %-5level %-4line --- [%thread]) %C{5} - %m%n%ex{short}</Pattern>
         </encoder>
     </appender>
 	<logger name="edu.ucdavis.fiehnlab" level="info"/>
