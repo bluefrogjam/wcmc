@@ -54,13 +54,3 @@ class CarrotCors extends WebMvcConfigurerAdapter {
 
   override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")
 }
-
-@Configuration
-@EnableWebSecurity
-class CarrotSecurity extends WebSecurityConfigurerAdapter with LazyLogging {
-
-  override def configure(web: WebSecurity): Unit = {
-    logger.warn("we are allowing unregulated access to this service!")
-    web.ignoring().antMatchers("/**")
-  }
-}

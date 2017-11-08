@@ -22,14 +22,8 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 	*/
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
+//@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class FServ extends WebMvcConfigurerAdapter{
-
-  @Value("${wcmc.server.fserv.directory:storage}")
-  val directory: String = null
-
-  @Bean
-  def resourceLoader: LocalLoader = new RecursiveDirectoryResourceLoader(new File(directory))
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {
     configurer.favorPathExtension(false).favorParameter(false).parameterName("mediaType").ignoreAcceptHeader(false).useJaf(false).defaultContentType(MediaType.APPLICATION_JSON).mediaType("json", MediaType.APPLICATION_JSON)
@@ -41,7 +35,13 @@ class FServ extends WebMvcConfigurerAdapter{
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackageClasses= Array(classOf[FServController]))
-class FServSecurity extends WebSecurityConfigurerAdapter with LazyLogging {
+class FServConfig extends WebSecurityConfigurerAdapter with LazyLogging {
+
+  @Value("${wcmc.server.fserv.directory:storage}")
+  val directory: String = null
+
+  @Bean
+  def resourceLoader: LocalLoader = new RecursiveDirectoryResourceLoader(new File(directory))
 
 	override def configure(web: WebSecurity): Unit = {
 		logger.warn("we are allowing unregulated access to this service!")
