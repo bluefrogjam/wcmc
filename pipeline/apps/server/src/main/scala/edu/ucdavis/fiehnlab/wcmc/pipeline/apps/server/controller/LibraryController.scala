@@ -5,6 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryTarget
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation._
@@ -50,7 +51,8 @@ class LibraryController extends LazyLogging {
     * @param target
     */
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.PUT))
-  def updateTarget(@PathVariable("library") id: String, @RequestBody target: Target): Unit = {
+  def updateTarget(@PathVariable("library") id: String, @RequestBody target: UpdateTargetExtended): Unit = {
+    logger.info(s"Update requested: $target")
     val result = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == id =>
         x
@@ -99,6 +101,25 @@ class ResourceAlreadyExistException extends RuntimeException
   * @param target
   */
 case class UpdateTarget(target: Target, library: String)
+
+case class UpdateTargetExtended(override val retentionIndex: Double,
+                                override var confirmed: Boolean,
+                                override val precursorMass:Option[Double],
+                                override var inchiKey:Option[String],
+                                override val spectrum:Option[SpectrumExtended],
+                                override var name:Option[String],
+                                override var requiredForCorrection:Boolean,
+                                override var isRetentionIndexStandard: Boolean
+                               ) extends Target {
+
+}
+
+case class SpectrumExtended(override val modelIons:Option[Seq[Double]],
+                            override val ions: Seq[Ion],
+                            override val msLevel: Short
+                           ) extends SpectrumProperties{
+
+}
 
 /**
   * specific class to add a target

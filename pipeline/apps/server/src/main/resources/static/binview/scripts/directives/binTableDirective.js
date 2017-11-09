@@ -171,15 +171,34 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
                 // Define editor properties
                 var editor = new $.fn.dataTable.Editor({
                     ajax: function(method, url, data, success, error) {
-                        var target = table.row(this).data();
+                        var rowData = table.row(this).data();
+                        var target = {
+                            id: rowData.id,
+                            confirmed: rowData.confirmed,
+                            inchiKey: rowData.inchiKey,
+                            ionMode: rowData.ionMode,
+                            isRetentionIndexStandard: rowData.isRetentionIndexStandard,
+                            msmsSpectrum: rowData.msmsSpectrum,
+                            name: rowData.name,
+                            precursorMass: rowData.precursorMass,
+                            requiredForCorrection: rowData.requiredForCorrection,
+                            retentionIndex: rowData.retentionIndex,
+                            retentionTimeInSeconds: rowData.retentionTimeInSeconds,
+                            spectrum: rowData.spectrum
+                        };
+                        var url = 'rest/library/' + $scope.endpoint;
                         target.name = data.data[Object.keys(data.data)[0]].name;
                         console.log(target);
+                        console.log(JSON.stringify(target));
 
                         $.ajax( {
                             type: 'PUT',
-                            url: 'rest/library/' + $scope.endpoint,
-                            data: target,
-                            dataType: 'application/json',
+                            headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                            },
+                            url: url,
+                            data: JSON.stringify(target),
                             success: function(json) {
                                 //success(json);
                             },
