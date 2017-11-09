@@ -102,13 +102,23 @@
         });
 
         $scope.similaritySearch = function(data) {
+
+            var spectrum = '';
+
+            data.spectrum.ions.forEach(function(ion) {
+                spectrum += ion.mass + ':' + ion.intensity + ' ';
+            });
+
+            console.log(spectrum);
+
             var postData = {
-                'spectrum': data.spectrum,
+                'spectrum': spectrum,
                 'minSimilarity': $scope.simSettings.minSimilarity || 700,
                 'maxSimilarity': $scope.simSettings.maxSimilarity || 1000,
                 'precursorMZ': $scope.simSettings.precursorMZ,
                 'precursorToleranceDa': $scope.simSettings.precursorToleranceDa
             };
+            console.log(postData);
             $http
                 .post('/rest/similarity/search', postData)
                 .then(function(response) {
