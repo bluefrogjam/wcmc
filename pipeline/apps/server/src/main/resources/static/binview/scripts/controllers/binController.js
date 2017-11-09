@@ -97,7 +97,6 @@
 
 //                $scope.binvestigateUrl = $sce.trustAsResourceUrl('http://binvestigate.fiehnlab.ucdavis.edu/#/bin/' + data.id);
                 $scope.similaritySearch(data);
-//                $scope.ctsSearch(data);
             })
         });
 
