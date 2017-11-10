@@ -7,15 +7,20 @@ import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.{ComponentScan, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.core.io.FileSystemResource
 import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType, ResponseEntity, _}
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.{HttpServerErrorException, RestTemplate}
 
 @Configuration
-@ComponentScan
-class MSDialRestProcessorAutoconfiguration {
+class MSDialRestProcessorAutoconfiguration extends LazyLogging {
+  @Bean
+  def restTemplate(): RestTemplate = new RestTemplate()
+
+  @Bean
+  def fServ4jClient = new FServ4jClient()
 
 }
 
@@ -40,7 +45,7 @@ class MSDialRestProcessor extends LazyLogging {
   val resourceLoader: ResourceLoader = null
 
   @Autowired
-  val restTemplate: RestOperations = null
+  val restTemplate: RestTemplate = null
 
   protected def msdresturl = s"http://${msdresthost}:${msdrestport}"
 
@@ -59,12 +64,12 @@ class MSDialRestProcessor extends LazyLogging {
     if (input.isDirectory) {
       throw new Exception("can't process a folder")
     } else {
-      logger.debug(s"File ${input.getName} is on fileserver, skipping upload")
-
-      //upload file if not on fileserver
-      if(exists(input.getName)) {
-      } else {
+      //upload file if not on msdial server
+      if (!exists(input.getName)) {
+        logger.debug(s"${input.getName} doesn't exist, uploading...")
         upload(input)
+      } else {
+        logger.debug(s"${input.getName} exists")
       }
 
       val response = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/process/${input.getName}", classOf[ServerResponse])
@@ -81,10 +86,8 @@ class MSDialRestProcessor extends LazyLogging {
         } finally {
           fout.flush()
           fout.close()
-
         }
       }
-
     }
   }
 
@@ -97,32 +100,50 @@ class MSDialRestProcessor extends LazyLogging {
   def upload(file: File): (String, String) = {
     logger.debug(s"uploading file: ${file} to ${msdresturl}")
 
-    val map = new LinkedMultiValueMap[String, AnyRef]
-    map.add("file", file)
+    //    val map = new LinkedMultiValueMap[String, AnyRef]
+    //    map.add("file", file)
+    //    val headers = new HttpHeaders
+    //    headers.setContentType(MediaType.MULTIPART_FORM_DATA)
+    //
+    //    val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
+    //    val result = restTemplate.exchange(s"$msdresturl/rest/file/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
     val headers = new HttpHeaders
     headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
-    val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-    val result = restTemplate.exchange(s"$msdresturl/rest/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
+    val map = new LinkedMultiValueMap[String, AnyRef]
+    map.add("file", new FileSystemResource(file))
 
-    if (result.getStatusCode == HttpStatus.OK) {
-      val token = result.getBody.filename
-      logger.info(s"filename = $token")
+    val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
+
+    logger.info(s"uploading ${file.getName} to: $msdresturl/rest/upload")
+    logger.debug(s"params: $requestEntity")
+
+    try {
+      val result = restTemplate.postForEntity(s"$msdresturl/rest/upload", requestEntity, classOf[ServerResponse])
 
       if (result.getStatusCode == HttpStatus.OK) {
-        if (result.getBody.link.contains("/conversion/")) {
-          logger.debug(s"upload result requires conversion of data")
-          (convert(result.getBody.link.split("/").last, token), token)
+        val token = result.getBody.filename
+        logger.info(s"filename = $token")
+
+        if (result.getStatusCode == HttpStatus.OK) {
+          //if input is raw data file... convert
+          if (result.getBody.link.contains("/conversion/")) {
+            logger.debug(s"upload result requires conversion of data")
+            (convert(result.getBody.link.split("/").last, token), token)
+          } else { // process
+            logger.debug("upload succeeded, not conversion required")
+            (result.getBody.link.split("/").last, token)
+          }
         } else {
-          logger.debug("upload succeeded, not conversion required")
-          (result.getBody.link.split("/").last, token)
+          throw new MSDialException(result)
         }
       } else {
+        logger.warn(s"received result was: ${result}")
         throw new MSDialException(result)
       }
-    } else {
-      logger.warn(s"received result was: ${result}")
-      throw new MSDialException(result)
+    } catch {
+      case ex: HttpServerErrorException => logger.error(ex.getMessage)
+      ("", "")
     }
   }
 
@@ -164,14 +185,10 @@ class MSDialRestProcessor extends LazyLogging {
     *
     * @param filename
     */
-  protected def  exists(filename: String): Boolean = {
-    val result = restTemplate.getForEntity(s"${msdresturl}/rest/file/exists/${filename}", classOf[FileResponse])
-
-    if(result.getStatusCode != HttpStatus.OK) {
-      false
-    }else {
-      result.getBody.exists
-    }
+  protected def exists(filename: String): Boolean = {
+    val fresp = restTemplate.getForObject(s"${msdresturl}/rest/file/exists/${filename}", classOf[FileResponse])
+    logger.info(s"EXISTS: ${fresp} ")
+    fresp.exists
   }
 
   /**
@@ -190,7 +207,6 @@ class MSDialRestProcessor extends LazyLogging {
     else {
       throw new MSDialException(result)
     }
-
   }
 
   /**
@@ -227,7 +243,6 @@ class MSDialRestProcessor extends LazyLogging {
     val request: HttpEntity[String] = new HttpEntity("parameters", headers)
     request
   }
-
 }
 
 /**
@@ -242,6 +257,7 @@ case class ServerResponse(filename: String, link: String, message: String, error
 
 /**
   * file check response
+  *
   * @param filename
   * @param exists
   */

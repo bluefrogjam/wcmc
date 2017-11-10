@@ -1,22 +1,20 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 
-import java.io.{File, FileOutputStream}
+import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import org.apache.commons.io.IOUtils
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
 import scala.io.Source
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 6/16/17.
@@ -35,10 +33,12 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+  mSDialRestProcessor.restTemplate.getMessageConverters.asScala.mkString("; ")
+
   "MSDialRestProcessorTest" should {
 
     "process" must {
-      "an Agilent .d file" in {
+      "process an Agilent .d file" ignore {
         val input = new File("testA.d.zip")
 
         val output = mSDialRestProcessor.process(input)
@@ -75,15 +75,13 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
 
         resultLines.size should be(12)
       }
-
     }
-
   }
 }
 
 @Configuration
-@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@Import(Array(classOf[MSDialRestProcessorAutoconfiguration]))
 class MSDialRestProcessorConfig {
   @Bean
-  def fserv4j: FServ4jClient = new FServ4jClient("testfserv.fiehnlab.ucdavis.edu")
+  def mSDialRestProcessor: MSDialRestProcessor = new MSDialRestProcessor()
 }
