@@ -62,7 +62,10 @@ class MSDialRestProcessor extends LazyLogging {
       logger.debug(s"File ${input.getName} is on fileserver, skipping upload")
 
       //upload file if not on fileserver
-      upload(input)
+      if(exists(input.getName)) {
+      } else {
+        upload(input)
+      }
 
       val response = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/process/${input.getName}", classOf[ServerResponse])
 
@@ -157,6 +160,21 @@ class MSDialRestProcessor extends LazyLogging {
   }
 
   /**
+    * checks if a file exists on the server
+    *
+    * @param filename
+    */
+  protected def  exists(filename: String): Boolean = {
+    val result = restTemplate.getForEntity(s"${msdresturl}/rest/file/exists/${filename}", classOf[FileResponse])
+
+    if(result.getStatusCode != HttpStatus.OK) {
+      false
+    }else {
+      result.getBody.exists
+    }
+  }
+
+  /**
     * convert the given file, if it was a .d file or so to an abf file
     *
     * @param id
@@ -213,7 +231,7 @@ class MSDialRestProcessor extends LazyLogging {
 }
 
 /**
-  * exspected server response
+  * expected server response
   *
   * @param filename
   * @param link
@@ -221,6 +239,13 @@ class MSDialRestProcessor extends LazyLogging {
   * @param error
   */
 case class ServerResponse(filename: String, link: String, message: String, error: String)
+
+/**
+  * file check response
+  * @param filename
+  * @param exists
+  */
+case class FileResponse(filename: String, exists: Boolean)
 
 /**
   * an msdial exception if something goes wrong
@@ -244,7 +269,7 @@ class CachedMSDialRestProcesser extends MSDialRestProcessor {
     */
   override def process(input: File): File = {
 
-    val newFile = s"${input.getName}.processed"
+    val newFile = s"${input.getName}"
 
     if (!resourceLoader.exists(newFile)) {
       logger.info(s"file: ${input.getName} requires processing and will be stored as ${newFile}")
