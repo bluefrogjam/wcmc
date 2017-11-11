@@ -38,7 +38,7 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
   "MSDialRestProcessorTest" should {
 
     "process" must {
-      "process an Agilent .d file" ignore {
+      "process an Agilent .d file" in {
         val input = new File("testA.d.zip")
 
         val output = mSDialRestProcessor.process(input)
