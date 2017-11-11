@@ -2,6 +2,8 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 
 import java.io._
 
+import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
@@ -72,11 +74,11 @@ class MSDialRestProcessor extends LazyLogging {
         logger.debug(s"${input.getName} exists")
       }
 
-      val response = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/process/${input.getName}", classOf[ServerResponse])
+      val response = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/process/${input.getName}", classOf[String])
+      logger.debug(s"RESPONSE: ${response}")
 
       if (response.getStatusCode != HttpStatus.OK) {
-        logger.warn(s"response: ${response.getBody.filename}")
-        throw new MSDialException(response)
+        throw new Exception("Bad request")
       } else {
         val fout = new FileOutputStream(msdialFile)
 
@@ -100,23 +102,13 @@ class MSDialRestProcessor extends LazyLogging {
   def upload(file: File): (String, String) = {
     logger.debug(s"uploading file: ${file} to ${msdresturl}")
 
-    //    val map = new LinkedMultiValueMap[String, AnyRef]
-    //    map.add("file", file)
-    //    val headers = new HttpHeaders
-    //    headers.setContentType(MediaType.MULTIPART_FORM_DATA)
-    //
-    //    val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-    //    val result = restTemplate.exchange(s"$msdresturl/rest/file/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
     val headers = new HttpHeaders
     headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
-    val map = new LinkedMultiValueMap[String, AnyRef]
-    map.add("file", new FileSystemResource(file))
+    val map = new LinkedMultiValueMap[String, File]
+    map.add("file", file)
 
-    val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
-
-    logger.info(s"uploading ${file.getName} to: $msdresturl/rest/upload")
-    logger.debug(s"params: $requestEntity")
+    val requestEntity = new HttpEntity[LinkedMultiValueMap[String, File]](map, headers)
 
     try {
       val result = restTemplate.postForEntity(s"$msdresturl/rest/upload", requestEntity, classOf[ServerResponse])
@@ -155,12 +147,12 @@ class MSDialRestProcessor extends LazyLogging {
     * @return
     */
   protected def download(id: String, token: String): File = {
-    val result = restTemplate.exchange(s"${msdresturl}/rest/deconvolution/status/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
+    val result = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/status/${id}", classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       //      val resultId = result.getBody.link.split("/").last
 
-      val download = restTemplate.exchange(s"${msdresturl}/rest/deconvolution/result/${id}", HttpMethod.GET, createAuthRequest(token), classOf[String])
+      val download = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/result/${id}", classOf[String])
 
       if (download.getStatusCode == HttpStatus.OK) {
 
@@ -186,9 +178,11 @@ class MSDialRestProcessor extends LazyLogging {
     * @param filename
     */
   protected def exists(filename: String): Boolean = {
-    val fresp = restTemplate.getForObject(s"${msdresturl}/rest/file/exists/${filename}", classOf[FileResponse])
-    logger.info(s"EXISTS: ${fresp} ")
-    fresp.exists
+    val fresp = restTemplate.getForEntity(s"${msdresturl}/rest/file/exists/${filename}", classOf[String])
+    logger.info(s"EXISTS: ${fresp.getBody} ")
+
+    //TODO: FIX this horrible hack since restTemplate can't deal with booleans in json responses
+    fresp.getBody.contains("exists\":true")
   }
 
   /**
@@ -198,7 +192,7 @@ class MSDialRestProcessor extends LazyLogging {
     * @param token
     */
   protected def convert(id: String, token: String): String = {
-    val result = restTemplate.exchange(s"${msdresturl}/rest/conversion/convert/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
+    val result = restTemplate.getForEntity(s"${msdresturl}/rest/conversion/convert/${id}", classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       logger.debug("conversion succeeded")
@@ -218,7 +212,7 @@ class MSDialRestProcessor extends LazyLogging {
     * @return
     */
   protected def schedule(id: String, token: String): String = {
-    val result = restTemplate.exchange(s"${msdresturl}/rest/deconvolution/schedule/${id}", HttpMethod.GET, createAuthRequest(token), classOf[ServerResponse])
+    val result = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/schedule/${id}", classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       logger.debug("conversion succeeded, not conversion required")
@@ -227,21 +221,6 @@ class MSDialRestProcessor extends LazyLogging {
     else {
       throw new MSDialException(result)
     }
-  }
-
-  /**
-    * Creates an HttpEntity with an Authorization header to call the rest server
-    *
-    * @param token authorization token returned by the upload endpoint
-    * @return
-    */
-  protected def createAuthRequest(token: String): HttpEntity[String] = {
-    // creating authorized request
-    val headers: HttpHeaders = new HttpHeaders()
-    headers.add("Authorization", token)
-
-    val request: HttpEntity[String] = new HttpEntity("parameters", headers)
-    request
   }
 }
 
@@ -261,7 +240,8 @@ case class ServerResponse(filename: String, link: String, message: String, error
   * @param filename
   * @param exists
   */
-case class FileResponse(filename: String, exists: Boolean)
+@JsonCreator
+case class FileResponse(@JsonProperty("filename")filename: String, @JsonProperty("exists")exists: Boolean)
 
 /**
   * an msdial exception if something goes wrong
