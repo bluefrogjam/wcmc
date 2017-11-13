@@ -22,7 +22,6 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 	*/
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-//@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class FServ extends WebMvcConfigurerAdapter{
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {
