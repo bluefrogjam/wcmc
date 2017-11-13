@@ -55,36 +55,26 @@ class MSDialRestProcessor extends LazyLogging {
   def process(input: File): File = {
     logger.debug(s"processing file: ${input}")
 
-    var msdialFile: File = new File(input.getName.substring(0, input.getName.indexOf(".")).concat(".msdial"))
-
     if (input.isDirectory) {
       throw new Exception("can't process a folder")
     } else {
       //upload file if not on msdial server
-      //if (!exists(input.getName)) {
+      if (!exists(input.getName)) {
         logger.debug(s"${input.getName} doesn't exist, uploading...")
         upload(input)
-     // } else {
-     //   logger.debug(s"${input.getName} exists")
-     // }
+      } else {
+        logger.debug(s"${input.getName} exists")
+      }
 
       val url: String = s"${msdresturl}/rest/deconvolution/process/${input.getName}"
       logger.info(s"invoking: ${url}")
       val response = restTemplate.getForEntity(url, classOf[ServerResponse])
-      logger.debug(s"RESPONSE: ${response}")
 
+      logger.info(s"response code is: ${response.getStatusCode} and message is ${response.getBody.message}")
       if (response.getStatusCode != HttpStatus.OK) {
         throw new Exception("Bad request")
       } else {
-        val fout = new FileOutputStream(msdialFile)
-
-        try {
-          IOUtils.copyLarge(fServ4jClient.download(msdialFile.getName).get, fout)
-          msdialFile
-        } finally {
-          fout.flush()
-          fout.close()
-        }
+        download(input.getName)
       }
     }
   }
@@ -98,7 +88,7 @@ class MSDialRestProcessor extends LazyLogging {
   def upload(file: File): (String, String) = {
     logger.debug(s"uploading file: ${file} to ${msdresturl}")
 
-    if(!file.exists()){
+    if (!file.exists()) {
       throw new FileNotFoundException(s"provided file does not exist: ${file}")
     }
     val headers = new HttpHeaders
@@ -110,7 +100,7 @@ class MSDialRestProcessor extends LazyLogging {
 
     val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
 
-    val result = restTemplate.exchange(s"$msdresturl/rest/file/upload",HttpMethod.POST, requestEntity, classOf[ServerResponse])
+    val result = restTemplate.exchange(s"$msdresturl/rest/file/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       val token = result.getBody.filename
@@ -139,10 +129,9 @@ class MSDialRestProcessor extends LazyLogging {
     * was this process finished
     *
     * @param id
-    * @param token
     * @return
     */
-  protected def download(id: String, token: String): File = {
+  protected def download(id: String): File = {
     val result = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/status/${id}", classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
@@ -250,28 +239,4 @@ case class FileResponse(filename: String, exists: Boolean)
   */
 class MSDialException(result: ResponseEntity[ServerResponse]) extends Exception {
   override def getMessage: String = result.getBody.message + "\n" + result.getBody.error
-}
-
-/**
-  * utilizes our FServer to cache processing results somewhere on the file system o
-  */
-class CachedMSDialRestProcesser extends MSDialRestProcessor {
-  /**
-    * processes the input file and includes caching support
-    * if enabled
-    *
-    * @param input
-    * @return
-    */
-  override def process(input: File): File = {
-
-    val newFile = s"${input.getName}"
-
-    if (!resourceLoader.exists(newFile)) {
-      logger.info(s"file: ${input.getName} requires processing and will be stored as ${newFile}")
-      fServ4jClient.upload(super.process(input), name = Some(newFile))
-    }
-
-    resourceLoader.loadAsFile(newFile).get
-  }
 }
