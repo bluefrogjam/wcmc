@@ -94,6 +94,10 @@ class MSDialRestProcessor extends LazyLogging {
   def upload(file: File): (String, String) = {
     logger.debug(s"uploading file: ${file} to ${msdresturl}")
 
+    if(!file.exists()){
+      throw new FileNotFoundException(s"the specified file does not exist: ${file.getAbsolutePath}")
+    }
+
     val map = new LinkedMultiValueMap[String, AnyRef]
     map.add("file", file)
     val headers = new HttpHeaders
