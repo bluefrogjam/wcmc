@@ -51,7 +51,7 @@ class LibraryController extends LazyLogging {
     * @param target
     */
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.PUT))
-  def updateTarget(@PathVariable("library") id: String, @RequestBody target: UpdateTargetExtended): Unit = {
+  def updateTarget(@PathVariable("library") id: String, @RequestBody target: TargetExtended): Unit = {
     logger.info(s"Update requested: $target")
     val result = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == id =>
@@ -102,19 +102,22 @@ class ResourceAlreadyExistException extends RuntimeException
   */
 case class UpdateTarget(target: Target, library: String)
 
-case class UpdateTargetExtended(override val retentionIndex: Double,
-                                override var confirmed: Boolean,
-                                override val precursorMass:Option[Double],
-                                override var inchiKey:Option[String],
-                                override val spectrum:Option[SpectrumExtended],
-                                override var name:Option[String],
-                                override var requiredForCorrection:Boolean,
-                                override var isRetentionIndexStandard: Boolean
-                               ) extends Target {
+case class TargetExtended(id: String,
+                          msmsSpectrum: Option[SpectrumExtended],
+                          override val retentionIndex: Double,
+                          override var confirmed: Boolean,
+                          override val precursorMass: Option[Double],
+                          override var inchiKey: Option[String],
+                          override val ionMode: IonMode,
+                          override val spectrum: Option[SpectrumExtended],
+                          override var name: Option[String],
+                          override var requiredForCorrection: Boolean,
+                          override var isRetentionIndexStandard: Boolean
+                         ) extends Target {
 
 }
 
-case class SpectrumExtended(override val modelIons:Option[Seq[Double]],
+case class SpectrumExtended(override val modelIons: Option[Seq[Double]],
                             override val ions: Seq[Ion],
                             override val msLevel: Short
                            ) extends SpectrumProperties{
