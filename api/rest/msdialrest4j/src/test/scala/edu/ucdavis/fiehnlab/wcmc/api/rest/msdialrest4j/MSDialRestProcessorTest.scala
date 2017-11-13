@@ -8,13 +8,14 @@ import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration, Import}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
 import scala.io.Source
-import scala.collection.JavaConverters._
 
 /**
   * Created by wohlgemuth on 6/16/17.
@@ -33,13 +34,11 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  mSDialRestProcessor.restTemplate.getMessageConverters.asScala.mkString("; ")
-
   "MSDialRestProcessorTest" should {
 
     "process" must {
       "process an Agilent .d file" in {
-        val input = new File("testA.d.zip")
+        val input = fserv4j.loadAsFile("testA.d.zip").get
 
         val output = mSDialRestProcessor.process(input)
         logger.warn(s"OUTPUT: ${output}")
@@ -54,15 +53,8 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
         resultLines.size should be(12)
       }
 
-      "return empty file for not zipped file" in {
-        val input = new File("B5_P20Lipids_Pos_QC029.d")
-        val output = intercept[Exception] {
-          mSDialRestProcessor.process(input)
-        }
-      }
-
       "process a .abf file" in {
-        val input = new File("testA.abf")
+        val input = fserv4j.loadAsFile("testA.abf").get
         val output = mSDialRestProcessor.process(input)
         logger.warn(s"OUTPUT: ${output}")
 
@@ -75,13 +67,15 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
 
         resultLines.size should be(12)
       }
+
     }
+
   }
 }
 
 @Configuration
-@Import(Array(classOf[MSDialRestProcessorAutoconfiguration]))
+@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class MSDialRestProcessorConfig {
   @Bean
-  def mSDialRestProcessor: MSDialRestProcessor = new MSDialRestProcessor()
+  def fserv4j: FServ4jClient = new FServ4jClient("testfserv.fiehnlab.ucdavis.edu")
 }
