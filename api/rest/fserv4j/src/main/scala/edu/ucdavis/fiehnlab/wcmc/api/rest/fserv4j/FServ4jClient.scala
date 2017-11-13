@@ -22,7 +22,6 @@ class FServ4jClient(host:String = "127.0.0.1",port:Int = 80, enableLookup:Boolea
     */
   override def isLookupEnabled(): Boolean = enableLookup
 
-  //  @Autowired
   val template: RestOperations = new RestTemplate()
 
   /**
@@ -79,7 +78,7 @@ class FServ4jClient(host:String = "127.0.0.1",port:Int = 80, enableLookup:Boolea
     */
   override def exists(name: String): Boolean = {
     val location = s"$url/exists/$name"
-    logger.debug(s"looking for location: ${location}")
+    logger.info(s"looking for file: ${location}")
     try {
       val response = template.getForEntity(location, classOf[Any])
       response.getStatusCode == HttpStatus.OK

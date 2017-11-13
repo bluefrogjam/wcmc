@@ -53,7 +53,6 @@ class DataFormerClient extends LazyLogging {
       } else {
         val tmpfile = new File(filename)
 
-        logger.debug("====== saving file ======")
         IOUtils.copyLarge(file.get, new FileOutputStream(tmpfile))
 
         try {
