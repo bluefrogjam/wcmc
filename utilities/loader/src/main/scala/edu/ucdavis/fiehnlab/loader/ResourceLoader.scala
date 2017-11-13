@@ -113,6 +113,7 @@ class DelegatingResourceLoader extends ResourceLoader {
     * @return
     */
   override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.exists(name) => {
+    logger.debug(s"loading ${name} with ${loader.getClass}")
 	  loader.load(name)
   }
   }.getOrElse(None)
@@ -123,7 +124,7 @@ class DelegatingResourceLoader extends ResourceLoader {
 
   @PostConstruct
   def init(): Unit ={
-    logger.info(s"configured with the following resource loaders: ${sortedLoader}")
+    logger.info(s"configured with the following (${sortedLoader.size}) resource loaders: ${sortedLoader}")
   }
 }
 
