@@ -39,7 +39,7 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
 
     "process" must {
       "an Agilent .d file" in {
-        val input = new File("testA.d.zip")
+        val input = fserv4j.loadAsFile("testA.d.zip").get
 
         val output = mSDialRestProcessor.process(input)
         logger.warn(s"OUTPUT: ${output}")
@@ -55,14 +55,14 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
       }
 
       "return empty file for not zipped file" in {
-        val input = new File("B5_P20Lipids_Pos_QC029.d")
+        val input = fserv4j.loadAsFile("B5_P20Lipids_Pos_QC029.d").get
         val output = intercept[Exception] {
           mSDialRestProcessor.process(input)
         }
       }
 
       "process a .abf file" in {
-        val input = new File("testA.abf")
+        val input = fserv4j.loadAsFile("testA.abf").get
         val output = mSDialRestProcessor.process(input)
         logger.warn(s"OUTPUT: ${output}")
 
