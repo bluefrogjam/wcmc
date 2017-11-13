@@ -45,40 +45,6 @@
                                         <div class="radio">
                                             <label><input type="radio" value="test 2" ng-model="binSettings.acquisition">Test 2</label>
                                         </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" ng-model="binSettings.filters.unnamed">Show only unnamed bins
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" ng-model="binSettings.filters.ungrouped">Show only ungrouped bins
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" ng-model="binSettings.filters.retentionRange">Show only RIs between...
-                                            </label>
-                                        </div>
-                                        <div class="form-inline">
-                                            <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="binSettings.filters.retentionMin" ng-model-options="{updateOn: 'blur'}">
-                                            </div>
-                                            <span>and</span>
-                                            <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="binSettings.filters.retentionMax" ng-model-options="{updateOn: 'blur'}">
-                                            </div>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label uib-tooltip="Only works on bins you've already clicked">
-                                                <input type="checkbox" ng-model="binSettings.filters.libraryMatches">Show only bins with library matches
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" ng-model="binSettings.filters.sameSample">Show only bins from the same sample
-                                            </label>
-                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -187,46 +153,6 @@
                                     </div>
                                     <div id="sim-table-wrapper" class="col-xs-12">
                                         <sim-table ng-if="similaritySearchResults" ng-model="similaritySearchResults" columns="simSettings.dtColumns" filters="simSettings.filters" select-fn="onSelectSim(e, dt, type, indexes)"></sim-table>
-                                    </div>
-                                </div>
-                            </div>
-                        </uib-tab>
-                        <uib-tab index="1" heading="Chemical Info">
-                            <div class="container">
-                                <div class="row">
-                                    <div id="chem-sketcher-wrapper" class="col-xs-12">
-                                        <div chemical-sketcher
-                                             readonly="true"
-                                             id="bioSketch"
-                                             ng-model="mol">
-                                        </div>
-                                    </div>
-                                    <div id="chem-table-wrapper" class="col-xs-12">
-                                        <table id="chemTable" class="table table-striped table-bordered table-hover">
-                                            <tbody>
-                                            <tr>
-                                                <td>Name</td>
-                                                <td>{{bin.bin}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Chemical Formula</td>
-                                                <td>{{compound.formula}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>InChI Code</td>
-                                                <td>{{compound.inchicode}}</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </uib-tab>
-                        <uib-tab index="2" heading="BinVestigate">
-                            <div class="container">
-                                <div class="row">
-                                    <div id="binvestigate-wrapper" class="col-xs-12">
-                                        <iframe width="100%" height="100%" ng-src="{{binvestigateUrl}}"></iframe>
                                     </div>
                                 </div>
                             </div>
