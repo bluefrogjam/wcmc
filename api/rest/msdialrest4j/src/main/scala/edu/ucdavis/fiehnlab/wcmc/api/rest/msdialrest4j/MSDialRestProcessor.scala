@@ -4,10 +4,11 @@ import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.{ComponentScan, Configuration}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType, ResponseEntity, _}
 import org.springframework.stereotype.Component
@@ -17,7 +18,8 @@ import org.springframework.web.client.RestOperations
 @Configuration
 @ComponentScan
 class MSDialRestProcessorAutoconfiguration {
-
+  @Bean
+  def dfClient: DataFormerClient = new DataFormerClient()
 }
 
 /**
@@ -43,6 +45,12 @@ class MSDialRestProcessor extends LazyLogging {
   @Autowired
   val restTemplate: RestOperations = null
 
+  @Autowired
+  val dfClient: DataFormerClient = null
+
+  @Autowired
+  val cvtSvc: ConvertService = null
+
   protected def msdresturl = s"http://${msdresthost}:${msdrestport}"
 
   /**
@@ -55,18 +63,25 @@ class MSDialRestProcessor extends LazyLogging {
   def process(input: File): File = {
     logger.debug(s"processing file: ${input}")
 
-    var msdialFile: File = new File(input.getName.substring(0, input.getName.indexOf(".")).concat(".msdial"))
+    var msdialFile: File = new File(input.getName.concat(".msdial"))
 
     if (input.isDirectory) {
       throw new Exception("can't process a folder")
     } else {
+
+      val converted: File = {
+        if (!input.getName.endsWith(".abf")) {
+          cvtSvc.getAbfFile(input).getOrElse(throw new Exception(s"Can't process ${input}. Error treying to convert to abf"))
+        } else {
+          input
+        }
+      }
+
       //upload file if not on msdial server
-      //if (!exists(input.getName)) {
+      if (!exists(converted.getName)) {
         logger.debug(s"${input.getName} doesn't exist, uploading...")
-        upload(input)
-     // } else {
-     //   logger.debug(s"${input.getName} exists")
-     // }
+        upload(converted)
+      }
 
       val url: String = s"${msdresturl}/rest/deconvolution/process/${input.getName}"
       logger.info(s"invoking: ${url}")
@@ -76,15 +91,8 @@ class MSDialRestProcessor extends LazyLogging {
       if (response.getStatusCode != HttpStatus.OK) {
         throw new Exception("Bad request")
       } else {
-        val fout = new FileOutputStream(msdialFile)
-
-        try {
-          IOUtils.copyLarge(fServ4jClient.download(msdialFile.getName).get, fout)
-          msdialFile
-        } finally {
-          fout.flush()
-          fout.close()
-        }
+//        download(input.getName)
+        new File("")
       }
     }
   }
@@ -98,7 +106,7 @@ class MSDialRestProcessor extends LazyLogging {
   def upload(file: File): (String, String) = {
     logger.debug(s"uploading file: ${file} to ${msdresturl}")
 
-    if(!file.exists()){
+    if (!file.exists()) {
       throw new FileNotFoundException(s"provided file does not exist: ${file}")
     }
     val headers = new HttpHeaders
@@ -110,7 +118,7 @@ class MSDialRestProcessor extends LazyLogging {
 
     val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
 
-    val result = restTemplate.exchange(s"$msdresturl/rest/file/upload",HttpMethod.POST, requestEntity, classOf[ServerResponse])
+    val result = restTemplate.exchange(s"$msdresturl/rest/file/upload", HttpMethod.POST, requestEntity, classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
       val token = result.getBody.filename
@@ -265,7 +273,7 @@ class CachedMSDialRestProcesser extends MSDialRestProcessor {
     */
   override def process(input: File): File = {
 
-    val newFile = s"${input.getName}"
+    val newFile = s"${input.getName}.msdial"
 
     if (!resourceLoader.exists(newFile)) {
       logger.info(s"file: ${input.getName} requires processing and will be stored as ${newFile}")
