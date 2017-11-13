@@ -171,25 +171,27 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
                 // Define editor properties
                 var editor = new $.fn.dataTable.Editor({
                     ajax: function(method, url, data, success, error) {
-                        var rowData = table.row(this).data();
+                        var newData = data.data[Object.keys(data.data)[0]];
+                        var rowData = $scope.activeBin;
+                        var rowId = Object.keys(data.data)[0];
+                        var rows = table.rows();
+
+                        var url = 'rest/library/' + $scope.endpoint;
+
                         var target = {
-                            id: rowData.id,
+                            id: newData.id,
                             confirmed: rowData.confirmed,
                             inchiKey: rowData.inchiKey,
-                            ionMode: rowData.ionMode,
+                            ionMode: newData.ionMode,
                             isRetentionIndexStandard: rowData.isRetentionIndexStandard,
                             msmsSpectrum: rowData.msmsSpectrum,
-                            name: rowData.name,
-                            precursorMass: rowData.precursorMass,
+                            name: newData.name,
+                            precursorMass: newData.precursorMass,
                             requiredForCorrection: rowData.requiredForCorrection,
-                            retentionIndex: rowData.retentionIndex,
+                            retentionIndex: newData.retentionIndex,
                             retentionTimeInSeconds: rowData.retentionTimeInSeconds,
                             spectrum: rowData.spectrum
                         };
-                        var url = 'rest/library/' + $scope.endpoint;
-                        target.name = data.data[Object.keys(data.data)[0]].name;
-                        console.log(target);
-                        console.log(JSON.stringify(target));
 
                         $.ajax( {
                             type: 'PUT',
@@ -199,12 +201,8 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
                             },
                             url: url,
                             data: JSON.stringify(target),
-                            success: function(json) {
-                                //success(json);
-                            },
-                            error: function(xhr, error, thrown) {
-                                //error(xhr, error, thrown);
-                            }
+                            success: function(json) { },
+                            error: function(xhr, error, thrown) { }
                         } );
                     },
                     table: '#binTable',
@@ -361,6 +359,7 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
                 // Broadcast event when a row is clicked
                 $('#binTable').on('click', 'tbody tr', function (e) {
                     var data = table.row(this).data();
+                    $scope.activeBin = data;
                     $rootScope.$broadcast('bin-clicked', data);
                 });
 
