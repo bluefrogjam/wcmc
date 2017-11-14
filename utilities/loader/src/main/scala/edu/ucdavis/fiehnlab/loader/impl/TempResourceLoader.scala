@@ -52,7 +52,7 @@ class TempResourceLoader extends LocalLoader {
     * @return
     */
   override def exists(name: String): Boolean = {
-    new File(name).exists()
+    new File(new File(System.getProperty("java.io.tmpdir")),name).exists()
   }
 
   override def priority: Int = -100

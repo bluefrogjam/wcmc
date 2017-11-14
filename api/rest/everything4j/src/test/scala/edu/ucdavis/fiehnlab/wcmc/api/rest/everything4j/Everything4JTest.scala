@@ -32,7 +32,10 @@ class Everything4JTest extends WordSpec  with ShouldMatchers with BeforeAndAfter
     "load a file" in {
       everything4J.load("090309bsesa100_1.cdf").isDefined shouldBe true
 
-      val file = everything4J.load("090309bsesa100_1.cdf").get
+      val file = everything4J.loadAsFile("090309bsesa100_1.cdf").get
+
+
+
     }
 
 
