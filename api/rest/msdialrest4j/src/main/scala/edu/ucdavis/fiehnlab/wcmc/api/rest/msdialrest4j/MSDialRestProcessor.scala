@@ -80,15 +80,15 @@ class MSDialRestProcessor extends LazyLogging {
         upload(converted)
       }
 
-      val url: String = s"${msdresturl}/rest/deconvolution/process/${input.getName}"
+      val url: String = s"${msdresturl}/rest/deconvolution/process/${converted.getName}"
       logger.info(s"invoking: ${url}")
       val response = restTemplate.getForEntity(url, classOf[ServerResponse])
 
       logger.info(s"response code is: ${response.getStatusCode} and message is ${response.getBody.message}")
       if (response.getStatusCode != HttpStatus.OK) {
-        throw new Exception("Bad request")
+        throw new Exception(s"Response was: ${response.getStatusCode} - ${response.getBody.message}")
       } else {
-        download(input.getName)
+        download(converted.getName)
       }
     }
   }
@@ -123,10 +123,8 @@ class MSDialRestProcessor extends LazyLogging {
       if (result.getStatusCode == HttpStatus.OK) {
         //if input is raw data file... convert
         if (result.getBody.link.contains("/conversion/")) {
-          logger.debug(s"upload result requires conversion of data")
           (convert(result.getBody.link.split("/").last, token), token)
         } else { // process
-          logger.debug("upload succeeded, not conversion required")
           (result.getBody.link.split("/").last, token)
         }
       } else {
