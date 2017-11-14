@@ -28,7 +28,6 @@ class ConvertService extends LazyLogging {
 
     //upload
     var result = mapper.readValue(dfClient.upload(input), classOf[UploadResponse])
-    logger.debug(s"RESULT: ${result}")
 
     //convert
     if (!result.abf.equals("ok")) {
@@ -40,7 +39,6 @@ class ConvertService extends LazyLogging {
       }
 
       //download
-      logger.debug(s"returning converted file: ${input}")
       Option(dfClient.download(input, FileType.ABF))
     }
   }
