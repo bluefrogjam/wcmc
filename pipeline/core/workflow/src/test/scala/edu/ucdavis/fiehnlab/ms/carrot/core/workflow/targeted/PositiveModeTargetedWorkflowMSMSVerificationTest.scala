@@ -4,47 +4,33 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.acquisition.AcquisitionLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration, Primary}
+import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @Configuration
-class MethodConfig{
+class MethodConfig {
 
   val method: AcquisitionMethod = new AcquisitionMethod(
     Some(new ChromatographicMethod("test", Some("agilent"), None, None))
   )
 
-  @Bean
-  @Primary
-  def acquistionLoader:AcquisitionLoader = new AcquisitionLoader {
-    /**
-      * loads the related acquition method for the specified sample
-      * whihc should provide you with all relevant metadata
-      *
-      * @param sample
-      * @return
-      */
-    override def load(sample: Sample): Option[AcquisitionMethod] = Option(method)
-  }
-
 }
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height","carrot.processing.replacement.simple"))
+@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height", "carrot.processing.replacement.simple"))
 class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -63,9 +49,6 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
   val targetLibrary: LibraryAccess[Target] = null
 
   @Autowired
-  val acquisitionLoader: AcquisitionLoader = null
-
-  @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
 
   @Value("${mona.rest.server.user}")
@@ -78,6 +61,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
 
   //sample name to test
   val sampleNames = "B5_SA0267_P20Lipids_Pos_1FV_2416_MSMS.abf" :: "B5_SA0262_P20Lipids_Pos_1FV_2404_MSMS.abf" :: List()
+  val method = AcquisitionMethod(None)
 
   "PositiveModeTargetedWorkflowMSMSVerificationTest" when {
 
@@ -88,13 +72,12 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
       monaSpectrumRestClient.list().size shouldBe 0
 
       val lib = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
-      val method = acquisitionLoader.load(loader.getSample(sampleNames.head)).get
       val targetsToAdd = lib.load(method)
-      targetLibrary.add(targetsToAdd, method,None)
+      targetLibrary.add(targetsToAdd, method, None)
 
     }
     "ensure our targets are defined" in {
-      assert(targetLibrary.load(acquisitionLoader.load(loader.getSample(sampleNames.head)).get).nonEmpty)
+      assert(targetLibrary.load(method).nonEmpty)
     }
 
     "able to load our sample" in {
@@ -112,10 +95,10 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
             classes = ExperimentClass(
               samples = sampleNames.map { sampleName =>
                 loader.getSample(sampleName)
-              },None
+              }, None
 
 
-            ) :: List(), None)
+            ) :: List(), None, AcquisitionMethod(None))
         )
 
       }
@@ -135,7 +118,6 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
       }
 
       "validate the generation of new target" in {
-        val method = acquisitionLoader.load(loader.getSample(sampleNames.head)).get
         assert(targetLibrary.load(method).size == 1203)
       }
     }
@@ -151,7 +133,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height","carrot.processing.replacement.simple"))
+@ActiveProfiles(Array("carrot.targets.dynamic", "carrot.targets.mona", "carrot.report.quantify.height", "carrot.processing.replacement.simple"))
 class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -169,8 +151,6 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
   @Autowired
   val targetLibrary: LibraryAccess[Target] = null
 
-  @Autowired
-  val acquisitionLoader: AcquisitionLoader = null
 
   @Autowired
   val monaSpectrumRestClient: MonaSpectrumRestClient = null
@@ -180,6 +160,7 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
 
   @Value("${mona.rest.server.password}")
   val password: String = null
+  val method = AcquisitionMethod(None)
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -194,13 +175,12 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
       monaSpectrumRestClient.list().foreach(p => monaSpectrumRestClient.delete(p.id))
 
       val lib = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
-      val method = acquisitionLoader.load(loader.getSample(sampleName)).get
       val targetsToAdd = lib.load(method)
       targetLibrary.add(targetsToAdd, method)
 
     }
     "ensure our targets are defined" in {
-      assert(targetLibrary.load(acquisitionLoader.load(loader.getSample(sampleName)).get).nonEmpty)
+      assert(targetLibrary.load(method).nonEmpty)
     }
 
     "able to load our sample" in {
@@ -214,7 +194,7 @@ class PositiveModeTargetedWorkflowMSMSVerificationWithMonaTest extends WordSpec 
           Experiment(
             classes = ExperimentClass(
               samples = loader.getSample(sampleName) :: List(), None
-            ) :: List(), None)
+            ) :: List(), None,AcquisitionMethod(None))
         )
 
       }

@@ -7,9 +7,9 @@
             <Pattern>%-30(%date{HH:mm:ss.SSS} %-5level %-4line --- [%thread]) %C{5} - %m%n%ex{short}</Pattern>
         </encoder>
     </appender>
-	<logger name="edu.ucdavis.fiehnlab" level="info"/>
+	<logger name="edu.ucdavis.fiehnlab" level="debug"/>
 
-	<root level="warn">
+	<root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

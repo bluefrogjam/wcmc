@@ -44,12 +44,12 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
   override protected def quantifySample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): QuantifiedSample[T] = sample match {
     case s: AnnotatedSample =>
       logger.info(s"quantify sample: $s")
-      var temp = quantificationProcess.process(s)
+      var temp = quantificationProcess.process(s, experiment.acquisitionMethod)
 
       logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen data type: $s")
       quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
         logger.info(s"executing: $x")
-        temp = x.process(temp)
+        temp = x.process(temp, experiment.acquisitionMethod)
       }
 
       temp
@@ -77,7 +77,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
             */
           def correct(sampleToUseForCorrection: Sample): Option[CorrectedSample] = {
             try {
-              val correctionCurve = correction.process(sampleToUseForCorrection)
+              val correctionCurve = correction.process(sampleToUseForCorrection, experiment.acquisitionMethod)
 
               Some(correction.doCorrection(correctionCurve.featuresUsedForCorrection, sample, correctionCurve.regressionCurve, sampleToUseForCorrection))
               //correction successful
@@ -126,10 +126,10 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
     else {
       //TODO could be done more elegant with a fold, but no time to play with it
       val iterator = preProcessor.asScala.sortBy(_.priortiy).reverseIterator
-      var temp = iterator.next().process(sample)
+      var temp = iterator.next().process(sample, experiment.acquisitionMethod)
 
       while (iterator.hasNext) {
-        temp = iterator.next().process(temp)
+        temp = iterator.next().process(temp, experiment.acquisitionMethod)
       }
 
       temp
@@ -144,7 +144,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
     * @param experiment
     * @return
     */
-  override protected def correctSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): CorrectedSample = correction.process(sample)
+  override protected def correctSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): CorrectedSample = correction.process(sample, experiment.acquisitionMethod)
 
   /**
     * annotate the given sample
@@ -155,7 +155,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
     * @return
     */
   override protected def annotateSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): AnnotatedSample = sample match {
-    case c: CorrectedSample => annotate.process(c)
+    case c: CorrectedSample => annotate.process(c, experiment.acquisitionMethod)
   }
 
   /**
@@ -175,10 +175,10 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
       else {
         //TODO could be done more elegant with a fold, but no time to play with it
         val iterator = postProcessor.asScala.sortBy(_.priortiy).reverseIterator
-        var temp = iterator.next().process(s)
+        var temp = iterator.next().process(s, experiment.acquisitionMethod)
 
         while (iterator.hasNext) {
-          temp = iterator.next().process(temp)
+          temp = iterator.next().process(temp, experiment.acquisitionMethod)
         }
 
         temp

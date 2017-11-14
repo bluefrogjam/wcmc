@@ -33,41 +33,45 @@ trait ResourceLoader extends LazyLogging {
     * @return
     */
   def loadAsFile(name: String): Option[File] = {
-	  val tempDir = new File(System.getProperty("java.io.tmpdir"))
-	  if(!tempDir.exists()) { tempDir.mkdirs() }
+    val tempDir = new File(System.getProperty("java.io.tmpdir"))
+    if (!tempDir.exists()) {
+      tempDir.mkdirs()
+    }
 
-	  val loaded = try {
-			  load(name)
-	  } catch {
-		  case error: Exception => { logger.debug(s"Error in ${this.getClass.getSimpleName} = ${error.getMessage}")}
-		  None
-	  }
+    val loaded = try {
+      load(name)
+    } catch {
+      case error: Exception => {
+        logger.debug(s"Error in ${this.getClass.getSimpleName} = ${error.getMessage}")
+      }
+        None
+    }
 
     if (loaded.isDefined) {
-      val fName = if(name.startsWith("/")){
+      val fName = if (name.startsWith("/")) {
         name.substring(1)
       } else {
         name
       }
 
-	    val prepro = File.createTempFile("pre", "pro")
-	    prepro.deleteOnExit()
-      val tempFile = new File(prepro.getParentFile,fName)
-	    logger.debug(s"storing ${fName} at: ${tempFile.getAbsolutePath}")
+      val prepro = File.createTempFile("pre", "pro")
+      prepro.deleteOnExit()
+      val tempFile = new File(prepro.getParentFile, fName)
+      logger.debug(s"storing ${fName} at: ${tempFile.getAbsolutePath}")
       tempFile.deleteOnExit()
 
       val outStream = new FileOutputStream(tempFile)
       val stream = loaded.get
 
       logger.debug(s"stream size: ${stream.available()}")
-      IOUtils.copy(stream,outStream)
+      IOUtils.copy(stream, outStream)
 
       outStream.flush()
       outStream.close()
       stream.close()
       Option(tempFile)
     } else {
-	    logger.debug(s"File ${name} not found")
+      logger.debug(s"File ${name} not found")
       None
     }
   }
@@ -113,17 +117,22 @@ class DelegatingResourceLoader extends ResourceLoader {
     * @return
     */
   override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.exists(name) => {
-	  loader.load(name)
+    logger.debug(s"loading ${name} with ${loader.getClass}")
+    loader.load(name)
   }
   }.getOrElse(None)
 
   override def toString = s"DelegatingResourceLoader($sortedLoader)"
 
-  override def exists(name: String): Boolean = sortedLoader.collectFirst { case loader if loader.exists(name) => true }.getOrElse(false)
+  override def exists(name: String): Boolean = sortedLoader.exists { loader =>
+    val result = loader.exists(name)
+    logger.info(s"evaluation of ${loader} for ${name} is ${result}")
+    result
+  }
 
   @PostConstruct
-  def init(): Unit ={
-    logger.info(s"configured with the following resource loaders: ${sortedLoader}")
+  def init(): Unit = {
+    logger.info(s"configured with the following (${sortedLoader.size}) resource loaders: ${sortedLoader}")
   }
 }
 
@@ -135,5 +144,5 @@ trait RemoteLoader extends ResourceLoader {
     * is a server allowed to use this one for lookup
     * functionality
     */
-  def isLookupEnabled():Boolean
+  def isLookupEnabled(): Boolean
 }

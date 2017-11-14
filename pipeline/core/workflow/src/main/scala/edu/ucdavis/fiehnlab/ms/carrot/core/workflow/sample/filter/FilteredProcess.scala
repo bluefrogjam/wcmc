@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.filter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.Process
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{ProcessedSample, Sample}
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +19,7 @@ class FilteredProcess @Autowired()(val filters: List[Filter[Feature]]) extends P
     * @param sample
     * @return
     */
-  override def doProcess(sample: Sample): ProcessedSample = {
+  override def doProcess(sample: Sample, method: AcquisitionMethod): ProcessedSample = {
 
     /**
       * iterate over all the spectra and try to filter the provided spectra

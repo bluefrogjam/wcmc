@@ -1,16 +1,13 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 
-import java.io.{File, FileOutputStream}
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import org.apache.commons.io.IOUtils
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
@@ -31,20 +28,31 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
   @Autowired
   val fserv4j: FServ4jClient = null
 
+  @Autowired
+  val svc: ConvertService = null
+
   def sha256Hash(text: String): String = String.format("%064x", new java.math.BigInteger(1, java.security.MessageDigest.getInstance("SHA-256").digest(text.getBytes("UTF-8"))))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+  "ConvertService" should {
+    "return abf from .d.zip" in {
+      val input = fserv4j.loadAsFile("testA.d.zip").get
+
+      val output = svc.getAbfFile(input).getOrElse(fail)
+      output.exists() should be(true)
+    }
+  }
+
   "MSDialRestProcessorTest" should {
 
     "process" must {
-      "an Agilent .d file" in {
-        val input = new File("testA.d.zip")
+      "process an Agilent .d file" in {
+        val input = fserv4j.loadAsFile("testA.d.zip").get
 
         val output = mSDialRestProcessor.process(input)
-        logger.warn(s"OUTPUT: ${output}")
 
-        output.getName shouldEqual "testA.msdial"
+        output.getName matches "msdial.*?deco"
 
         val resultLines = Source.fromFile(output).getLines().toSeq
         output.deleteOnExit()
@@ -54,19 +62,11 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
         resultLines.size should be(12)
       }
 
-      "return empty file for not zipped file" in {
-        val input = new File("B5_P20Lipids_Pos_QC029.d")
-        val output = intercept[Exception] {
-          mSDialRestProcessor.process(input)
-        }
-      }
-
       "process a .abf file" in {
-        val input = new File("testA.abf")
+        val input = fserv4j.loadAsFile("testA.abf").get
         val output = mSDialRestProcessor.process(input)
-        logger.warn(s"OUTPUT: ${output}")
 
-        output.getName shouldEqual "testA.msdial"
+        output.getName matches "msdial.*?deco"
 
         val resultLines = Source.fromFile(output).getLines().toSeq
 
