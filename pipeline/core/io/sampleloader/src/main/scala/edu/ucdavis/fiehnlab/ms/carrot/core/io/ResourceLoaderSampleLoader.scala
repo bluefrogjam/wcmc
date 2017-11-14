@@ -29,7 +29,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     * @return
     */
   override def loadSample(name: String): Option[_ <: Sample] = {
-    logger.debug(s"looking for sample: ${name}")
+    logger.debug(s"looking for sample: ${name} with ${resourceLoader}")
     val fileOption = resourceLoader.loadAsFile(name)
 
     if (fileOption.isDefined) {

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component
 /**
   * Created by diego on 7/13/2017.
   */
-@Component
 class TempResourceLoader extends LocalLoader {
   /**
     * returns the related resource or none
