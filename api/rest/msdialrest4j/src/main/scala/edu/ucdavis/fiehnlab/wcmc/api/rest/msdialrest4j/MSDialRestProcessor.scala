@@ -6,7 +6,6 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.core.io.FileSystemResource
@@ -150,8 +149,6 @@ class MSDialRestProcessor extends LazyLogging {
     val result = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/status/${id}", classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
-      //      val resultId = result.getBody.link.split("/").last
-
       val download = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/result/${id}", classOf[String])
 
       if (download.getStatusCode == HttpStatus.OK) {
