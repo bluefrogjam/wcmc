@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
@@ -53,8 +54,10 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
     //compute purity values
     val purityComputed = samples //.map(purity.process)
 
+    val method = AcquisitionMethod(None)
+
     //correct the data
-    val correctedSample = purityComputed.map(correction.process)
+    val correctedSample = purityComputed.map((item: Sample) => correction.process(item, method))
 
     correctedSample.foreach { sample =>
       s"process ${sample} without recursive annotation and with preferring mass accuracy over retention index distance" in {
@@ -62,7 +65,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
         annotation.lcmsProperties.recursiveAnnotationMode = false
         annotation.lcmsProperties.preferMassAccuracyOverRetentionIndexDistance = true
 
-        val result = annotation.process(sample)
+        val result = annotation.process(sample, method)
 
         assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)
@@ -85,7 +88,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
           logger.debug("")
         }
-        val quantified = quantify.process(result)
+        val quantified = quantify.process(result, method)
 
 
         //these are our ISD
@@ -111,7 +114,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
         annotation.lcmsProperties.recursiveAnnotationMode = true
         annotation.lcmsProperties.preferMassAccuracyOverRetentionIndexDistance = true
 
-        val result = annotation.process(sample)
+        val result = annotation.process(sample, method)
 
         assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)
@@ -136,7 +139,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
           logger.debug("")
         }
-        val quantified = quantify.process(result)
+        val quantified = quantify.process(result,method )
 
 
         //these are our ISD

@@ -4,25 +4,31 @@ import java.io.File
 import java.util.Date
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.wcmc.server.rdmonitor.api.{FileEvent, FileEventListener}
+import edu.ucdavis.fiehnlab.wcmc.server.rdmonitor.api.FileEventListener
 import org.apache.commons.io.FileUtils
 import org.junit.runner.RunWith
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, ShouldMatchers, WordSpec}
+import org.scalatest.concurrent.{Eventually, IntegrationPatience}
+import org.scalatest.time.{Seconds, Span}
+import org.scalatest.{BeforeAndAfterAll, ShouldMatchers, WordSpec}
+import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.{Bean, Configuration, Import, Profile}
 import org.springframework.stereotype.Component
-import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.collection.mutable.ArrayBuffer
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[MonitorTestConfig]))
-class MonitorTest extends WordSpec with LazyLogging with ShouldMatchers with BeforeAndAfterAll {
+@ActiveProfiles(Array("test"))
+class MonitorTest extends WordSpec with LazyLogging with ShouldMatchers with BeforeAndAfterAll with Eventually with IntegrationPatience {
   @Value("${wcmc.monitor.sourceFolder:target/tmp}")
-  val sourceFolder: String = ""
+  val sourceFolder: Array[String] = null
 
   @Autowired
   val monitor: Monitor = null
@@ -30,11 +36,16 @@ class MonitorTest extends WordSpec with LazyLogging with ShouldMatchers with Bef
   @Autowired
   val listener: TestEventListener = null
 
-  var TS: Long = 0
+  @Autowired
+  val rabbitTemplate: RabbitTemplate = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+  var TS: Long = 0
+
   override def beforeAll() {
+    FileUtils.deleteDirectory(new File("target/tmp"))
+
     TS = prepFiles()
   }
 
@@ -43,67 +54,89 @@ class MonitorTest extends WordSpec with LazyLogging with ShouldMatchers with Bef
   }
 
   "testMonitor" should {
-    "be defined" in {
+    "be defined" ignore {
       monitor should not be null
     }
 
-    "have a sourceFolder" in {
+    "have a sourceFolder" ignore {
       monitor.sourceFolder shouldEqual sourceFolder
     }
 
-    "have a listener registered" in {
+    "have a listener registered" ignore {
       monitor.listeners should not be empty
     }
 
-    "find all files" in {
+    "find all files" ignore {
       listener.files.clear()
-      new File(sourceFolder) should exist
+      sourceFolder.foreach { f =>
+        new File(f) should exist
+      }
 
-      monitor.searchFiles(0)
-      listener.files.size shouldBe 6
+      monitor.searchFiles(0, sourceFolder)
+      eventually(timeout(Span(5, Seconds))) {
+        listener.files.size shouldBe 6 * sourceFolder.length
+      }
     }
 
-    s"find files newer than ${TS}" ignore {    //timing not working, can't figure it out
+    s"find files newer than ${TS}" ignore { //timing not working, can't figure it out
       listener.files.clear()
-      new File(sourceFolder) should exist
+      sourceFolder.foreach { f =>
+        new File(f) should exist
+      }
 
-      monitor.searchFiles(TS)
-      listener.files.size shouldBe 3
+      monitor.searchFiles(TS, sourceFolder)
+      eventually(timeout(Span(5, Seconds))) {
+        listener.files.size shouldBe 3
+      }
     }
 
   }
 
   private def prepFiles(): Long = {
-    logger.debug(s"Creating fake files on ${sourceFolder}...")
+    var ts: Long = 0
 
     val sleep = 200
-    val store = new File(sourceFolder)
-    if (store.exists()) {
-      store.delete()
+    sourceFolder.zipWithIndex.foreach { case (f, ctr) =>
+      val store = new File(f)
+      if (store.exists()) {
+        store.delete()
+      }
+      store.mkdirs()
+
+      Array(".d.zip", ".wiff").foreach(i => {
+        File.createTempFile("blah_", i, store)
+        Thread.sleep(sleep)
+      })
+      new File(s"${f}/blah_folderold.d").mkdir()
+
+      ts = new Date().getTime
+
+      Array(".d.zip", ".wiff").foreach(i => {
+        File.createTempFile("blah_", i, store)
+        Thread.sleep(sleep)
+      })
+      new File(s"${f}/blah_foldernew.d").mkdir()
     }
-    store.mkdirs()
-
-    Array(".d.zip", ".wiff").foreach(i => {File.createTempFile("blah_", i, store); Thread.sleep(sleep)})
-    new File(s"${sourceFolder}/blah_folderold.d").mkdir()
-
-    val ts = new Date().getTime
-
-    Array(".d.zip", ".wiff").foreach(i => {File.createTempFile("blah_", i, store); Thread.sleep(sleep)})
-    new File(s"${sourceFolder}/blah_foldernew.d").mkdir()
 
     ts
   }
 }
 
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class MonitorTestConfig {}
+@Configuration
+@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@Import(Array(classOf[MonitorAutoConfiguration]))
+class MonitorTestConfig {
+  @Bean
+  def listenerAdapter(receiver: FileEventListener) = new MessageListenerAdapter(receiver, "recieveMessage")
+}
 
 @Component
+@Profile(Array("test"))
 class TestEventListener extends FileEventListener with LazyLogging {
   val files: ArrayBuffer[String] = ArrayBuffer.empty
 
-  override def foundFile(event: FileEvent): Unit = {
-    logger.info(s"Found new file: ${event.file.getName}\t-\t${event.file.lastModified()} - ref stamp: ${event.refTimeStamp}")
-    files.append(event.file.getName)
+  def recieveMessage(message: FileMessage): Unit = {
+    logger.info(s"Found new file: ${message.name}\t-\t${message.timestamp}")
+    files.append(message.name)
   }
 }

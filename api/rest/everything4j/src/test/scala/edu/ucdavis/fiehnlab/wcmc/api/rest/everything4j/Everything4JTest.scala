@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j
 
 import java.io.{File, FileOutputStream}
+import java.nio.charset.MalformedInputException
 import java.nio.file.Files
 import java.security.MessageDigest
 
@@ -15,15 +16,17 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
+import scala.io.Source
+
 /**
   * Created by wohlgemuth on 10/10/17.
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TestConfig]))
-class Everything4JTest extends WordSpec  with ShouldMatchers with BeforeAndAfterEach with LazyLogging{
+class Everything4JTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {
 
   @Autowired
-  val everything4J:Everything4J = null
+  val everything4J: Everything4J = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -31,7 +34,22 @@ class Everything4JTest extends WordSpec  with ShouldMatchers with BeforeAndAfter
 
     "load a file" in {
       everything4J.load("090309bsesa100_1.cdf").isDefined shouldBe true
+
+      val file = everything4J.loadAsFile("090309bsesa100_1.cdf").get
+
     }
+
+    "load GLA_CT_Lipids_QC04.abf as abf binary file and is not html" in {
+      val file = everything4J.loadAsFile("GLA_CT_Lipids_QC04.abf").get
+
+
+      //only gets thrown in case of binary files
+      intercept[MalformedInputException] {
+        Source.fromFile(file).getLines().hasNext
+      }
+
+    }
+
 
     "load a folder" in {
       val name = "Tube A.d"
@@ -74,6 +92,6 @@ class Everything4JTest extends WordSpec  with ShouldMatchers with BeforeAndAfter
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class TestConfig{
+class TestConfig {
 
 }

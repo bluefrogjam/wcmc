@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.acquisition.AcquisitionLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Target}
@@ -12,8 +12,8 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * This test is a case to ensure that our value is in the exspected range and this annotation
@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height","carrot.processing.replacement.simple"))
+@ActiveProfiles(Array("backend-txt", "carrot.report.quantify.height", "carrot.processing.replacement.simple"))
 class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpec with LazyLogging {
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
@@ -32,8 +32,6 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
   @Autowired
   val loader: SampleLoader = null
 
-  @Autowired
-  val acquisitionLoader:AcquisitionLoader = null
 
   @Autowired
   val targetLibrary: LibraryAccess[Target] = null
@@ -46,7 +44,7 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
   "LCMSPositiveModeTargetWorkflowTest" when {
 
     "ensure our targets are defined" in {
-      assert(targetLibrary.load(acquisitionLoader.load(loader.getSample(sampleName)).get).nonEmpty)
+      assert(targetLibrary.load(AcquisitionMethod(None)).nonEmpty)
     }
 
     s"find *015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD in sample $sampleName with a value over 80k" must {
@@ -55,7 +53,10 @@ class PositiveModeTargetedWorkflow015ISTDMSDialsVerificationTest extends WordSpe
         val result = workflow.process(
           Experiment(
             classes = ExperimentClass(
-              samples = loader.getSample(sampleName) :: List(),None) :: List(), None))
+              samples = loader.getSample(sampleName) :: List(), None) :: List(), None,
+            acquisitionMethod = AcquisitionMethod(None)
+          )
+        )
       }
 
       "has a result" in {

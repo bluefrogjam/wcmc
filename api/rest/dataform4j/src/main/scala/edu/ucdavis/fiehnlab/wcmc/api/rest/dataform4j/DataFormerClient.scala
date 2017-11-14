@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
 import java.io._
+import java.net.URL
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
@@ -30,6 +31,9 @@ class DataFormerClient extends LazyLogging {
   @Value("${wcmc.api.rest.dataformer.port:9090}")
   val port: Int = 0
 
+  @Value("${wcmc.api.rest.dataformer.storage:target/storage}")
+  val storage: String = ""
+
   @Autowired
   val fserv4j: FServ4jClient = null
 
@@ -51,34 +55,29 @@ class DataFormerClient extends LazyLogging {
         logger.error(s"File ${filename} did not download correctly")
         Map("abf" -> null, "mzml" -> null, "error" -> s"File ${filename} did not download correctly")
       } else {
-        val tmpfile = new File(filename)
+        val tmpfile = new File(storage.concat(File.separator).concat(filename))
+        if (!tmpfile.getParentFile.exists()) {
+          tmpfile.getParentFile.mkdir()
+        }
 
-        logger.debug("====== saving file ======")
         IOUtils.copyLarge(file.get, new FileOutputStream(tmpfile))
 
         try {
           val upresponse = upload(tmpfile)
-          logger.info(s"uploaded msg: ${upresponse}")
 
           mapper.registerModule(DefaultScalaModule)
           val uploaded = mapper.readValue(upresponse, classOf[Map[String, String]])
 
           if (uploaded.getOrElse("abf", "not found").equals("ok")) {
             abfFile = download(tmpfile, FileType.ABF)
-            logger.debug(s"abfFile: ${abfFile.length()}")
             fserv4j.upload(abfFile)
             logger.debug(s"${abfFile} added to FileServer")
-          } else {
-            logger.info("Could not convert to ABF")
           }
 
           if (uploaded.getOrElse("mzml", "not found").equals("ok")) {
             mzmlFile = download(tmpfile, FileType.MZML)
-            logger.debug(s"mzmlFile: ${mzmlFile.length()}")
             fserv4j.upload(mzmlFile)
             logger.debug(s"${mzmlFile} added to FileServer")
-          } else {
-            logger.info("Could not convert to ABF")
           }
 
           Map("abf" -> abfFile.getName, "mzml" -> mzmlFile.getName)
@@ -109,13 +108,11 @@ class DataFormerClient extends LazyLogging {
     val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
 
     logger.info(s"uploading ${file.getName} to: $url/rest/conversion/upload")
-    logger.debug(s"params: $requestEntity")
 
     val result = restTemplate.exchange(s"$url/rest/conversion/upload", HttpMethod.POST, requestEntity, classOf[String])
 
     if (result.getStatusCode == HttpStatus.OK) {
       val uploadResp = result.getBody
-      logger.info(s"filename = $uploadResp")
       result.getBody
     } else {
       logger.warn(s"received result was: ${result}")
@@ -124,26 +121,22 @@ class DataFormerClient extends LazyLogging {
   }
 
   def download(file: File, format: FileType): File = {
-    val endpoint = s"$url/rest/conversion/download/${file}/${format.toString.toLowerCase}"
+    val endpoint = s"$url/rest/conversion/download/${file.getName}/${format.toString.toLowerCase}"
     logger.info(s"downloading ${format} version of ${file.getName}")
 
-    val request: HttpEntity[String] = new HttpEntity("parameters")
-    val result = restTemplate.exchange(endpoint, HttpMethod.GET, request, classOf[Array[Byte]])
+    //    val request: HttpEntity[String] = new HttpEntity("parameters")
+    val downloadName = storage.concat(File.separator).concat(file.getName.substring(0, file.getName.indexOf(".")))
+    val toDownload = new File(s"${downloadName}.${format.toString.toLowerCase()}")
 
-    val downloadName = file.getName.substring(0, file.getName.indexOf("."))
-    if (result.getStatusCode == HttpStatus.OK) {
-      val toDownload = new File(s"${downloadName}.${format.toString.toLowerCase()}")
-
-      logger.debug(s"Trying to download: ${toDownload}")
-      val out = new BufferedOutputStream(new FileOutputStream(toDownload))
-      IOUtils.copy(new ByteArrayInputStream(result.getBody), out)
+    val out = new BufferedOutputStream(new FileOutputStream(toDownload))
+    try {
+      IOUtils.copy(new URL(endpoint).openStream(), out)
       out.flush()
+    } finally {
       out.close()
-
-      toDownload
-    } else {
-      throw new DownloadException(result.toString)
     }
+
+    toDownload
   }
 }
 

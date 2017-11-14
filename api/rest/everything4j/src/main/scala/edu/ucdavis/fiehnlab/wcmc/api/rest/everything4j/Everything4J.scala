@@ -38,6 +38,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     val data = objectMapper.readValue(new URL(url),classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")
 
     if (data.isEmpty) {
+      logger.info("no data received...")
       val folder = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "folder")
 
       if (folder.isEmpty) {
@@ -47,8 +48,12 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
         Option(content)
       }
     } else {
-      val encoded = data.head.path.replaceAll("\\\\","/").replaceAll("\\s","%20").replaceAll(":","%3A")
-      val content = new URI(s"http://${host}:${port}/${encoded}").toURL
+      val encoded = s"${data.head.path.replaceAll("\\\\","/").replaceAll("\\s","%20").replaceAll(":","%3A")}/${data.head.name}"
+      val uri = s"http://${host}:${port}/${encoded}"
+
+      logger.info(s"loading from URI: ${uri}")
+      val content = new URI(uri).toURL
+
 
       Option(content.openStream())
     }
@@ -140,8 +145,11 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     val url = s"http://${host}:${port}?s=${name}&j=1&path_column=1"
     logger.info(s"checking url: ${url}")
 
-    objectMapper.readValue(new URL(url), classOf[Search]).results.exists(_.`type`.toLowerCase() == "file")
+    val result  = objectMapper.readValue(new URL(url), classOf[Search]).results.count(_.`type`.toLowerCase() == "file") > 0
 
+
+    logger.info(s"exists: ${result}")
+    result
   }
 }
 

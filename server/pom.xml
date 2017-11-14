@@ -18,7 +18,7 @@
 	<modules>
 		<module>fserv</module>
 		<module>fservapp</module>
-        <module>rdmonitor</module>
+        <!--<module>rdmonitor</module>-->
     </modules>
 
 
