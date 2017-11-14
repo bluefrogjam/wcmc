@@ -4,10 +4,10 @@ import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.{ComponentScan, Configuration}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType, ResponseEntity, _}
 import org.springframework.stereotype.Component
@@ -17,7 +17,8 @@ import org.springframework.web.client.RestOperations
 @Configuration
 @ComponentScan
 class MSDialRestProcessorAutoconfiguration {
-
+  @Bean
+  def dfClient: DataFormerClient = new DataFormerClient()
 }
 
 /**
@@ -43,6 +44,12 @@ class MSDialRestProcessor extends LazyLogging {
   @Autowired
   val restTemplate: RestOperations = null
 
+  @Autowired
+  val dfClient: DataFormerClient = null
+
+  @Autowired
+  val cvtSvc: ConvertService = null
+
   protected def msdresturl = s"http://${msdresthost}:${msdrestport}"
 
   /**
@@ -58,23 +65,30 @@ class MSDialRestProcessor extends LazyLogging {
     if (input.isDirectory) {
       throw new Exception("can't process a folder")
     } else {
-      //upload file if not on msdial server
-      if (!exists(input.getName)) {
-        logger.debug(s"${input.getName} doesn't exist, uploading...")
-        upload(input)
-      } else {
-        logger.debug(s"${input.getName} exists")
+
+      val converted: File = {
+        if (!input.getName.endsWith(".abf")) {
+          cvtSvc.getAbfFile(input).getOrElse(throw new Exception(s"Can't process ${input}. Error treying to convert to abf"))
+        } else {
+          input
+        }
       }
 
-      val url: String = s"${msdresturl}/rest/deconvolution/process/${input.getName}"
+      //upload file if not on msdial server
+      if (!exists(converted.getName)) {
+        logger.debug(s"${input.getName} doesn't exist, uploading...")
+        upload(converted)
+      }
+
+      val url: String = s"${msdresturl}/rest/deconvolution/process/${converted.getName}"
       logger.info(s"invoking: ${url}")
       val response = restTemplate.getForEntity(url, classOf[ServerResponse])
 
       logger.info(s"response code is: ${response.getStatusCode} and message is ${response.getBody.message}")
       if (response.getStatusCode != HttpStatus.OK) {
-        throw new Exception("Bad request")
+        throw new Exception(s"Response was: ${response.getStatusCode} - ${response.getBody.message}")
       } else {
-        download(input.getName)
+        download(converted.getName)
       }
     }
   }
@@ -88,7 +102,7 @@ class MSDialRestProcessor extends LazyLogging {
   def upload(file: File): (String, String) = {
     logger.debug(s"uploading file: ${file} to ${msdresturl}")
 
-    if (!file.exists()) {
+    if(!file.exists()){
       throw new FileNotFoundException(s"provided file does not exist: ${file}")
     }
     val headers = new HttpHeaders
@@ -109,10 +123,8 @@ class MSDialRestProcessor extends LazyLogging {
       if (result.getStatusCode == HttpStatus.OK) {
         //if input is raw data file... convert
         if (result.getBody.link.contains("/conversion/")) {
-          logger.debug(s"upload result requires conversion of data")
           (convert(result.getBody.link.split("/").last, token), token)
         } else { // process
-          logger.debug("upload succeeded, not conversion required")
           (result.getBody.link.split("/").last, token)
         }
       } else {
@@ -135,8 +147,6 @@ class MSDialRestProcessor extends LazyLogging {
     val result = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/status/${id}", classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
-      //      val resultId = result.getBody.link.split("/").last
-
       val download = restTemplate.getForEntity(s"${msdresturl}/rest/deconvolution/result/${id}", classOf[String])
 
       if (download.getStatusCode == HttpStatus.OK) {
