@@ -160,7 +160,7 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
                             },
                             url: url,
                             data: JSON.stringify(target),
-                            success: function(json) { },
+                            success: function(json) { console.log('success', json); table.ajax.reload(); },
                             error: function(xhr, error, thrown) { }
                         } );
                     },
