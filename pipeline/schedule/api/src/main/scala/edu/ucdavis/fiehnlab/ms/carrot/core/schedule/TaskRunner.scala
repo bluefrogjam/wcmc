@@ -42,6 +42,10 @@ class TaskRunner extends LazyLogging {
     */
   final def run(task: Task) = {
 
+    assert(task.acquisitionMethod != null)
+    assert(task.email != null)
+    assert(task.name != null)
+
     logger.info(s"executing received task: ${task}")
 
     val classes: Seq[ExperimentClass] = task.samples.groupBy(_.matrix).map { entry =>
@@ -57,7 +61,8 @@ class TaskRunner extends LazyLogging {
 
     val experiment = Experiment(
       classes,
-      Some(task.name)
+      Some(task.name),
+      acquisitionMethod = task.acquisitionMethod
     )
 
     logger.info(s"starting to process the generated experiment: ${experiment}")
@@ -65,7 +70,7 @@ class TaskRunner extends LazyLogging {
 
 
     //send the processed result to the storage engine.
-    storage.asScala.foreach { x:ResultStorage =>
+    storage.asScala.foreach { x: ResultStorage =>
       try {
         x.store(result, task)
       }

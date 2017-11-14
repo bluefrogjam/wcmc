@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.acquisition.AcquisitionLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target}
@@ -13,8 +13,8 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * This test is a case to ensure that our value is in the exspected range and this annotation
@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height","carrot.processing.replacement.simple"))
+@ActiveProfiles(Array("backend-txt", "carrot.report.quantify.height", "carrot.processing.replacement.simple"))
 class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with LazyLogging {
   @Autowired
   val workflow: LCMSPositiveModeTargetWorkflow[Double] = null
@@ -35,8 +35,6 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
 
   @Autowired
   val targetLibrary: LibraryAccess[Target] = null
-  @Autowired
-  val acquisitionLoader:AcquisitionLoader = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -46,10 +44,10 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
   "LCMSPositiveModeTargetWorkflowTest" when {
 
     "ensure our targets are defined" in {
-      assert(targetLibrary.load(acquisitionLoader.load(loader.getSample(sampleName)).get).nonEmpty)
+      assert(targetLibrary.load(AcquisitionMethod(None)).nonEmpty)
     }
 
-    "able to load our sample" in{
+    "able to load our sample" in {
       assert(loader.loadSample(sampleName).isDefined)
     }
 
@@ -59,8 +57,8 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
         val result = workflow.process(
           Experiment(
             classes = ExperimentClass(
-	            samples = loader.getSample(sampleName) :: List(),None
-            ) :: List(), None)
+              samples = loader.getSample(sampleName) :: List(), None
+            ) :: List(), None, AcquisitionMethod(None))
         )
 
       }
@@ -83,11 +81,11 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
         val count = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.count(_.isInstanceOf[GapFilledTarget[Double]])
         logger.info(s"replaced value count: ${count}")
 
-        count shouldBe(370)
+        count shouldBe (370)
       }
       "validate the result" in {
 
-        val sample:QuantifiedSample[Double] = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]]
+        val sample: QuantifiedSample[Double] = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]]
 
         val target = sample.quantifiedTargets.filter(_.name.get == "*015 1_MG 17:0/0:0/0:0 [M+Na]+ ISTD").head
 

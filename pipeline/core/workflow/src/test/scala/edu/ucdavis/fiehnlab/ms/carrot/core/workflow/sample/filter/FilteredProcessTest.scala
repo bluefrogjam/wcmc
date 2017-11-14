@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.filter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample}
 import org.scalatest.WordSpec
@@ -11,7 +12,7 @@ import org.scalatest.WordSpec
 class FilteredProcessTest extends WordSpec {
 
   "FilteredProcessTest" should {
-
+    val method = AcquisitionMethod(None)
     "process - which should include everything" in {
 
       val filteredProcess = new FilteredProcess(
@@ -20,7 +21,7 @@ class FilteredProcessTest extends WordSpec {
         })
       )
 
-      val result = filteredProcess.process(testSampleWith1Spectra)
+      val result = filteredProcess.process(testSampleWith1Spectra, method)
 
       assert(result.spectra.size == 1)
     }
@@ -32,7 +33,7 @@ class FilteredProcessTest extends WordSpec {
         })
       )
 
-      val result = filteredProcess.process(testSampleWith1Spectra)
+      val result = filteredProcess.process(testSampleWith1Spectra, method)
 
       assert(result.spectra.isEmpty)
     }
@@ -50,7 +51,7 @@ class FilteredProcessTest extends WordSpec {
         )
       )
 
-      val result = filteredProcess.process(testSampleWith1Spectra)
+      val result = filteredProcess.process(testSampleWith1Spectra, method)
 
       assert(result.spectra.isEmpty)
     }

@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
@@ -42,21 +43,19 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "SimpleZeroReplacementTest" must {
-
+    val method = AcquisitionMethod(None)
     val sample:QuantifiedSample[Double] =
-      quantify.process(
-        annotation.process(
-          correction.process(
-            loader.getSample("B5_P20Lipids_Pos_QC000.abf")
-          )
-        )
-      )
+      quantify.process(annotation.process(
+                correction.process(
+                  loader.getSample("B5_P20Lipids_Pos_QC000.abf"), method
+                ), method
+              ), method)
 
     "replaceValue" should {
 
       var replaced:QuantifiedSample[Double] = null
       "replace the null values in the file" in {
-          replaced = simpleZeroReplacement.process(sample)
+          replaced = simpleZeroReplacement.process(sample,method )
 
 
         replaced.spectra.foreach{ x =>

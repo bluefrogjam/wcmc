@@ -3,7 +3,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import org.junit.runner.RunWith
@@ -18,14 +19,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height"))
-class QuantifyByHeightProcessTest extends WordSpec with LazyLogging{
+@ActiveProfiles(Array("backend-txt", "carrot.report.quantify.height"))
+class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrection = null
 
   @Autowired
-  val loader:SampleLoader = null
+  val loader: SampleLoader = null
 
   @Autowired
   val annotation: LCMSTargetAnnotationProcess = null
@@ -37,26 +38,28 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging{
 
   "QuantifyByHeightProcessTest" should {
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq(  "B5_P20Lipids_Pos_NIST02.abf","B5_SA0002_P20Lipids_Pos_1FL_1006.abf"))
+    val method = AcquisitionMethod(None)
+
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.abf", "B5_SA0002_P20Lipids_Pos_1FL_1006.abf"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)
 
     //correct the data
-    val correctedSample = purityComputed.map(correction.process)
+    val correctedSample = purityComputed.map((item: Sample) => correction.process(item, method))
 
-    val annotated = correctedSample.map(annotation.process)
+    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method))
 
     annotated.foreach { sample =>
 
       s"process ${sample}" in {
 
-        val result:QuantifiedSample[Double] = quantification.process(sample)
+        val result: QuantifiedSample[Double] = quantification.process(sample, method)
 
         var annotationCount = 0
-        result.quantifiedTargets.foreach{ a=>
-          if(a.spectra.isDefined){
-            annotationCount = annotationCount+ 1
+        result.quantifiedTargets.foreach { a =>
+          if (a.spectra.isDefined) {
+            annotationCount = annotationCount + 1
           }
         }
 

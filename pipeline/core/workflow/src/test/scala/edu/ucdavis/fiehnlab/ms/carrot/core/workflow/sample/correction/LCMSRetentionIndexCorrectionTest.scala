@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception.NotEnoughStandardsFoundException
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -32,7 +33,7 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec with LazyLogging{
 
     val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.abf")
     val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.abf")
-
+    val method = AcquisitionMethod(None)
     assert(correction != null)
 
 
@@ -40,7 +41,7 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec with LazyLogging{
 
         correction.minimumFoundStandards = 20
         val error = intercept[NotEnoughStandardsFoundException] {
-          val result = correction.process(sample3)
+          val result = correction.process(sample3, method)
 
           for(x <- result.featuresUsedForCorrection ){
             logger.info(s"used for correction: ${x}")
@@ -52,7 +53,7 @@ class LCMSRetentionIndexCorrectionTest extends WordSpec with LazyLogging{
       s"should pass, because we have enough standards for us to continue ${sample2}" in {
         correction.minimumFoundStandards = 16
 
-        val corrected = correction.process(sample2)
+        val corrected = correction.process(sample2,method )
 
         for(x <- corrected.featuresUsedForCorrection ){
           logger.info(s"used for correction: ${x}")

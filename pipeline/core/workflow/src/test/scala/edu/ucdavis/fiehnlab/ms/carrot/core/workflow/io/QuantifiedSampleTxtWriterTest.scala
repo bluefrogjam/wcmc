@@ -5,7 +5,8 @@ import java.io.{FileInputStream, FileOutputStream}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
@@ -48,17 +49,18 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
   "QuantifiedSampleTxtWriterTest" should {
 
 
+    val method = AcquisitionMethod(None)
 
     val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.abf", "B5_P20Lipids_Pos_QC000.abf"))
 
     //correct the data
-    val correctedSample = samples.map(correction.process)
+    val correctedSample = samples.map((item: Sample) => correction.process(item, method))
 
-    val annotated = correctedSample.map(annotation.process)
+    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method))
 
-    val quantified = annotated.map(quantification.process)
+    val quantified = annotated.map((item: AnnotatedSample) => quantification.process(item,method ))
 
-    val results = quantified.map(replacement.process)
+    val results = quantified.map((item: QuantifiedSample[Double]) => replacement.process(item, method))
 
     "write" in {
 
