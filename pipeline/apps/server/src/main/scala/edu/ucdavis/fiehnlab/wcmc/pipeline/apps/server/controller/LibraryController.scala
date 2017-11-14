@@ -51,7 +51,7 @@ class LibraryController extends LazyLogging {
     * @param target
     */
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.PUT))
-  def updateTarget(@PathVariable("library") id: String, @RequestBody target: TargetExtended): Unit = {
+  def updateTarget(@PathVariable("library") id: String, @RequestBody target: TargetExtended): Iterable[Target] = {
     logger.info(s"Update requested: $target")
     val result = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == id =>
@@ -59,7 +59,10 @@ class LibraryController extends LazyLogging {
     }
 
     if(result.isDefined){
+      logger.info(s"Result: $result")
       libraryAccess.update(target,result.get)
+
+      Array(target)
     }
     else{
       throw new ResourceNotFoundException
@@ -102,23 +105,25 @@ class ResourceAlreadyExistException extends RuntimeException
   */
 case class UpdateTarget(target: Target, library: String)
 
-case class TargetExtended(id: String,
-                          msmsSpectrum: Option[SpectrumExtended],
-                          override val retentionIndex: Double,
-                          override var confirmed: Boolean,
-                          override val precursorMass: Option[Double],
+case class TargetExtended(override var confirmed: Boolean,
+                          id: String,
                           override var inchiKey: Option[String],
                           override val ionMode: IonMode,
-                          override val spectrum: Option[SpectrumExtended],
+                          override var isRetentionIndexStandard: Boolean,
+                          msmsSpectrum: Option[SpectrumExtended],
                           override var name: Option[String],
+                          override val precursorMass: Option[Double],
                           override var requiredForCorrection: Boolean,
-                          override var isRetentionIndexStandard: Boolean
+                          override val retentionIndex: Double,
+                          override val retentionTimeInSeconds: Double,
+                          override val spectrum: Option[SpectrumExtended]
                          ) extends Target {
+  override def toString = f"Target(id=${id}, name=${name.getOrElse("None")}, retentionTime=$retentionTimeInMinutes (min), retentionTime=$retentionIndex (s), inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${precursorMass.getOrElse("None")})"
 
 }
 
-case class SpectrumExtended(override val modelIons: Option[Seq[Double]],
-                            override val ions: Seq[Ion],
+case class SpectrumExtended(override val ions: Seq[Ion],
+                            override val modelIons: Option[Seq[Double]],
                             override val msLevel: Short
                            ) extends SpectrumProperties{
 
