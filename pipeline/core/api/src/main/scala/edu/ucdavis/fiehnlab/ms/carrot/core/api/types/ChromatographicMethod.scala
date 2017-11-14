@@ -37,3 +37,16 @@ class Treatment(
                  val name: String,
                  val value: Any
                )
+
+/**
+  * returns the associated id for this object
+  */
+trait Idable[T] {
+
+  /**
+    * internal id
+    *
+    * @return
+    */
+  def id: T
+}
