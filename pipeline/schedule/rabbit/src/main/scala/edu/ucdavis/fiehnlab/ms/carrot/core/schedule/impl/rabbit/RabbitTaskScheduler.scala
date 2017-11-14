@@ -2,10 +2,14 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.schedule.impl.rabbit
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
+import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Bean, Configuration}
+
 
 /**
   * schedules carrot based tasks to a local queue
@@ -42,6 +46,23 @@ class RabbitTaskRunner {
 
 @Configuration
 class RabbitTaskAutoconfiguration {
+
+  @Bean
+  def queue: Queue = new Queue("carrot-tasks", false)
+
+  @Bean
+  def exchange = new FanoutExchange("carrot-test-exchange")
+
+  @Bean
+  def binding(queue: Queue, exchange: TopicExchange): Binding = BindingBuilder.bind(queue).to(exchange).`with`("carrot-tasks")
+
+  @Bean def container(connectionFactory: Nothing, listenerAdapter: MessageListenerAdapter): SimpleMessageListenerContainer = {
+    val container = new SimpleMessageListenerContainer
+    container.setConnectionFactory(connectionFactory)
+    container.setQueueNames("carrot-tasks")
+    container.setMessageListener(listenerAdapter)
+    container
+  }
 
   @Bean
   def rabbitTaskRunner: RabbitTaskRunner = {
