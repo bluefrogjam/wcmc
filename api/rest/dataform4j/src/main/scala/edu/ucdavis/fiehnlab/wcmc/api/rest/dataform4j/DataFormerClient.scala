@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
 import java.io._
+import java.net.URL
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
@@ -126,23 +127,20 @@ class DataFormerClient extends LazyLogging {
     val endpoint = s"$url/rest/conversion/download/${file}/${format.toString.toLowerCase}"
     logger.info(s"downloading ${format} version of ${file.getName}")
 
-    val request: HttpEntity[String] = new HttpEntity("parameters")
-    val result = restTemplate.exchange(endpoint, HttpMethod.GET, request, classOf[Array[Byte]])
-
+    //    val request: HttpEntity[String] = new HttpEntity("parameters")
     val downloadName = file.getName.substring(0, file.getName.indexOf("."))
-    if (result.getStatusCode == HttpStatus.OK) {
-      val toDownload = new File(s"${downloadName}.${format.toString.toLowerCase()}")
+    val toDownload = new File(s"${downloadName}.${format.toString.toLowerCase()}")
 
+    val out = new BufferedOutputStream(new FileOutputStream(toDownload))
+    try {
       logger.debug(s"Trying to download: ${toDownload}")
-      val out = new BufferedOutputStream(new FileOutputStream(toDownload))
-      IOUtils.copy(new ByteArrayInputStream(result.getBody), out)
+      IOUtils.copy(new URL(endpoint).openStream(), out)
       out.flush()
+    } finally {
       out.close()
-
-      toDownload
-    } else {
-      throw new DownloadException(result.toString)
     }
+
+    toDownload
   }
 }
 

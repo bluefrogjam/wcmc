@@ -31,19 +31,22 @@ class ConvertService extends LazyLogging {
     logger.debug(s"RESULT: ${result}")
 
     //convert
-    if(!result.abf.equals("ok")) {
+    if (!result.abf.equals("ok")) {
       None
     } else {
       val cr = dfClient.convert(input.getName)
-      if(cr.get(""))) {
-
+      if (cr.getOrElse("abf", "").isEmpty) {
+        None
       }
 
       //download
+      logger.debug(s"returning converted file: ${input}")
+      Option(dfClient.download(input, FileType.ABF))
     }
   }
 }
 
 
 case class UploadResponse(filename: String, abf: String, mzml: String)
+
 case class ConversionResponse(filename: String, abf: String, mzml: String)

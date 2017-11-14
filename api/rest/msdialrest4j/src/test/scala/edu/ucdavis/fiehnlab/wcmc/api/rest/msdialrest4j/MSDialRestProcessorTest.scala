@@ -41,9 +41,11 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
     "return abf from .d.zip" in {
       val input = fserv4j.loadAsFile("testA.d.zip").get
 
-      val output = svc.getAbfFile(input)
+      val output = svc.getAbfFile(input).getOrElse(fail)
 
+      output.length() should be > 4000L
 
+      Source.fromFile(output).getLines.toList.head should contain("Name")
     }
   }
 

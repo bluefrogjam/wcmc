@@ -22,7 +22,12 @@ class ABFSample(override val fileName: String, file: File, client: MSDialRestPro
     logger.debug("converting to MSDial representation")
     logger.info(s"using file: ${file}")
 	  val start = System.nanoTime()
-	  val spec = MSDialSample(fileName, client.process(file)).spectra
+
+    val processingResult = client.process(file)
+
+    logger.info(s"processing result is located at: ${processingResult.getAbsolutePath}")
+
+	  val spec = MSDialSample(fileName, processingResult).spectra
 	  logger.info(s"preprocess took: ${(System.nanoTime() - start) / 1000000}ms")
 	  spec
   }
