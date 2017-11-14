@@ -14,14 +14,8 @@
         $scope.binSettings = {
             acquisition: 'test',
             filters: {
-                unnamed: false,
-                ungrouped: false,
-                retentionRange: false,
-                retentionMin: 200000,
-                retentionMax: 300000,
-                libraryMatches: false,
-                sameSample: false,
-                sampleName: ''
+                massWindow: 5,
+                riWindow: 5
             }
         };
 
@@ -90,12 +84,8 @@
             $scope.$apply(function() {
             console.log('bin-clicked', data);
                 $scope.bin = data;
-//                $scope.binSettings.filters.sampleName = data.sampleName;
-
                 $scope.stSpectra.data = [];
                 $scope.stSpectra.data.push({ spectrumId: 'BIN', spectrum: data.spectrum });
-
-//                $scope.binvestigateUrl = $sce.trustAsResourceUrl('http://binvestigate.fiehnlab.ucdavis.edu/#/bin/' + data.id);
                 $scope.similaritySearch(data);
             })
         });

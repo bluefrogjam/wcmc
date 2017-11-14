@@ -35,8 +35,9 @@
             <div class="row">
                 <div id="bin-table-wrapper" class="col-xs-7 col-md-6 scrollable">
                     <div id="bin-filter-wrapper">
+                        <a class="corner-button" href="/">Back</a>
                         <div uib-accordion>
-                            <div uib-accordion-group class="panel-default" heading="Filters" is-open="filtersOpen">
+                            <div uib-accordion-group class="panel-default" heading="Settings" is-open="filtersOpen">
                                 <div class="panel-default">
                                     <form>
                                         <div class="radio">
@@ -45,12 +46,22 @@
                                         <div class="radio">
                                             <label><input type="radio" value="test 2" ng-model="binSettings.acquisition">Test 2</label>
                                         </div>
+
+                                        <div class="form-group">
+                                            <label>Mass Window</label>
+                                            <input type="number" class="form-control" ng-model="binSettings.filters.massWindow" ng-model-options="{updateOn: 'blur'}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>RI Window</label>
+                                            <input type="number" class="form-control" ng-model="binSettings.filters.riWindow" ng-model-options="{updateOn: 'blur'}">
+                                        </div>
+
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <bin-table filters="binSettings.filters" endpoint="binSettings.acquisition"></bin-table>
+                    <bin-table filters="binSettings.filters" endpoint="binSettings.acquisition" dt-footer></bin-table>
                 </div>
                 <div id="uib-tabset-wrapper" class="col-xs-5 col-md-6">
                     <uib-tabset active="active">
@@ -197,8 +208,11 @@
 
         <script src="binview/scripts/directives/binTableDirective.js"></script>
         <script src="binview/scripts/directives/simTableDirective.js"></script>
+        <script src="binview/scripts/directives/dtFooterDirective.js"></script>
         <script src="binview/scripts/directives/sketcherDirective.js"></script>
         <script src="binview/scripts/directives/stMassSpecDirective.js"></script>
+
+        <script src="binview/scripts/services/dtFilterService.js"></script>
 
         <script src="binview/lib/save-svg-as-png/saveSvgAsPng.js"></script>
 
