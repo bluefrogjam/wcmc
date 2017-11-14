@@ -13,7 +13,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.TargetGenerationNotSupp
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
@@ -176,7 +176,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       Spectrum(
         compound = Array(compound),
         id = t match {
-          case x: MonaLibraryTarget =>
+          case x: Target with Idable[String] =>
             logger.debug(s"associate id: ${x.id}")
             x.id
           case _ =>
@@ -568,7 +568,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     */
   override def delete(t: Target, acquisitionMethod: AcquisitionMethod): Unit = {
     t match {
-      case target: MonaLibraryTarget =>
+      case target: Target with Idable[String] =>
         val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
 
         logger.info("delete begin")
@@ -670,7 +670,7 @@ case class MonaLibraryTarget(
                                 */
                               override val ionMode: IonMode
                             )
-  extends Target {
+  extends Target with Idable[String]{
 
   /**
     * required since targets expects a spectrum, while its being optional on the carrot level
