@@ -104,7 +104,6 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
 		*/
 	def buildSpectra(dataMap: Map[String, String]): Feature = {
 
-    logger.debug(s"datamap: ${dataMap}")
     if (!dataMap.keySet.contains(spectraIdentifier)) {
       /**
         * no spectra available so it's just a feature

@@ -3,7 +3,8 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, PositiveMode}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.AdvancedTaskScheduler
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
@@ -32,6 +33,9 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
   @Autowired
   val template: RestTemplate = null
 
+  @Autowired
+  val testScheduler: TestTaskScheduler = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
@@ -49,12 +53,19 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
         result.size shouldBe 1
       }
 
-      "submit" in {
+      "submit with AcquisitionMethod(None)" in {
         val task = Task("test", "test@test.de", AcquisitionMethod(None), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
 
         val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
 
         result.getBody.get("result").get shouldBe "test"
+
+        testScheduler.submittedTask should not be null
+
+        testScheduler.submittedTask.acquisitionMethod should not be null
+
+        testScheduler.submittedTask.acquisitionMethod shouldEqual (AcquisitionMethod(None))
+
       }
 
       "isFailed" in {
@@ -86,6 +97,50 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
 
       }
 
+      "submit with AcquisitionMethod(Some(...))" in {
+        val task = Task("test", "test@test.de", AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
+
+        val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
+
+        result.getBody.get("result").get shouldBe "test"
+
+        testScheduler.submittedTask should not be null
+
+        testScheduler.submittedTask.acquisitionMethod should not be null
+
+        testScheduler.submittedTask.acquisitionMethod shouldEqual AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+
+      }
+
+      "submit with AcquisitionMethod(Some(...)) and positive ion mode" in {
+        val task = Task("test", "test@test.de", AcquisitionMethod(Option(ChromatographicMethod("test", None, None, Option(PositiveMode())))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
+
+        val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
+
+        result.getBody.get("result").get shouldBe "test"
+
+        testScheduler.submittedTask should not be null
+
+        testScheduler.submittedTask.acquisitionMethod should not be null
+
+        testScheduler.submittedTask.acquisitionMethod shouldEqual AcquisitionMethod(Option(ChromatographicMethod("test", None, None, Option(PositiveMode()))))
+
+      }
+      "submit with AcquisitionMethod(Some(...)) and negative ion mode" in {
+        val task = Task("test", "test@test.de", AcquisitionMethod(Option(ChromatographicMethod("test", None, None, Option(NegativeMode())))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
+
+        val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
+
+        result.getBody.get("result").get shouldBe "test"
+
+        testScheduler.submittedTask should not be null
+
+        testScheduler.submittedTask.acquisitionMethod should not be null
+
+        testScheduler.submittedTask.acquisitionMethod shouldEqual AcquisitionMethod(Option(ChromatographicMethod("test", None, None, Option(NegativeMode()))))
+
+      }
+
     }
   }
 }
@@ -104,12 +159,16 @@ class TestStorage extends ResultStorage {
 @Component
 @Primary
 class TestTaskScheduler extends AdvancedTaskScheduler {
+
+  var submittedTask: Task = _
+
   /**
     * runs this provided task
     *
     * @param task
     */
   override def doSubmit(task: Task): String = {
+    submittedTask = task
     task.name
   }
 

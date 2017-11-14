@@ -40,7 +40,7 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File, override va
 		* @return
 		*/
 	override def loadAsFile(name: String): Option[File] = {
-		logger.debug(s"recursively load ${name} from ${directory}")
+		logger.debug(s"recursively load ${name} from ${directory.getAbsolutePath}")
 
 		val files = walkTree(directory).filter(p => p.getAbsolutePath.endsWith(name) && p.isFile)
 		files.headOption

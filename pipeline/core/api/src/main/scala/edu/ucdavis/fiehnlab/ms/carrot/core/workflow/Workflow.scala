@@ -178,6 +178,7 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
     */
   private final def assembleExperiment(experiment: Experiment, callback: (Sample, ExperimentClass, Experiment) => Sample, exceptionCallBack: (Sample, ExperimentClass, Experiment, Exception) => Option[Sample] = null) = {
     Experiment(
+
       classes = experiment.classes.collect {
         case clazz: ExperimentClass =>
           ExperimentClass(
@@ -214,7 +215,8 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
             matrix = clazz.matrix
           )
       },
-      name = experiment.name
+      name = experiment.name,
+      acquisitionMethod = experiment.acquisitionMethod
     )
   }
 

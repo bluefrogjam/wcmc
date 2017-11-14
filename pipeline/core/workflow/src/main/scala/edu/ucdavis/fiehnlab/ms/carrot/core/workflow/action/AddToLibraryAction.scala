@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.math.similarity.{CompositeSimilarity, Similarity}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.acquisition.AcquisitionLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -12,7 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSMSSpectra, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow, IncludeBySimilarity}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.{Description, Profile}
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 /**
@@ -21,9 +20,6 @@ import org.springframework.stereotype.Component
 @Component
 @Profile(Array("carrot.targets.dynamic"))
 class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extends PostAction with LazyLogging {
-
-  @Autowired
-  val acquisitionLoader: AcquisitionLoader = null
 
   /**
     * which similarity to use in the system
@@ -54,7 +50,7 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     * @param experiment
     */
   override def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
-    val method = acquisitionLoader.load(sample).get
+    val method = experiment.acquisitionMethod
     sample match {
       case data: AnnotatedSample =>
 

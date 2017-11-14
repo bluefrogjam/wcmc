@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
@@ -43,7 +44,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
 		* @param sample
 		* @return
 		*/
-	final override def doProcess(sample: QuantifiedSample[Double]): QuantifiedSample[Double] = {
+	final override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod): QuantifiedSample[Double] = {
 
     //contains a bug doing unnessescary search against the server. A collect first would be more appropriate
     //to check if a file exist
