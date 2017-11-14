@@ -52,7 +52,7 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
 
         val output = mSDialRestProcessor.process(input)
 
-        output.getName shouldEqual "testA.msdial"
+        output.getName matches "msdial.*?deco"
 
         val resultLines = Source.fromFile(output).getLines().toSeq
         output.deleteOnExit()
