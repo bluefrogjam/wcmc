@@ -11,8 +11,8 @@ mona:
     server:
       user: admin
       password: admin
-      host: cream.fiehnlab.ucdavis.edu
-      port: 9090
+      host: localhost
+      port: 80
 
 server:
   port: 18080
