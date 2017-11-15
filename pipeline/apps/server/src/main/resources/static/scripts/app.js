@@ -262,7 +262,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Target object for single target mode
          */
-        $scope.target = {};
+        $scope.target = {ri_unit: 'minutes'};
 
         $scope.reset = function() {
             $window.location.reload();
@@ -340,10 +340,16 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                 return;
             }
 
+            var target = angular.copy($scope.target)
+
+            if (target.ri_unit == 'minutes') {
+                target.retentionTime *= 60;
+            }
+
             $scope.submitting = true;
 
             HttpService.submitTarget(
-                $scope.target,
+                target,
                 function (data) {
                     $scope.submitting = false;
                     $scope.success = true;
@@ -403,12 +409,18 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             for (var i = 0; i < $scope.data.length; i++) {
                 // Ignore empty rows
                 if (!isRowEmpty($scope.data[i])) {
-                    $scope.data[i].library = $scope.target.library;
-                    $scope.data[i].mode = $scope.target.mode;
+                    $scope.target.targetName = $scope.data[i].targetName;
+                    $scope.target.precursor = $scope.data[i].precursor;
+                    $scope.target.retentionTime = $scope.data[i].retentionTime;
+                    $scope.target.riMarker = $scope.data[i].riMarker;
                     totalCount++;
 
+                    if ($scope.target.ri_unit == 'minutes') {
+                        $scope.target.retentionTime *= 60;
+                    }
+
                     HttpService.submitTarget(
-                        $scope.data[i],
+                        $scope.target,
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-check text-success" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
