@@ -31,11 +31,32 @@
     </head>
 
     <body ng-controller="BinController" bs-loading-overlay>
+        <header class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" ng-click="navCollapsed = !navCollapsed">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <span class="navbar-brand">Carrot Control Panel</span>
+                </div>
+                <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation" uib-collapse="navCollapsed">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#/"><i class="fa fa-calendar"></i> Schedule Job</a></li>
+                        <li><a href="#/addTarget"><i class="fa fa-crosshairs"></i> Add Single Target</a></li>
+                        <li><a href="#/addLibrary"><i class="fa fa-list-alt"></i> Add Library</a></li>
+                        <li><a href="binview/index.html"><i class="fa fa-list-alt"></i> CarrotView</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
         <div id="page-wrapper" class="container">
             <div class="row">
                 <div id="bin-table-wrapper" class="col-xs-7 col-md-6 scrollable">
                     <div id="bin-filter-wrapper">
-                        <a class="corner-button" href="/">Back</a>
                         <div uib-accordion>
                             <div uib-accordion-group class="panel-default" heading="Settings" is-open="filtersOpen">
                                 <div class="panel-default">
