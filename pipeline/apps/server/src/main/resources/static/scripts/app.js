@@ -381,6 +381,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         $scope.submitLibrary = function() {
             $scope.success = false;
             $scope.error = undefined;
+            $scope.totalCount = 0;
 
             if (!validateAcquisitionMode()) {
                 return;
@@ -408,6 +409,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
                         $scope.error = 'Please ensure that all targets are completed!'
                     } else {
+                        $scope.totalCount++;
                         rowLabels[i] = i + 1;
                         instance.updateSettings({rowHeaders: rowLabels});
                     }
@@ -419,7 +421,8 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             }
 
             // Submit
-            var totalCount = 0, successCount = 0, errorCount = 0;
+            $scope.successCount = 0;
+            $scope.errorCount = 0;
             $scope.submitting = true;
 
             for (var i = 0; i < $scope.data.length; i++) {
@@ -429,7 +432,6 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                     $scope.target.precursor = $scope.data[i].precursor;
                     $scope.target.retentionTime = $scope.data[i].retentionTime;
                     $scope.target.riMarker = $scope.data[i].riMarker;
-                    totalCount++;
 
                     if ($scope.target.ri_unit == 'minutes') {
                         $scope.target.retentionTime *= 60;
@@ -441,28 +443,28 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                             rowLabels[i] = '<i class="fa fa-check text-success" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
 
-                            successCount++;
+                            $scope.successCount++;
                         },
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
 
-                            errorCount++;
+                            $scope.errorCount++;
                         }
                     );
                 }
             }
 
             var submitLibrary = function() {
-                if (successCount + errorCount < totalCount) {
+                if ($scope.successCount + $scope.errorCount < $scope.totalCount) {
                     $timeout(submitLibrary, 1000);
                 } else {
                     $scope.submitting = false;
 
-                    if (totalCount == successCount) {
+                    if ($scope.totalCount == $scope.successCount) {
                         $scope.success = true;
                     } else {
-                        $scope.error = 'Only '+ successCount +' / '+ totalCount +' targets were successfully submitted.'
+                        $scope.error = 'Only '+ $scope.successCount +' / '+ $scope.totalCount +' targets were successfully submitted.'
                     }
                 }
             };
