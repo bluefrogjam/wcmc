@@ -80,10 +80,10 @@
         $scope.startLoadingService();
 
         $(document).ready(function() {
-            $('#bin-table-wrapper').height($(document).height()-30);
-            $('#uib-tabset-wrapper').height($(document).height()-30);
-            $('#binvestigate-wrapper').height($(document).height()-30-42-15);
-            $('.tab-content').height($(document).height()-30-42);
+            $('#bin-table-wrapper').height($(document).height()-30-56);
+            $('#uib-tabset-wrapper').height($(document).height()-30-56);
+            $('#binvestigate-wrapper').height($(document).height()-30-42-15-56);
+            $('.tab-content').height($(document).height()-30-42-56);
         });
 
 
@@ -105,8 +105,6 @@
                 spectrum += ion.mass + ':' + ion.intensity + ' ';
             });
 
-            console.log(spectrum);
-
             var postData = {
                 'spectrum': spectrum,
                 'minSimilarity': $scope.simSettings.minSimilarity || 700,
@@ -114,7 +112,7 @@
                 'precursorMZ': $scope.simSettings.precursorMZ,
                 'precursorToleranceDa': $scope.simSettings.precursorToleranceDa
             };
-            console.log(postData);
+
             $http
                 .post('/rest/similarity/search', postData)
                 .then(function(response) {
@@ -178,7 +176,7 @@
         };
 
         $scope.saveImage = function(bin, lib){
-            saveSvgAsPng(document.getElementsByClassName('st-base')[0], 'diff-'+bin+'-'+lib+'.png', {scale: 5});
+            saveSvgAsPng(document.getElementsByClassName('st-base')[0], 'diff-' + bin + '-' + lib + '.png', { scale: 5 });
         };
 
     }
