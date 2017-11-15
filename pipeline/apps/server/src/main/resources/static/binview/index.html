@@ -40,11 +40,8 @@
                             <div uib-accordion-group class="panel-default" heading="Settings" is-open="filtersOpen">
                                 <div class="panel-default">
                                     <form>
-                                        <div class="radio">
-                                            <label><input type="radio" value="test" ng-model="binSettings.acquisition">Test</label>
-                                        </div>
-                                        <div class="radio">
-                                            <label><input type="radio" value="test 2" ng-model="binSettings.acquisition">Test 2</label>
+                                        <div class="radio" ng-repeat="library in binSettings.libraries">
+                                            <label><input type="radio" value="{{library.chromatographicMethod.name}}" ng-model="binSettings.acquisition">{{library.chromatographicMethod.name}}</label>
                                         </div>
 
                                         <div class="form-group">
@@ -61,7 +58,7 @@
                             </div>
                         </div>
                     </div>
-                    <bin-table filters="binSettings.filters" dt-data-url="'/rest/library/'+binSettings.acquisition" dt-footer></bin-table>
+                    <bin-table ng-if="binSettings.acquisition" filters="binSettings.filters" dt-data-url="'/rest/library/'+binSettings.acquisition" dt-footer></bin-table>
                 </div>
                 <div id="uib-tabset-wrapper" class="col-xs-5 col-md-6">
                     <uib-tabset active="active">
