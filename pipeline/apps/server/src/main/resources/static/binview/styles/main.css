@@ -23,7 +23,7 @@
     box-sizing: border-box;
 }
 
-.container {
+#page-wrapper.container, #page-wrapper .container {
     width: 100%;
 }
 
@@ -100,4 +100,8 @@
 
 table .clickable {
     cursor: pointer;
+}
+
+.navbar {
+    margin-bottom: 0;
 }
