@@ -23,7 +23,7 @@
     box-sizing: border-box;
 }
 
-.container {
+#page-wrapper.container, #page-wrapper .container {
     width: 100%;
 }
 
