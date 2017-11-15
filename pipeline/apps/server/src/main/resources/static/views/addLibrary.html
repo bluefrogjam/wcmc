@@ -15,6 +15,11 @@
     {{error}}
 </div>
 
+<uib-progress max="totalCount" ng-show="submitting || success || error">
+    <uib-bar value="successCount" type="success"></uib-bar>
+    <uib-bar value="errorCount" type="dangerstat"></uib-bar>
+</uib-progress>
+
 <hot-table
         hot-id="library"
         col-headers
