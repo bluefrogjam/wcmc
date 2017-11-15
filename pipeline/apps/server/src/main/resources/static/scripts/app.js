@@ -163,20 +163,19 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             var validCount = 0;
 
             $scope.data.forEach(function(x, i) {
-                var filename = x[fileNameCol];
 
-                if (filename !== null) {
+                if (x[fileNameCol] !== null) {
                     // Replace extension if desired
                     if (angular.isDefined($scope.task.extension) && $scope.task.extension != "") {
-                        if (filename.indexOf('.') > -1) {
-                            filename = filename.substr(0, filename.lastIndexOf('.'));
+                        if (x[fileNameCol].indexOf('.') > -1) {
+                            x[fileNameCol] = x[fileNameCol].substr(0, x[fileNameCol].lastIndexOf('.'));
                         } else {
-                            filename += '.'+ $scope.task.extension;
+                            x[fileNameCol] += '.'+ $scope.task.extension;
                         }
                     }
 
                     HttpService.checkFileStatus(
-                        filename,
+                        x[fileNameCol],
                         function(data) {
                             // Add a valid sample to the task
                             var sample = {fileName: x[fileNameCol]};
