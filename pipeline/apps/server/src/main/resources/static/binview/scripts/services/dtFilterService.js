@@ -1,8 +1,8 @@
 'use strict';
 
-app.service('DTFilter', function() {
+app.service('dtFilter', function() {
     var service = {
-        addFilter: function(filter, tableId) {
+        addFilter: function(tableId, filter) {
             $.fn.dataTable.ext.search.push(
                 function(settings, data, dataIndex) {
                     if (settings.nTable.getAttribute('id') === tableId) {
