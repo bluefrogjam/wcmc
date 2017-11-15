@@ -70,12 +70,16 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Acquisition method options
          */
-        HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data;
-        });
-        HttpService.getPlatforms(function(data) {
-            $scope.platformOptions = data;
-        });
+        $scope.pullAcquisitionMethodsAndPlatforms = function() {
+            HttpService.getAcquisitionMethods(function(data) {
+                $scope.acquisitionMethodOptions = data;
+            });
+
+            HttpService.getPlatforms(function(data) {
+                $scope.platformOptions = data;
+            });
+        };
+        $scope.pullAcquisitionMethodsAndPlatforms();
 
         /**
          * Task object
@@ -102,6 +106,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
         $scope.submit = function() {
             // Reset error
+            $scope.success = false;
             $scope.error = undefined;
 
             // Check that filename column is selected
@@ -155,11 +160,23 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             // Check file existence for each row and update the row header with the result
             var rowLabels = instance.getRowHeader();
             var checkCount = 0;
+            var validCount = 0;
 
             $scope.data.forEach(function(x, i) {
-                if (x[fileNameCol] !== null) {
+                var filename = x[fileNameCol];
+
+                if (filename !== null) {
+                    // Replace extension if desired
+                    if (angular.isDefined($scope.task.extension) && $scope.task.extension != "") {
+                        if (filename.indexOf('.') > -1) {
+                            filename = filename.substr(0, filename.lastIndexOf('.'));
+                        } else {
+                            filename += '.'+ $scope.task.extension;
+                        }
+                    }
+
                     HttpService.checkFileStatus(
-                        x[fileNameCol],
+                        filename,
                         function(data) {
                             // Add a valid sample to the task
                             var sample = {fileName: x[fileNameCol]};
@@ -185,6 +202,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                             instance.updateSettings({rowHeaders: rowLabels});
 
                             checkCount++;
+                            validCount++;
                         },
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
@@ -205,7 +223,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             var submitTask = function() {
                 if (checkCount < $scope.data.length) {
                     $timeout(submitTask, 1000);
-                } else {
+                } else if (validCount > 0) {
                     HttpService.submitJob(
                         task,
                         function(data) {
@@ -217,6 +235,9 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                             $scope.running = false;
                         }
                     );
+                } else {
+                    $scope.error = 'No valid sample files were provided!';
+                    $scope.running = false;
                 }
             };
 
@@ -230,12 +251,16 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Acquisition method options
          */
-        HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data;
-        });
-        HttpService.getPlatforms(function(data) {
-            $scope.platformOptions = data;
-        });
+        $scope.pullAcquisitionMethodsAndPlatforms = function() {
+            HttpService.getAcquisitionMethods(function(data) {
+                $scope.acquisitionMethodOptions = data;
+            });
+
+            HttpService.getPlatforms(function(data) {
+                $scope.platformOptions = data;
+            });
+        };
+        $scope.pullAcquisitionMethodsAndPlatforms();
 
         /**
          * HandsOnTable settings
@@ -253,7 +278,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Target object for single target mode
          */
-        $scope.target = {};
+        $scope.target = {ri_unit: 'minutes'};
 
         $scope.reset = function() {
             $window.location.reload();
@@ -312,6 +337,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
 
         $scope.submitSingleTarget = function() {
+            $scope.success = false;
             $scope.error = undefined;
 
             if (angular.isUndefined($scope.target.targetName)) {
@@ -330,10 +356,16 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                 return;
             }
 
+            var target = angular.copy($scope.target)
+
+            if (target.ri_unit == 'minutes') {
+                target.retentionTime *= 60;
+            }
+
             $scope.submitting = true;
 
             HttpService.submitTarget(
-                $scope.target,
+                target,
                 function (data) {
                     $scope.submitting = false;
                     $scope.success = true;
@@ -347,7 +379,9 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
 
         $scope.submitLibrary = function() {
+            $scope.success = false;
             $scope.error = undefined;
+            $scope.totalCount = 0;
 
             if (!validateAcquisitionMode()) {
                 return;
@@ -375,6 +409,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
                         $scope.error = 'Please ensure that all targets are completed!'
                     } else {
+                        $scope.totalCount++;
                         rowLabels[i] = i + 1;
                         instance.updateSettings({rowHeaders: rowLabels});
                     }
@@ -386,44 +421,50 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             }
 
             // Submit
-            var totalCount = 0, successCount = 0, errorCount = 0;
+            $scope.successCount = 0;
+            $scope.errorCount = 0;
             $scope.submitting = true;
 
             for (var i = 0; i < $scope.data.length; i++) {
                 // Ignore empty rows
                 if (!isRowEmpty($scope.data[i])) {
-                    $scope.data[i].library = $scope.target.library;
-                    $scope.data[i].mode = $scope.target.mode;
-                    totalCount++;
+                    $scope.target.targetName = $scope.data[i].targetName;
+                    $scope.target.precursor = $scope.data[i].precursor;
+                    $scope.target.retentionTime = $scope.data[i].retentionTime;
+                    $scope.target.riMarker = $scope.data[i].riMarker;
+
+                    if ($scope.target.ri_unit == 'minutes') {
+                        $scope.target.retentionTime *= 60;
+                    }
 
                     HttpService.submitTarget(
-                        $scope.data[i],
+                        $scope.target,
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-check text-success" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
 
-                            successCount++;
+                            $scope.successCount++;
                         },
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
 
-                            errorCount++;
+                            $scope.errorCount++;
                         }
                     );
                 }
             }
 
             var submitLibrary = function() {
-                if (successCount + errorCount < totalCount) {
+                if ($scope.successCount + $scope.errorCount < $scope.totalCount) {
                     $timeout(submitLibrary, 1000);
                 } else {
                     $scope.submitting = false;
 
-                    if (totalCount == successCount) {
+                    if ($scope.totalCount == $scope.successCount) {
                         $scope.success = true;
                     } else {
-                        $scope.error = 'Only '+ successCount +' / '+ totalCount +' targets were successfully submitted.'
+                        $scope.error = 'Only '+ $scope.successCount +' / '+ $scope.totalCount +' targets were successfully submitted.'
                     }
                 }
             };
