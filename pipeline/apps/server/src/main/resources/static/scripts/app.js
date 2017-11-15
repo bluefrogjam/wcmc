@@ -160,15 +160,19 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             // Check file existence for each row and update the row header with the result
             var rowLabels = instance.getRowHeader();
             var checkCount = 0;
-
+            var validCount = 0;
 
             $scope.data.forEach(function(x, i) {
                 var filename = x[fileNameCol];
 
                 if (filename !== null) {
                     // Replace extension if desired
-                    if (angular.isDefined($scope.task.extension) && $scope.task.extension != "" && filename.indexOf('.') > -1) {
-                        filename = filename.substr(0, filename.lastIndexOf('.')) +'.'+ $scope.task.extension;
+                    if (angular.isDefined($scope.task.extension) && $scope.task.extension != "") {
+                        if (filename.indexOf('.') > -1) {
+                            filename = filename.substr(0, filename.lastIndexOf('.'));
+                        } else {
+                            filename += '.'+ $scope.task.extension;
+                        }
                     }
 
                     HttpService.checkFileStatus(
