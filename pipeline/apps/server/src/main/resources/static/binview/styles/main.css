@@ -1,0 +1,103 @@
+/**
+ * App-specific styles
+ */
+
+
+/* DataTables */
+#binTable_wrapper .row {
+    margin: auto;
+}
+
+#binTable td {
+    cursor: pointer;
+}
+
+#binTable td.editable {
+    font-weight: bold;
+    cursor: text;
+}
+
+#binTable tfoot input {
+    width: 100%;
+    /*padding: 0;*/
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+}
+
+.scrollable {
+    overflow: scroll;
+}
+
+.mass-spec {
+    height: 200px;
+}
+
+#bin-filter-wrapper {
+    padding: 0 15px;
+}
+
+#bin-table-wrapper {
+    padding: 15px 0;
+    background-color: #fff;
+}
+
+#uib-tabset-wrapper {
+    padding: 15px;
+}
+
+#sim-table-wrapper {
+    padding: 0 15px;
+}
+
+#sim-settings-wrapper {
+    padding-top: 15px;
+}
+
+#chem-sketcher-wrapper {
+    padding: 15px;
+    text-align: center;
+}
+
+#binvestigate-wrapper {
+    width: 100%;
+}
+
+#binvestigate-wrapper iframe {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#simTable .selected {
+    background-color: #08C;
+}
+
+#simTable .selected td {
+    color: #fff;
+}
+
+#simTableDT td {
+    cursor: pointer;
+}
+
+.tab-content {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top-color: transparent;
+    overflow: scroll;
+}
+
+.header {
+    text-align: center;
+}
+
+table .clickable {
+    cursor: pointer;
+}
