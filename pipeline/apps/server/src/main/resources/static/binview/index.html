@@ -61,7 +61,7 @@
                             </div>
                         </div>
                     </div>
-                    <bin-table filters="binSettings.filters" endpoint="binSettings.acquisition" dt-footer></bin-table>
+                    <bin-table filters="binSettings.filters" dt-data-url="'/rest/library/'+binSettings.acquisition" dt-footer></bin-table>
                 </div>
                 <div id="uib-tabset-wrapper" class="col-xs-5 col-md-6">
                     <uib-tabset active="active">
