@@ -141,7 +141,10 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
     * @param exception
     * @return
     */
-  protected def handleFailedCorrection(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment, exception: Exception): Option[CorrectedSample] = None
+  protected def handleFailedCorrection(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment, exception: Exception): Option[CorrectedSample] = {
+    logger.warn(s"correction failed, sample ${sample} will be removed from experiment!")
+    None
+  }
 
   /**
     * preprocesses the given sample

@@ -38,7 +38,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
         if (spectra.getMsFunction.getMsLevel == 0) {
           throw new RuntimeException("Invalid MS Level!")
         }
-        else if (spectra.getMsFunction.getMsLevel == 1) {
+        else if (spectra.getMsFunction.getMsLevel == 1 || spectra.getIsolations.isEmpty) {
 
           //discover which mixins we need
           spectra.getPolarity match {
@@ -207,12 +207,25 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSSpectra {
   * @param spectra
   */
 class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSMSSpectra {
-  override val precursorIon: Double = spectra.getIsolations.get(0).getPrecursorMz
+  override val precursorIon: Double = if (spectra.getIsolations.isEmpty) {
+    //this is just bad, but seems to be a real value in some files
+    0.0
+  } else {
+    spectra.getIsolations.get(0).getPrecursorMz
+  }
+
   override val retentionTimeInSeconds: Double = spectra.getChromatographyInfo.getRetentionTime.toDouble
   override val scanNumber: Int = spectra.getScanNumber
   override val purity: Option[Double] = None
   override val ionMode: Option[IonMode] = mode
-  override val massOfDetectedFeature: Option[Ion] = MSDKSample.build(spectra).find(_.mass == spectra.getIsolations.get(0).getPrecursorMz)
+  override val massOfDetectedFeature: Option[Ion] = MSDKSample.build(spectra).find { x =>
+    if (spectra.getIsolations.isEmpty) {
+      false
+    }
+    else {
+      x.mass == spectra.getIsolations.get(0).getPrecursorMz
+    }
+  }
   /**
     * associated spectrum propties if applicable
     */
