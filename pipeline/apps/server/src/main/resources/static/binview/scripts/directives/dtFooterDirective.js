@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('app').directive('dtFooter', function() {
+angular.module('app').directive('dtFooter', [ 'dtFilter', function(dtFilter) {
     return {
         restrict: 'A',
         require: 'binTable',
@@ -103,22 +103,15 @@ angular.module('app').directive('dtFooter', function() {
                 return value === '' || value.trim().length < minLength || data.match(regex);
             };
 
-            // Add filters to the data table
-            $.fn.dataTable.ext.search.push(
-                function(settings, data, dataIndex) {
-                    if (settings.nTable.getAttribute('id') === attr.id) {
-                        return matchFilter('id_filter', data[0]) &&
-                            stringFilter('name_filter', data[1]) &&
-                            rangeFilter('precursorMass_filter', data[2], scope.binSettings.filters.massWindow) &&
-                            rangeFilter('retentionIndex_filter', data[3], scope.binSettings.filters.riWindow) &&
-                            matchFilter('ionMode_filter', data[4]);
-                    } else {
-                        return true;
-                    }
-                }
-            );
+            dtFilter.addFilter('binTable', function(settings, data, dataIndex) {
+                return matchFilter('id_filter', data[0]) &&
+                    stringFilter('name_filter', data[1]) &&
+                    rangeFilter('precursorMass_filter', data[2], scope.binSettings.filters.massWindow) &&
+                    rangeFilter('retentionIndex_filter', data[3], scope.binSettings.filters.riWindow) &&
+                    matchFilter('ionMode_filter', data[4]);
+            });
 
-            var footer = $('#'+attr.id).append('<tfoot><tr></tr></tfoot>');
+            var footer = $('#' + attr.id).append('<tfoot><tr></tr></tfoot>');
 
             var columns = [
                 {data: 'id', title: 'ID'},
@@ -130,9 +123,9 @@ angular.module('app').directive('dtFooter', function() {
 
             $.each(columns, function (i, x) {
                 var inputId = x.data +'_filter';
-                $('#' + attr.id).find('tfoot tr').append('<th><input type="text" class="form-control input-sm" id="'+ inputId +'" placeholder="Search ' + x.title + '" /></th>');
+                $('#' + attr.id).find('tfoot tr').append('<th><input type="text" class="form-control input-sm" id="' + inputId + '" placeholder="Search ' + x.title + '" /></th>');
 
-                $('#'+ inputId).on('keypress', function(e) {
+                $('#' + inputId).on('keypress', function(e) {
                     if (e.keyCode == 13 || e.keyCode == 9) {
                         controller.refresh();
                     }
@@ -144,4 +137,4 @@ angular.module('app').directive('dtFooter', function() {
             }, true);
         }
     };
-});
+}]);
