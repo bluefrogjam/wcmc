@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" data-ng-app="app">
+    <head>
+        <title>BinView</title>
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="styles/theme-simple.css" />
+        <link rel="stylesheet" href="styles/main.css" />
+
+        <link rel="stylesheet" href="lib/chemdoodle/ChemDoodleWeb.css" />
+        <link rel="stylesheet" href="lib/specktackle/css/index.css" />
+        <link rel="stylesheet" href="lib/specktackle/css/st.css" />
+
+
+        <!-- Datatables CSS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.14/css/dataTables.bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.2/css/select.bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/keytable/2.2.1/css/keyTable.dataTables.min.css" />
+        <link rel="stylesheet" type="text/css" href="http://cdn.fiehnlab.ucdavis.edu/Editor-1.6.1/css/editor.bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/keytable/2.2.0/css/keyTable.dataTables.css" />
+
+        <link rel="stylesheet" type="text/css" href="bower_components/jQuery-contextMenu/dist/jquery.contextMenu.min.css"/>
+
+        <link rel="shortcut icon" type="image/x-icon" href="binview/favicon.ico" />
+
+        <base href="/">
+    </head>
+
+    <body ng-controller="BinController" bs-loading-overlay>
+        <div id="page-wrapper" class="container">
+            <div class="row">
+                <div id="bin-table-wrapper" class="col-xs-7 col-md-6 scrollable">
+                    <div id="bin-filter-wrapper">
+                        <a class="corner-button" href="/">Back</a>
+                        <div uib-accordion>
+                            <div uib-accordion-group class="panel-default" heading="Settings" is-open="filtersOpen">
+                                <div class="panel-default">
+                                    <form>
+                                        <div class="radio">
+                                            <label><input type="radio" value="test" ng-model="binSettings.acquisition">Test</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input type="radio" value="test 2" ng-model="binSettings.acquisition">Test 2</label>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Mass Window</label>
+                                            <input type="number" class="form-control" ng-model="binSettings.filters.massWindow" ng-model-options="{updateOn: 'blur'}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>RI Window</label>
+                                            <input type="number" class="form-control" ng-model="binSettings.filters.riWindow" ng-model-options="{updateOn: 'blur'}">
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <bin-table filters="binSettings.filters" endpoint="binSettings.acquisition" dt-footer></bin-table>
+                </div>
+                <div id="uib-tabset-wrapper" class="col-xs-5 col-md-6">
+                    <uib-tabset active="active">
+                        <uib-tab index="0" heading="Similarity Search">
+                            <div class="container">
+                                <div class="row">
+                                    <div ng-if="stSpectra.data && stSpectra.data.length > 0" id="mass-spec-wrapper" class="col-xs-12">
+                                        <div st-mass-spec ng-model="stSpectra" normalize="true"></div>
+                                        <button id="download" class="btn btn-primary" ng-click="saveImage(bin.binid, libraryBin.hit.compound[0].names[0].name)">Download SVG</button>
+                                    </div>
+                                    <div id="sim-settings-wrapper" class="col-xs-12">
+                                        <div uib-accordion>
+                                            <div uib-accordion-group class="panel-default" heading="Search Settings" is-open="searchSettingsOpen">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        Include libraries
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="simSettings.filters.libraries.all">All
+                                                            </label>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="simSettings.filters.libraries.fiehnlib" ng-disabled="simSettings.filters.libraries.all">FiehnLib
+                                                            </label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="simSettings.filters.libraries.gnps" ng-disabled="simSettings.filters.libraries.all">GNPS
+                                                            </label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="simSettings.filters.libraries.hmdb" ng-disabled="simSettings.filters.libraries.all">HMDB
+                                                            </label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="simSettings.filters.libraries.itree" ng-disabled="simSettings.filters.libraries.all">iTree
+                                                            </label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="simSettings.filters.libraries.massbank" ng-disabled="simSettings.filters.libraries.all">MassBank
+                                                            </label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="simSettings.filters.libraries.metabobase" ng-disabled="simSettings.filters.libraries.all">MetaboBASE
+                                                            </label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="simSettings.filters.libraries.respect" ng-disabled="simSettings.filters.libraries.all">ReSpect
+                                                            </label>
+                                                        </div>
+                                                        <hr>
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" ng-model="simSettings.filters.ri">Filter results without RIs
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <form class="form-horizontal" ng-submit="similaritySearch()">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6" for="minSimilarity">Minimum Similarity</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control" type="number" ng-model="simSettings.minSimilarity" id="minSimilarity" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6" for="maxSimilarity">Maximum Similarity</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control" type="number" ng-model="simSettings.maxSimilarity" id="maxSimilarity" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6" for="precursorMZ">Precursor MZ</label>
+                                                                <div class="col-md-6">
+                                                                    <input class="form-control" type="number" ng-model="simSettings.precursorMZ" id="precursorMZ" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <div class="col-md-6 col-md-offset-6">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-addon">±</span>
+                                                                        <input class="form-control" type="number" ng-model="simSettings.precursorToleranceDa" id="precursorToleranceDa" />
+                                                                        <span class="input-group-addon">Da</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <button class="btn btn-block btn-primary" type="submit">Search</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="sim-table-wrapper" class="col-xs-12">
+                                        <sim-table ng-if="similaritySearchResults" ng-model="similaritySearchResults" columns="simSettings.dtColumns" filters="simSettings.filters" select-fn="onSelectSim(e, dt, type, indexes)"></sim-table>
+                                    </div>
+                                </div>
+                            </div>
+                        </uib-tab>
+                    </uib-tabset>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Javascript -->
+        <script src="binview/bower_components/jquery/dist/jquery.min.js"></script>
+
+        <script src="binview/bower_components/angular/angular.min.js"></script>
+        <script src="binview/bower_components/angular-animate/angular-animate.min.js"></script>
+        <script src="binview/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+        <script src="binview/bower_components/d3/d3.min.js"></script>
+
+        <script src="binview/bower_components/flot/jquery.flot.js"></script>
+        <script src="binview/bower_components/flot/jquery.flot.resize.js"></script>
+        <script src="binview/bower_components/flot/jquery.flot.selection.js"></script>
+        <script src="binview/bower_components/angular-loading-overlay/dist/angular-loading-overlay.js"></script>
+        <script src="binview/bower_components/angular-route/angular-route.js"></script>
+
+        <script src="https://cdn.datatables.net/1.10.14/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.14/js/dataTables.bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/select/1.2.2/js/dataTables.select.min.js"></script>
+        <script src="https://cdn.datatables.net/keytable/2.2.1/js/dataTables.keyTable.min.js"></script>
+        <script src="http://cdn.fiehnlab.ucdavis.edu/Editor-1.6.1/js/dataTables.editor.min.js"></script>
+        <script src="http://cdn.fiehnlab.ucdavis.edu/Editor-1.6.1/js/editor.bootstrap.min.js"></script>
+
+        <script src="binview/bower_components/jQuery-contextMenu/dist/jquery.contextMenu.min.js"></script>
+        <script src="binview/bower_components/jQuery-contextMenu/dist/jquery.ui.position.min.js"></script>
+
+        <script src="binview/lib/chemdoodle/ChemDoodleWeb.js"></script>
+        <script src="binview/lib/specktackle/st.js"></script>
+
+        <script src="binview/scripts/app.js"></script>
+
+        <script src="binview/scripts/controllers/binController.js"></script>
+        <script src="binview/scripts/controllers/modalController.js"></script>
+
+        <script src="binview/scripts/directives/binTableDirective.js"></script>
+        <script src="binview/scripts/directives/simTableDirective.js"></script>
+        <script src="binview/scripts/directives/dtFooterDirective.js"></script>
+        <script src="binview/scripts/directives/sketcherDirective.js"></script>
+        <script src="binview/scripts/directives/stMassSpecDirective.js"></script>
+
+        <script src="binview/scripts/services/dtFilterService.js"></script>
+
+        <script src="binview/lib/save-svg-as-png/saveSvgAsPng.js"></script>
+
+    </body>
+</html>
