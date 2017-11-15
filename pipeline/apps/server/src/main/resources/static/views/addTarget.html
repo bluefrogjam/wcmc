@@ -26,8 +26,19 @@
 </div>
 
 <div class="form-group">
-    <label for="retentionTime">Retention Time (s)</label>
-    <input type="text" class="form-control" id="retentionTime" placeholder="Retention Time (s)" ng-model="target.retentionTime">
+    <label for="retentionTime">Retention Time</label>
+    <input type="text" class="form-control" id="retentionTime" placeholder="Retention Time" ng-model="target.retentionTime">
+</div>
+
+<div class="form-group">
+    <label>Retention Time Units</label><br>
+
+    <label class="radio-inline">
+        <input type="radio" name="ri_unit" value="minutes" ng-model="target.ri_unit"> Minutes
+    </label>
+    <label class="radio-inline">
+        <input type="radio" name="ri_unit" value="seconds" ng-model="target.ri_unit"> Seconds
+    </label>
 </div>
 
 <div class="form-group">
