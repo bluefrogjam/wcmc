@@ -16,3 +16,10 @@ mona:
 
 server:
   port: 18080
+
+wcmc:
+  api:
+    rest:
+      msdialrest4j:
+        host: luna.fiehnlab.ucdavis.edu
+        port: 8080
