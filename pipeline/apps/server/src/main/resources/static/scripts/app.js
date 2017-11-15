@@ -202,6 +202,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                             instance.updateSettings({rowHeaders: rowLabels});
 
                             checkCount++;
+                            validCount++;
                         },
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
@@ -222,7 +223,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             var submitTask = function() {
                 if (checkCount < $scope.data.length) {
                     $timeout(submitTask, 1000);
-                } else {
+                } else if (validCount > 0) {
                     HttpService.submitJob(
                         task,
                         function(data) {
@@ -234,6 +235,9 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                             $scope.running = false;
                         }
                     );
+                } else {
+                    $scope.error = 'No valid sample files were provided!';
+                    $scope.running = false;
                 }
             };
 
