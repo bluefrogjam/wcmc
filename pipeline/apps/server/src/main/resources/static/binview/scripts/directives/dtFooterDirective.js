@@ -103,27 +103,29 @@ angular.module('app').directive('dtFooter', [ 'dtFilter', function(dtFilter) {
                 return value === '' || value.trim().length < minLength || data.match(regex);
             };
 
+            var columns = [
+                {data: 'id', title: 'ID'},
+                {data: 'name', title: 'Name', className: 'editable'},
+                {data: 'precursorMass', title: 'Precursor Mass'},
+                {data: 'retentionIndex', title: 'Retention Index'},
+                {data: 'isRetentionIndexStandard', title: 'Retention Index Standard', className: 'editable'},
+                {data: 'ionMode.mode', title: 'Ion Mode'}
+            ];
+
             dtFilter.addFilter('binTable', function(settings, data, dataIndex) {
-                return matchFilter('id_filter', data[0]) &&
-                    stringFilter('name_filter', data[1]) &&
-                    rangeFilter('precursorMass_filter', data[2], scope.binSettings.filters.massWindow) &&
-                    rangeFilter('retentionIndex_filter', data[3], scope.binSettings.filters.riWindow) &&
-                    matchFilter('ionMode_filter', data[4]);
+                return stringFilter(columns[0].data + '_filter', data[0]) &&
+                    stringFilter(columns[1].data + '_filter', data[1]) &&
+                    rangeFilter(columns[2].data + '_filter', data[2], scope.binSettings.filters.massWindow) &&
+                    rangeFilter(columns[3].data + '_filter', data[3], scope.binSettings.filters.riWindow) &&
+                    stringFilter(columns[4].data + '_filter', data[4]) &&
+                    stringFilter(columns[5].data.replace('.','_') + '_filter', data[5]);
             });
 
             var footer = $('#' + attr.id).append('<tfoot><tr></tr></tfoot>');
 
-            var columns = [
-                {data: 'id', title: 'ID'},
-                {data: 'name', title: 'Name'},
-                {data: 'precursorMass', title: 'Precursor Mass'},
-                {data: 'retentionIndex', title: 'Retention Index'},
-                {data: 'ionMode', title: 'Ion Mode'}
-            ];
-
             $.each(columns, function (i, x) {
                 var inputId = x.data +'_filter';
-                $('#' + attr.id).find('tfoot tr').append('<th><input type="text" class="form-control input-sm" id="' + inputId + '" placeholder="Search ' + x.title + '" /></th>');
+                $('#' + attr.id).find('tfoot tr').append('<th><input type="text" class="form-control input-sm" id="' + inputId.replace('.','_') + '" placeholder="Search ' + x.title + '" /></th>');
 
                 $('#' + inputId).on('keypress', function(e) {
                     if (e.keyCode == 13 || e.keyCode == 9) {
