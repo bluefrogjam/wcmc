@@ -106,6 +106,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
         $scope.submit = function() {
             // Reset error
+            $scope.success = false;
             $scope.error = undefined;
 
             // Check that filename column is selected
@@ -320,6 +321,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
 
         $scope.submitSingleTarget = function() {
+            $scope.success = false;
             $scope.error = undefined;
 
             if (angular.isUndefined($scope.target.targetName)) {
@@ -355,6 +357,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
 
         $scope.submitLibrary = function() {
+            $scope.success = false;
             $scope.error = undefined;
 
             if (!validateAcquisitionMode()) {
