@@ -79,8 +79,23 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
 
         libraries.size shouldBe 1
+
         Thread.sleep(250)
       }
+    }
+
+    "added targed properties must be correct" in {
+
+      val result = template.getForObject(s"http://localhost:${port}/rest/library/test", classOf[Array[Map[Any, Any]]])
+
+      logger.info(s"result ${result}")
+      result.foreach { x =>
+        logger.info(s"entry: ${x}")
+
+      }
+
+      result.length should not be 0
+
     }
 
     "add 1 target to the library test 2" in {

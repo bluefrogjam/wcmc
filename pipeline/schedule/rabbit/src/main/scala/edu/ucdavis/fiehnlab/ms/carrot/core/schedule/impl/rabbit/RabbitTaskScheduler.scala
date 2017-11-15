@@ -26,8 +26,9 @@ class RabbitTaskScheduler extends TaskScheduler {
     * @param task
     * @return
     */
-  override protected def doSubmit(task: Task):Unit = {
+  override protected def doSubmit(task: Task): String = {
     rabbitTemplate.convertAndSend("carrot-tasks", task)
+    "scheduled"
   }
 }
 
@@ -54,7 +55,6 @@ class RabbitTaskAutoconfiguration {
 
   @Value("${wcmc.pipeline.workflow.scheduler.exchange:carrot-exchange}")
   val exchangeName: String = ""
-
 
 
   @Bean
