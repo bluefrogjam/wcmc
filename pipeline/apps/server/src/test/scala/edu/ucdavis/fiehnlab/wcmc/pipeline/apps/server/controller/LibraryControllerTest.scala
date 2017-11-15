@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
 
 /**
   * Created by wohlgemuth on 10/17/17.
@@ -36,7 +36,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
   val libraryAccess: LibraryAccess[Target] = null
 
   @Autowired
-  val monaLibraryAccess:MonaLibraryAccess = null
+  val monaLibraryAccess: MonaLibraryAccess = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -53,7 +53,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     }
     "have no library" in {
-      val libraries: Array[String] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[String]])
+      val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
       eventually(timeout(30 seconds)) {
 
         libraries.size shouldBe 0
@@ -117,26 +117,18 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
         mode = "positive"
       )
 
-      val before = libraryAccess.load(target.buildMethod).size
-      template.postForObject(s"http://localhost:${port}/rest/library", target, classOf[Void])
-
-      eventually(timeout(15 seconds)) {
-
-        val after = libraryAccess.load(target.buildMethod).size
-
-        after shouldBe before
-
-        Thread.sleep(250)
+      intercept[HttpClientErrorException] {
+        template.postForObject(s"http://localhost:${port}/rest/library", target, classOf[Void])
       }
     }
 
 
     "able to load targets by library" in {
 
-      val result = template.getForObject(s"http://localhost:${port}/rest/library/test 2",classOf[Array[Map[Any,Any]]])
+      val result = template.getForObject(s"http://localhost:${port}/rest/library/test 2", classOf[Array[Map[Any, Any]]])
 
       logger.info(s"result ${result}")
-      result.foreach{ x =>
+      result.foreach { x =>
         logger.info(s"entry: ${x}")
 
       }
@@ -151,7 +143,6 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
       val lib = libraries.toSeq.head
 
       val targets = monaLibraryAccess.load(lib)
-
 
 
     }

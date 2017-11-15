@@ -35,7 +35,6 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
       //test all ms scans
       spectra: MsScan =>
 
-        logger.debug(s"reading scan: ${spectra}")
         if (spectra.getMsFunction.getMsLevel == 0) {
           throw new RuntimeException("Invalid MS Level!")
         }

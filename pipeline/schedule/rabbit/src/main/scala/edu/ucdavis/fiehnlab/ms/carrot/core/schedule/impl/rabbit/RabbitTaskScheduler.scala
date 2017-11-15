@@ -4,10 +4,11 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
 import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.{Bean, Configuration}
 
 
@@ -25,7 +26,7 @@ class RabbitTaskScheduler extends TaskScheduler {
     * @param task
     * @return
     */
-  override protected def doSubmit(task: Task) = {
+  override protected def doSubmit(task: Task):Unit = {
     rabbitTemplate.convertAndSend("carrot-tasks", task)
   }
 }
@@ -47,19 +48,29 @@ class RabbitTaskRunner {
 @Configuration
 class RabbitTaskAutoconfiguration {
 
-  @Bean
-  def queue: Queue = new Queue("carrot-tasks", false)
+
+  @Value("${wcmc.pipeline.workflow.scheduler.queue:carrot-tasks}")
+  val queueName: String = ""
+
+  @Value("${wcmc.pipeline.workflow.scheduler.exchange:carrot-exchange}")
+  val exchangeName: String = ""
+
+
 
   @Bean
-  def exchange = new FanoutExchange("carrot-test-exchange")
+  def queue: Queue = new Queue(queueName, false)
 
   @Bean
-  def binding(queue: Queue, exchange: TopicExchange): Binding = BindingBuilder.bind(queue).to(exchange).`with`("carrot-tasks")
+  def exchange = new FanoutExchange(exchangeName)
 
-  @Bean def container(connectionFactory: Nothing, listenerAdapter: MessageListenerAdapter): SimpleMessageListenerContainer = {
+  @Bean
+  def binding(queue: Queue, exchange: TopicExchange): Binding = BindingBuilder.bind(queue).to(exchange).`with`(queueName)
+
+  @Bean
+  def container(connectionFactory: ConnectionFactory, listenerAdapter: MessageListenerAdapter): SimpleMessageListenerContainer = {
     val container = new SimpleMessageListenerContainer
     container.setConnectionFactory(connectionFactory)
-    container.setQueueNames("carrot-tasks")
+    container.setQueueNames(queueName)
     container.setMessageListener(listenerAdapter)
     container
   }
