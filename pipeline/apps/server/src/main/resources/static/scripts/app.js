@@ -70,12 +70,16 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Acquisition method options
          */
-        HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data;
-        });
-        HttpService.getPlatforms(function(data) {
-            $scope.platformOptions = data;
-        });
+        $scope.pullAcquisitionMethodsAndPlatforms = function() {
+            HttpService.getAcquisitionMethods(function(data) {
+                $scope.acquisitionMethodOptions = data;
+            });
+
+            HttpService.getPlatforms(function(data) {
+                $scope.platformOptions = data;
+            });
+        };
+        $scope.pullAcquisitionMethodsAndPlatforms();
 
         /**
          * Task object
@@ -230,12 +234,16 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Acquisition method options
          */
-        HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data;
-        });
-        HttpService.getPlatforms(function(data) {
-            $scope.platformOptions = data;
-        });
+        $scope.pullAcquisitionMethodsAndPlatforms = function() {
+            HttpService.getAcquisitionMethods(function(data) {
+                $scope.acquisitionMethodOptions = data;
+            });
+
+            HttpService.getPlatforms(function(data) {
+                $scope.platformOptions = data;
+            });
+        };
+        $scope.pullAcquisitionMethodsAndPlatforms();
 
         /**
          * HandsOnTable settings
