@@ -15,37 +15,26 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
         },
 
         controller: function($scope, $rootScope) {
+            var columns = [];
 
             $(document).ready(function() {
                 // Define columns
-                var columns = [
+                columns = [
                     {data: 'id', title: 'ID'},
                     {data: 'name', title: 'Name', className: 'editable'},
                     {data: 'precursorMass', title: 'Precursor Mass'},
                     {data: 'retentionIndex', title: 'Retention Index'},
+                    {data: 'isRetentionIndexStandard', title: 'Retention Index Standard', className: 'editable'},
                     {data: 'ionMode.mode', title: 'Ion Mode'}
                 ];
 
                 // Define editor properties
                 var editor = new $.fn.dataTable.Editor({
                     ajax: function(method, url, data, success, error) {
-                        var newData = data.data[Object.keys(data.data)[0]];
-                        var rowData = $scope.activeBin;
-
-                        var target = {
-                            id: newData.id,
-                            confirmed: rowData.confirmed,
-                            inchiKey: rowData.inchiKey,
-                            ionMode: newData.ionMode,
-                            isRetentionIndexStandard: rowData.isRetentionIndexStandard,
-                            msmsSpectrum: rowData.msmsSpectrum,
-                            name: newData.name,
-                            precursorMass: newData.precursorMass,
-                            requiredForCorrection: rowData.requiredForCorrection,
-                            retentionIndex: newData.retentionIndex,
-                            retentionTimeInSeconds: rowData.retentionTimeInSeconds,
-                            spectrum: rowData.spectrum
-                        };
+                        var rowId = Object.keys(data.data)[0];
+                        var newData = data.data[rowId];
+                        var rowData = table.row('#' + rowId).data();
+                        var target = Object.assign({}, rowData, newData);
 
                         $.ajax({
                             type: 'PUT',
@@ -60,6 +49,7 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                                 table.ajax.reload();
                             },
                             error: function(xhr, error, thrown) {
+
                             }
                         });
                     },
@@ -72,6 +62,7 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
 
                 // Create bin table
                 table = $('#binTable').DataTable({
+                    rowId: 'id',
                     ajax: {
                         url: $scope.dtDataUrl,
                         dataSrc: function(json) {
@@ -94,14 +85,12 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
 
                 // Activate an inline edit on click of a table cell
                 $('#binTable').on('click', 'tbody td.editable', function (e) {
-                    console.log(e);
                     editor.inline(this, { submit: 'all' });
                 });
 
                 // Broadcast event when a row is clicked
                 $('#binTable').on('click', 'tbody tr', function (e) {
                     var data = table.row(this).data();
-                    $scope.activeBin = data;
                     $rootScope.$broadcast('bin-clicked', data);
                 });
 
@@ -121,6 +110,10 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                 if (table) {
                     table.draw();
                 }
+            }
+
+            this.getColumns = function() {
+                return columns;
             }
         },
 
