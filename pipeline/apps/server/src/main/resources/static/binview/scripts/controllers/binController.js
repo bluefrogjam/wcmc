@@ -12,7 +12,7 @@
     function binController($scope, $sce, $http, bsLoadingOverlayService) {
 
         $scope.binSettings = {
-            acquisition: 'test',
+            libraries: [],
             filters: {
                 massWindow: 5,
                 riWindow: 5
@@ -61,6 +61,13 @@
                 ri: false
             }
         };
+
+        $http.get("/rest/library")
+            .then(function(response) {
+                console.log(response);
+                $scope.binSettings.libraries = response.data;
+                $scope.binSettings.acquisition = response.data[0].chromatographicMethod.name;
+            });
 
         $scope.stSpectra = {
             data: []

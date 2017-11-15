@@ -3,18 +3,18 @@
  */
 'use strict';
 
-app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', function(bsLoadingOverlayService, $uibModal, $http) {
+app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadingOverlayService, $http) {
     var table;
     return {
         restrict: 'E',
         template: '<table id="binTable" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%"></table>',
         replace: true,
         scope: {
-            endpoint: '=',
+            dtDataUrl: '=',
             filters: '='
         },
 
-        controller: function($scope, $rootScope, $uibModal) {
+        controller: function($scope, $rootScope) {
 
             $(document).ready(function() {
                 // Define columns
@@ -31,10 +31,6 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
                     ajax: function(method, url, data, success, error) {
                         var newData = data.data[Object.keys(data.data)[0]];
                         var rowData = $scope.activeBin;
-                        var rowId = Object.keys(data.data)[0];
-                        var rows = table.rows();
-
-                        var url = 'rest/library/' + $scope.endpoint;
 
                         var target = {
                             id: newData.id,
@@ -51,17 +47,21 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
                             spectrum: rowData.spectrum
                         };
 
-                        $.ajax( {
+                        $.ajax({
                             type: 'PUT',
                             headers: {
                                     'Accept': 'application/json',
                                     'Content-Type': 'application/json'
                             },
-                            url: url,
+                            url: $scope.dtDataUrl,
                             data: JSON.stringify(target),
-                            success: function(json) { console.log('success', json); table.ajax.reload(); },
-                            error: function(xhr, error, thrown) { }
-                        } );
+                            success: function(json) {
+                                success(json);
+                                table.ajax.reload();
+                            },
+                            error: function(xhr, error, thrown) {
+                            }
+                        });
                     },
                     table: '#binTable',
                     idSrc: 'id',
@@ -70,14 +70,10 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
                     })
                 });
 
-                editor.on('preSubmit', function(e, data, action) {
-                    console.log(e, data, action);
-                });
-
                 // Create bin table
                 table = $('#binTable').DataTable({
                     ajax: {
-                        url: '/rest/library/' + $scope.endpoint,
+                        url: $scope.dtDataUrl,
                         dataSrc: function(json) {
                             bsLoadingOverlayService.stop();
                             return json;
@@ -98,6 +94,7 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
 
                 // Activate an inline edit on click of a table cell
                 $('#binTable').on('click', 'tbody td.editable', function (e) {
+                    console.log(e);
                     editor.inline(this, { submit: 'all' });
                 });
 
@@ -128,9 +125,9 @@ app.directive('binTable', ['bsLoadingOverlayService', '$uibModal', '$http', func
         },
 
         link: function(scope) {
-            scope.$watch('endpoint', function(newVal, oldVal) {
+            scope.$watch('dtDataUrl', function(newVal, oldVal) {
                 if (table) {
-                    table.ajax.url('/rest/library/' + newVal).load();
+                    table.ajax.url(newVal).load();
                 }
             });
         }
