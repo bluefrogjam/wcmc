@@ -413,7 +413,11 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                         rowLabels[i] = i + 1;
                         instance.updateSettings({rowHeaders: rowLabels});
                     }
-                }
+                } else {
+                     $scope.totalCount++;
+                     rowLabels[i] = i + 1;
+                     instance.updateSettings({rowHeaders: rowLabels});
+                 }
             }
 
             if (angular.isDefined($scope.error)) {
