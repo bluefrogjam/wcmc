@@ -164,12 +164,12 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
             $scope.data.forEach(function(x, i) {
 
-                if (x[fileNameCol] !== null) {
+                if (x[fileNameCol] !== null && x[fileNameCol] !== "") {
                     // Replace extension if desired
                     if (angular.isDefined($scope.task.extension) && $scope.task.extension != "") {
                         if (x[fileNameCol].indexOf('.') > -1) {
                             x[fileNameCol] = x[fileNameCol].substr(0, x[fileNameCol].lastIndexOf('.'));
-                        } else {
+                        } else if (x[fileNameCol] != "") {
                             x[fileNameCol] += '.'+ $scope.task.extension;
                         }
                     }
