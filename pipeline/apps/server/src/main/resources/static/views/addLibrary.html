@@ -13,6 +13,9 @@
 <div class="alert alert-danger" role="alert" ng-show="error">
     <h4><i class="fa fa-exclamation-triangle"></i> Error!</h4>
     {{error}}
+    <ul>
+        <li ng-repeat="e in errors">{{e}}</li>
+    </ul>
 </div>
 
 <uib-progress max="totalCount" ng-show="submitting || success || error">

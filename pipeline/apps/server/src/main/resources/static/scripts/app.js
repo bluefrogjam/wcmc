@@ -381,6 +381,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             $scope.success = false;
             $scope.error = undefined;
             $scope.totalCount = 0;
+            $scope.errors = [];
 
             if (!validateAcquisitionMode()) {
                 return;
@@ -427,17 +428,18 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             for (var i = 0; i < $scope.data.length; i++) {
                 // Ignore empty rows
                 if (!isRowEmpty($scope.data[i])) {
-                    $scope.target.targetName = $scope.data[i].targetName;
-                    $scope.target.precursor = $scope.data[i].precursor;
-                    $scope.target.retentionTime = $scope.data[i].retentionTime;
-                    $scope.target.riMarker = $scope.data[i].riMarker;
+                    var target = angular.copy($scope.target);
+                    target.targetName = $scope.data[i].targetName;
+                    target.precursor = $scope.data[i].precursor;
+                    target.retentionTime = $scope.data[i].retentionTime;
+                    target.riMarker = angular.isDefined($scope.data[i].riMarker) && $scope.data[i].riMarker;
 
-                    if ($scope.target.ri_unit == 'minutes') {
-                        $scope.target.retentionTime *= 60;
+                    if (target.ri_unit == 'minutes') {
+                        target.retentionTime *= 60;
                     }
 
                     HttpService.submitTarget(
-                        $scope.target,
+                        target,
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-check text-success" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
@@ -449,6 +451,12 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                             instance.updateSettings({rowHeaders: rowLabels});
 
                             $scope.errorCount++;
+
+                            if (data.status == 409) {
+                                $scope.errors.push("Target \""+ data.config.data.targetName +"\" already exists in specified library!");
+                            } else {
+                                $scope.errors.push("Internal server error for target: "+ data.config.data.targetName);
+                            }
                         }
                     );
                 }
