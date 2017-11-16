@@ -84,7 +84,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Task object
          */
-        $scope.task = {};
+        $scope.task = {platform: "LC-MS"};
 
         $scope.reset = function() {
           $window.location.reload();
