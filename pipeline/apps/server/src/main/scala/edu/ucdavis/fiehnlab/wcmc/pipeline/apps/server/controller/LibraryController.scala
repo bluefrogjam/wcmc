@@ -36,11 +36,14 @@ class LibraryController extends LazyLogging {
 
     logger.info(s"library contains currently ${existingTargets.size} targets")
 
-    if (!existingTargets.exists(_.equals(t))) {
+    val hasExistings = existingTargets.filter(_.equals(t))
+
+    if (hasExistings.isEmpty) {
       libraryAccess.add(t, method, None)
     }
     else {
       logger.info(s"target already existed: $t")
+      logger.debug(s"\t=>existing target was: ${hasExistings}")
       throw new ResourceAlreadyExistException
     }
   }
