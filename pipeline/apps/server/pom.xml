@@ -16,6 +16,11 @@
     <description>
         Provides the REST based entry server
     </description>
+
+    <properties>
+        <docker.expose>18080</docker.expose>
+        <docker.jvm>-Xmx16186m</docker.jvm>
+    </properties>
     <dependencies>
 
         <dependency>
