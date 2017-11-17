@@ -55,7 +55,12 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
       val content = new URI(uri).toURL
 
 
-      Option(content.openStream())
+      try {
+        Option(content.openStream())
+      }
+      finally {
+        logger.info(s"download completed for ${name}")
+      }
     }
   }
 

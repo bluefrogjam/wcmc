@@ -70,7 +70,7 @@ class TaskRunner extends LazyLogging {
 
 
     //send the processed result to the storage engine.
-    storage.asScala.foreach { x: ResultStorage =>
+    storage.asScala.par.foreach { x: ResultStorage =>
       try {
         x.store(result, task)
       }
