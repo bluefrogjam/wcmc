@@ -31,7 +31,18 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                             }
 
                             return data;
-                        }
+                        },
+                        className: "ri-standard"
+                    },
+                    {data: 'confirmed', title: 'Confirmed',
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                return '<input type="checkbox" class="editor-active">';
+                            }
+
+                            return data;
+                        },
+                        className: "confirmed"
                     },
                     {data: 'ionMode.mode', title: 'Ion Mode'}
                 ];
@@ -49,6 +60,11 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                             target.isRetentionIndexStandard = false;
                         }
 
+                        if (target.confirmed.length && target.confirmed.length == 1) { //TODO this is terrible and should be fixed, why is the variable being set this way?
+                            target.confirmed = true;
+                        } else {
+                            target.confirmed = false;
+                        }
                         $.ajax({
                             type: 'PUT',
                             headers: {
@@ -80,6 +96,19 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                                 ]
                             }
                         }
+
+                        if (x.data == 'confirmed') {
+                            return {
+                                name: x.data,
+                                label: x.title,
+                                type: 'checkbox',
+                                separate: '|',
+                                options: [
+                                    { label: '', value: true }
+                                ]
+                            }
+                        }
+
                         return {name: x.data, label: x.title}
                     })
                 });
@@ -100,7 +129,8 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                     },
                     columns: columns,
                     rowCallback: function(row, data) {
-                        $('input.editor-active', row).prop('checked', data.isRetentionIndexStandard == true);
+                        $('.ri-standard input.editor-active', row).prop('checked', data.isRetentionIndexStandard == true);
+                        $('.confirmed input.editor-active', row).prop('checked', data.confirmed == true);
                     }
                 });
 
@@ -121,13 +151,23 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                     $rootScope.$broadcast('bin-clicked', data);
                 });
 
-                $('#binTable').on( 'change', 'input.editor-active', function () {
+                $('#binTable').on( 'change', '.ri-standard input.editor-active', function () {
 
                     var checked = $(this).prop('checked');
 
                     editor
                         .edit( $(this).closest('tr'), false )
                         .field('isRetentionIndexStandard').set( checked ); //TODO this sets the field in the most asinine way, find a way to fix
+                    editor.submit();
+                } );
+
+                $('#binTable').on( 'change', '.confirmed input.editor-active', function () {
+
+                    var checked = $(this).prop('checked');
+
+                    editor
+                        .edit( $(this).closest('tr'), false )
+                        .field('confirmed').set( checked ); //TODO this sets the field in the most asinine way, find a way to fix
                     editor.submit();
                 } );
 
