@@ -69,7 +69,6 @@
 
         $http.get("/rest/library")
             .then(function(response) {
-                console.log(response);
                 $scope.binSettings.libraries = response.data;
                 $scope.binSettings.acquisition = response.data[0].chromatographicMethod.name;
             });
@@ -94,7 +93,6 @@
 
         $scope.$on('bin-clicked', function(event, data) {
             $scope.$apply(function() {
-            console.log('bin-clicked', data);
                 $scope.bin = data;
                 $scope.stSpectra.data = [];
                 $scope.stSpectra.data.push({ spectrumId: 'BIN', spectrum: data.spectrum });

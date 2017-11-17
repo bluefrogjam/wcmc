@@ -43,8 +43,7 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                         var newData = data.data[rowId];
                         var rowData = table.row('#' + rowId).data();
                         var target = Object.assign({}, rowData, newData);
-                        console.log(target);
-                        if (target.isRetentionIndexStandard.length && target.isRetentionIndexStandard.length == 1) {
+                        if (target.isRetentionIndexStandard.length && target.isRetentionIndexStandard.length == 1) { //TODO this is terrible and should be fixed, why is the variable being set this way?
                             target.isRetentionIndexStandard = true;
                         } else {
                             target.isRetentionIndexStandard = false;
@@ -101,7 +100,6 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                     },
                     columns: columns,
                     rowCallback: function(row, data) {
-                        console.log(data);
                         $('input.editor-active', row).prop('checked', data.isRetentionIndexStandard == true);
                     }
                 });
@@ -125,13 +123,11 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
 
                 $('#binTable').on( 'change', 'input.editor-active', function () {
 
-                    console.log($(this).closest('tr'));
                     var checked = $(this).prop('checked');
-                    console.log(checked);
 
                     editor
                         .edit( $(this).closest('tr'), false )
-                        .field('isRetentionIndexStandard').set( checked );
+                        .field('isRetentionIndexStandard').set( checked ); //TODO this sets the field in the most asinine way, find a way to fix
                     editor.submit();
                 } );
 
