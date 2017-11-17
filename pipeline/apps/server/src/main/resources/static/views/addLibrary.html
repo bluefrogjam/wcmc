@@ -2,7 +2,7 @@
 <br />
 
 <div class="alert alert-info" role="alert" ng-show="submitting">
-    <h4><i class="fa fa-spinner fa-spin fa-fw"></i> Submitting...</h4>
+    <h4><i class="fa fa-spinner fa-spin fa-fw"></i> Submitting {{successCount + errorCount}} / {{totalCount}}...</h4>
 </div>
 
 <div class="alert alert-success" role="alert" ng-show="success">
@@ -13,7 +13,15 @@
 <div class="alert alert-danger" role="alert" ng-show="error">
     <h4><i class="fa fa-exclamation-triangle"></i> Error!</h4>
     {{error}}
+    <ul>
+        <li ng-repeat="e in errors">{{e}}</li>
+    </ul>
 </div>
+
+<uib-progress max="totalCount" ng-show="submitting || success || error">
+    <uib-bar value="successCount" type="success"></uib-bar>
+    <uib-bar value="errorCount" type="dangerstat"></uib-bar>
+</uib-progress>
 
 <hot-table
         hot-id="library"
@@ -33,17 +41,32 @@
 </hot-table>
 <br />
 
+<div class="form-group">
+    <label>Retention Time Units</label><br>
+
+    <label class="radio-inline">
+        <input type="radio" name="ri_unit" value="minutes" ng-model="target.ri_unit"> Minutes
+    </label>
+    <label class="radio-inline">
+        <input type="radio" name="ri_unit" value="seconds" ng-model="target.ri_unit"> Seconds
+    </label>
+</div>
 
 <div class="form-group">
     <label for="acquisitionMethod">Acquisition Method</label>
-    <input type="text"
-           id="acquisitionMethod"
-           class="form-control"
-           ng-model="target.selectedMethod"
-           placeholder="Acquisition Method"
-           uib-typeahead="x as x.title for x in acquisitionMethodOptions | filter:$viewValue"
-           typeahead-show-hint="true"
-           typeahead-min-length="0">
+    <div class="input-group">
+        <input type="text"
+               id="acquisitionMethod"
+               class="form-control"
+               ng-model="target.selectedMethod"
+               placeholder="Acquisition Method"
+               uib-typeahead="x as x.title for x in acquisitionMethodOptions | filter:$viewValue"
+               typeahead-show-hint="true"
+               typeahead-min-length="0">
+        <span class="input-group-btn">
+                <button class="btn btn-default" type="button"><i class="fa fa-refresh" ng-click="pullAcquisitionMethodsAndPlatforms()"></i></button>
+        </span>
+    </div>
 </div>
 
 <div class="form-group" ng-if="(target.selectedMethod | getType) == 'string'">
