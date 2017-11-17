@@ -185,7 +185,7 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
       classes = experiment.classes.collect {
         case clazz: ExperimentClass =>
           ExperimentClass(
-            samples = clazz.samples.collect {
+            samples = clazz.samples.par.collect {
               case sample: Sample =>
                 try {
                   callback(sample, clazz, experiment)
@@ -213,7 +213,7 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
                 }
             }.collect {
               case sample: Sample => sample
-            }.seq,
+            }.seq.toSeq,
 
             matrix = clazz.matrix
           )

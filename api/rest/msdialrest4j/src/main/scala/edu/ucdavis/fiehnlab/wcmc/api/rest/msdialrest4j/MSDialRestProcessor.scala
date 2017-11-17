@@ -81,10 +81,10 @@ class MSDialRestProcessor extends LazyLogging {
       }
 
       val url: String = s"${msdresturl}/rest/deconvolution/process/${converted.getName}"
-      logger.info(s"invoking: ${url}")
+      logger.debug(s"invoking: ${url}")
       val response = restTemplate.getForEntity(url, classOf[ServerResponse])
 
-      logger.info(s"response code is: ${response.getStatusCode} and message is ${response.getBody.message}")
+      logger.debug(s"response code is: ${response.getStatusCode} and message is ${response.getBody.message}")
       if (response.getStatusCode != HttpStatus.OK) {
         throw new Exception(s"Response was: ${response.getStatusCode} - ${response.getBody.message}")
       } else {
@@ -118,7 +118,7 @@ class MSDialRestProcessor extends LazyLogging {
 
     if (result.getStatusCode == HttpStatus.OK) {
       val token = result.getBody.filename
-      logger.info(s"filename = $token")
+      logger.debug(s"filename = $token")
 
       if (result.getStatusCode == HttpStatus.OK) {
         //if input is raw data file... convert
@@ -174,7 +174,7 @@ class MSDialRestProcessor extends LazyLogging {
     */
   protected def exists(filename: String): Boolean = {
     val url = s"${msdresturl}/rest/file/exists/${filename}"
-    logger.info(s"url: ${url}")
+    logger.debug(s"url: ${url}")
 
     val fresp = restTemplate.getForEntity(url, classOf[ServerResponse])
     val response = fresp.getBody
@@ -190,7 +190,7 @@ class MSDialRestProcessor extends LazyLogging {
     */
   protected def convert(id: String, token: String): String = {
     val url = s"${msdresturl}/rest/conversion/convert/${id}"
-    logger.info(s"invoking conversion at ${url}")
+    logger.debug(s"invoking conversion at ${url}")
     val result = restTemplate.getForEntity(s"${msdresturl}/rest/conversion/convert/${id}", classOf[ServerResponse])
 
     if (result.getStatusCode == HttpStatus.OK) {
