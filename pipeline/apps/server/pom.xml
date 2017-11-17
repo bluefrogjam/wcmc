@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
-            <artifactId>thread</artifactId>
+            <artifactId>rabbit</artifactId>
             <version>1.0.16-SNAPSHOT</version>
         </dependency>
 
