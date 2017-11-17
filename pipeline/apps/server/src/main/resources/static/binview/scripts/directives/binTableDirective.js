@@ -24,7 +24,15 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                     {data: 'name', title: 'Name', className: 'editable'},
                     {data: 'precursorMass', title: 'Precursor Mass'},
                     {data: 'retentionIndex', title: 'Retention Index'},
-                    {data: 'isRetentionIndexStandard', title: 'Retention Index Standard', className: 'editable'},
+                    {data: 'isRetentionIndexStandard', title: 'Retention Index Standard',
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                return '<input type="checkbox" class="editor-active">';
+                            }
+
+                            return data;
+                        }
+                    },
                     {data: 'ionMode.mode', title: 'Ion Mode'}
                 ];
 
@@ -35,6 +43,12 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                         var newData = data.data[rowId];
                         var rowData = table.row('#' + rowId).data();
                         var target = Object.assign({}, rowData, newData);
+                        console.log(target);
+                        if (target.isRetentionIndexStandard.length && target.isRetentionIndexStandard.length == 1) {
+                            target.isRetentionIndexStandard = true;
+                        } else {
+                            target.isRetentionIndexStandard = false;
+                        }
 
                         $.ajax({
                             type: 'PUT',
@@ -56,6 +70,17 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                     table: '#binTable',
                     idSrc: 'id',
                     fields: columns.map(function(x) {
+                        if (x.data == 'isRetentionIndexStandard') {
+                            return {
+                                name: x.data,
+                                label: x.title,
+                                type: 'checkbox',
+                                separate: '|',
+                                options: [
+                                    { label: '', value: true }
+                                ]
+                            }
+                        }
                         return {name: x.data, label: x.title}
                     })
                 });
@@ -74,7 +99,11 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                         style: 'os',
                         info: false
                     },
-                    columns: columns
+                    columns: columns,
+                    rowCallback: function(row, data) {
+                        console.log(data);
+                        $('input.editor-active', row).prop('checked', data.isRetentionIndexStandard == true);
+                    }
                 });
 
                 table.on('user-select', function( e, dt, type, cell, originalEvent ) {
@@ -93,6 +122,18 @@ app.directive('binTable', ['bsLoadingOverlayService', '$http', function(bsLoadin
                     var data = table.row(this).data();
                     $rootScope.$broadcast('bin-clicked', data);
                 });
+
+                $('#binTable').on( 'change', 'input.editor-active', function () {
+
+                    console.log($(this).closest('tr'));
+                    var checked = $(this).prop('checked');
+                    console.log(checked);
+
+                    editor
+                        .edit( $(this).closest('tr'), false )
+                        .field('isRetentionIndexStandard').set( checked );
+                    editor.submit();
+                } );
 
                 editor
                     .on('open', function (e, mode, action) {

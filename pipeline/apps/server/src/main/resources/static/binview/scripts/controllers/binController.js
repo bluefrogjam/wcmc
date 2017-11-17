@@ -48,15 +48,20 @@
                 }
             ],
             filters: {
+                allLibraries: true,
+                toggleAllLibraries: function() {
+                    for (var library in $scope.simSettings.filters.libraries) {
+                        $scope.simSettings.filters.libraries[library].value = $scope.simSettings.filters.allLibraries;
+                    }
+                },
                 libraries: {
-                    all: true,
-                    fiehnlib: true,
-                    gnps: true,
-                    hmdb: true,
-                    itree: true,
-                    massbank: true,
-                    metabobase: true,
-                    respect: true
+                    'fiehnlib': { name: 'FiehnLib', value: true },
+                    'gnps': { name: 'GNPS', value: true },
+                    'hmdb': { name: 'HMDB', value: true },
+                    'itree': { name: 'iTree', value: true },
+                    'massbank': { name: 'MassBank', value: true },
+                    'metabobase': { name: 'MetaboBase', value: true },
+                    'respect': { name: 'ReSpect', value: true }
                 },
                 ri: false
             }
@@ -71,7 +76,7 @@
 
         $scope.stSpectra = {
             data: []
-        }
+        };
 
         $scope.startLoadingService = function() {
             bsLoadingOverlayService.start();
