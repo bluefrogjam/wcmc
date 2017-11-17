@@ -5,7 +5,6 @@ angular.module('app').directive('dtFooter', [ 'dtFilter', function(dtFilter) {
         restrict: 'A',
         require: 'binTable',
         link: function(scope, elem, attr, controller) {
-            console.log('dtFooterDirective: link', scope, elem, attr, controller);
 
             /**
              * Filter to find exact matches for one or more query strings,
@@ -109,6 +108,7 @@ angular.module('app').directive('dtFooter', [ 'dtFilter', function(dtFilter) {
                 {data: 'precursorMass', title: 'Precursor Mass'},
                 {data: 'retentionIndex', title: 'Retention Index'},
                 {data: 'isRetentionIndexStandard', title: 'Retention Index Standard', className: 'editable'},
+                {data: 'confirmed', title: 'Confirmed', className: 'editable'},
                 {data: 'ionMode.mode', title: 'Ion Mode'}
             ];
 
@@ -118,7 +118,8 @@ angular.module('app').directive('dtFooter', [ 'dtFilter', function(dtFilter) {
                     rangeFilter(columns[2].data + '_filter', data[2], scope.binSettings.filters.massWindow) &&
                     rangeFilter(columns[3].data + '_filter', data[3], scope.binSettings.filters.riWindow) &&
                     stringFilter(columns[4].data + '_filter', data[4]) &&
-                    stringFilter(columns[5].data.replace('.','_') + '_filter', data[5]);
+                    stringFilter(columns[5].data + '_filter', data[5]) &&
+                    stringFilter(columns[6].data.replace('.','_') + '_filter', data[6]);
             });
 
             var footer = $('#' + attr.id).append('<tfoot><tr></tr></tfoot>');
