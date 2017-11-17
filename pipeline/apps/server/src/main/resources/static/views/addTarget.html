@@ -26,8 +26,19 @@
 </div>
 
 <div class="form-group">
-    <label for="retentionTime">Retention Time (s)</label>
-    <input type="text" class="form-control" id="retentionTime" placeholder="Retention Time (s)" ng-model="target.retentionTime">
+    <label for="retentionTime">Retention Time</label>
+    <input type="text" class="form-control" id="retentionTime" placeholder="Retention Time" ng-model="target.retentionTime">
+</div>
+
+<div class="form-group">
+    <label>Retention Time Units</label><br>
+
+    <label class="radio-inline">
+        <input type="radio" name="ri_unit" value="minutes" ng-model="target.ri_unit"> Minutes
+    </label>
+    <label class="radio-inline">
+        <input type="radio" name="ri_unit" value="seconds" ng-model="target.ri_unit"> Seconds
+    </label>
 </div>
 
 <div class="form-group">
@@ -37,14 +48,19 @@
 
 <div class="form-group">
     <label for="acquisitionMethod">Acquisition Method Name</label>
-    <input type="text"
-           id="acquisitionMethod"
-           class="form-control"
-           ng-model="target.selectedMethod"
-           placeholder="Acquisition Method"
-           uib-typeahead="x as x.title for x in acquisitionMethodOptions | filter:$viewValue"
-           typeahead-show-hint="true"
-           typeahead-min-length="0">
+    <div class="input-group">
+        <input type="text"
+               id="acquisitionMethod"
+               class="form-control"
+               ng-model="target.selectedMethod"
+               placeholder="Acquisition Method"
+               uib-typeahead="x as x.title for x in acquisitionMethodOptions | filter:$viewValue"
+               typeahead-show-hint="true"
+               typeahead-min-length="0">
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="button"><i class="fa fa-refresh" ng-click="pullAcquisitionMethodsAndPlatforms()"></i></button>
+        </span>
+    </div>
 </div>
 
 <div class="form-group" ng-if="(target.selectedMethod | getType) == 'string'">

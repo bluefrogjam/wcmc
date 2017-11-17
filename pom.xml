@@ -3,11 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>edu.ucdavis.fiehnlab</groupId>
     <artifactId>wcmc</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+
     <modules>
         <module>utilities</module>
         <module>server</module>
@@ -15,16 +14,20 @@
 	    <module>pipeline</module>
     </modules>
 
+    <packaging>pom</packaging>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.6.RELEASE</version>
     </parent>
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <scala.version>2.11</scala.version>
+        <scala.minor.version>8</scala.minor.version>
         <groovy.version>2.4.4</groovy.version>
         <java.version>1.8</java.version>
     </properties>
@@ -38,7 +41,6 @@
                 <version>4.12</version>
                 <scope>test</scope>
             </dependency>
-
 
             <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-scala_2.11 -->
             <dependency>
@@ -111,13 +113,11 @@
                 <artifactId>scala-logging_${scala.version}</artifactId>
                 <version>3.5.0</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
     <!-- our default stack to be used in the fiehnlab -->
     <profiles>
-
         <!--scala support for compiling of tests-->
         <profile>
             <id>scala-test</id>
@@ -131,7 +131,7 @@
                 <dependency>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>scala-library</artifactId>
-                    <version>${scala.version}.8</version>
+                    <version>${scala.version}.${scala.minor.version}</version>
                 </dependency>
 
                 <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest_2.11 -->
@@ -141,7 +141,6 @@
                     <version>2.2.6</version>
                     <scope>test</scope>
                 </dependency>
-
             </dependencies>
 
             <build>
@@ -195,7 +194,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <scalaVersion>${scala.version}.8</scalaVersion>
+                            <scalaVersion>${scala.version}.${scala.minor.version}</scalaVersion>
                             <jvmArgs>
                                 <jvmArg>-Xms64m</jvmArg>
                                 <jvmArg>-Xmx1024m</jvmArg>
@@ -354,7 +353,7 @@
                 <dependency>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>scala-library</artifactId>
-                    <version>${scala.version}.7</version>
+                    <version>${scala.version}.${scala.minor.version}</version>
                 </dependency>
 
                 <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest_2.11 -->
@@ -364,7 +363,6 @@
                     <version>2.2.6</version>
                     <scope>test</scope>
                 </dependency>
-
             </dependencies>
 
             <build>
@@ -411,7 +409,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <scalaVersion>${scala.version}.7</scalaVersion>
+                            <scalaVersion>${scala.version}.${scala.minor.version}</scalaVersion>
                             <jvmArgs>
                                 <jvmArg>-Xms64m</jvmArg>
                                 <jvmArg>-Xmx1024m</jvmArg>
@@ -619,7 +617,6 @@
                 </plugins>
             </build>
         </profile>
-
     </profiles>
 
     <distributionManagement>
@@ -634,7 +631,6 @@
             <url>http://gose.fiehnlab.ucdavis.edu:55000/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
 
     <repositories>
         <repository>
@@ -652,6 +648,7 @@
             </releases>
         </repository>
     </repositories>
+
     <pluginRepositories>
         <pluginRepository>
             <id>spring-releases</id>

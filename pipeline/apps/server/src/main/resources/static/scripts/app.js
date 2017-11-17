@@ -70,20 +70,90 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Acquisition method options
          */
-        HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data;
-        });
-        HttpService.getPlatforms(function(data) {
-            $scope.platformOptions = data;
-        });
+        $scope.pullAcquisitionMethodsAndPlatforms = function() {
+            HttpService.getAcquisitionMethods(function(data) {
+                $scope.acquisitionMethodOptions = data;
+            });
+
+            HttpService.getPlatforms(function(data) {
+                $scope.platformOptions = data;
+            });
+        };
+        $scope.pullAcquisitionMethodsAndPlatforms();
 
         /**
          * Task object
          */
-        $scope.task = {};
+        $scope.task = {platform: "LC-MS"};
 
         $scope.reset = function() {
           $window.location.reload();
+        };
+
+
+        /**
+         * Table functions
+         */
+        $scope.resetTableRowHeaders = function() {
+            var instance = hotRegisterer.getInstance('scheduler');
+            var rowLabels = instance.getRowHeader();
+
+            $scope.data.forEach(function(x, i) {
+                rowLabels[i] = i + 1;
+            });
+
+            instance.updateSettings({rowHeaders: rowLabels});
+        };
+
+        $scope.resetTable = function() {
+            $scope.resetTableRowHeaders();
+            $scope.data = [[]];
+        };
+
+        $scope.sortTableByValidity = function(includeBadRows) {
+            includeBadRows = angular.isDefined(includeBadRows) ? includeBadRows : true;
+
+            var instance = hotRegisterer.getInstance('scheduler');
+            var rowLabels = instance.getRowHeader();
+
+            // Find valid and invalid samples
+            var goodRows = [], badRows = [];
+
+            $scope.data.forEach(function(x, i) {
+                if (angular.isString(rowLabels[i])) {
+                    if (rowLabels[i].indexOf("fa-check") > 0) {
+                        goodRows.push(x);
+                    } else if (rowLabels[i].indexOf('fa-times') > 0) {
+                        badRows.push(x);
+                    }
+                }
+            });
+
+            // Update data
+            $scope.data = includeBadRows ? goodRows.concat(badRows) : goodRows;
+
+            if ($scope.data.length == 0) {
+                $scope.data = [[]];
+            }
+
+            // Update row headers
+            for (var i = 0; i < goodRows.length + badRows.length; i++) {
+                if (i < goodRows.length) {
+                    rowLabels[i] = '<i class="fa fa-check text-success" aria-hidden="true"></i>';
+                } else if (includeBadRows && i < goodRows.length + badRows.length) {
+                    rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
+                } else {
+                    rowLabels[i] = i + 1;
+                }
+            }
+
+            instance.updateSettings({rowHeaders: rowLabels});
+        };
+
+        $scope.removeInvalidRows = function() {
+            $scope.sortTableByValidity(false);
+            $scope.checkFileError = undefined
+            $scope.checkFileSuccess = $scope.taskToSubmit.samples.length > 0;
         };
 
 
@@ -100,8 +170,11 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         };
 
 
-        $scope.submit = function() {
+        $scope.checkFiles = function() {
             // Reset error
+            $scope.success = false;
+            $scope.checkFileSuccess = undefined;
+            $scope.checkFileError = undefined;
             $scope.error = undefined;
 
             // Check that filename column is selected
@@ -121,43 +194,31 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                 return;
             }
 
-            if (angular.isUndefined($scope.task.email)) {
-                $scope.error = 'No email address provided!';
-                return;
-            }
-            if (angular.isUndefined($scope.task.platform)) {
-                $scope.error = 'No platform selected!';
-                return;
-            }
-            if (angular.isUndefined($scope.task.acquisitionMethod)) {
-                $scope.error = 'No acquisition method selected!';
-                return;
-            }
-
-            $scope.running = true;
+            $scope.checkingFiles = true;
+            $scope.resetTableRowHeaders();
 
             // Task object to submit
-            var task = {
-                samples: [],
-                name: $scope.task.email,
-                email: $scope.task.email,
-                acquisitionMethod: $scope.task.acquisitionMethod,
-                platform: {platform: {name: $scope.task.platform}}
+            $scope.taskToSubmit = {
+                samples: []
             };
-
-            // Add task name
-            if (angular.isDefined($scope.task.name) && $scope.task.name != '') {
-                task.name += '_'+ $scope.task.name;
-            } else {
-                task.name += '_'+ $filter('date')(new Date(), 'yyyyMMddHHmmss');
-            }
 
             // Check file existence for each row and update the row header with the result
             var rowLabels = instance.getRowHeader();
             var checkCount = 0;
+            var validCount = 0;
+            var errorCount = 0;
 
             $scope.data.forEach(function(x, i) {
-                if (x[fileNameCol] !== null) {
+                if (x[fileNameCol] !== null && x[fileNameCol] !== "") {
+                    // Replace extension if desired
+                    if (angular.isDefined($scope.task.extension) && $scope.task.extension != "") {
+                        if (x[fileNameCol].indexOf('.') > -1) {
+                            x[fileNameCol] = x[fileNameCol].substr(0, x[fileNameCol].lastIndexOf('.')) +'.'+ $scope.task.extension;
+                        } else if (x[fileNameCol] != "") {
+                            x[fileNameCol] += '.'+ $scope.task.extension;
+                        }
+                    }
+
                     HttpService.checkFileStatus(
                         x[fileNameCol],
                         function(data) {
@@ -178,49 +239,93 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                             if (!angular.equals(matrix, {}))
                                 sample.matrix = matrix;
 
-                            task.samples.push(sample);
+                            $scope.taskToSubmit.samples.push(sample);
 
                             // Update row header
                             rowLabels[i] = '<i class="fa fa-check text-success" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
 
                             checkCount++;
+                            validCount++;
                         },
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
 
                             checkCount++;
+                            errorCount++;
                         }
                     );
+                } else if (x.filter(function(x) { return x != null && x != ""; }).length == 0) {
+                    // Ignore empty rows
+                    rowLabels[i] = i + 1;
+                    instance.updateSettings({rowHeaders: rowLabels});
+                    checkCount++;
                 } else {
                     rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
                     instance.updateSettings({rowHeaders: rowLabels});
-
                     checkCount++;
                 }
             });
 
             // Submit the task, waiting until all checks are complete
-            var submitTask = function() {
+            var monitorFileCheck = function() {
                 if (checkCount < $scope.data.length) {
-                    $timeout(submitTask, 1000);
+                    $timeout(monitorFileCheck, 1000);
+                } else if (errorCount > 0) {
+                    $scope.checkFileError = errorCount +"/"+ (validCount + errorCount) +" sample files could not be found!  Please remove or rename these."
+                    $scope.checkingFiles = false;
                 } else {
-                    HttpService.submitJob(
-                        task,
-                        function(data) {
-                            $scope.success = data.data;
-                            $scope.running = false;
-                        },
-                        function(data) {
-                            $scope.error = data.data;
-                            $scope.running = false;
-                        }
-                    );
+                    $scope.checkFileSuccess = true;
+                    $scope.checkingFiles = false;
                 }
             };
 
-            submitTask();
+            monitorFileCheck();
+        };
+
+        $scope.submit = function() {
+            if ($scope.checkFileError) {
+                $scope.error = 'Not all sample files are valid - please re-check files before submitting!';
+                return;
+            }
+            if (angular.isUndefined($scope.task.email)) {
+                $scope.error = 'No email address provided!';
+                return;
+            }
+            if (angular.isUndefined($scope.task.platform)) {
+                $scope.error = 'No platform selected!';
+                return;
+            }
+            if (angular.isUndefined($scope.task.acquisitionMethod)) {
+                $scope.error = 'No acquisition method selected!';
+                return;
+            }
+
+            $scope.taskToSubmit.name = $scope.task.email;
+            $scope.taskToSubmit.email = $scope.task.email;
+            $scope.taskToSubmit.acquisitionMethod = $scope.task.acquisitionMethod;
+            $scope.taskToSubmit.platform = {platform: {name: $scope.task.platform}};
+
+            // Add task name
+            if (angular.isDefined($scope.task.name) && $scope.task.name != '') {
+                $scope.taskToSubmit.name += '_'+ $scope.task.name;
+            } else {
+                $scope.taskToSubmit.name += '_'+ $filter('date')(new Date(), 'yyyyMMddHHmmss');
+            }
+
+            // Submit the task, waiting until all checks are complete
+            HttpService.submitJob(
+                $scope.taskToSubmit,
+                function(data) {
+                    $scope.success = data.data;
+                    $scope.submitting = false;
+                },
+                function(data) {
+                    $scope.error = data.data;
+                    $scope.submitting = false;
+                }
+            );
         };
     }])
 
@@ -230,12 +335,16 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Acquisition method options
          */
-        HttpService.getAcquisitionMethods(function(data) {
-            $scope.acquisitionMethodOptions = data;
-        });
-        HttpService.getPlatforms(function(data) {
-            $scope.platformOptions = data;
-        });
+        $scope.pullAcquisitionMethodsAndPlatforms = function() {
+            HttpService.getAcquisitionMethods(function(data) {
+                $scope.acquisitionMethodOptions = data;
+            });
+
+            HttpService.getPlatforms(function(data) {
+                $scope.platformOptions = data;
+            });
+        };
+        $scope.pullAcquisitionMethodsAndPlatforms();
 
         /**
          * HandsOnTable settings
@@ -253,7 +362,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
         /**
          * Target object for single target mode
          */
-        $scope.target = {};
+        $scope.target = {ri_unit: 'minutes'};
 
         $scope.reset = function() {
             $window.location.reload();
@@ -312,6 +421,7 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
 
         $scope.submitSingleTarget = function() {
+            $scope.success = false;
             $scope.error = undefined;
 
             if (angular.isUndefined($scope.target.targetName)) {
@@ -330,10 +440,16 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
                 return;
             }
 
+            var target = angular.copy($scope.target)
+
+            if (target.ri_unit == 'minutes') {
+                target.retentionTime *= 60;
+            }
+
             $scope.submitting = true;
 
             HttpService.submitTarget(
-                $scope.target,
+                target,
                 function (data) {
                     $scope.submitting = false;
                     $scope.success = true;
@@ -347,7 +463,10 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
 
         $scope.submitLibrary = function() {
+            $scope.success = false;
             $scope.error = undefined;
+            $scope.totalCount = 0;
+            $scope.errors = [];
 
             if (!validateAcquisitionMode()) {
                 return;
@@ -375,10 +494,14 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
 
                         $scope.error = 'Please ensure that all targets are completed!'
                     } else {
+                        $scope.totalCount++;
                         rowLabels[i] = i + 1;
                         instance.updateSettings({rowHeaders: rowLabels});
                     }
-                }
+                } else {
+                     rowLabels[i] = i + 1;
+                     instance.updateSettings({rowHeaders: rowLabels});
+                 }
             }
 
             if (angular.isDefined($scope.error)) {
@@ -386,44 +509,57 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             }
 
             // Submit
-            var totalCount = 0, successCount = 0, errorCount = 0;
+            $scope.successCount = 0;
+            $scope.errorCount = 0;
             $scope.submitting = true;
 
             for (var i = 0; i < $scope.data.length; i++) {
                 // Ignore empty rows
                 if (!isRowEmpty($scope.data[i])) {
-                    $scope.data[i].library = $scope.target.library;
-                    $scope.data[i].mode = $scope.target.mode;
-                    totalCount++;
+                    var target = angular.copy($scope.target);
+                    target.targetName = $scope.data[i].targetName;
+                    target.precursor = $scope.data[i].precursor;
+                    target.retentionTime = $scope.data[i].retentionTime;
+                    target.riMarker = angular.isDefined($scope.data[i].riMarker) && $scope.data[i].riMarker;
+
+                    if (target.ri_unit == 'minutes') {
+                        target.retentionTime *= 60;
+                    }
 
                     HttpService.submitTarget(
-                        $scope.data[i],
+                        target,
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-check text-success" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
 
-                            successCount++;
+                            $scope.successCount++;
                         },
                         function(data) {
                             rowLabels[i] = '<i class="fa fa-times text-danger" aria-hidden="true"></i>';
                             instance.updateSettings({rowHeaders: rowLabels});
 
-                            errorCount++;
+                            $scope.errorCount++;
+
+                            if (data.status == 409) {
+                                $scope.errors.push("Target \""+ data.config.data.targetName +"\" already exists in specified library!");
+                            } else {
+                                $scope.errors.push("Internal server error for target: "+ data.config.data.targetName);
+                            }
                         }
                     );
                 }
             }
 
             var submitLibrary = function() {
-                if (successCount + errorCount < totalCount) {
+                if ($scope.successCount + $scope.errorCount < $scope.totalCount) {
                     $timeout(submitLibrary, 1000);
                 } else {
                     $scope.submitting = false;
 
-                    if (totalCount == successCount) {
+                    if ($scope.totalCount == $scope.successCount) {
                         $scope.success = true;
                     } else {
-                        $scope.error = 'Only '+ successCount +' / '+ totalCount +' targets were successfully submitted.'
+                        $scope.error = 'Only '+ $scope.successCount +' / '+ $scope.totalCount +' targets were successfully submitted.'
                     }
                 }
             };
