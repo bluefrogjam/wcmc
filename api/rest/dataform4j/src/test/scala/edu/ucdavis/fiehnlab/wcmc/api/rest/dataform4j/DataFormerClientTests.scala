@@ -33,8 +33,7 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "convert a raw data file (.d.zip)" in {
-      //      val mapper = new ObjectMapper
-      val filename = "B5_P20Lipids_Pos_QC000.d.zip"
+      val filename = "testA.d.zip"
 
       val result = dfClient.convert(filename)
 
