@@ -9,15 +9,28 @@
     <h4><i class="fa fa-spinner fa-spin fa-fw"></i> Submitting...</h4>
 </div>
 
-<div class="alert alert-danger" role="alert" ng-show="error || checkFileError">
+<div class="alert alert-danger" role="alert" ng-show="error || checkFileError || miniXError">
     <h4 class="text-danger"><i class="fa fa-exclamation-triangle"></i> Error!</h4>
-    {{error}}{{checkFileError}}
+    {{error}}{{checkFileError}}{{miniXError}}
 </div>
 
 <div class="alert alert-success" role="alert" ng-show="success">
     <h4 class="text-success"><i class="fa fa-check-circle-o"></i> Success!</h4>
     Your processing task was submitted successfully with task ID: {{success.result}}
 </div>
+
+<label>Retrieve Study Details from MiniX (Optional)</label>
+
+<form class="form-inline">
+    <div class="form-group" style="display: inline-table;">
+        <input type="number" class="form-control" placeholder="MiniX Study ID" ng-model="task.minix">
+    </div>
+    <button type="button" class="btn btn-primary" ng-click="pullMiniXStudy()" ng-disabled="miniXLoading">
+        <span ng-if="miniXLoading" class="spinner"><i class="fa fa-spinner fa-spin"></i></span>
+        <span>Get MiniX Study</span>
+    </button>
+</form>
+<br>
 
 <div style="position: relative; left: 50px; white-space: nowrap; overflow: visible;">
     <select
@@ -41,6 +54,7 @@
         min-cols="6"
         min-rows="5"
         min-spare-rows="2"
+        observe-changes="true"
         col-widths="150"
         allow-html="true"
         datarows="data">
