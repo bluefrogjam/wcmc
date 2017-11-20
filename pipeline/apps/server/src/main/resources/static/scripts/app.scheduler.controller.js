@@ -1,6 +1,6 @@
 angular.module('app')
-    .controller('SchedulerController', ['$scope', '$window','$timeout', '$filter', 'HttpService', 'MinixService', 'hotRegisterer', function($scope, $window, $timeout, $filter, HttpService, MinixService, hotRegisterer) {
-        MinixService.getMinixStudy(375786);
+    .controller('SchedulerController', ['$scope', '$window','$timeout', '$filter', 'HttpService', 'hotRegisterer', function($scope, $window, $timeout, $filter, HttpService, hotRegisterer) {
+
         /**
          * Syncs the select fields with the HandsOnTable column headers
          */
@@ -65,6 +65,66 @@ angular.module('app')
 
         $scope.reset = function() {
           $window.location.reload();
+        };
+
+
+        /**
+         * MiniX Integration
+         */
+        $scope.pullMiniXStudy = function() {
+            $scope.miniXError = undefined;
+
+            if (angular.isUndefined($scope.task.minix) || $scope.task.minix == '') {
+                $scope.miniXError = 'No MiniX study ID provided!';
+            } else {
+                $scope.miniXLoading = true;
+
+                var instance = hotRegisterer.getInstance('scheduler');
+                var headers = instance.getColHeader();
+
+                HttpService.getMinixStudyExport(
+                    $scope.task.minix,
+                    function(data) {
+                        $scope.miniXLoading = false;
+
+                        var fileNameCol = headers.indexOf('Sample File Name');
+                        var classCol = headers.indexOf('Class');
+                        var speciesCol = headers.indexOf('Species');
+                        var organCol = headers.indexOf('Organ');
+                        var commentCol = headers.indexOf('Comment');
+                        var labelCol = headers.indexOf('Label');
+
+
+                        data.data.forEach(function(x, i) {
+                            var values = Array($scope.columnOptions.length).fill('');
+
+                            if (fileNameCol > -1)
+                                values[fileNameCol] = x.sample;
+                            if (classCol > -1)
+                                values[classCol] = x.className;
+                            if (speciesCol > -1)
+                                values[speciesCol] = x.species;
+                            if (organCol > -1)
+                                values[organCol] = x.organ;
+                            if (commentCol > -1)
+                                values[commentCol] = x.comment;
+                            if (labelCol > -1)
+                                values[labelCol] = x.label;
+
+                            if (i < $scope.data.length) {
+                                $scope.data[i] = values;
+                            } else {
+                                $scope.data.push(values);
+                            }
+
+                            instance.updateSettings({data: $scope.data});
+                        })
+                    },
+                    function(data) {
+                        $scope.miniXLoading = false;
+                        $scope.miniXError = 'MiniX study ID could not be found!'
+                    });
+            }
         };
 
 
@@ -153,6 +213,7 @@ angular.module('app')
             $scope.checkFileSuccess = undefined;
             $scope.checkFileError = undefined;
             $scope.error = undefined;
+            $scope.miniXError = undefined;
 
             // Check that filename column is selected
             var instance = hotRegisterer.getInstance('scheduler');
@@ -262,6 +323,8 @@ angular.module('app')
         };
 
         $scope.submit = function() {
+            $scope.error = undefined;
+
             if ($scope.checkFileError) {
                 $scope.error = 'Not all sample files are valid - please re-check files before submitting!';
                 return;
