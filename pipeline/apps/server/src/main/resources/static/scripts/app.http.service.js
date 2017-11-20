@@ -11,6 +11,10 @@ angular.module('app')
             }).then(successCallback, errorCallback);
         };
 
+        this.getFileDownloadPath = function() {
+            return '/rest/file/download/';
+        };
+
         this.submitJob = function(task, successCallback, errorCallback) {
             $http({
                 method: 'POST',

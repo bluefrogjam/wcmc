@@ -15,6 +15,10 @@ angular.module('app', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'ngHandsontable']
             .when('/addLibrary', {
                 templateUrl: 'views/addLibrary.html',
                 controller: 'TargetController'
+            })
+            .when('/download', {
+                templateUrl: 'views/download.html',
+                controller: 'DownloadController'
             });
     })
 
