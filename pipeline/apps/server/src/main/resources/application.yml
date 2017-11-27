@@ -16,7 +16,7 @@ mona:
     server:
       user: admin
       password: admin
-      host: localhost
+      host: trashcan.fiehnlab.ucdavis.edu
       port: 80
 
 server:
