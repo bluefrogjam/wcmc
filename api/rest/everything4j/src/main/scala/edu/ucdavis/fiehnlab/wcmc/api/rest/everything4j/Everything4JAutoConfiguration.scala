@@ -9,5 +9,5 @@ import org.springframework.context.annotation.{Bean, Configuration}
 class Everything4JAutoConfiguration {
 
   @Bean
-  def eveyrthing4J: Everything4J = new Everything4J()
+  def everything4J: Everything4J = new Everything4J()
 }

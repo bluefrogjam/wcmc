@@ -75,7 +75,7 @@ class DataFormerClient extends LazyLogging {
           }
 
           if (uploaded.getOrElse("mzml", "not found").equals("ok")) {
-            mzmlFile = download(tmpfile, FileType.MZML)
+            mzmlFile = download(tmpfile, FileType.MZXML)
             fserv4j.upload(mzmlFile)
             logger.debug(s"${mzmlFile} added to FileServer")
           }
@@ -146,7 +146,7 @@ class DownloadException(message: String) extends IOException(message) {}
 
 object FileType extends Enumeration {
   type FileType = Value
-  val ABF, MZML = Value
+  val ABF, MZML, MZXML = Value
 }
 
 

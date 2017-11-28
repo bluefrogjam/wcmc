@@ -40,7 +40,7 @@
                                 return false;
                             }
 
-                            if (!$scope.filters.libraries.all && !$scope.filters.libraries[data[3].toLowerCase()]) {
+                            if (!$scope.filters.allLibraries && (!$scope.filters.libraries[data[3].toLowerCase()] || !$scope.filters.libraries[data[3].toLowerCase()].value)) {
                                 return false;
                             }
                         }

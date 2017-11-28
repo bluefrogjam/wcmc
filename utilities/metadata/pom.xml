@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>utilities</artifactId>
+        <groupId>edu.ucdavis.fiehnlab</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.wcmc.utilities</groupId>
+    <artifactId>metadata</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.msdk</groupId>
+            <artifactId>msdk-all</artifactId>
+            <version>0.0.11</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>cpdetector</artifactId>
+                    <groupId>net.sourceforge.cpdetector</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--<dependency>-->
+        <!--<groupId>de.flapdoodle.embed</groupId>-->
+        <!--<artifactId>de.flapdoodle.embed.mongo</artifactId>-->
+        <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>com.typesafe.scala-logging</groupId>
+            <artifactId>scala-logging_2.11</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
+            <artifactId>everything4j</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
+            <artifactId>fserv4j</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+</project>
