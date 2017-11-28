@@ -19,16 +19,15 @@ class ABFSample(override val fileName: String, file: File, client: MSDialRestPro
     */
 
   def deconvolute:Seq[_ <:Feature] = {
-    logger.debug("converting to MSDial representation")
-    logger.info(s"using file: ${file}")
+    logger.debug(s"converting ${file} to MSDial representation")
 	  val start = System.nanoTime()
 
     val processingResult = client.process(file)
 
-    logger.info(s"processing result is located at: ${processingResult.getAbsolutePath}")
+    logger.debug(s"processing result is located at: ${processingResult.getAbsolutePath}")
 
 	  val spec = MSDialSample(fileName, processingResult).spectra
-	  logger.info(s"preprocess took: ${(System.nanoTime() - start) / 1000000}ms")
+	  logger.debug(s"preprocess took: ${(System.nanoTime() - start) / 1000000}ms")
 	  spec
   }
   /**

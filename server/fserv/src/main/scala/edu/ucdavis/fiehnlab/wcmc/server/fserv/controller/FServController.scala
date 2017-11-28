@@ -24,7 +24,7 @@ import scala.collection.JavaConverters._
 @RequestMapping(value = Array("/rest/file"))
 class FServController extends LazyLogging {
 
-  @Value("${wcmc.server.fserv.directory:storage}")
+  @Value("${wcmc.server.fserv.directory:#{systemProperties['user.home']}/.carrot_storage}")
   val directory: String = null
 
   @Autowired
