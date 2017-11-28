@@ -2,7 +2,7 @@
 <br />
 
 <div class="alert alert-info" role="alert" ng-show="submitting">
-    <h4><i class="fa fa-spinner fa-spin fa-fw"></i> Submitting...</h4>
+    <h4><i class="fa fa-spinner fa-spin fa-fw"></i> Submitting {{successCount + errorCount}} / {{totalCount}}...</h4>
 </div>
 
 <div class="alert alert-success" role="alert" ng-show="success">
@@ -13,6 +13,9 @@
 <div class="alert alert-danger" role="alert" ng-show="error">
     <h4><i class="fa fa-exclamation-triangle"></i> Error!</h4>
     {{error}}
+    <ul>
+        <li ng-repeat="e in errors">{{e}}</li>
+    </ul>
 </div>
 
 <uib-progress max="totalCount" ng-show="submitting || success || error">

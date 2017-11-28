@@ -16,11 +16,22 @@
     <description>
         Provides the REST based entry server
     </description>
+
+    <properties>
+        <docker.expose>18080</docker.expose>
+        <docker.jvm>-Xmx16186m</docker.jvm>
+    </properties>
     <dependencies>
 
         <dependency>
+            <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
+            <artifactId>minix</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
-            <artifactId>thread</artifactId>
+            <artifactId>rabbit</artifactId>
             <version>1.0.16-SNAPSHOT</version>
         </dependency>
 
