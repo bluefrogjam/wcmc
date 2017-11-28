@@ -53,7 +53,7 @@ class DataFormerClient extends LazyLogging {
 
       if (file.isEmpty) {
         logger.error(s"File ${filename} did not download correctly")
-        Map("abf" -> null, "mzml" -> null, "error" -> s"File ${filename} did not download correctly")
+        Map("abf" -> null, "mzxml" -> null, "error" -> s"File ${filename} did not download correctly")
       } else {
         val tmpfile = new File(storage.concat(File.separator).concat(filename))
         if (!tmpfile.getParentFile.exists()) {
@@ -74,22 +74,22 @@ class DataFormerClient extends LazyLogging {
             logger.debug(s"${abfFile} added to FileServer")
           }
 
-          if (uploaded.getOrElse("mzml", "not found").equals("ok")) {
+          if (uploaded.getOrElse("mzxml", "not found").equals("ok")) {
             mzmlFile = download(tmpfile, FileType.MZXML)
             fserv4j.upload(mzmlFile)
             logger.debug(s"${mzmlFile} added to FileServer")
           }
 
-          Map("abf" -> abfFile.getName, "mzml" -> mzmlFile.getName)
+          Map("abf" -> abfFile.getName, "mzxml" -> mzmlFile.getName)
         } catch {
           case uex: UploadException =>
-            Map("abf" -> null, "mzml" -> null, "error" -> uex.getMessage)
+            Map("abf" -> null, "mzxml" -> null, "error" -> uex.getMessage)
           case dex: DownloadException =>
-            Map("abf" -> null, "mzml" -> null, "error" -> dex.getMessage)
+            Map("abf" -> null, "mzxml" -> null, "error" -> dex.getMessage)
         }
       }
     } else {
-      Map("abf" -> null, "mzml" -> null, "error" -> s"File ${filename} doesn't exist")
+      Map("abf" -> null, "mzxml" -> null, "error" -> s"File ${filename} doesn't exist")
     }
 
   }
