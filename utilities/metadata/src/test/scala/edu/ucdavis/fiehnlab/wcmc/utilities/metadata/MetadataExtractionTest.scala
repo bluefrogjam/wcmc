@@ -12,12 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.data.mongodb.core.query.{Criteria, Query}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
-
-import scala.collection.JavaConverters._
 
 
 @RunWith(classOf[SpringRunner])
@@ -31,10 +27,7 @@ class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLoggi
   val everything4j: Everything4J = null
 
   @Autowired
-  val fmdRepo: FileMetadataRepository = null
-
-  @Autowired
-  val mongoTemplate: MongoTemplate = null
+  val mdRepo: FileMetadataRepository = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -67,16 +60,16 @@ class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLoggi
   "something" must {
     "store data in mongo" in {
       val f = fixture
+      val filename = "Inj006_ExtrCtl_6.mzXML"
+
+      val tmp = mdRepo.findByFilename(filename)
+      mdRepo.delete(tmp)
+
       val fmd = metadataExtraction.getMetadata(f.origFile).get
+      val results = mdRepo.findByFilename("Inj006_ExtrCtl_6.mzXML")
 
-      mongoTemplate.findAllAndRemove(new Query(Criteria where "filename" is "Inj006_ExtrCtl_6.mzXML"), classOf[FileMetadata], "metadata")
-      mongoTemplate.save(fmd, "metadata")
-
-      val results = mongoTemplate.find(new Query(Criteria where "filename" is "Inj006_ExtrCtl_6.mzXML"), classOf[FileMetadata], "metadata")
-
-      results should have size 1
-      results.asScala.head.manufacturer should be === "Agilent"
-      results.asScala.head.model should be === "AGILENT TOF"
+      results.manufacturer should be === "Agilent"
+      results.model should be === "AGILENT TOF"
     }
   }
 

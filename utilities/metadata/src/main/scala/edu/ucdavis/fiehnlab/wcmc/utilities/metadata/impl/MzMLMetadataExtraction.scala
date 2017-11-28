@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import scala.xml._
 
 @Component
-class MZMLMetadataExtraction extends MetadataExtraction with LazyLogging {
+class MzMLMetadataExtraction extends MetadataExtraction with LazyLogging {
 
   override def getMetadata(file: File): Option[FileMetadata] = {
     if (!isValidFormat(file)) {
