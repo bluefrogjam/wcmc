@@ -21,20 +21,13 @@ services:
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:
-    build:
-      context: ./docker
-      dockerfile: Dockerfile
-    ports:
-      - 9500:9200
-      - 9300:9300
-    entrypoint: ./bin/elasticsearch -Xmx4g
+    image: elasticsearch:1.7.5
+    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="es-cluster"
 
   # Elasticsearch node, which may be scaled
   elasticsearch_node:
-    build:
-      context: ./docker
-      dockerfile: Dockerfile
-    entrypoint: ./bin/elasticsearch -Xmx4g
+    image: elasticsearch:1.7.5
+    entrypoint: ./bin/elasticsearch -Xmx4g -Des.cluster.name="es-cluster"
 
   rabbitmq:
     image: rabbitmq:3-management
