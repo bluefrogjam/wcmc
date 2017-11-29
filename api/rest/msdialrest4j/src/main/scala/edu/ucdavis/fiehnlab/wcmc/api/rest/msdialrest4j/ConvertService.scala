@@ -45,6 +45,6 @@ class ConvertService extends LazyLogging {
 }
 
 
-case class UploadResponse(filename: String, abf: String, mzml: String)
+case class UploadResponse(filename: String, abf: String, mzxml: String, mzml: String)
 
-case class ConversionResponse(filename: String, abf: String, mzml: String)
+case class ConversionResponse(filename: String, abf: String, mzxml: String, mzml: String)
