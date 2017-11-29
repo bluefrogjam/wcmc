@@ -6,12 +6,13 @@ import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.Bean
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.web.client.RestTemplate
 
 import scala.io.Source
 
@@ -30,6 +31,9 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
 
   @Autowired
   val svc: ConvertService = null
+
+  @Autowired
+  val restTemplate: RestTemplate = null
 
   def sha256Hash(text: String): String = String.format("%064x", new java.math.BigInteger(1, java.security.MessageDigest.getInstance("SHA-256").digest(text.getBytes("UTF-8"))))
 
@@ -81,8 +85,7 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
   }
 }
 
-@Configuration
-@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class MSDialRestProcessorConfig {
   @Bean
   def fserv4j: FServ4jClient = new FServ4jClient("testfserv.fiehnlab.ucdavis.edu")
