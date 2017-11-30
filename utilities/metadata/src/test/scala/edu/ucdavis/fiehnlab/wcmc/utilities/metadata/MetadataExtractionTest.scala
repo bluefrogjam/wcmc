@@ -44,11 +44,8 @@ class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLoggi
 
     "get a FileMetadata object" in {
       val f = fixture
-      logger.debug(s"size: ${f.origFile.length()}")
 
       val result = metadataExtraction.getMetadata(f.origFile)
-
-      logger.debug(result.get.toString)
 
       result should not be empty
       result.get shouldBe a[FileMetadata]
@@ -62,8 +59,7 @@ class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLoggi
       val f = fixture
       val filename = "Inj006_ExtrCtl_6.mzXML"
 
-      val tmp = mdRepo.findByFilename(filename)
-      mdRepo.delete(tmp)
+      mdRepo.deleteAll()
 
       val fmd = metadataExtraction.getMetadata(f.origFile).get
       val results = mdRepo.findByFilename("Inj006_ExtrCtl_6.mzXML")

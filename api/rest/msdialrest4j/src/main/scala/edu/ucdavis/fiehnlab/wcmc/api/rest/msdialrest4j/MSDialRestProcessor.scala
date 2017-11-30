@@ -9,14 +9,14 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.core.io.FileSystemResource
-import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType, ResponseEntity, _}
+import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType, _}
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestOperations
 
 @Configuration
 @ComponentScan
-class MSDialRestProcessorAutoconfiguration {
+class MSDialRestProcessorAutoconfiguration extends LazyLogging {
   @Bean
   def dfClient: DataFormerClient = new DataFormerClient()
 }
@@ -68,7 +68,7 @@ class MSDialRestProcessor extends LazyLogging {
 
       val converted: File = {
         if (!input.getName.endsWith(".abf")) {
-          cvtSvc.getAbfFile(input).getOrElse(throw new Exception(s"Can't process ${input}. Error treying to convert to abf"))
+          cvtSvc.getAbfFile(input).getOrElse(throw new Exception(s"Can't process ${input}. Error trying to convert to abf"))
         } else {
           input
         }
@@ -128,11 +128,11 @@ class MSDialRestProcessor extends LazyLogging {
           (result.getBody.link.split("/").last, token)
         }
       } else {
-        throw new MSDialException(result)
+        throw new MSDialException(result.getBody)
       }
     } else {
       logger.warn(s"received result was: ${result}")
-      throw new MSDialException(result)
+      throw new MSDialException(result.getBody)
     }
 
   }
@@ -160,10 +160,10 @@ class MSDialRestProcessor extends LazyLogging {
 
         file
       } else {
-        throw new MSDialException(result)
+        throw new MSDialException(result.getBody)
       }
     } else {
-      throw new MSDialException(result)
+      throw new MSDialException(result.getBody)
     }
   }
 
@@ -198,7 +198,7 @@ class MSDialRestProcessor extends LazyLogging {
       result.getBody.link.split("/").last
     }
     else {
-      throw new MSDialException(result)
+      throw new MSDialException(result.getBody)
     }
 
   }
@@ -219,7 +219,7 @@ class MSDialRestProcessor extends LazyLogging {
       result.getBody.link.split("/").last
     }
     else {
-      throw new MSDialException(result)
+      throw new MSDialException(result.getBody)
     }
   }
 }
@@ -247,6 +247,6 @@ case class FileResponse(filename: String, exists: Boolean)
   *
   * @param result
   */
-class MSDialException(result: ResponseEntity[ServerResponse]) extends Exception {
-  override def getMessage: String = result.getBody.message + "\n" + result.getBody.error
+class MSDialException(result: ServerResponse) extends Exception {
+  override def getMessage: String = result.message + "\n" + result.error
 }

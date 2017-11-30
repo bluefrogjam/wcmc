@@ -130,7 +130,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
   "MonaLibraryAccessTest" should {
 
 
-    "resset database ussing mona client" in {
+    "reset database using mona client" in {
       client.list().foreach { x =>
         client.delete(x.id)
       }

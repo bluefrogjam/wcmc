@@ -38,14 +38,14 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
       val result = dfClient.convert(filename)
 
       result should contain key "abf"
-      result should contain key "mzml"
+      result should contain key "mzxml"
 
       val fileNoExt = filename.substring(0, filename.indexOf("."))
 
       result("abf") should equal(s"${fileNoExt}.abf")
-      result("mzml") should equal(s"${fileNoExt}.mzml")
+      result("mzxml") should equal(s"${fileNoExt}.mzxml")
 
-      Array(".abf", ".d.zip", ".mzml").foreach(s => new File(fileNoExt + s).deleteOnExit())
+      Array(".abf", ".d.zip", ".mzxml").foreach(s => new File(fileNoExt + s).deleteOnExit())
 
     }
 
