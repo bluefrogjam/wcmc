@@ -18,6 +18,6 @@ mona:
   rest:
     server:
       host: 127.0.0.1
-      port: 11111
+      port: 80
       user: admin
       password: admin

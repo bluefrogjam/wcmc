@@ -17,6 +17,7 @@
         <module>loader</module>
         <module>minix</module>
         <module>metadata</module>
+        <module>email</module>
     </modules>
 
 
