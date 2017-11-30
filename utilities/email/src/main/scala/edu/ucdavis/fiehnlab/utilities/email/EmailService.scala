@@ -1,15 +1,11 @@
 package edu.ucdavis.fiehnlab.utilities.email
 
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Bean
-import org.springframework.mail.javamail.JavaMailSenderImpl
-
 import java.io.File
 import java.util.Properties
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Bean, Configuration, Profile}
-import org.springframework.mail.javamail.{JavaMailSender, MimeMessageHelper}
+import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.mail.javamail.{JavaMailSender, JavaMailSenderImpl, MimeMessageHelper}
 
 @Configuration
 class EmailServiceAutoConfiguration {

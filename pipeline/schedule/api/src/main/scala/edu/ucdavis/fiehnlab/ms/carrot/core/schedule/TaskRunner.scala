@@ -8,7 +8,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
-import org.springframework.beans.factory.annotation.Autowired
+import edu.ucdavis.fiehnlab.utilities.email.EmailService
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
@@ -22,11 +23,18 @@ import scala.collection.JavaConverters._
 @Component
 class TaskRunner extends LazyLogging {
 
+
+  @Value("${wcmc.pipeline.workflow.config.email.sender:binbase@gmail.com}")
+  val emailSender: String = ""
+
   @Autowired
   val workflow: Workflow[Double] = null
 
   @Autowired
   val sampleLoader: SampleLoader = null
+
+  @Autowired
+  val emailService: EmailService = null
 
   /**
     * This provides the system with N-instructions after the processing is finished. The concrete implementations can write the result to a file,
@@ -80,7 +88,8 @@ class TaskRunner extends LazyLogging {
       }
     }
 
-    //notify people by email, if required
+    //send notification email
+    emailService.send(emailSender, task.email :: List(), s"Dear user, your result with ${task.name} is now ready for download!", "carrot: your result is finished", None)
 
   }
 }

@@ -98,7 +98,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
       }
 
       "submit with AcquisitionMethod(Some(...))" in {
-        val task = Task("test", "test@test.de", AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
+        val task = Task("test", "binbase@gmail.com", AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
 
         val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
 
@@ -113,7 +113,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
       }
 
       "submit with AcquisitionMethod(Some(...)) and positive ion mode" in {
-        val task = Task("test", "test@test.de", AcquisitionMethod(Option(ChromatographicMethod("test", None, None, Option(PositiveMode())))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
+        val task = Task("test", "binbase@gmail.com", AcquisitionMethod(Option(ChromatographicMethod("test", None, None, Option(PositiveMode())))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
 
         val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
 
@@ -127,7 +127,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
 
       }
       "submit with AcquisitionMethod(Some(...)) and negative ion mode" in {
-        val task = Task("test", "test@test.de", AcquisitionMethod(Option(ChromatographicMethod("test", None, None, Option(NegativeMode())))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
+        val task = Task("test", "binbase@gmail.com", AcquisitionMethod(Option(ChromatographicMethod("test", None, None, Option(NegativeMode())))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
 
         val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
 

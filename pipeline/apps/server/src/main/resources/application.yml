@@ -22,6 +22,11 @@ mona:
 server:
   port: 18080
 
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: password
 wcmc:
   api:
     rest:
