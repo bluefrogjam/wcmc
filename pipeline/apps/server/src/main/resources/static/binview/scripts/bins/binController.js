@@ -5,13 +5,13 @@
 (function() {
     'use strict';
 
-    BinController.$inject = ['$scope', '$sce', '$http', 'bsLoadingOverlayService', 'bin', 'monaSimilaritySearch', 'stSpectra'];
+    BinController.$inject = ['$scope', '$sce', '$http', 'bsLoadingOverlayService', 'bin', 'monaSimilaritySearch'];
 
     angular.module('app')
         .controller('BinController', BinController);
 
     /* @ngInject */
-    function BinController($scope, $sce, $http, bsLoadingOverlayService, bin, monaSimilaritySearch, stSpectra) {
+    function BinController($scope, $sce, $http, bsLoadingOverlayService, bin, monaSimilaritySearch) {
 
         $scope.binSettings = {
             libraries: [],
