@@ -1,8 +1,10 @@
-'use strict';
+(function() {
+    'use strict';
 
-var app = angular.module('app', ['ngAnimate', 'ui.bootstrap', 'bsLoadingOverlay'])
-    .run(function(bsLoadingOverlayService) {
-        bsLoadingOverlayService.setGlobalConfig({
-            templateUrl: 'binview/views/loadingOverlayTemplate.html'
+    angular.module('app', ['app.similarity', 'ngAnimate', 'ui.bootstrap', 'bsLoadingOverlay'])
+        .run(function(bsLoadingOverlayService) {
+            bsLoadingOverlayService.setGlobalConfig({
+                templateUrl: 'binview/views/loadingOverlayTemplate.html'
+            });
         });
-    });
+})();
