@@ -8,8 +8,9 @@
     'use strict';
 
     chemicalSketcher.$inject = ['$log'];
+
     angular.module('app')
-      .directive('chemicalSketcher', chemicalSketcher);
+        .directive('chemicalSketcher', chemicalSketcher);
 
     /* @ngInject */
     function chemicalSketcher($log) {

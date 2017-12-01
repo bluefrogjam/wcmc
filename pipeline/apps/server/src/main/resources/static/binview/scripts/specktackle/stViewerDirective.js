@@ -1,7 +1,7 @@
 /**
  * Created by matthewmueller on 10/6/17.
  *
- * Uses SpeckTackle to display one or more mass spectra
+ * SpeckTackle spectrum viewer
  *
  */
 
@@ -9,28 +9,28 @@
     'use strict';
 
     angular.module('app')
-        .directive('stMassSpec', stMassSpec);
+        .directive('stViewer', stViewer);
 
         /* @ngInject */
-        function stMassSpec() {
+        function stViewer() {
             var directive = {
                 restrict: 'A',
                 replace: false,
-                require: 'ngModel',
-                template: '<div id="stgraph" class="stgraph" />',
+                template: '<div id="stgraph-{{::$id}}" class="stgraph" />',
 
                 scope: {
-                    model: '=ngModel',
-                    normalize: '='
+                    spectra: '=',
+                    options: '=?'
                 },
 
                 link: function(scope) {
-                    var xMin = 0,
+                    var xMin = 80,
                         xMax = 100,
                         yMin = 0,
-                        yMax = 1;
+                        yMax = 1,
+                        normalize = true;
 
-                    function processSpectrum(input, invert = false, normalize = true) {
+                    function processSpectrum(input, invert) {
                         var maxIntensity = 0;
 
                         var output = {
@@ -52,7 +52,7 @@
                                     maxIntensity = ion.intensity;
                                 }
 
-                                output.peaks.push({mz: ion.mass, intensity: ion.intensity});
+                                output.peaks.push({ mz: ion.mass, intensity: ion.intensity });
                             });
                         } else {
                             var tokens = input.spectrum.match(/\S+/g);
@@ -60,8 +60,13 @@
                             tokens.forEach(function(token) {
                                 var tuple = token.split(':');
 
-                                if (parseInt(tuple[0]) < xMin) { xMin = parseInt(tuple[0]); }
-                                if (parseInt(tuple[0]) > xMax) { xMax = parseInt(tuple[0]); }
+                                if (parseInt(tuple[0]) < xMin) {
+                                    xMin = parseInt(tuple[0]);
+                                }
+
+                                if (parseInt(tuple[0]) > xMax) {
+                                    xMax = parseInt(tuple[0]);
+                                }
 
                                 if (parseInt(tuple[1]) > maxIntensity) {
                                     maxIntensity = parseInt(tuple[1]);
@@ -74,7 +79,9 @@
                                 var pair = {
                                     mz: tuple[0],
                                     intensity: normalize ?
-                                        (invert ? -100 * tuple[1] / maxIntensity : 100 * tuple[1] / maxIntensity) :
+                                        (invert ?
+                                            -100 * tuple[1] / maxIntensity :
+                                            100 * tuple[1] / maxIntensity) :
                                         tuple[1]
                                 }
 
@@ -93,41 +100,55 @@
                         return output;
                     }
 
-                    scope.$watch('model', function(newVal, oldVal) {
+                    scope.$watch('spectra', function(newVal, oldVal) {
                         var spectra = [];
 
-                        switch (newVal.data.length) {
+                        if (scope.options && typeof scope.options.normalize !== 'undefined') {
+                            normalize = scope.options.normalize;
+                        }
+
+                        xMin = 80;
+                        xMax = 100;
+
+                        switch (newVal.length) {
                             case 0:
                                 break;
                             case 1:
-                                spectra.push(processSpectrum(newVal.data[0], false, scope.normalize));
-                                if (scope.normalize) {
+                                spectra.push(processSpectrum(newVal[0], false));
+                                if (normalize) {
                                     yMin = 0;
                                     yMax = 100;
                                 }
                                 break;
                             case 2:
-                                spectra.push(processSpectrum(newVal.data[0], false, scope.normalize));
-                                spectra.push(processSpectrum(newVal.data[1], true, scope.normalize));
-                                if (scope.normalize) {
+                                spectra.push(processSpectrum(newVal[0], false));
+                                spectra.push(processSpectrum(newVal[1], true));
+                                if (normalize) {
                                     yMin = -100;
                                     yMax = 100;
                                 }
                                 break;
                             default:
+                                newVal.forEach(function(val) {
+                                    spectra.push(processSpectrum(val, false));
+                                });
+                                if (normalize) {
+                                    yMin = 0;
+                                    yMax = 100;
+                                }
                                 break;
                         }
 
-                        $("#stgraph").empty();
+                        $("#stgraph-" + scope.$id).empty();
 
                         var chart = st.chart
                             .ms()
-                            .legend(true)
                             .xlabel("m/z")
                             .ylabel("Abundance")
+                            .legend(true)
                             .labels(true);
 
-                        chart.render("#stgraph");
+                        chart.render("#stgraph-" + scope.$id);
 
                         var handle = st.data
                             .set()
@@ -137,9 +158,7 @@
                             .x("peaks.mz")
                             .y("peaks.intensity");
 
-                        // bind the data handler to the chart
                         chart.load(handle);
-                        // load the spectrum and annotations for Uridine
                         handle.add(spectra);
                     }, true);
 
