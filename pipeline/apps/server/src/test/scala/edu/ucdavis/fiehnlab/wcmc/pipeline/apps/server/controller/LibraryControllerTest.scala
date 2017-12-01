@@ -43,22 +43,8 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
   "LibraryControllerTest" should {
 
     "delete all data" in {
-      libraryAccess.libraries.foreach { x =>
-        logger.info(s"loading ${x}")
-        libraryAccess.load(x).foreach { y =>
-          logger.info(s"deleting ${y} in ${x}")
-          libraryAccess.delete(y, x)
-        }
-      }
+      libraryAccess.deleteAll
 
-    }
-    "have no library" in {
-      val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
-      eventually(timeout(30 seconds)) {
-
-        libraries.size shouldBe 0
-        Thread.sleep(250)
-      }
     }
 
     "add 1 target to the library test" in {
