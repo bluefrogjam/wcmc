@@ -4,6 +4,7 @@ import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4J
+import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.api.MetadataExtraction
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.db.{FileMetadata, FileMetadataRepository}
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.impl.MzXMLMetadataExtraction
 import org.junit.runner.RunWith
@@ -21,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner
 class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
-  val metadataExtraction: MzXMLMetadataExtraction = null
+  val metadataExtraction: MetadataExtraction = null
 
   @Autowired
   val everything4j: Everything4J = null

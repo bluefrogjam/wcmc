@@ -5,20 +5,16 @@ import java.util.Date;
 /**
  * Created by wohlgemuth on 8/17/16.
  */
-public class BinBaseResult {
+public class BinBaseResult extends AnnotationResult {
 
 	private String bin;
 	private String inchikey;
 	private Integer binid = 0;
-	private Double retentionindex;
-	private Double retentionTime = 0.0;
-	private Boolean correctionFailed = false;
+    private Boolean correctionFailed = false;
 	private Double quantMass = 0.0;
 	private String leco;
 	private Date dateOfImport;
-	private String spectra;
-	private Double intensity = 0.0;
-	private Double normalizedIntensity = 0.0;
+    private Double normalizedIntensity = 0.0;
 	private Double purity;
 	private Double similarity;
 	private String group;
@@ -27,6 +23,10 @@ public class BinBaseResult {
 	private Double binUniqueMass;
 	private Double kovatsRetentionIndex;
 
+
+    public void setSpectra(String spectra) {
+        this.spectra = spectra;
+    }
 
 	public String getBin() {
         return bin;
@@ -52,10 +52,6 @@ public class BinBaseResult {
         this.binid = binid;
     }
 
-    public Double getRetentionindex() {
-        return retentionindex;
-    }
-
 
     public void setRetentionindex(Double retentionindex) {
         this.retentionindex = retentionindex;
@@ -69,10 +65,6 @@ public class BinBaseResult {
         this.kovatsRetentionIndex = kovatsRetentionIndex;
     }
 
-    public Double getRetentionTime() {
-        return retentionTime;
-    }
-
     public void setRetentionTime(Double retentionTime) {
         this.retentionTime = retentionTime;
     }
@@ -83,10 +75,6 @@ public class BinBaseResult {
 
     public void setCorrectionFailed(Boolean correctionFailed) {
         this.correctionFailed = correctionFailed;
-    }
-
-	public Double getIntensity() {
-        return intensity;
     }
 
     public void setIntensity(Double intensity) {
@@ -187,15 +175,7 @@ public class BinBaseResult {
         this.dateOfImport = dateOfImport;
     }
 
-    public String getSpectra() {
-        return spectra;
-    }
-
-    public void setSpectra(String spectra) {
-        this.spectra = spectra;
-    }
-
-	public Double getNormalizedIntensity() {
+    public Double getNormalizedIntensity() {
 		return normalizedIntensity;
 	}
 

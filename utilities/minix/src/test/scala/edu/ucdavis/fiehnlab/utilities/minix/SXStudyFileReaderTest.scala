@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.utilities.minix
 import java.io.File
 import java.util
 
+import edu.ucdavis.fiehnlab.utilities.minix.types.BinBaseResult
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -13,7 +14,7 @@ import org.springframework.test.context.TestContextManager
 class SXStudyFileReaderTest extends WordSpec with ShouldMatchers {
 
   @Autowired
-  val sXStudyFilesTransformer:SXStudyFileReader = null
+  val sXStudyFilesTransformer: SXStudyFileReader = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
@@ -51,7 +52,7 @@ class SXStudyFileReaderTest extends WordSpec with ShouldMatchers {
     "the first purity in the first sample should be 0.50386" in {
       val annotations = new util.ArrayList(result.get(0).getAnnotations())
 
-      annotations.get(0).getPurity() should be(0.50386)
+      annotations.get(0).asInstanceOf[BinBaseResult].getPurity() should be(0.50386)
     }
 
   }
@@ -60,6 +61,6 @@ class SXStudyFileReaderTest extends WordSpec with ShouldMatchers {
 }
 
 @SpringBootApplication
-class SXStudyFileTestConfiguration{
+class SXStudyFileTestConfiguration {
 
 }

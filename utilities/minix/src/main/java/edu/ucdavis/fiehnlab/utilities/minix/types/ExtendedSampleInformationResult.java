@@ -64,7 +64,7 @@ public class ExtendedSampleInformationResult extends SampleInformationResult {
         if (annotations != null) {
 
             if (verbose) {
-                for (BinBaseResult x : annotations) {
+                for (AnnotationResult x : annotations) {
                     buffer.append("\t" + x.toString() + "\n");
                 }
                 buffer.append("\t" + "treatment=" + "treatmentName" + "\n");
