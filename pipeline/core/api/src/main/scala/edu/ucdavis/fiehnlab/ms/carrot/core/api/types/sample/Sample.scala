@@ -21,6 +21,18 @@ trait Sample {
   val fileName: String
 
   /**
+    * provides us with the given extension of the file name
+    */
+  val extension: String = {
+    if (fileName.contains(".")) {
+      fileName.substring(fileName.indexOf(".") + 1)
+    }
+    else {
+      ""
+    }
+  }
+
+  /**
     * internal name of the sample
     */
   lazy val name: String = if (fileName.contains(".")) fileName.substring(0, fileName.indexOf(".")) else fileName
@@ -100,14 +112,13 @@ trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging {
   val quantifiedTargets: Seq[QuantifiedTarget[T]]
 }
 
-trait GapFilledSample[T] extends  QuantifiedSample[T] {
+trait GapFilledSample[T] extends QuantifiedSample[T] {
 
   /**
     * which file was used for the gap filling
     */
-  val gapFilledWithFile:String
+  val gapFilledWithFile: String
 }
-
 
 
 /**
@@ -150,12 +161,13 @@ trait QuantifiedSpectra[T] extends AnnotatedSpectra {
 
   override def toString = s"QuantifiedSpectra(quantifiedValue=$quantifiedValue, target=$target)"
 }
-trait GapFilledSpectra[T] extends QuantifiedSpectra[T]{
+
+trait GapFilledSpectra[T] extends QuantifiedSpectra[T] {
 
   /**
     * which sample was used for the replacement
     */
-  val sampleUsedForReplacement:String
+  val sampleUsedForReplacement: String
 
   override def toString = s"GapFilled(quantifiedValue=$quantifiedValue, target=$target, sample=$sampleUsedForReplacement)"
 
@@ -184,14 +196,15 @@ trait QuantifiedTarget[T] extends Target {
 
 /**
   * defines a target which has
+  *
   * @tparam T
   */
-trait GapFilledTarget[T] extends QuantifiedTarget[T]{
+trait GapFilledTarget[T] extends QuantifiedTarget[T] {
 
   /**
     * which actual spectra has been used for the replacement
     */
-  val spectraUsedForReplacement:Feature with GapFilledSpectra[T]
+  val spectraUsedForReplacement: Feature with GapFilledSpectra[T]
 
   /**
     * to avoid that somebody can overwrite this value in an implementation and sets it to NONE, which might break expected behaviour.

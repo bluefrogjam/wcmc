@@ -77,7 +77,7 @@ public class SampleInformationResult {
         if (annotations != null) {
 
             if (verbose) {
-                for (BinBaseResult x : annotations) {
+                for (AnnotationResult x : annotations) {
                     buffer.append("\t" + x.toString() + "\n");
                 }
                 buffer.append("\t" + "treatment=" + "treatmentName" + "\n");
@@ -146,13 +146,13 @@ public class SampleInformationResult {
 
     String treatmentValue;
 
-    public Collection<BinBaseResult> getAnnotations() {
+    public Collection<? extends AnnotationResult> getAnnotations() {
         return annotations;
     }
 
-    public void setAnnotations(Collection<BinBaseResult> annotations) {
+    public void setAnnotations(Collection<? extends AnnotationResult> annotations) {
         this.annotations = annotations;
     }
 
-    Collection<BinBaseResult> annotations;
+    Collection<? extends AnnotationResult> annotations;
 }
