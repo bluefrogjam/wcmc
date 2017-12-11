@@ -1,8 +1,20 @@
-'use strict';
+(function(){
+    'use strict';
 
-app.service('dtFilter', function() {
-    var service = {
-        addFilter: function(tableId, filter) {
+    angular.module('app')
+        .factory('dtFilter', dtFilter);
+
+    function dtFilter() {
+
+        var service = {
+            addFilter: addFilter
+        };
+
+        return service;
+
+        //////////
+
+        function addFilter(tableId, filter) {
             $.fn.dataTable.ext.search.push(
                 function(settings, data, dataIndex) {
                     if (settings.nTable.getAttribute('id') === tableId) {
@@ -13,7 +25,6 @@ app.service('dtFilter', function() {
                 }
             );
         }
-    };
+    }
 
-    return service;
-});
+})();
