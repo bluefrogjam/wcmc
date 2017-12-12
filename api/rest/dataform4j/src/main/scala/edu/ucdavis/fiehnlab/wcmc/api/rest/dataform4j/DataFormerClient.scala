@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate
   */
 @Component
 class DataFormerClient extends LazyLogging {
-  @Value("${wcmc.api.rest.dataformer.host:128.120.143.101}")
+  @Value("${wcmc.api.rest.dataformer.host:luna.fiehnlab.ucdavis.edu}")
   val host: String = ""
 
   @Value("${wcmc.api.rest.dataformer.port:9090}")

@@ -11,7 +11,7 @@ wcmc:
   api:
     rest:
       msdialrest4j:
-        host: 128.120.143.101
+        host: luna.fiehnlab.ucdavis.edu
         port: 8080
 
 mona:
