@@ -1,16 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk
 
 import java.io.{File, FileInputStream, FileOutputStream}
-import java.nio.file.Files._
-import java.nio.file.Paths
 import java.util.zip.GZIPInputStream
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
-import io.github.msdk.datamodel.datastore.DataPointStoreFactory
-import io.github.msdk.datamodel.msspectra.MsSpectrumType
-import io.github.msdk.datamodel.rawdata.{MsScan, PolarityType, RawDataFile}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
+import io.github.msdk.datamodel.{MsScan, MsSpectrumType, PolarityType, RawDataFile}
 import io.github.msdk.io.mzdata.MzDataFileImportMethod
 import io.github.msdk.io.mzml.MzMLFileImportMethod
 import io.github.msdk.io.mzxml.MzXMLFileImportMethod
@@ -35,10 +31,10 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
       //test all ms scans
       spectra: MsScan =>
 
-        if (spectra.getMsFunction.getMsLevel == 0) {
+        if (spectra.getMsLevel() == 0) {
           throw new RuntimeException("Invalid MS Level!")
         }
-        else if (spectra.getMsFunction.getMsLevel == 1 || spectra.getIsolations.isEmpty) {
+        else if (spectra.getMsLevel == 1 || spectra.getIsolations.isEmpty) {
 
           //discover which mixins we need
           spectra.getPolarity match {
@@ -135,19 +131,19 @@ object MSDKSample extends LazyLogging {
       name match {
         case "mzxml" =>
           logger.debug("using mzXML implementation")
-          new MzXMLFileImportMethod(output, DataPointStoreFactory.getMemoryDataStore).execute()
+          new MzXMLFileImportMethod(output).execute()
         case "mzml" =>
           logger.debug("using mzML implementation")
           new MzMLFileImportMethod(output).execute()
         case "mzdata" =>
           logger.debug("using mzData implementation")
-          new MzDataFileImportMethod(output, DataPointStoreFactory.getMemoryDataStore).execute()
+          new MzDataFileImportMethod(output).execute()
         case "mzdata.xml" =>
           logger.debug("using mzData implementation")
-          new MzDataFileImportMethod(output, DataPointStoreFactory.getMemoryDataStore).execute()
+          new MzDataFileImportMethod(output).execute()
         case "cdf" =>
           logger.debug("using cdf implementation")
-          new NetCDFFileImportMethod(output, DataPointStoreFactory.getMemoryDataStore).execute()
+          new NetCDFFileImportMethod(output).execute()
         case _ =>
           throw new RuntimeException(s"sorry this file format is not yet supported: ${file}/${output}, extension ${name}")
       }
@@ -178,7 +174,7 @@ object MSDKSample extends LazyLogging {
   * @param spectra
   */
 class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSSpectra {
-  override val retentionTimeInSeconds: Double = spectra.getChromatographyInfo.getRetentionTime.toDouble
+  override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
 
   override val scanNumber: Int = spectra.getScanNumber
   override val purity: Option[Double] = None
@@ -214,7 +210,7 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSMSSpectr
     spectra.getIsolations.get(0).getPrecursorMz
   }
 
-  override val retentionTimeInSeconds: Double = spectra.getChromatographyInfo.getRetentionTime.toDouble
+  override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
   override val scanNumber: Int = spectra.getScanNumber
   override val purity: Option[Double] = None
   override val ionMode: Option[IonMode] = mode

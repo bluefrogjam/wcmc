@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>io.github.msdk</groupId>
 			<artifactId>msdk-all</artifactId>
-			<version>0.0.7</version>
+			<version>0.0.11</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>cpdetector</artifactId>
