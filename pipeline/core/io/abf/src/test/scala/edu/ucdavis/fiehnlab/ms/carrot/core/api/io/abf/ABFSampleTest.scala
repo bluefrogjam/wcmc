@@ -2,18 +2,16 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.abf
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSMSSpectra
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowConfig
 import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4JAutoConfiguration
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, ComponentScan}
+import org.springframework.context.annotation.Bean
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
