@@ -40,19 +40,6 @@ class MSDKSampleTest extends WordSpec {
       }
     }
 
-    "support mzdata" should {
-
-      val delegate:MSDKSample =  MSDKSample("test.mzdata",new File("src/test/resources/test.mzdata"))
-
-      "unknownSpectra" in {
-        assert(delegate.spectra.size == 112)
-      }
-
-      "fileName" in {
-        assert(delegate.fileName != null)
-      }
-    }
-
 
     "support mzxml" should {
 

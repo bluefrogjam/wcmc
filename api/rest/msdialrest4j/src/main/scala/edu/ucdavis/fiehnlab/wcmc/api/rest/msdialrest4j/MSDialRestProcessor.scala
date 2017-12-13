@@ -29,7 +29,7 @@ class MSDialRestProcessorAutoconfiguration extends LazyLogging {
 @Component
 class MSDialRestProcessor extends LazyLogging {
 
-  @Value("${wcmc.api.rest.msdialrest4j.host:luna.fiehnlab.ucdavis.edu}")
+  @Value("${wcmc.api.rest.msdialrest4j.host:phobos.fiehnlab.ucdavis.edu}")
   val msdresthost: String = ""
 
   @Value("${wcmc.api.rest.msdialrest4j.port:8080}")

@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSeri
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
+import org.springframework.context.annotation._
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ContextConfiguration, TestContextManager}
 

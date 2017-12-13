@@ -24,7 +24,7 @@ trait Sample {
     * provides us with the given extension of the file name
     */
   val extension: String = {
-    if (fileName.contains(".")) {
+    if (fileName != null && fileName.contains(".")) {
       fileName.substring(fileName.indexOf(".") + 1)
     }
     else {

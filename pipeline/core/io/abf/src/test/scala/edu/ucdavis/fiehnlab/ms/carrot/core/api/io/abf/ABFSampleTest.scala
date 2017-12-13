@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.abf
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSMSSpectra
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.WorkflowConfig
+import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4JAutoConfiguration
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
@@ -66,7 +67,7 @@ class ABFSampleTest extends WordSpec with ShouldMatchers with LazyLogging{
   }
 }
 
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration],classOf[Everything4JAutoConfiguration]))
 class ABFSampleTestConfig {
   @Bean
   def client:FServ4jClient = new FServ4jClient(
