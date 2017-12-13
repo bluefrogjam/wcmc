@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate
   */
 @Component
 class DataFormerClient extends LazyLogging {
-  @Value("${wcmc.api.rest.dataformer.host:luna.fiehnlab.ucdavis.edu}")
+  @Value("${wcmc.api.rest.dataformer.host:phobos.fiehnlab.ucdavis.edu}")
   val host: String = ""
 
   @Value("${wcmc.api.rest.dataformer.port:9090}")
@@ -68,6 +68,7 @@ class DataFormerClient extends LazyLogging {
           mapper.registerModule(DefaultScalaModule)
           val uploaded = mapper.readValue(upresponse, classOf[Map[String, String]])
 
+          logger.warn(s"uploaded: ${uploaded}")
           if (uploaded.getOrElse("abf", "not found").equals("ok")) {
             abfFile = download(tmpfile, FileType.ABF)
             fserv4j.upload(abfFile)

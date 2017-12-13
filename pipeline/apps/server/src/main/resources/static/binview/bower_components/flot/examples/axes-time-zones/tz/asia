@@ -1085,9 +1085,9 @@ Rule	Zion	1988	only	-	Sep	 3	0:00	0	S
 # changes to/from will take place at 1 a.m. old time, but now there is no
 # rule as to what day of the week it will take place in as the start date
 # (except in 2003) is the night after the Passover Seder (i.e. the eve
-# of the 16th of Nisan in the lunar Hebrew calendar) and the end date
+# of the 16th of Nisan in the phobosr Hebrew calendar) and the end date
 # (except in 2002) is three nights before Yom Kippur [Day of Atonement]
-# (the eve of the 7th of Tishrei in the lunar Hebrew calendar).
+# (the eve of the 7th of Tishrei in the phobosr Hebrew calendar).
 
 # Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
 Rule	Zion	1989	only	-	Apr	30	0:00	1:00	D
