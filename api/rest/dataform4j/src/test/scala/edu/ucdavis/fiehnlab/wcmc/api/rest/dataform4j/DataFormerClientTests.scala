@@ -1,14 +1,16 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
-import java.io.File
+import java.io.{File, IOException}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration, Import}
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
@@ -26,34 +28,38 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
   "edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" should {
     "fail for invalid .d.zip file" in {
       val filename = "not_found.d.zip"
-      val result = dfClient.convert(filename)
 
-      result should contain key "error"
-      result("error") shouldEqual (s"File ${filename} doesn't exist")
+      val result = dfClient.convert(filename, "abf")
+
+      result shouldBe None
     }
 
-    "convert a raw data file (.d.zip)" in {
+    "convert a raw data file (.d.zip) to abf" in {
       val filename = "testA.d.zip"
 
-      val result = dfClient.convert(filename)
+      val result = dfClient.convert(filename, "abf")
 
-      result should contain key "abf"
-      result should contain key "mzxml"
+      result.isDefined shouldBe true
 
-      val fileNoExt = filename.substring(0, filename.indexOf("."))
-
-      result("abf") should equal(s"${fileNoExt}.abf")
-      result("mzxml") should equal(s"${fileNoExt}.mzxml")
-
-      Array(".abf", ".d.zip", ".mzxml").foreach(s => new File(fileNoExt + s).deleteOnExit())
-
+      result.get.getName.endsWith("abf") shouldBe true
     }
+
+    "convert a raw data file (.d.zip) to mzXML" in {
+      val filename = "testA.d.zip"
+
+      val result = dfClient.convert(filename, "mzXML")
+
+      result.isDefined shouldBe true
+
+      result.get.getName.toLowerCase.endsWith("mzxml") shouldBe true
+    }
+
 
   }
 }
 
 @Configuration
-@Import(Array(classOf[DataFormerAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class DataFormerClientTestConfiguration {
   @Value("${wcmc.api.rest.fserv4j.host:testfserv.fiehnlab.ucdavis.edu}")
   val fservHost = ""

@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.{ByteArrayResource, FileSystemResource, InputStreamResource}
 import org.springframework.http._
 import org.springframework.http.client.{ClientHttpRequestFactory, HttpComponentsClientHttpRequestFactory}
 import org.springframework.stereotype.Component
@@ -26,73 +26,81 @@ import org.springframework.web.client.RestTemplate
 @Component
 class DataFormerClient extends LazyLogging {
   @Value("${wcmc.api.rest.dataformer.host:phobos.fiehnlab.ucdavis.edu}")
-  val host: String = ""
+  private val host: String = ""
 
   @Value("${wcmc.api.rest.dataformer.port:9090}")
-  val port: Int = 0
+  private val port: Int = 0
 
-  @Value("${wcmc.api.rest.dataformer.storage:target/storage}")
-  val storage: String = ""
-
-  @Autowired
-  val fserv4j: FServ4jClient = null
+  @Value("${wcmc.api.rest.dataformer.storage:#{systemProperties['java.io.tmpdir']}}")
+  private val storage: String = ""
 
   @Autowired
-  val restTemplate: RestTemplate = null
+  private val fserv4j: FServ4jClient = null
+
+  @Value("${wcmc.api.rest.dataformer.conversiontimeout:60}")
+  private val conversionTimeout: Int = 0
+
+
+  /**
+    * required due to the us needed to specify timeouts and so cant use default template
+    */
+  val restTemplate: RestTemplate = new RestTemplate(getRequestFactory())
+
+  /**
+    * builds a custom request factory to avoid timeouts
+    *
+    * @return
+    */
+  private def getRequestFactory(): ClientHttpRequestFactory = {
+    val factory: HttpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory()
+
+    factory.setReadTimeout(conversionTimeout * 1000)
+    factory.setConnectTimeout(1 * 1000)
+    factory.setConnectionRequestTimeout(1 * 1000)
+    factory
+  }
 
   protected def url = s"http://${host}:${port}"
 
-  def convert(filename: String): Map[String, String] = {
-    var abfFile: File = null
-    var mzmlFile: File = null
-    var file: Option[InputStream] = null
-    val mapper = new ObjectMapper
+  /**
+    * converts from the given file name, to an alternative format
+    *
+    * @param filename
+    * @param extension
+    * @return
+    */
+  def convert(filename: String, extension: String = "abf"): Option[File] = {
 
     if (fserv4j.exists(filename)) {
-      file = fserv4j.download(filename)
+      val file = fserv4j.download(filename)
 
       if (file.isEmpty) {
-        logger.error(s"File ${filename} did not download correctly")
-        Map("abf" -> null, "mzxml" -> null, "error" -> s"File ${filename} did not download correctly")
+        throw new IOException(s"File ${filename} did not download correctly")
       } else {
-        val tmpfile = new File(storage.concat(File.separator).concat(filename))
-        if (!tmpfile.getParentFile.exists()) {
-          tmpfile.getParentFile.mkdir()
-        }
-
-        IOUtils.copyLarge(file.get, new FileOutputStream(tmpfile))
 
         try {
-          val upresponse = upload(tmpfile)
+          val upresponse = upload(file.get, filename)
 
-          mapper.registerModule(DefaultScalaModule)
-          val uploaded = mapper.readValue(upresponse, classOf[Map[String, String]])
-
-          logger.warn(s"uploaded: ${uploaded}")
-          if (uploaded.getOrElse("abf", "not found").equals("ok")) {
-            abfFile = download(tmpfile, FileType.ABF)
-            fserv4j.upload(abfFile)
-            logger.debug(s"${abfFile} added to FileServer")
+          if (extension.equalsIgnoreCase("abf")) {
+            Option(download(filename, FileType.ABF))
+          }
+          else if (extension.equalsIgnoreCase("mzxml")) {
+            Option(download(filename, FileType.MZXML))
+          }
+          else {
+            throw new IOException(s"invalid extension provided: ${extension}")
           }
 
-          if (uploaded.getOrElse("mzxml", "not found").equals("ok")) {
-            mzmlFile = download(tmpfile, FileType.MZXML)
-            fserv4j.upload(mzmlFile)
-            logger.debug(s"${mzmlFile} added to FileServer")
-          }
-
-          Map("abf" -> abfFile.getName, "mzxml" -> mzmlFile.getName)
         } catch {
           case uex: UploadException =>
-            Map("abf" -> null, "mzxml" -> null, "error" -> uex.getMessage)
+            throw new IOException(uex.getMessage, uex)
           case dex: DownloadException =>
-            Map("abf" -> null, "mzxml" -> null, "error" -> dex.getMessage)
+            throw new IOException(dex.getMessage, dex)
         }
       }
     } else {
-      Map("abf" -> null, "mzxml" -> null, "error" -> s"File ${filename} doesn't exist")
+      None
     }
-
   }
 
   def writeBytes(data: Stream[Byte], file: File): Unit = {
@@ -100,15 +108,18 @@ class DataFormerClient extends LazyLogging {
     try data.foreach(target.write(_)) finally target.close()
   }
 
-  def upload(file: File): String = {
+  def upload(stream: InputStream, name: String): String = {
     val map = new LinkedMultiValueMap[String, AnyRef]
-    map.add("file", new FileSystemResource(file))
+    map.add("file", new ByteArrayResource(IOUtils.toByteArray(stream), name) {
+      override def getFilename = name
+    })
+
     val headers = new HttpHeaders
     headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
     val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
 
-    logger.info(s"uploading ${file.getName} to: $url/rest/conversion/upload")
+    logger.info(s"uploading ${name} to: $url/rest/conversion/upload")
 
     val result = restTemplate.exchange(s"$url/rest/conversion/upload", HttpMethod.POST, requestEntity, classOf[String])
 
@@ -121,12 +132,11 @@ class DataFormerClient extends LazyLogging {
     }
   }
 
-  def download(file: File, format: FileType): File = {
-    val endpoint = s"$url/rest/conversion/download/${file.getName}/${format.toString.toLowerCase}"
-    logger.info(s"downloading ${format} version of ${file.getName}")
+  def download(fileName: String, format: FileType): File = {
+    val endpoint = s"$url/rest/conversion/download/${fileName}/${format.toString.toLowerCase}"
+    logger.info(s"downloading ${format} version of ${fileName}")
 
-    //    val request: HttpEntity[String] = new HttpEntity("parameters")
-    val downloadName = storage.concat(File.separator).concat(file.getName.substring(0, file.getName.indexOf(".")))
+    val downloadName = storage.concat(File.separator).concat(fileName.substring(0, fileName.indexOf(".")))
     val toDownload = new File(s"${downloadName}.${format.toString.toLowerCase()}")
 
     val out = new BufferedOutputStream(new FileOutputStream(toDownload))
@@ -153,18 +163,4 @@ object FileType extends Enumeration {
 
 @Configuration
 class DataFormerAutoConfiguration extends LazyLogging {
-  @Value("${wcmc.api.rest.dataformer.conversiontimeout:60}")
-  val conversionTimeout: Int = 0
-
-  @Bean
-  def restTemplate(): RestTemplate = new RestTemplate(getRequestFactory())
-
-  private def getRequestFactory(): ClientHttpRequestFactory = {
-    val factory: HttpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory()
-
-    factory.setReadTimeout(conversionTimeout * 1000)
-    factory.setConnectTimeout(1 * 1000)
-    factory.setConnectionRequestTimeout(1 * 1000)
-    factory
-  }
 }

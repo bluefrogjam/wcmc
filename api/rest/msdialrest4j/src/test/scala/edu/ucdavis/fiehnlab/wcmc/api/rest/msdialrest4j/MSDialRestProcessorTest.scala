@@ -30,23 +30,11 @@ class MSDialRestProcessorTest extends WordSpec with LazyLogging with ShouldMatch
   val fserv4j: FServ4jClient = null
 
   @Autowired
-  val svc: ConvertService = null
-
-  @Autowired
   val restTemplate: RestTemplate = null
 
   def sha256Hash(text: String): String = String.format("%064x", new java.math.BigInteger(1, java.security.MessageDigest.getInstance("SHA-256").digest(text.getBytes("UTF-8"))))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
-
-  "ConvertService" should {
-    "return abf from .d.zip" in {
-      val input = fserv4j.loadAsFile("testA.d.zip").get
-
-      val output = svc.getAbfFile(input).getOrElse(fail)
-      output.exists() should be(true)
-    }
-  }
 
   "MSDialRestProcessorTest" should {
 

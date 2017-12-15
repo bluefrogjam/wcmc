@@ -82,7 +82,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
       temp.toPath
     } catch {
       case ex: Exception =>
-        logger.error(s"OOPS: ${ex.getMessage}")
+        logger.error(s"OOPS: ${ex.getMessage}",ex)
     }
 
     new FileInputStream(zipFile)
