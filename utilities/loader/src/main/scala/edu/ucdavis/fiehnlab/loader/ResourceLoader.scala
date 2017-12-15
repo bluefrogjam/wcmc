@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.loader
 
 import java.io._
+import java.util.zip.ZipInputStream
 import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
@@ -90,6 +91,20 @@ trait ResourceLoader extends LazyLogging {
     * @return
     */
   def exists(name: String): Boolean
+
+  /**
+    * check if the requested resource is a directory
+    * @param name
+    * @return
+    */
+  def isDirectory(name:String) : Boolean = ???
+
+  /**
+    * checks if the requested resource is a file
+    * @param name
+    * @return
+    */
+  def isFile(name:String) : Boolean = ???
 }
 
 /**
@@ -136,8 +151,14 @@ class DelegatingResourceLoader extends ResourceLoader {
   }
 }
 
+/**
+  * accesses local resources on the filesystem
+  */
 trait LocalLoader extends ResourceLoader
 
+/**
+  * access remote resources
+  */
 trait RemoteLoader extends ResourceLoader {
 
   /**

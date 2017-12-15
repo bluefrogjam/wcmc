@@ -47,9 +47,6 @@ class MSDialRestProcessor extends LazyLogging {
   @Autowired
   val dfClient: DataFormerClient = null
 
-  @Autowired
-  val cvtSvc: ConvertService = null
-
   protected def msdresturl = s"http://${msdresthost}:${msdrestport}"
 
   /**
@@ -68,7 +65,7 @@ class MSDialRestProcessor extends LazyLogging {
 
       val converted: File = {
         if (!input.getName.endsWith(".abf")) {
-          cvtSvc.getAbfFile(input).getOrElse(throw new Exception(s"Can't process ${input}. Error trying to convert to abf"))
+          dfClient.convert(input.getName,"abf").getOrElse(throw new Exception(s"Can't process ${input}. Error trying to convert to abf"))
         } else {
           input
         }

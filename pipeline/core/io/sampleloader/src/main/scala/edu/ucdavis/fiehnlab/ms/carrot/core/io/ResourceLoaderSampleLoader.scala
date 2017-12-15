@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
+import java.io.File
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
@@ -32,6 +34,10 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     logger.debug(s"looking for sample: ${name} with ${resourceLoader}")
     val fileOption = resourceLoader.loadAsFile(name)
 
+    convertFileToSample(name, fileOption)
+  }
+
+  protected def convertFileToSample(name: String, fileOption: Option[File]) = {
     if (fileOption.isDefined) {
       val file = fileOption.get
       if (file.getName.toLowerCase().matches(".*\\.txt(?:.gz)?")) { // .*.txt[.gz]*  can catch invalid files (blahtxt.gz)

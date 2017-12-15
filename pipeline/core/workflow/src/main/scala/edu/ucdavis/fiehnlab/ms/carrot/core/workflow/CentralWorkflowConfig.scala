@@ -1,7 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow
 
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.io.{ConversionAwareSampleLoader, ResourceLoaderSampleLoader}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import org.springframework.context.annotation._
 
 /**
@@ -19,6 +20,5 @@ class CentralWorkflowConfig {
     * @return
     */
   @Bean
-  def resourceSampleLoader(resourceLoader: DelegatingResourceLoader): ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(resourceLoader)
-
+  def loader(resourceLoader: DelegatingResourceLoader, dataFormerClient: DataFormerClient): ConversionAwareSampleLoader = new ConversionAwareSampleLoader(dataFormerClient, resourceLoader)
 }

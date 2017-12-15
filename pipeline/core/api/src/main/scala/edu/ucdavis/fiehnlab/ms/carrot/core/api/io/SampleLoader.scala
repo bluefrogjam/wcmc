@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
-import java.io.FileNotFoundException
+import java.io.{File, FileNotFoundException}
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 
@@ -56,4 +56,5 @@ trait SampleLoader {
     * @return
     */
   def sampleExists(name: String): Boolean
+
 }
