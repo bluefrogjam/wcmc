@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.loader.impl
 
 import java.io.File
+import java.util.zip.ZipInputStream
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.TestConfiguration
@@ -62,6 +63,34 @@ class DirectoryResourceLoaderTest extends WordSpec with LazyLogging {
       assert(loader.exists("/sub/test3.txt"))
     }
 
+    "return zip imput stream" in {
+      val result = loader.load("/testA.d")
+
+      assert(result.isDefined)
+      assert(result.get.isInstanceOf[ZipInputStream])
+      result.get.close()
+    }
+    "return zip imput stream from subfolder" in {
+      val result = loader.load("sub/testB.d")
+
+      assert(result.isDefined)
+      assert(result.get.isInstanceOf[ZipInputStream])
+      result.get.close()
+    }
+
+    "pass when checking a file with isFile" in {
+      assert(loader.isFile("test.txt"))
+    }
+    "fails when checking a file with isDirectory" in {
+      assert(!loader.isDirectory("test.txt"))
+    }
+
+    "pass when checking a folder with isDirectory" in {
+      assert(loader.isDirectory("testA.d"))
+    }
+    "fails when checking a file with isFile" in {
+      assert(!loader.isFile("testA.d"))
+    }
   }
 }
 
