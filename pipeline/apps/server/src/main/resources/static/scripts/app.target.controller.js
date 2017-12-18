@@ -189,7 +189,17 @@ angular.module('app')
                     target.targetName = $scope.data[i].targetName;
                     target.precursor = $scope.data[i].precursor;
                     target.retentionTime = $scope.data[i].retentionTime;
-                    target.riMarker = angular.isDefined($scope.data[i].riMarker) && $scope.data[i].riMarker;
+
+                    // Handle string values for checkboxes when pasted
+                    if (angular.isDefined($scope.data[i].riMarker)) {
+                        if ((angular.isString($scope.data[i].riMarker) && $scope.data[i].riMarker == 'TRUE') || $scope.data[i].riMarker == true) {
+                          target.riMarker = true;
+                        } else {
+                            target.riMarker = false;
+                        }
+                    } else {
+                        target.riMarker = false;
+                    }
 
                     if (target.ri_unit == 'minutes') {
                         target.retentionTime *= 60;
