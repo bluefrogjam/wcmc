@@ -49,7 +49,9 @@ angular.module('app')
                     'Content-Type': 'application/json'
                 }
             }).then(function(data) {
-                successCallback(data.data.map(function(x) {
+                successCallback(data.data
+                    .filter(function(x) { return x != null && x.chromatographicMethod != null; })
+                    .map(function(x) {
                     // Combine name and ion mode for selections
                     x.title = x.chromatographicMethod.name;
 
