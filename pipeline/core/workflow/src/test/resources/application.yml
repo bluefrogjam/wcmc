@@ -2,10 +2,6 @@
 workflow.correction.massAccuracy: 150
 workflow.files.targets: "/targets_full.txt"
 
-#annotation:
-#  lcmsProperties:
-#    massAccuracy: 150
-#    retentionIndexWindow: 200
 
 wcmc:
   api:
