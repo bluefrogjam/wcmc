@@ -1,9 +1,11 @@
 package edu.ucdavis.fiehnlab.loader.impl
 
-import java.io.{File, InputStream}
+import java.io.{File, FileInputStream, InputStream}
+import java.util.zip.ZipInputStream
 
-import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
+import edu.ucdavis.fiehnlab.loader.LocalLoader
 import org.springframework.stereotype.Component
+import org.zeroturnaround.zip.ZipUtil
 
 import scala.util.{Failure, Success, Try}
 
@@ -18,17 +20,32 @@ class ClasspathResourceLoader extends LocalLoader {
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = if (name.startsWith("/")) {
-    Option(getClass.getResourceAsStream(name))
-  } else {
-    Option(getClass.getResourceAsStream(s"/$name"))
+  override def load(name: String): Option[InputStream] = {
+    val fixed = cleanName(name)
+    val resource = getClass.getResource(s"/${fixed}")
+    if (resource != null) {
+      val file = new File(resource.getFile)
+      if(resource.getFile.endsWith(".d")){
+        val zipfile = if(fixed.contains("/")) File.createTempFile("tmp",s"${fixed.substring(fixed.lastIndexOf("/")+1)}.zip") else File.createTempFile("tmp",s"${fixed}.zip")
+        ZipUtil.pack(file, zipfile)
+        Option(new ZipInputStream(new FileInputStream(zipfile)))
+      } else {
+        Option(getClass.getResourceAsStream(s"/${fixed}"))
+      }
+    } else {
+      None
+    }
+  }
+
+  private def cleanName(name: String) = {
+    if (name.startsWith("/")) { name.substring(1) } else { name }
   }
 
   override def exists(name: String): Boolean = {
     val file = if (name.startsWith("/")) {
       getClass.getResource(name)
     } else {
-      getClass.getResource(s"/${name}")
+      getClass.getResource(s"/$name")
     }
 
     Try {
@@ -39,5 +56,25 @@ class ClasspathResourceLoader extends LocalLoader {
     }
   }
 
-	override def priority: Int = super.priority + 10
+  override def priority: Int = super.priority + 10
+
+  override def isDirectory(name: String): Boolean = {
+    val fixed = cleanName(name)
+    val resource = getClass.getResource(s"/$fixed")
+    if (resource != null) {
+      new File(resource.getFile).isDirectory
+    } else {
+      false
+    }
+  }
+
+  override def isFile(name: String): Boolean = {
+    val fixed = cleanName(name)
+    val resource = getClass.getResource(s"/$fixed")
+    if (resource != null) {
+      new File(resource.getFile).isFile
+    } else {
+      false
+    }
+  }
 }
