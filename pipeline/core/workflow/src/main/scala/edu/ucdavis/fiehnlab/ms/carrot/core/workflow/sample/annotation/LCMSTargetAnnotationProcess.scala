@@ -373,7 +373,7 @@ class LCMSTargetAnnotationProperties {
   /**
     * defined mass accuracy in milli dalton for the annotation process
     */
-  @Value("${lcmsProperties.massAccuracy:15}")
+  @Value("${workflow.lcms.annotation.detection.massAccuracy:5}")
   var massAccuracy: Double = _
 
   /**
@@ -384,7 +384,7 @@ class LCMSTargetAnnotationProperties {
   /**
     * the defined retention index window to use for it's given targets. It's considered in seconds
     */
-  @Value("${lcmsProperties.retentionIndexWindow:12}")
+  @Value("${workflow.lcms.annotation.detection.riWindow:12}")
   var retentionIndexWindow: Double = _
 
   /**
@@ -395,12 +395,16 @@ class LCMSTargetAnnotationProperties {
 
   /**
     * to decided the best peak, do we prefer mass accuracy or retention time distance difference
+    *
+    * by default we define the retention index to be more important due to isomeres.
     */
-  var preferMassAccuracyOverRetentionIndexDistance: Boolean = true
+  @Value("${workflow.lcms.annotation.detection.massOverRI:false}")
+  var preferMassAccuracyOverRetentionIndexDistance: Boolean = false
 
   /**
     * this enables the close peak detection system, if two possible targets are closer than n seconds, than the larger peak will be accepted as default annotation. Set to 0 to disable this feature
     */
+  @Value("${workflow.lcms.annotation.detection.closePeak:3}")
   var closePeakDetection: Double = 3
 
 }
