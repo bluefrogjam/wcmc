@@ -36,5 +36,10 @@
             <version>2.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-zip</artifactId>
+            <version>1.12</version>
+        </dependency>
     </dependencies>
 </project>
