@@ -17,7 +17,7 @@ import org.springframework.context.annotation._
 /**
   * Test configuration of a LCMS target workflow
   */
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration],classOf[Everything4JAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 @Configuration
 class TargetedWorkflowTestConfiguration extends LazyLogging {
 

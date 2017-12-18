@@ -77,12 +77,6 @@ class PositiveModeTargetedWorkflow015ISTDVerificationTest extends WordSpec with 
         assert(listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.nonEmpty)
       }
 
-      "validate the amount of replaced value" in {
-        val count = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]].quantifiedTargets.count(_.isInstanceOf[GapFilledTarget[Double]])
-        logger.info(s"replaced value count: ${count}")
-
-        count shouldBe (370)
-      }
       "validate the result" in {
 
         val sample: QuantifiedSample[Double] = listener.quantifiedExperiment.classes.head.samples.head.asInstanceOf[QuantifiedSample[Double]]
