@@ -1,5 +1,8 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.{DeserializationContext, JsonDeserializer}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
@@ -7,8 +10,11 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryTarget
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation._
+
+import scala.annotation.meta.field
 
 /**
   * provides us with an easy way to create and query libraries
@@ -132,6 +138,12 @@ case class SpectrumExtended(override val ions: Seq[Ion],
 
 }
 
+
+class JsonBooleanDeserializer extends JsonDeserializer[Boolean]{
+  override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext) : Boolean= {
+    jsonParser.getText.toBoolean
+  }
+}
 /**
   * specific class to add a target
   *
@@ -142,7 +154,7 @@ case class SpectrumExtended(override val ions: Seq[Ion],
   * @param riMarker
   * @param mode
   */
-case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String, riMarker: Boolean, mode: String) {
+case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String, @(JsonDeserialize@field)riMarker: Boolean, mode: String) {
 
   /**
     * builds the associated acquition method
