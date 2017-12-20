@@ -1,9 +1,13 @@
 package edu.ucdavis.fiehnlab.loader.impl
 
+import java.io.InputStream
+import java.util.zip.ZipInputStream
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.TestConfiguration
+import org.junit.{After, Before}
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.{BeforeAndAfter, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
@@ -14,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TestConfiguration]))
-class ClasspathResourceLoaderTest extends WordSpec with LazyLogging {
+class ClasspathResourceLoaderTest extends WordSpec with LazyLogging with BeforeAndAfter {
 
   @Autowired
   val loader: ClasspathResourceLoader = null
@@ -51,5 +55,35 @@ class ClasspathResourceLoaderTest extends WordSpec with LazyLogging {
     "fail finding file without subfolder" in {
       assert(!loader.exists("test3.txt"))
     }
+
+    "return zip imput stream" in {
+      val result = loader.load("/testA.d")
+
+      assert(result.isDefined)
+      assert(result.get.isInstanceOf[ZipInputStream])
+      result.get.close()
+    }
+    "return zip imput stream from subfolder" in {
+      val result = loader.load("sub/testB.d")
+
+      assert(result.isDefined)
+      assert(result.get.isInstanceOf[ZipInputStream])
+      result.get.close()
+    }
+
+    "pass when checking a file with isFile" in {
+      assert(loader.isFile("test.txt"))
+    }
+    "fails when checking a file with isDirectory" in {
+      assert(!loader.isDirectory("test.txt"))
+    }
+
+    "pass when checking a folder with isDirectory" in {
+      assert(loader.isDirectory("testA.d"))
+    }
+    "fails when checking a file with isFile" in {
+      assert(!loader.isFile("testA.d"))
+    }
+
   }
 }
