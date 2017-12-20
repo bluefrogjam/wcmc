@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
-import java.io.File
+import java.io.{File, IOException}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.abf.ABFSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -21,6 +22,9 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
 
   @Autowired
   val client: MSDialRestProcessor = null
+
+  @Autowired
+  val dataFormerClient:DataFormerClient = null
 
   logger.info(s"using loader: ${resourceLoader}")
 
@@ -38,7 +42,9 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
   }
 
   protected def convertFileToSample(name: String, fileOption: Option[File]) = {
+
     if (fileOption.isDefined) {
+      logger.info(s"converting ${fileOption.get.getName} to sample")
       val file = fileOption.get
       if (file.getName.toLowerCase().matches(".*\\.txt(?:.gz)?")) { // .*.txt[.gz]*  can catch invalid files (blahtxt.gz)
         //leco
@@ -49,6 +55,17 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
       }
       else if (file.getName.toLowerCase().matches(".*\\.abf")) { // .*.abf can catch files that end in '.' like blah.abf.
         Some(new ABFSample(name, file, client))
+      }
+      else if (file.getName.toLowerCase.matches(".*\\.d.zip")){
+        //covnert it to abf
+        val result = dataFormerClient.convert(name)
+
+        if(result.isDefined) {
+          Some(new ABFSample(name,result.get, client))
+        }
+        else{
+          throw new IOException(s"sorry on demand conversion of file failed: ${name}")
+        }
       }
       else {
         Some(MSDKSample(name, file))

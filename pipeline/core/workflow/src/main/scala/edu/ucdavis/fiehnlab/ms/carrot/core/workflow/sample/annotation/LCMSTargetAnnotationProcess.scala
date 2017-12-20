@@ -373,7 +373,7 @@ class LCMSTargetAnnotationProperties {
   /**
     * defined mass accuracy in milli dalton for the annotation process
     */
-  @Value("${workflow.lcms.annotation.detection.massAccuracy:5}")
+  @Value("${workflow.lcms.annotation.detection.massAccuracy:10}")
   var massAccuracy: Double = _
 
   /**
@@ -384,7 +384,7 @@ class LCMSTargetAnnotationProperties {
   /**
     * the defined retention index window to use for it's given targets. It's considered in seconds
     */
-  @Value("${workflow.lcms.annotation.detection.riWindow:12}")
+  @Value("${workflow.lcms.annotation.detection.riWindow:6}")
   var retentionIndexWindow: Double = _
 
   /**

@@ -57,7 +57,7 @@ class TaskRunner extends LazyLogging {
     logger.info(s"executing received task: ${task}")
 
     val classes: Seq[ExperimentClass] = task.samples.groupBy(_.matrix).map { entry =>
-      val samples = entry._2.par.map { x =>
+      val samples = entry._2.map { x =>
         assert(x.fileName != null, "you need to provide a file name!")
         assert(x.fileName.length > 0, "you need to provide a file name!")
 

@@ -9,7 +9,9 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.apache.commons.io.IOUtils
+import org.apache.http.impl.client.HttpClientBuilder
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.{ByteArrayResource, FileSystemResource, InputStreamResource}
 import org.springframework.http._
@@ -37,7 +39,7 @@ class DataFormerClient extends LazyLogging {
   @Autowired
   private val fserv4j: FServ4jClient = null
 
-  @Value("${wcmc.api.rest.dataformer.conversiontimeout:60}")
+  @Value("${wcmc.api.rest.dataformer.conversiontimeout:120}")
   private val conversionTimeout: Int = 0
 
 
@@ -52,11 +54,15 @@ class DataFormerClient extends LazyLogging {
     * @return
     */
   private def getRequestFactory(): ClientHttpRequestFactory = {
-    val factory: HttpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory()
+    val factory: HttpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create()
+      .setMaxConnTotal(200)
+      .setMaxConnPerRoute(50)
+      .build())
 
     factory.setReadTimeout(conversionTimeout * 1000)
-    factory.setConnectTimeout(1 * 1000)
-    factory.setConnectionRequestTimeout(1 * 1000)
+    factory.setConnectTimeout(5 * 1000)
+    factory.setConnectionRequestTimeout(5 * 1000)
+
     factory
   }
 
@@ -69,6 +75,7 @@ class DataFormerClient extends LazyLogging {
     * @param extension
     * @return
     */
+  @Cacheable
   def convert(filename: String, extension: String = "abf"): Option[File] = {
 
     if (fserv4j.exists(filename)) {
@@ -109,29 +116,35 @@ class DataFormerClient extends LazyLogging {
   }
 
   def upload(stream: InputStream, name: String): String = {
-    val map = new LinkedMultiValueMap[String, AnyRef]
-    map.add("file", new ByteArrayResource(IOUtils.toByteArray(stream), name) {
-      override def getFilename = name
-    })
+    try {
+      val map = new LinkedMultiValueMap[String, AnyRef]
+      map.add("file", new ByteArrayResource(IOUtils.toByteArray(stream), name) {
+        override def getFilename = name
+      })
 
-    val headers = new HttpHeaders
-    headers.setContentType(MediaType.MULTIPART_FORM_DATA)
+      val headers = new HttpHeaders
+      headers.setContentType(MediaType.MULTIPART_FORM_DATA)
 
-    val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
+      val requestEntity = new HttpEntity[LinkedMultiValueMap[String, AnyRef]](map, headers)
 
-    logger.info(s"uploading ${name} to: $url/rest/conversion/upload")
+      logger.info(s"uploading ${name} to: $url/rest/conversion/upload")
 
-    val result = restTemplate.exchange(s"$url/rest/conversion/upload", HttpMethod.POST, requestEntity, classOf[String])
+      val result = restTemplate.exchange(s"$url/rest/conversion/upload", HttpMethod.POST, requestEntity, classOf[String])
 
-    if (result.getStatusCode == HttpStatus.OK) {
-      val uploadResp = result.getBody
-      result.getBody
-    } else {
-      logger.warn(s"received result was: ${result}")
-      throw new UploadException(result.toString)
+      if (result.getStatusCode == HttpStatus.OK) {
+        val uploadResp = result.getBody
+        result.getBody
+      } else {
+        logger.warn(s"received result was: ${result}")
+        throw new UploadException(result.toString)
+      }
+    }
+    finally {
+      stream.close()
     }
   }
 
+  @Cacheable
   def download(fileName: String, format: FileType): File = {
     val endpoint = s"$url/rest/conversion/download/${fileName}/${format.toString.toLowerCase}"
     logger.info(s"downloading ${format} version of ${fileName}")
@@ -143,11 +156,12 @@ class DataFormerClient extends LazyLogging {
     try {
       IOUtils.copy(new URL(endpoint).openStream(), out)
       out.flush()
+
+      toDownload
     } finally {
       out.close()
     }
 
-    toDownload
   }
 }
 
