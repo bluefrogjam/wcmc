@@ -5,28 +5,34 @@ spring:
     multipart:
       max-file-size: 2048MB
       max-request-size: 2048MB
+
+#which rabbit mq to use
   rabbitmq:
     host: blonde.fiehnlab.ucdavis.edu
     port: 5673
     username: rabbituser
     password: rabbitpass
 
+#which mona server to use
 mona:
   rest:
     server:
       user: admin
       password: admin
-      host: trashcan.fiehnlab.ucdavis.edu
+      host: megamona.fiehnlab.ucdavis.edu
       port: 80
 
 server:
   port: 18080
 
+#which email account to use
 email:
   host: smtp.gmail.com
   port: 25
   username: binbase@gmail.com
   pass: BinBase2018
+
+#which rest backend to use
 wcmc:
   api:
     rest:

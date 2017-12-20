@@ -118,7 +118,7 @@ class PositiveModeTargetedWorkflowMSMSGenerationVerificationWithMonaTest extends
       }
 
       "validate the generation of new target" in {
-        assert(targetLibrary.load(method).size == 1203)
+        assert(targetLibrary.load(method).size == 1204)
       }
     }
 
