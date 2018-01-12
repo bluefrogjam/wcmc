@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
+import edu.ucdavis.fiehnlab.utilities.logging.{JSONAlgorithmLogging, JSONPhaseLogging, JSONSettingsLogging}
 
 /**
   * Simple class to help us with annotations

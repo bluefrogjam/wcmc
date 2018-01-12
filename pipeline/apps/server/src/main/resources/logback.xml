@@ -11,7 +11,7 @@
         </encoder>
     </appender>
 
-    <appender name="JSON" class="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.diagnostics.JSONLoggingAppender"/>
+    <appender name="JSON" class="edu.ucdavis.fiehnlab.utilities.logging.JSONLoggingAppender"/>
 
     <!-- populates the database in the backend with content -->
 
