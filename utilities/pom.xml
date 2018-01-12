@@ -18,6 +18,7 @@
         <module>minix</module>
         <module>metadata</module>
         <module>email</module>
+        <module>logging</module>
     </modules>
 
 

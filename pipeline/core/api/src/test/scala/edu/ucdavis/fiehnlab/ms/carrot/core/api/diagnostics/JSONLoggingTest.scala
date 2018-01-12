@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, PositiveMode, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
+import edu.ucdavis.fiehnlab.utilities.logging.{JSONLogging, JSONPhaseLogging}
 import org.scalatest.{FunSuite, ShouldMatchers, WordSpec}
 
 class JSONLoggingTest extends WordSpec with ShouldMatchers{
