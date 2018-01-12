@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.math
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, Target}
 import org.scalatest.Matchers._
 import org.scalatest.{WordSpec, _}
 /**
@@ -18,6 +18,8 @@ class MassAccuracyTest extends WordSpec {
       "example 1" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val sample:Sample = null
+
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 
@@ -60,6 +62,8 @@ class MassAccuracyTest extends WordSpec {
       "example 2" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val sample:Sample = null
+
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 
@@ -99,6 +103,8 @@ class MassAccuracyTest extends WordSpec {
       "example 3" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val sample:Sample = null
+
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 
@@ -139,6 +145,8 @@ class MassAccuracyTest extends WordSpec {
       "example 4" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val sample:Sample = null
+
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 
@@ -178,6 +186,8 @@ class MassAccuracyTest extends WordSpec {
       "example 5" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val sample:Sample = null
+
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 
@@ -217,7 +227,10 @@ class MassAccuracyTest extends WordSpec {
       }
       "example 6" in {
         val ppmError = accuracy.calculateMassErrorPPM(
+
           new MSSpectra {override val purity: Option[Double] = None
+            override val sample:Sample = null
+
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 

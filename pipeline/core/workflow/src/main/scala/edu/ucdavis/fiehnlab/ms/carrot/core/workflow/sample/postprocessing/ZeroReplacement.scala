@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -148,7 +149,8 @@ class ZeroReplacementProperties {
 @Component
 @Profile(Array("carrot.processing.replacement.simple"))
 class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
-	/**
+
+  /**
 		* replaces the given value, with the best possible value
 		* based on the provided configuration settings
 		*
@@ -244,6 +246,8 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * which actual spectra has been used for the replacement
     */
   override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
+
+    override val sample:Sample = value.sample
     /**
       * which sample was used for the replacement
       */

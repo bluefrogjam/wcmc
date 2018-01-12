@@ -24,9 +24,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
   val client: MSDialRestProcessor = null
 
   @Autowired
-  val dataFormerClient:DataFormerClient = null
-
-  logger.info(s"using loader: ${resourceLoader}")
+  val dataFormerClient: DataFormerClient = null
 
   /**
     * loads a sample
@@ -41,38 +39,46 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     convertFileToSample(name, fileOption)
   }
 
-  protected def convertFileToSample(name: String, fileOption: Option[File]) = {
+  protected def convertFileToSample(name: String, fileOption: Option[File]): Option[_ <: Sample] = {
 
-    if (fileOption.isDefined) {
-      logger.info(s"converting ${fileOption.get.getName} to sample")
-      val file = fileOption.get
-      if (file.getName.toLowerCase().matches(".*\\.txt(?:.gz)?")) { // .*.txt[.gz]*  can catch invalid files (blahtxt.gz)
-        //leco
-        None
-      }
-      else if (file.getName.toLowerCase().matches(".*\\.(msdial|processed)(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
-        Some(MSDialSample(name, file))
-      }
-      else if (file.getName.toLowerCase().matches(".*\\.abf")) { // .*.abf can catch files that end in '.' like blah.abf.
-        Some(new ABFSample(name, file, client))
-      }
-      else if (file.getName.toLowerCase.matches(".*\\.d.zip")){
-        //covnert it to abf
-        val result = dataFormerClient.convert(name)
-
-        if(result.isDefined) {
-          Some(new ABFSample(name,result.get, client))
+    val begin = System.currentTimeMillis()
+    try {
+      if (fileOption.isDefined) {
+        logger.debug(s"converting ${fileOption.get.getName} to sample")
+        val file = fileOption.get
+        if (file.getName.toLowerCase().matches(".*\\.txt(?:.gz)?")) { // .*.txt[.gz]*  can catch invalid files (blahtxt.gz)
+          //leco
+          None
         }
-        else{
-          throw new IOException(s"sorry on demand conversion of file failed: ${name}")
+        else if (file.getName.toLowerCase().matches(".*\\.(msdial|processed)(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
+          Some(MSDialSample(name, file))
+        }
+        else if (file.getName.toLowerCase().matches(".*\\.abf")) { // .*.abf can catch files that end in '.' like blah.abf.
+          Some(new ABFSample(name, file, client))
+        }
+        else if (file.getName.toLowerCase.matches(".*\\.d.zip")) {
+          //covnert it to abf
+          val result = dataFormerClient.convert(name)
+
+          if (result.isDefined) {
+            Some(new ABFSample(name, result.get, client))
+          }
+          else {
+            throw new IOException(s"sorry on demand conversion of file failed: ${name}")
+          }
+        }
+        else {
+          Some(MSDKSample(name, file))
         }
       }
       else {
-        Some(MSDKSample(name, file))
+        None
       }
     }
-    else {
-      None
+    finally {
+     val duration = System.currentTimeMillis() - begin
+
+      logger.debug(s"duration to convert file was ${duration} ms")
     }
   }
 

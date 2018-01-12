@@ -74,6 +74,9 @@ class FilteredProcessTest extends WordSpec {
     * simple test spectra with 1 ion
     */
   val testSpectraWith1Ion = new MSSpectra {
+
+    val sample:Sample = null
+
     /**
       * specified ion mode for the given feature
       */

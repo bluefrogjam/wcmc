@@ -30,11 +30,7 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File, override va
     val result = loadAsFile(name)
 
     if (result.isDefined) {
-      if (result.get.getName.endsWith(".zip")) {
-        Option(new ZipInputStream(new FileInputStream(result.get)))
-      } else {
         Option(new FileInputStream(result.get))
-      }
     } else {
       None
     }

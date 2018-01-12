@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.filter
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 
 /**
   * Created by wohlg_000 on 4/22/2016.

@@ -81,6 +81,7 @@ class QuantifiedSampleTxtWriter[T] extends Writer[Sample] with LazyLogging {
           writeLine("mass", target => f"${target.precursorMass.getOrElse(0.0)}%1.4f")
           writeLine("retention time (s)", target => f"${target.retentionIndex}%1.2f")
           writeLine("retention time (min)", target => f"${target.retentionTimeInMinutes}%1.2f")
+          writeLine("found at correction", target => s"${data.featuresUsedForCorrection.exists(p => p.target == target)}")
           //write mass
 
           //write retention time of target

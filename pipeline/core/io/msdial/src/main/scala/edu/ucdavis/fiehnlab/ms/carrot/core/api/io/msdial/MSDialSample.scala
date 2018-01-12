@@ -109,6 +109,8 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
         * no spectra available so it's just a feature
         */
       new Feature {
+
+        val sample:Sample = MSDialSample.this
         /**
           * the retention time of this spectra. It should be provided in seconds!
           */
@@ -134,6 +136,8 @@ class MSDialSample(inputStream: InputStream, override val fileName: String) exte
         * complete spectra available
         */
       new MSMSSpectra {
+
+        val sample:Sample = MSDialSample.this
 
         override val massOfDetectedFeature: Option[Ion] = Option(Ion(dataMap(accurateMassIdentifier).toDouble, dataMap(intensityIdentifier).toFloat))
 

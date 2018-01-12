@@ -7,8 +7,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 /**
   * Created by wohlg_000 on 6/10/2016.
   */
-class RetentionIndexAnnotation(retentionIndexWindow: Double) extends Annotate with LazyLogging {
+class RetentionIndexAnnotation(retentionIndexWindow: Double,val phase:String) extends Annotate with LazyLogging {
 
+  override protected val usedSettings = Map("window" -> retentionIndexWindow)
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
     *
@@ -16,7 +17,7 @@ class RetentionIndexAnnotation(retentionIndexWindow: Double) extends Annotate wi
     * @param librarySpectra
     * @return
     */
-  override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
 
     val time: Double = correctedSpectra.asInstanceOf[CorrectedSpectra].retentionIndex
     val min: Double = librarySpectra.retentionIndex - retentionIndexWindow
@@ -28,4 +29,9 @@ class RetentionIndexAnnotation(retentionIndexWindow: Double) extends Annotate wi
 
     result
   }
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = phase
 }

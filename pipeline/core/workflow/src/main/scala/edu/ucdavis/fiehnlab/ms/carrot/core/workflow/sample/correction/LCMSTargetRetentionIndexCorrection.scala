@@ -68,12 +68,12 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
   /**
     * needs to be lazily loaded, since the correction settings need to be set first by spring
     */
-  lazy val massAccuracy = new AccurateMassAnnotation(massAccuracySetting, 0)
+  lazy val massAccuracy = new AccurateMassAnnotation(massAccuracySetting, 0,"correction")
 
   /**
     * allows us to filter the data by the height of the ion
     */
-  lazy val massIntensity = new MassIsHighEnoughAnnotation(massAccuracySetting, minPeakIntensity)
+  lazy val massIntensity = new MassIsHighEnoughAnnotation(massAccuracySetting, minPeakIntensity,"correction")
 
   /**
     * this defines our regression curve, which is supposed to be utilized during the correction. Lazy loading is required to avoid null pointer exception of the configuration settings
@@ -131,6 +131,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
           val previousTime = previousTarget.target.retentionIndex
           val result = previousTime >= min && previousTime <= max
 
+          logger.info(s"compare ${previousTime} with ${min} and ${max} = ${result}")
           if (result) {
             /**
               * we only need to optimize the targets, if the times are out of order
@@ -140,13 +141,14 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
             val currentAnnotationTime = target.annotation.retentionTimeInSeconds
 
             if (previousAnnotationTime < currentAnnotationTime) {
+              logger.info(s"\t\t\t=> keeping ${previousTarget.annotation.retentionTimeInSeconds} since it's in order with ${target.annotation.retentionTimeInSeconds}")
               /**
                 * times are in order, returning the target
                 */
               target
             }
             else {
-              logger.debug(s"\t\t\t=> dropping ${target} since it's to close to ${previousTarget} and annotations was not in order")
+              logger.info(s"\t\t\t=> dropping ${target} since it's to close to ${previousTarget} and annotations was not in order")
             }
           }
           else {
@@ -229,7 +231,7 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     }.collect {
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[Target, Feature] =>
-          logger.info(s"annotated: ${hit.target.name.getOrElse("Unknown")}/${hit.target.retentionIndex}/${hit.target.precursorMass.getOrElse(0)} with ${hit.annotation.retentionTimeInSeconds}/${hit.annotation.massOfDetectedFeature.get.mass}")
+          logger.info(s"annotated: ${hit.target.name.getOrElse("Unknown")}/${hit.target.retentionIndex}/${hit.target.precursorMass.getOrElse(0)} with ${hit.annotation.retentionTimeInSeconds}s ${hit.annotation.massOfDetectedFeature.get.mass}Da")
           hit
       }.seq
 
@@ -307,9 +309,12 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     * @param possibleHits
     */
   def verifyOrder(possibleHits: Seq[TargetAnnotation[Target, Feature]], input: Sample) = {
+    possibleHits.foreach{ x=>
+      logger.info(s"validating order for ${x.target.name} with ${x.target.retentionIndex} against annotation ${x.annotation.retentionTimeInSeconds}")
+    }
     //brian would suggest to delete standards, which are out of order in case they are the same compound with different ionisations and come very close together
-    if (!possibleHits.sliding(2).forall(x => x.head.annotation.retentionTimeInSeconds < x.last.annotation.retentionTimeInSeconds)) {
-      throw new StandardsNotInOrderException(s"one or more standards where not annotated in ascending order of there retention times! Sample was ${input.fileName}")
+    if (!possibleHits.sliding(2).forall(x => x.head.annotation.retentionTimeInSeconds <= x.last.annotation.retentionTimeInSeconds)) {
+      throw new StandardsNotInOrderException(s"one or more standards in this sample  ${input.fileName} where not annotated in ascending order of their retention times! Sample was ${input.fileName}")
     }
   }
 }

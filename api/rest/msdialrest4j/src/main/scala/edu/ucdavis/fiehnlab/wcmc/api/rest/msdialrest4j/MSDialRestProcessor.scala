@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, MediaType, _}
@@ -56,6 +57,7 @@ class MSDialRestProcessor extends LazyLogging {
     * @param input
     * @return
     */
+  @Cacheable(Array("msdialrest"))
   def process(input: File): File = {
     logger.debug(s"processing file: ${input}")
 

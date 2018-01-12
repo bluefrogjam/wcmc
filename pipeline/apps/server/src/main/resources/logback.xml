@@ -1,15 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+    <!--
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%-30(%date{HH:mm:ss.SSS} %-5level %-4line --- [%thread]) %C{5} - %m%n%ex{short}</Pattern>
+            <Pattern>[%date{HH:mm:ss.SSS} - %-5level %C{0}] : %m%n%ex{short}</Pattern>
         </encoder>
     </appender>
-	<logger name="edu.ucdavis.fiehnlab" level="info"/>
 
-	<root level="warn">
+    <appender name="JSON" class="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.diagnostics.JSONLoggingAppender"/>
+
+    <!-- populates the database in the backend with content -->
+
+
+
+    <logger name="edu.ucdavis.fiehnlab" level="debug" additivity="false">
+        <appender-ref ref="JSON" />
+    </logger>
+
+
+    <!-- uncomment to see caching operations -->
+    <!--
+        <logger name="org.springframework.cache" level="trace"/>
+    -->
+
+	<root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
+
 </configuration>

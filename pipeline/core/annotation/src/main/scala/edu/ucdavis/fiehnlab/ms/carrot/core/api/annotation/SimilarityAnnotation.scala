@@ -13,7 +13,10 @@ import edu.ucdavis.fiehnlab.util.Utilities
   * @param simmilarityOffset minimum similarity to be considered a match
   * @param algorithm         utilized algorith for computing the spectra similarity
   */
-class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similarity) extends Annotate with LazyLogging {
+class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similarity, val phase: String) extends Annotate with LazyLogging {
+
+  override protected val usedSettings = Map("minSimilarity" -> simmilarityOffset, "algorithm" -> algorithm.getClass.getSimpleName)
+
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
     *
@@ -21,20 +24,20 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
     * @param librarySpectra
     * @return
     */
-  override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
 
     librarySpectra match {
       case x: Target =>
         correctedSpectra match {
-          case y: MSSpectra if y.spectrum.isDefined=>
+          case y: MSSpectra if y.spectrum.isDefined =>
             val value = algorithm.compute(convertSpectra(y.spectrum.get.spectraString), convertSpectra(x.spectrum.get.spectraString))
-            logger.debug(s"computed match is: ${value}")
+            logger.trace(s"computed match is: ${value}")
             val result = value > simmilarityOffset
-            logger.debug(s"\t=> matches: ${result}")
+            logger.trace(s"\t=> matches: ${result}")
             result
 
           case _ =>
-            logger.debug("\t=> not a spectra, it's a feature!")
+            logger.trace("\t=> not a spectra, it's a feature!")
             false
         }
 
@@ -52,4 +55,9 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
   def convertSpectra(spectra: String): Spectrum = {
     new BinByRoundingMethod().binSpectrum(Utilities.convertStringToSpectrum(spectra))
   }
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = phase
 }
