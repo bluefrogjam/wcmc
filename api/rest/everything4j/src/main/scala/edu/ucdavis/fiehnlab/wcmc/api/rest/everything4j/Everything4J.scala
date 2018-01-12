@@ -150,7 +150,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     val url = s"http://${host}:${port}?s=${name}&j=1&path_column=1"
     logger.info(s"checking url: ${url}")
 
-    val result  = objectMapper.readValue(new URL(url), classOf[Search]).results.count(_.`type`.toLowerCase() == "file") > 0
+    val result  = objectMapper.readValue(new URL(url), classOf[Search]).results.nonEmpty
 
 
     logger.info(s"exists: ${result}")

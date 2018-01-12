@@ -1,13 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
-import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 
 /**
   * Simple class to help us with annotations
   */
-abstract class Annotate {
+abstract class Annotate extends JSONPhaseLogging with JSONSettingsLogging {
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -16,14 +16,49 @@ abstract class Annotate {
     * @param target
     * @return
     */
-  def isMatch(unknown: Feature, target: Target): Boolean
+  final def isMatch(unknown: Feature, target: Target): Boolean = {
+    val result = doMatch(unknown, target)
+
+    //a bit uggly but no better way right now todo so
+    if (this.supportsJSONLogging) {
+
+      val jsonLogger = new JSONPhaseLogging with JSONAlgorithmLogging with JSONTargetLogging with JSONSampleLogging with JSONFeatureLogging {
+        /**
+          * which phase we require to log
+          */
+        override protected val phaseToLog: String = Annotate.this.phaseToLog
+        /**
+          * which target we require to log
+          */
+        override protected val targetToLog = target
+        /**
+          * which sample we require to log
+          */
+        override protected val sampleToLog = unknown.sample
+        /**
+          * which feature we require to log
+          */
+        override protected val featureToLog = unknown
+        /**
+          * by default we want to log the actual implementation
+          */
+        override protected val classUnderInvestigation = Annotate.this
+      }
+
+      jsonLogger.logJSON(Map("pass" -> result))
+    }
+    result
+  }
+
+
+  protected def doMatch(unknown: Feature, target: Target): Boolean
 }
 
 /**
   * this defines a sequential annotator, if all annotations pass
   * it will consider the annotation to be a success
   */
-class SequentialAnnotate(val annotators: List[Annotate]) extends Annotate with LazyLogging{
+class SequentialAnnotate(val annotators: List[Annotate]) extends Annotate {
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -32,25 +67,30 @@ class SequentialAnnotate(val annotators: List[Annotate]) extends Annotate with L
     * @param target
     * @return
     */
-  override def isMatch(unknown: Feature, target: Target): Boolean = {
-    logger.debug(s"Evaluating ${unknown} vs ${target}")
-    if(annotators.nonEmpty) {
+  override def doMatch(unknown: Feature, target: Target): Boolean = {
+    if (annotators.nonEmpty) {
       annotators.foreach { annotator =>
         val result = annotator.isMatch(unknown, target)
 
-        logger.debug(s"\t=> running annotate: ${annotator}")
-        logger.debug(s"\t\t=> result was: ${result}")
         if (!result) {
-          logger.debug("\t\t\t=> spectra rejected!")
           return false
         }
       }
-
-      logger.debug("\t\t\t=> spectra accepted")
       true
     }
-    else{
+    else {
       false
     }
   }
+
+  override protected def supportsJSONLogging = false
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = "none"
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings = Map[String,Any]()
 }

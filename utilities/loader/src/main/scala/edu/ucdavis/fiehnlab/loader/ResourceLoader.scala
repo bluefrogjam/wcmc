@@ -141,7 +141,7 @@ class DelegatingResourceLoader extends ResourceLoader {
 
   override def exists(name: String): Boolean = sortedLoader.exists { loader =>
     val result = loader.exists(name)
-    logger.info(s"evaluation of ${loader} for ${name} is ${result}")
+    logger.debug(s"evaluation of ${loader} for ${name} is ${result}")
     result
   }
 

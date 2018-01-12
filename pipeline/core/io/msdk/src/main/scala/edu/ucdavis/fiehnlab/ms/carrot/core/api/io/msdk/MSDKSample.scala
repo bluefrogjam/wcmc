@@ -6,6 +6,7 @@ import java.util.zip.GZIPInputStream
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
+import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import io.github.msdk.datamodel.{MsScan, MsSpectrumType, PolarityType, RawDataFile}
 import io.github.msdk.io.mzdata.MzDataFileImportMethod
 import io.github.msdk.io.mzml.MzMLFileImportMethod
@@ -40,28 +41,28 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
           spectra.getPolarity match {
             case PolarityType.NEGATIVE =>
               spectra.getSpectrumType match {
-                case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(NegativeMode())) with Centroided
-                case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(NegativeMode())) with Profiled
+                case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(NegativeMode()),this) with Centroided
+                case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(NegativeMode()),this) with Profiled
                 case _ => {
                   logger.warn("Unrecognized spectrum type, setting to profiled")
-                  new MSDKMSSpectra(spectra, Some(NegativeMode())) with Profiled
+                  new MSDKMSSpectra(spectra, Some(NegativeMode()),this) with Profiled
                 }
               }
             case PolarityType.POSITIVE =>
-              new MSDKMSSpectra(spectra, Some(PositiveMode()))
+              new MSDKMSSpectra(spectra, Some(PositiveMode()),this)
             case _ =>
-              new MSDKMSSpectra(spectra, None)
+              new MSDKMSSpectra(spectra, None,this)
           }
         }
         else {
           //discover which mixins we need
           spectra.getPolarity match {
             case PolarityType.NEGATIVE =>
-              new MSDKMSMSSpectra(spectra, Some(NegativeMode()))
+              new MSDKMSMSSpectra(spectra, Some(NegativeMode()),this)
             case PolarityType.POSITIVE =>
-              new MSDKMSMSSpectra(spectra, Some(PositiveMode()))
+              new MSDKMSMSSpectra(spectra, Some(PositiveMode()),this)
             case _ =>
-              new MSDKMSMSSpectra(spectra, None)
+              new MSDKMSMSSpectra(spectra, None,this)
           }
         }
 
@@ -145,7 +146,7 @@ object MSDKSample extends LazyLogging {
           logger.debug("using cdf implementation")
           new NetCDFFileImportMethod(output).execute()
         case _ =>
-          throw new RuntimeException(s"sorry this file format is not yet supported: ${file}/${output}, extension ${name}")
+          throw new UnsupportedSampleException(s"sorry this file format is not yet supported: ${file}/${output}, extension ${name}")
       }
     )
 
@@ -173,7 +174,7 @@ object MSDKSample extends LazyLogging {
   *
   * @param spectra
   */
-class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSSpectra {
+class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: Sample) extends MSSpectra {
   override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
 
   override val scanNumber: Int = spectra.getScanNumber
@@ -202,7 +203,7 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSSpectra {
   *
   * @param spectra
   */
-class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode]) extends MSMSSpectra {
+class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: Sample) extends MSMSSpectra {
   override val precursorIon: Double = if (spectra.getIsolations.isEmpty) {
     //this is just bad, but seems to be a real value in some files
     0.0

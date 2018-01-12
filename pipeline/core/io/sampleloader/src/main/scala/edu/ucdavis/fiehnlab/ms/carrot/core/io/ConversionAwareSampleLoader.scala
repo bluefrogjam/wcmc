@@ -60,9 +60,8 @@ class ConversionAwareSampleLoader @Autowired()(dataForm: DataFormerClient, resou
     *
     * @param name
     */
-  @Cacheable
   private def convertFile(name: String): Option[File] = {
-    logger.info(s"attempting to convert to: ${name}")
+    logger.debug(s"attempting to convert to: ${name}")
     val split = name.split("\\.")
     val fileName = split.head
     val extension = split.last
@@ -71,15 +70,15 @@ class ConversionAwareSampleLoader @Autowired()(dataForm: DataFormerClient, resou
     val result = supportedInputExtensionForDataForm.collectFirst {
 
       case x: String if {
-        logger.info(s"checking for: ${fileName}.${x}")
+        logger.debug(s"checking for: ${fileName}.${x}")
         resourceLoader.exists(s"${fileName}.${x}")
       } =>
         val fileToConvert = s"${fileName}.${x}"
-        logger.info(s"found rawdata file: ${fileToConvert}")
+        logger.debug(s"found rawdata file: ${fileToConvert}")
         dataForm.convert(fileToConvert, extension)
     }
 
-    logger.info(s"conversion successful: ${result.isDefined}")
+    logger.debug(s"conversion successful: ${result.isDefined}")
 
     if(result.isDefined){
       result.get

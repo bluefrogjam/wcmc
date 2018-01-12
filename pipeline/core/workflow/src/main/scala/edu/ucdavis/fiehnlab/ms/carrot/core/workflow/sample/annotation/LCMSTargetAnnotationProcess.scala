@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation.{AccurateMassAnnotation, RetentionIndexAnnotation, SequentialAnnotate}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.{JSONLogging, JSONPhaseLogging, JSONSampleLogging, JSONTargetLogging}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionIndexDifference}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
@@ -28,8 +29,8 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
   //our defined filters to find possible matches are registered in here
   lazy val filters: SequentialAnnotate = new SequentialAnnotate(
-    new AccurateMassAnnotation(lcmsProperties.massAccuracy / 1000, lcmsProperties.massIntensity) ::
-      new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow) ::
+    new AccurateMassAnnotation(lcmsProperties.massAccuracy / 1000, lcmsProperties.massIntensity, "annotation") ::
+      new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") ::
       List()
   )
 
@@ -42,14 +43,8 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     */
   def findMatchesForTarget(target: Target, spectra: Seq[_ <: Feature with CorrectedSpectra]): Seq[_ <: Feature with CorrectedSpectra] = {
     val result = spectra.collect {
-      case spectra: Feature with CorrectedSpectra =>
-        val result = filters.isMatch(spectra, target)
-
-        if (result) {
-          spectra
-        }
-    }.collect {
-      case x: Feature with CorrectedSpectra => x
+      case spectra: Feature with CorrectedSpectra if filters.isMatch(spectra, target) =>
+        spectra
     }
 
     if (debug) {
@@ -67,7 +62,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     * @param target
     * @param matches
     */
-  def removeDuplicatedTargetAnnotations(target: Target, matches: Seq[_ <: Feature with CorrectedSpectra]): Option[Feature with CorrectedSpectra] = {
+  def removeDuplicatedTargetAnnotations(sample: CorrectedSample, target: Target, matches: Seq[_ <: Feature with CorrectedSpectra]): Option[Feature with CorrectedSpectra] = {
 
     if (matches.nonEmpty) {
       logger.debug(s"find best match for target $target, ${matches.size} possible annotations")
@@ -94,6 +89,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
       if (resultList.size == 1 || lcmsProperties.closePeakDetection == 0.0) {
         logger.debug(s"\t\t\t\t=>accepting ${best}")
+
         Some(best)
       }
       else {
@@ -238,7 +234,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     * @return
     */
   override def process(input: CorrectedSample, targets: Iterable[Target]): AnnotatedSample = {
-	  logger.info(s"Annotating sample: ${input.name}")
+    logger.info(s"Annotating sample: ${input.name}")
 
     /**
       * internal recursive function to find all possible annotations in the sample
@@ -246,14 +242,14 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
       * @param spectra
       * @param targets
       */
-    def annotate(spectra: Seq[_ <: Feature with CorrectedSpectra], targets: Iterable[Target]): Seq[(Target, _ <: Feature with CorrectedSpectra)] = {
+    def annotate(input: CorrectedSample, spectra: Seq[_ <: Feature with CorrectedSpectra], targets: Iterable[Target]): Seq[(Target, _ <: Feature with CorrectedSpectra)] = {
       logger.info(s"sspectra requiring annotation: ${spectra.size}")
       val annotatedTargets: Map[Target, _ <: Feature with CorrectedSpectra] = if (debug) {
         //if debugging is enable, we sort by name
-        ListMap(findMatchesForTargets(targets, spectra).toSeq.sortBy(_._1.name): _*)
+        ListMap(findMatchesForTargets(input, targets, spectra).toSeq.sortBy(_._1.name): _*)
       } else {
         //it's a bit faster this way
-        findMatchesForTargets(targets, spectra)
+        findMatchesForTargets(input, targets, spectra)
       }
 
       //get all the targets, without an annotation
@@ -285,7 +281,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
         val firstResult = annotatedTargets.toSeq
         if (lcmsProperties.recursiveAnnotationMode) {
           logger.debug("utilizing recursive annotation model")
-          val newResult = annotate(noneIdentifiedSpectra, noneAnnotatedTargets)
+          val newResult = annotate(input, noneIdentifiedSpectra, noneAnnotatedTargets)
 
           List.concat(newResult, firstResult)
         }
@@ -297,7 +293,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
     }
 
-    val result = annotate(input.spectra, targets)
+    val result = annotate(input, input.spectra, targets)
 
 
     //remap to correct types
@@ -335,7 +331,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     * @param spectra
     * @return
     */
-  def findMatchesForTargets(targets: Iterable[Target], spectra: Seq[_ <: Feature with CorrectedSpectra]): Map[Target, _ <: Feature with CorrectedSpectra] = {
+  def findMatchesForTargets(sample: CorrectedSample, targets: Iterable[Target], spectra: Seq[_ <: Feature with CorrectedSpectra]): Map[Target, _ <: Feature with CorrectedSpectra] = {
     logger.debug(s"defined targets: ${targets.size}")
     val possibleHits: Seq[(Target, _ <: Feature with CorrectedSpectra)] = targets.toList.sortBy(_.retentionTimeInMinutes).collect {
       case target: Target =>
@@ -344,7 +340,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
         logger.debug(s"found ${matches.size} matches for $target")
 
 
-        removeDuplicatedTargetAnnotations(target, matches) match {
+        removeDuplicatedTargetAnnotations(sample, target, matches) match {
           case x: Some[Feature with CorrectedSpectra] =>
             logger.debug(s"accepting")
             logger.debug(s"\t=>${x.get} as")
@@ -373,7 +369,7 @@ class LCMSTargetAnnotationProperties {
   /**
     * defined mass accuracy in milli dalton for the annotation process
     */
-  @Value("${workflow.lcms.annotation.detection.massAccuracy:10}")
+  @Value("${workflow.lcms.annotation.detection.massAccuracy:5}")
   var massAccuracy: Double = _
 
   /**
@@ -384,7 +380,7 @@ class LCMSTargetAnnotationProperties {
   /**
     * the defined retention index window to use for it's given targets. It's considered in seconds
     */
-  @Value("${workflow.lcms.annotation.detection.riWindow:6}")
+  @Value("${workflow.lcms.annotation.detection.riWindow:12}")
   var retentionIndexWindow: Double = _
 
   /**

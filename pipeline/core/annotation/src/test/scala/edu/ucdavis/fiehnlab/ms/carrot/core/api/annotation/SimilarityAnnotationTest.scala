@@ -13,13 +13,13 @@ class SimilarityAnnotationTest extends WordSpec {
 
     "isMatch" in {
 
-      val test = new SimilarityAnnotation(0.7,new CompositeSimilarity())
+      val test = new SimilarityAnnotation(0.7,new CompositeSimilarity(),"")
 
       assert(test.isMatch(testAccurateMassSpectraWith4Ions, testAccurateLibraryMassSpectraWith4Ions))
     }
 
     "noMatch" in {
-      val test = new SimilarityAnnotation(0.9,new CompositeSimilarity())
+      val test = new SimilarityAnnotation(0.9,new CompositeSimilarity(),"")
 
       assert(!test.isMatch(testAccurateMassSpectraWith4Ions, testAccurateLibraryMassSpectra2With4Ions))
 

@@ -7,6 +7,11 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 trait Feature extends AccurateMassSupport {
 
   /**
+    * the associated sample
+    */
+  val sample:Sample
+
+  /**
     * how pure this spectra is
     */
   val purity: Option[Double]

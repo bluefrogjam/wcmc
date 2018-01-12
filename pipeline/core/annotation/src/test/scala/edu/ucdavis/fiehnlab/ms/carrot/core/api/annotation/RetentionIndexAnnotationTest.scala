@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, MSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, Target}
 import org.scalatest.WordSpec
 
 /**
@@ -11,12 +11,14 @@ class RetentionIndexAnnotationTest extends WordSpec {
 
   "RetentionIndexAnnotationTest" should {
 
-    val test = new RetentionIndexAnnotation(5)
+    val test = new RetentionIndexAnnotation(5,"")
     "isMatch" in {
 
       assert(test.isMatch(
 
         new MSSpectra with CorrectedSpectra {
+          val sample:Sample = null
+
           override val purity: Option[Double] = None
           override val ionMode: Option[IonMode] = None
           override val scanNumber: Int = 1
@@ -73,6 +75,8 @@ class RetentionIndexAnnotationTest extends WordSpec {
       assert(!test.isMatch(
 
         new MSSpectra with CorrectedSpectra {
+          val sample:Sample = null
+
           override val purity: Option[Double] = None
           override val ionMode: Option[IonMode] = None
           override val scanNumber: Int = 1

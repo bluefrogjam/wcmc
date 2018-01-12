@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 import java.io.{File, FileNotFoundException}
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import org.springframework.cache.annotation.Cacheable
 
 /**
   * used to simply load samples from a local or remote storage depending on

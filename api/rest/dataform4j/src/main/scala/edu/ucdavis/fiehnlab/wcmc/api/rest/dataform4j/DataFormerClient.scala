@@ -3,17 +3,15 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 import java.io._
 import java.net.URL
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
-import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.apache.commons.io.IOUtils
 import org.apache.http.impl.client.HttpClientBuilder
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.cache.annotation.Cacheable
-import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.core.io.{ByteArrayResource, FileSystemResource, InputStreamResource}
+import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.ByteArrayResource
 import org.springframework.http._
 import org.springframework.http.client.{ClientHttpRequestFactory, HttpComponentsClientHttpRequestFactory}
 import org.springframework.stereotype.Component
@@ -37,7 +35,7 @@ class DataFormerClient extends LazyLogging {
   private val storage: String = ""
 
   @Autowired
-  private val fserv4j: FServ4jClient = null
+  private val fserv4j: ResourceLoader = null
 
   @Value("${wcmc.api.rest.dataformer.conversiontimeout:120}")
   private val conversionTimeout: Int = 0
@@ -75,11 +73,11 @@ class DataFormerClient extends LazyLogging {
     * @param extension
     * @return
     */
-  @Cacheable
+  @Cacheable(Array[String]("dataform"))
   def convert(filename: String, extension: String = "abf"): Option[File] = {
 
     if (fserv4j.exists(filename)) {
-      val file = fserv4j.download(filename)
+      val file = fserv4j.load(filename)
 
       if (file.isEmpty) {
         throw new IOException(s"File ${filename} did not download correctly")
@@ -110,12 +108,12 @@ class DataFormerClient extends LazyLogging {
     }
   }
 
-  def writeBytes(data: Stream[Byte], file: File): Unit = {
+  private def writeBytes(data: Stream[Byte], file: File): Unit = {
     val target = new BufferedOutputStream(new FileOutputStream(file))
     try data.foreach(target.write(_)) finally target.close()
   }
 
-  def upload(stream: InputStream, name: String): String = {
+  private def upload(stream: InputStream, name: String): String = {
     try {
       val map = new LinkedMultiValueMap[String, AnyRef]
       map.add("file", new ByteArrayResource(IOUtils.toByteArray(stream), name) {
@@ -144,8 +142,7 @@ class DataFormerClient extends LazyLogging {
     }
   }
 
-  @Cacheable
-  def download(fileName: String, format: FileType): File = {
+  private def download(fileName: String, format: FileType): File = {
     val endpoint = s"$url/rest/conversion/download/${fileName}/${format.toString.toLowerCase}"
     logger.info(s"downloading ${format} version of ${fileName}")
 

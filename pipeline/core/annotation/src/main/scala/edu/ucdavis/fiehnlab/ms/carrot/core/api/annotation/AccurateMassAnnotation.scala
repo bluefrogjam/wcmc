@@ -9,9 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
   *
   * @param massAccuracyInDalton
   */
-class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float = 0) extends Annotate with LazyLogging {
-
-  logger.info(s"utilizing accuracy of ${massAccuracyInDalton}")
+class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float = 0, val phase: String) extends Annotate with LazyLogging {
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -20,35 +18,44 @@ class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float =
     * @param librarySpectra
     * @return
     */
-  override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
-        logger.debug(s"checking mass: ${mass}")
+        logger.trace(s"checking mass: ${mass}")
 
         val min = mass - massAccuracyInDalton
         val max = mass + massAccuracyInDalton
 
-        logger.debug(s"\t=> min: ${min} and max: ${max} ")
+        logger.trace(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
 
           case x: Feature if x.massOfDetectedFeature.isDefined =>
             val ion = x.massOfDetectedFeature.get
 
-            logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
+            logger.trace(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
             val result = (ion.mass >= min) && (ion.mass <= max) && ion.intensity >= minIntensity
 
-            logger.debug(s"\t\t\t=> matches: ${result}")
+            logger.trace(s"\t\t\t=> matches: ${result}")
             result
 
           case _ => false
         }
       case None =>
-        logger.debug(s"no spectra was provided for given library spectra: $librarySpectra")
+        logger.trace(s"no spectra was provided for given library spectra: $librarySpectra")
         false
     }
   }
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = phase
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings = Map("minIntensity" -> minIntensity, "massAccuracyInDalton" -> massAccuracyInDalton)
 }
 
 /**
@@ -56,9 +63,12 @@ class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float =
   *
   * @param massAccuracyInDalton
   */
-class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Float) extends Annotate with LazyLogging {
+class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Float, val phase: String) extends Annotate with LazyLogging {
 
-  logger.info(s"utilizing accuracy of ${massAccuracyInDalton}")
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings = Map("minIntensity" -> minIntensity, "massAccuracyInDalton" -> massAccuracyInDalton)
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -67,35 +77,41 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
     * @param librarySpectra
     * @return
     */
-  override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
-        logger.debug(s"checking mass: ${mass}")
+        logger.trace(s"checking mass: ${mass}")
 
         val min = mass - massAccuracyInDalton
         val max = mass + massAccuracyInDalton
 
-        logger.debug(s"\t=> min: ${min} and max: ${max} ")
+        logger.trace(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
           case x: Feature if x.massOfDetectedFeature.isDefined =>
             val ion = x.massOfDetectedFeature.get
 
-            logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
+            logger.trace(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
             val result = (ion.mass >= min) && (ion.mass <= max) && ion.intensity >= minIntensity
 
-            logger.debug(s"\t\t\t=> matches: ${result}")
+            logger.trace(s"\t\t\t=> matches: ${result}")
             result
 
           case _ => false
         }
 
       case None =>
-        logger.debug(s"no spectra was provided for given library spectra: $librarySpectra")
+        logger.trace(s"no spectra was provided for given library spectra: $librarySpectra")
         false
     }
   }
+
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = phase
 }
 
 /**
@@ -104,16 +120,21 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
   *
   * @param massAccuracyInDalton
   */
-class AccurateMassBasePeakAnnotation(massAccuracyInDalton: Double) extends AccurateMassAnnotation(massAccuracyInDalton, 100)
+class AccurateMassBasePeakAnnotation(massAccuracyInDalton: Double, phase: String) extends AccurateMassAnnotation(massAccuracyInDalton, 100, phase)
 
 /**
   * considered to be a match, if the accuracte mass of the spectra is in the provided ppm window
   *
   * @param massAccuracyInPPM
   */
-class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with LazyLogging {
+class AccurateMassAnnotationPPM(massAccuracyInPPM: Int, val phase: String) extends Annotate with LazyLogging {
 
   logger.debug(s"mass accuracy: ${massAccuracyInPPM} ppm")
+
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings = Map("massAccuracyInPPM" -> massAccuracyInPPM)
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -122,7 +143,7 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with La
     * @param librarySpectra
     * @return
     */
-  override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
 
@@ -145,6 +166,12 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with La
         false
     }
   }
+
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = phase
 }
 
 
@@ -153,7 +180,12 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with La
   *
   * @param massAccuracyInDalton
   */
-class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity: Float = 0) extends Annotate with LazyLogging {
+class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity: Float = 0, val phase: String) extends Annotate with LazyLogging {
+
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings = Map("minIntensity" -> minIntensity, "massAccuracyInDalton" -> massAccuracyInDalton)
 
   logger.info(s"utilizing accuracy of ${massAccuracyInDalton}")
 
@@ -164,7 +196,7 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
     * @param librarySpectra
     * @return
     */
-  override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
         logger.debug(s"checking mass: ${mass}")
@@ -193,6 +225,12 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
         false
     }
   }
+
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = phase
 }
 
 /**
@@ -200,9 +238,14 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
   *
   * @param massAccuracyInDalton
   */
-class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity: Float) extends Annotate with LazyLogging {
+class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity: Float, val phase: String) extends Annotate with LazyLogging {
 
   logger.info(s"utilizing accuracy of ${massAccuracyInDalton}")
+
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings = Map("minIntensity" -> minIntensity, "massAccuracyInDalton" -> massAccuracyInDalton)
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -211,25 +254,25 @@ class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minInten
     * @param librarySpectra
     * @return
     */
-  override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
-        logger.debug(s"checking mass: ${mass}")
+        logger.trace(s"checking mass: ${mass}")
 
         val min = mass - massAccuracyInDalton
         val max = mass + massAccuracyInDalton
 
-        logger.debug(s"\t=> min: ${min} and max: ${max} ")
+        logger.trace(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
           case x: MSSpectra if x.spectrum.isDefined =>
             x.spectrum.get.ions.exists { ion: Ion =>
 
-              logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
+              logger.trace(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
               val result = (ion.mass >= min) && (ion.mass <= max) && ion.intensity >= minIntensity
 
-              logger.debug(s"\t\t\t=> matches: ${result}")
+              logger.trace(s"\t\t\t=> matches: ${result}")
               result
             }
 
@@ -241,6 +284,12 @@ class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minInten
         false
     }
   }
+
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = phase
 }
 
 /**
@@ -248,9 +297,12 @@ class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minInten
   *
   * @param massAccuracyInPPM
   */
-class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with LazyLogging {
+class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int, val phase: String) extends Annotate with LazyLogging {
 
-  logger.debug(s"mass accuracy: ${massAccuracyInPPM} ppm")
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings = Map("massAccuracyInPPM" -> massAccuracyInPPM)
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -259,20 +311,20 @@ class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int) extends Annotat
     * @param librarySpectra
     * @return
     */
-  override def isMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
 
         correctedSpectra match {
           case x: MSSpectra if x.spectrum.isDefined =>
-            logger.debug(s"checking mass: ${mass}")
+            logger.trace(s"checking mass: ${mass}")
 
             x.spectrum.get.ions.exists { ion: Ion =>
               val error = mass - ion.mass
               val ppm = Math.abs(error / mass * 1000000)
-              logger.debug(s"\t=> error: ${error} and ppm: ${ppm}")
+              logger.trace(s"\t=> error: ${error} and ppm: ${ppm}")
               val result = ppm < massAccuracyInPPM
-              logger.debug(s"\t\t=> matches: ${result}")
+              logger.trace(s"\t\t=> matches: ${result}")
               result
             }
 
@@ -280,8 +332,14 @@ class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int) extends Annotat
         }
 
       case None =>
-        logger.debug(s"no spectra was provided for given library spectra: $librarySpectra")
+        logger.trace(s"no spectra was provided for given library spectra: $librarySpectra")
         false
     }
   }
+
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = phase
 }
