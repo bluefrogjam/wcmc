@@ -12,6 +12,7 @@
         <module>server</module>
         <module>api</module>
 	    <module>pipeline</module>
+        <module>cts3</module>
     </modules>
 
     <packaging>pom</packaging>
