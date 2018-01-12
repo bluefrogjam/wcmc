@@ -10,11 +10,10 @@ import org.apache.commons.io.IOUtils
 import org.apache.http.impl.client.HttpClientBuilder
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.cache.annotation.Cacheable
-import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http._
 import org.springframework.http.client.{ClientHttpRequestFactory, HttpComponentsClientHttpRequestFactory}
-import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 
@@ -23,7 +22,6 @@ import org.springframework.web.client.RestTemplate
   *
   * sends a raw data file to DataFormer rest service to be converted into .abf and .mzml and then sends the result to fserv
   */
-@Component
 class DataFormerClient extends LazyLogging {
   @Value("${wcmc.api.rest.dataformer.host:phobos.fiehnlab.ucdavis.edu}")
   private val host: String = ""
@@ -174,4 +172,7 @@ object FileType extends Enumeration {
 
 @Configuration
 class DataFormerAutoConfiguration extends LazyLogging {
+
+  @Bean
+  def dataform: DataFormerClient = new DataFormerClient
 }

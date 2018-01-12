@@ -45,7 +45,7 @@ class JSONLoggingAppender extends AppenderBase[ILoggingEvent] with LazyLogging {
       }
     }
     else {
-      logger.warn("this logger has not been initialized yet!")
+      logger.trace("this logger has not been initialized yet!")
     }
   }
 
@@ -54,7 +54,7 @@ class JSONLoggingAppender extends AppenderBase[ILoggingEvent] with LazyLogging {
   def init(): Unit = {
     JSONLoggingAppender.mongoTemplate = mongoTemplate
 
-    logger.warn("dropping existing collection...")
+    logger.error("dropping existing collection...")
     mongoTemplate.dropCollection("carrot_logging")
     start()
   }

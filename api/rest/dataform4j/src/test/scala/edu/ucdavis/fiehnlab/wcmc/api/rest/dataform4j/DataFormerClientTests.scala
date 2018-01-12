@@ -71,6 +71,4 @@ class DataFormerClientTestConfiguration {
   @Bean
   def fserv4j: FServ4jClient = new FServ4jClient(fservHost, fservPort)
 
-  @Bean
-  def dfClient: DataFormerClient = new DataFormerClient()
 }
