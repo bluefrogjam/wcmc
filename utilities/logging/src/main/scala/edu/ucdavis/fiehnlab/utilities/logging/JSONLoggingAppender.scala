@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.diagnostics
+package edu.ucdavis.fiehnlab.utilities.logging
 
 import javax.annotation.PostConstruct
 
@@ -45,7 +45,7 @@ class JSONLoggingAppender extends AppenderBase[ILoggingEvent] with LazyLogging {
       }
     }
     else {
-      logger.warn("sorry no mongo template set!")
+      logger.warn("this logger has not been initialized yet!")
     }
   }
 
