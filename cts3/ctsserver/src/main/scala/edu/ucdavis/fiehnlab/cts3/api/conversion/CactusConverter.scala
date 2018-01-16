@@ -13,8 +13,8 @@ import scala.io.Source
   **/
 @Component
 class CactusConverter extends Converter {
-  private def provides = List("stdinchikey","stdinchi","sdf","smiles","names","IUPACName","cas","csid","molweight","formula")
   private def requires = List("name","names","stdinchikey","stdinchi","smiles")
+  private def provides = List("stdinchikey","stdinchi","sdf","smiles","names","IUPACName","cas","csid","molweight","formula")
   private def CACTUS_API = "https://cactus.nci.nih.gov/chemical/structure/"
 
 
