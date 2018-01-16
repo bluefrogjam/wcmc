@@ -12,7 +12,7 @@
     <artifactId>cts3</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>server</module>
+        <module>ctsserver</module>
     </modules>
 
 
