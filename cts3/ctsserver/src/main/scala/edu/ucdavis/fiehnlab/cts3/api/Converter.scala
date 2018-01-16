@@ -11,6 +11,8 @@ trait Converter {
 
   protected def doConvert(keyword: String, from: String, to: String): Seq[Hit]
 
+  protected def canConvert(from: String, to:String): Boolean
+
   protected def supportsJSONLogging = false
 
   protected val phaseToLog = "none"
