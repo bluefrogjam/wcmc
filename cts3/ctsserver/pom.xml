@@ -45,5 +45,9 @@
             <groupId>com.typesafe.scala-logging</groupId>
             <artifactId>scala-logging_${scala.version}</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
     </dependencies>
 </project>

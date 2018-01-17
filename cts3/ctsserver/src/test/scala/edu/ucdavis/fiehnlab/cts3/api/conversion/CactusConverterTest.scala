@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by diego on 1/12/2018
   **/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[ConvertersConfiguration]))
+@SpringBootTest(classes = Array(classOf[ConvertersTestConfiguration]))
 class CactusConverterTest extends WordSpec with Matchers with LazyLogging {
   @Autowired
   val converter: CactusConverter = null
@@ -85,7 +85,7 @@ class CactusConverterTest extends WordSpec with Matchers with LazyLogging {
 @SpringBootApplication
 @ComponentScan(basePackageClasses = Array(classOf[CactusConverter]))
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class ConvertersConfiguration {
+class ConvertersTestConfiguration {
   @Bean
   def converter: CactusConverter = new CactusConverter()
 }

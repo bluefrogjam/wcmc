@@ -21,12 +21,12 @@ class ConversionControllerIntegrationTest extends WordSpec with Matchers with La
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "ConversionControllerTest" should {
+  "ConversionControllerIntegrationTest" should {
 
-    "return a sequence of hit" in {
-      val result = template.getForObject("/rest/convert/{keyword}/{to}", classOf[String], "alanine", "inchikey")
+    "return hits as json" in {
+      val result = template.getForObject("/rest/convert/{from}/{to}/{keyword}", classOf[String], "name", "inchikey", "alanine")
 
-      result shouldEqual ""
+      result shouldEqual "[{\"keyword\":\"alanine\",\"from\":\"name\",\"to\":\"inchikey\",\"result\":\"InChIKey=QNAYBMKLOCPYGJ-REOHCLBHSA-N\",\"score\":1.0}]"
     }
   }
 }
