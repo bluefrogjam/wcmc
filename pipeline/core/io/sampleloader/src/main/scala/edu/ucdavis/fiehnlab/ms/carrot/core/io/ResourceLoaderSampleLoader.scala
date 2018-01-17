@@ -46,11 +46,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
       if (fileOption.isDefined) {
         logger.debug(s"converting ${fileOption.get.getName} to sample")
         val file = fileOption.get
-        if (file.getName.toLowerCase().matches(".*\\.txt(?:.gz)?")) { // .*.txt[.gz]*  can catch invalid files (blahtxt.gz)
-          //leco
-          None
-        }
-        else if (file.getName.toLowerCase().matches(".*\\.(msdial|processed)(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
+        if (file.getName.toLowerCase().matches(".*\\.(msdial|processed)(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
           Some(MSDialSample(name, file))
         }
         else if (file.getName.toLowerCase().matches(".*\\.abf")) { // .*.abf can catch files that end in '.' like blah.abf.
@@ -58,7 +54,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
         }
         else if (file.getName.toLowerCase.matches(".*\\.d.zip")) {
           //covnert it to abf
-          val result = dataFormerClient.convert(name)
+          val result = dataFormerClient.convert(name,"abf")
 
           if (result.isDefined) {
             Some(new ABFSample(name, result.get, client))
@@ -76,7 +72,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
       }
     }
     finally {
-     val duration = System.currentTimeMillis() - begin
+      val duration = System.currentTimeMillis() - begin
 
       logger.debug(s"duration to convert file was ${duration} ms")
     }

@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import org.apache.commons.io.IOUtils
 import org.apache.http.impl.client.HttpClientBuilder
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http._
@@ -64,6 +64,28 @@ class DataFormerClient extends LazyLogging {
 
   protected def url = s"http://${host}:${port}"
 
+  final def convert(filename: String, extension: String = "abf"): Option[File] = {
+    val data = doConvert(filename, extension)
+
+    if (data.isDefined) {
+      if (data.get.exists()) {
+        data
+      }
+      else {
+        evictCachedValue(filename)
+        doConvert(filename, extension)
+      }
+    }
+    else {
+      None
+    }
+  }
+
+  @CacheEvict(value = Array[String]("dataform"), key = "#filename")
+  def evictCachedValue(filename: String) = {
+    logger.warn(s"cache is no longer valid, evicted ${filename}")
+  }
+
   /**
     * converts from the given file name, to an alternative format
     *
@@ -71,8 +93,8 @@ class DataFormerClient extends LazyLogging {
     * @param extension
     * @return
     */
-  @Cacheable(Array[String]("dataform"))
-  def convert(filename: String, extension: String = "abf"): Option[File] = {
+  @Cacheable(value = Array[String]("dataform"), key = "#filename")
+  def doConvert(filename: String, extension: String = "abf"): Option[File] = {
 
     if (fserv4j.exists(filename)) {
       val file = fserv4j.load(filename)

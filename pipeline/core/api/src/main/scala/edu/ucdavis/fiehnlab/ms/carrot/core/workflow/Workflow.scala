@@ -229,10 +229,8 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
   protected final def export(experiment: Experiment, writer: Writer[Sample]): InputStream = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ExportBeginEvent(experiment)))
 
-    val file = File.createTempFile("carrot-target", ".txt")
-    val out = new BufferedOutputStream(new FileOutputStream(file))
+    val out = new ByteArrayOutputStream()
 
-    logger.info(s"\ttemp file is ${file.getAbsolutePath}")
     val classes: Seq[ExperimentClass] = experiment.classes
 
     writer.writeHeader(out)
@@ -248,7 +246,7 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
     out.close()
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ExportFinishedEvent(experiment)))
-    new FileInputStream(file)
+    new ByteArrayInputStream(out.toByteArray)
   }
 
   /**

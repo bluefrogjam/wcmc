@@ -203,13 +203,15 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
       MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
     }
 
+    val ion = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get).get
+
     logger.debug(s"found best spectra for replacement: $value")
-    val noiseCorrectedValue: Double = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get).get.intensity
+    val noiseCorrectedValue: Double =ion.intensity - noise
 
     /**
       * build target object
       */
-    new ZeroreplacedTarget(value, noiseCorrectedValue, needsReplacement, fileUsedForReplacement = rawdata.fileName)
+    new ZeroreplacedTarget(value, noiseCorrectedValue, needsReplacement, fileUsedForReplacement = rawdata.fileName,ion)
   }
 
   /**
@@ -239,12 +241,19 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
   }
 }
 
-class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedValue: Double, needsReplacement: QuantifiedTarget[Double], fileUsedForReplacement: String) extends GapFilledTarget[Double] {
+class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedValue: Double, needsReplacement: QuantifiedTarget[Double], fileUsedForReplacement: String,ion:Ion) extends GapFilledTarget[Double] {
 
   /**
     * which actual spectra has been used for the replacement
     */
   override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
+
+    /**
+      * returns the accurate mass, of this trait
+      *
+      * @return
+      */
+    override def accurateMass = Option(ion.mass)
 
     override val sample:Sample = value.sample
     /**
@@ -292,7 +301,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     /**
       * accurate mass of this feature, if applicable
       */
-    override val massOfDetectedFeature: Option[Ion] = value.massOfDetectedFeature
+    override val massOfDetectedFeature: Option[Ion] = Option(ion)
 
 
   }
