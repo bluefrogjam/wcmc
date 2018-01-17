@@ -12,7 +12,7 @@ package edu.ucdavis.fiehnlab.cts3.model
   * Created by diego on 01/12/2018
   */
 class Hit(val keyword: String, val from: String, val to: String, val result: String, val score: Float) {
-  override def toString():String = {
+  override def toString: String = {
     s"Keyword: $keyword, From: $from, To: $to, Result: $result, Score: $score"
   }
 }
