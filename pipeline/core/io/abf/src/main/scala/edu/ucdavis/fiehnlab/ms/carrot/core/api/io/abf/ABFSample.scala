@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.abf
 
-import java.io.File
+import java.io.{File, FileNotFoundException}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSample
@@ -13,6 +13,9 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
   */
 class ABFSample(override val fileName: String, file: File, client: MSDialRestProcessor) extends Sample with LazyLogging {
 
+  if(!file.exists()){
+    throw new FileNotFoundException(file.getAbsolutePath)
+  }
   /**
     * simple wrapper method for the deconvolution process
     * @return
