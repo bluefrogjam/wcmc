@@ -7,11 +7,11 @@ import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 /**
-  * Created by %{USER} on %{DATE}
+  * Created by diego on 01/17/2018
   **/
 @Configuration
 @EnableSwagger2
-class SwaggerConfig {
+class SwaggerConfiguration {
   @Bean
   def api(): Docket = {
     new Docket(DocumentationType.SWAGGER_2).select.apis(RequestHandlerSelectors.any).paths(PathSelectors.any).build
