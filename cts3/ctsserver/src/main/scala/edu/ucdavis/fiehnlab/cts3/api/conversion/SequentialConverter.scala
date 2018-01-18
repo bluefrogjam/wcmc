@@ -19,4 +19,8 @@ class SequentialConverter(val converters: List[Converter]) extends Converter {
     * which phase we require to log
     */
   override protected val phaseToLog = "none"
+
+  override protected def requires: Map[String, String] = Map.empty
+
+  override protected def provides: Map[String, String] = Map.empty
 }

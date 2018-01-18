@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.cts3.api.conversion
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.cts3.api.Converter
 import edu.ucdavis.fiehnlab.cts3.model.Hit
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -16,12 +17,12 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by diego on 1/12/2018
   **/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[ConvertersTestConfiguration]))
+@SpringBootTest(classes = Array(classOf[CctsConverterTestConfiguration]))
 class CactusConverterTest extends WordSpec with Matchers with LazyLogging {
   @Autowired
   val converter: CactusConverter = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "CactusConverter" should {
 
@@ -85,7 +86,7 @@ class CactusConverterTest extends WordSpec with Matchers with LazyLogging {
 @SpringBootApplication
 @ComponentScan(basePackageClasses = Array(classOf[CactusConverter]))
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class ConvertersTestConfiguration {
+class CctsConverterTestConfiguration {
   @Bean
   def converter: CactusConverter = new CactusConverter()
 }
