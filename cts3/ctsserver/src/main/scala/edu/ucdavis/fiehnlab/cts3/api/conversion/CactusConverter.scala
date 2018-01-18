@@ -12,15 +12,16 @@ import org.springframework.web.client.{HttpClientErrorException, RestOperations}
   * Created by diego on 1/12/2018
   **/
 @Component
-class CactusConverter extends Converter with LazyLogging {
+class CactusConverter extends Converter {
   @Autowired
   val template: RestOperations = null
 
-  private def requires = Map("name" -> "name", "inchikey" -> "stdinchikey", /*"inchicode" -> "stdinchi",*/ "smiles" -> "smiles")
-
-  private def provides = Map("inchikey" -> "stdinchikey", "inchicode" -> "stdinchi", "sdf" -> "sdf",
-    "smiles" -> "smiles", "cas" -> "cas", "molweight" -> "mw", "formula" -> "formula", "iupacname" -> "iupac_name")
   private def CACTUS_API = "https://cactus.nci.nih.gov/chemical/structure/"
+
+  override final def requires = Map("name" -> "name", "inchikey" -> "stdinchikey", /*"inchicode" -> "stdinchi",*/ "smiles" -> "smiles")
+
+  override final def provides = Map("inchikey" -> "stdinchikey", "inchicode" -> "stdinchi", "sdf" -> "sdf",
+    "smiles" -> "smiles", "cas" -> "cas", "molweight" -> "mw", "formula" -> "formula", "iupacname" -> "iupac_name")
 
   override final def priority: Int = (Int.MaxValue * 0.5).toInt
 
@@ -47,9 +48,5 @@ class CactusConverter extends Converter with LazyLogging {
       }
         Seq.empty
     }
-  }
-
-  override def canConvert(from:String, to:String): Boolean = {
-    requires.keySet.contains(from) && provides.keySet.contains(to)
   }
 }
