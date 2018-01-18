@@ -18,11 +18,17 @@ trait Converter extends LazyLogging {
     }
   }
 
+  protected def requires: Map[String, String]
+
+  protected def provides: Map[String, String]
+
   protected def priority = 0
 
   protected def doConvert(keyword: String, from: String, to: String): Seq[Hit]
 
-  protected def canConvert(from: String, to:String): Boolean
+  protected final def canConvert(from: String, to:String): Boolean = {
+    requires.keySet.contains(from) && provides.keySet.contains(to)
+  }
 
   protected def supportsJSONLogging = false
 
