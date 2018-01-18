@@ -25,7 +25,7 @@ class CactusConverter extends Converter {
 
   override final def priority: Int = (Int.MaxValue * 0.5).toInt
 
-  override def doConvert(keyword: String, from: String, to: String): Seq[Hit] = {
+  override final def doConvert(keyword: String, from: String, to: String): Seq[Hit] = {
     var keywordFixed = ""
 
     logger.debug(s"Request: $keyword, $from, $to")

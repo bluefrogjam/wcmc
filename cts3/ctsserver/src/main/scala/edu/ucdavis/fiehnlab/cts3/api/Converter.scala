@@ -12,7 +12,11 @@ trait Converter extends LazyLogging {
   final def convert(keyword: String, from: String, to: String): Seq[Hit] = {
     logger.debug(s"Called trait convert ($keyword, $from, $to)")
     if (canConvert(from, to)) {
-      doConvert(keyword, from, to)
+      if(from.eq(to)) {
+        Seq(Hit(keyword, from, to, keyword, 1.0f))
+      } else {
+        doConvert(keyword, from, to)
+      }
     } else {
       Seq.empty
     }
@@ -26,7 +30,7 @@ trait Converter extends LazyLogging {
 
   protected def doConvert(keyword: String, from: String, to: String): Seq[Hit]
 
-  protected final def canConvert(from: String, to:String): Boolean = {
+  final def canConvert(from: String, to:String): Boolean = {
     requires.keySet.contains(from) && provides.keySet.contains(to)
   }
 
