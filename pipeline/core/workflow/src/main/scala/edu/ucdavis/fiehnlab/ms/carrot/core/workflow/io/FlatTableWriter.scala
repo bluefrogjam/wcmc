@@ -88,7 +88,7 @@ class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
             0.0
           }))
           o.print(seperator)
-          o.print(Math.abs(if (feature.isDefined) feature.get.accurateMass.getOrElse(0.0) - target.accurateMass.getOrElse(0.0) else {
+          o.print(Math.abs(if (feature.isDefined)( feature.get.accurateMass.getOrElse(0.0) - target.accurateMass.getOrElse(0.0)) * 1000 else {
             0.0
           }))
 
@@ -145,7 +145,7 @@ class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
     o.print(seperator)
     o.print("retention index shift")
     o.print(seperator)
-    o.print("mass shift")
+    o.print("mass shift (mDa)")
     o.print(seperator)
     o.print("retention time (s)(annotation)")
     o.print(seperator)

@@ -380,7 +380,7 @@ class LCMSTargetAnnotationProperties {
   /**
     * the defined retention index window to use for it's given targets. It's considered in seconds
     */
-  @Value("${workflow.lcms.annotation.detection.riWindow:25}")
+  @Value("${workflow.lcms.annotation.detection.riWindow:5}")
   var retentionIndexWindow: Double = _
 
   /**
