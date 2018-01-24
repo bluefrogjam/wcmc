@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation.{AccurateMassAnnotation, RetentionIndexAnnotation, SequentialAnnotate}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation.{AccurateMassAnnotation, AccurateMassInSpectraAnnotationPPM, RetentionIndexAnnotation, SequentialAnnotate}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionIndexDifference}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
@@ -28,6 +28,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
   //our defined filters to find possible matches are registered in here
   lazy val filters: SequentialAnnotate = new SequentialAnnotate(
+    //new AccurateMassInSpectraAnnotationPPM(10 , "annotation") ::
     new AccurateMassAnnotation(lcmsProperties.massAccuracy / 1000, lcmsProperties.massIntensity, "annotation") ::
       new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") ::
       List()

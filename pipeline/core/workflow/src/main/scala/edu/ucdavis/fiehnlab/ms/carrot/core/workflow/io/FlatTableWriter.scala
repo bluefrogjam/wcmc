@@ -84,13 +84,13 @@ class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
             0.0
           })
           o.print(seperator)
-          o.print(if (feature.isDefined) feature.get.retentionIndex - target.retentionIndex else {
+          o.print(Math.abs(if (feature.isDefined) feature.get.retentionIndex - target.retentionIndex else {
             0.0
-          })
+          }))
           o.print(seperator)
-          o.print(if (feature.isDefined) feature.get.accurateMass.getOrElse(0.0) - target.accurateMass.getOrElse(0.0) else {
+          o.print(Math.abs(if (feature.isDefined) feature.get.accurateMass.getOrElse(0.0) - target.accurateMass.getOrElse(0.0) else {
             0.0
-          })
+          }))
 
           o.print(seperator)
           o.print(if (feature.isDefined) feature.get.retentionTimeInSeconds else {
