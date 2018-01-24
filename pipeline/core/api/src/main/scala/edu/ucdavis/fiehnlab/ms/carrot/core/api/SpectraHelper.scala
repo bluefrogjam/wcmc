@@ -23,6 +23,7 @@ object SpectraHelper {
 
     feature match {
       case feat: MSMSSpectra =>
+
         new MSMSSpectra with CorrectedSpectra {
 
           override val sample:Sample = feature.sample
