@@ -7,11 +7,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
-import me.tongfei.progressbar.ProgressBar
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Component
 

@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation.{AccurateMassAnnotation, RetentionIndexAnnotation, SequentialAnnotate}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation.{AccurateMassAnnotation, AccurateMassInSpectraAnnotationPPM, RetentionIndexAnnotation, SequentialAnnotate}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionIndexDifference}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
@@ -28,6 +28,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
   //our defined filters to find possible matches are registered in here
   lazy val filters: SequentialAnnotate = new SequentialAnnotate(
+    //new AccurateMassInSpectraAnnotationPPM(10 , "annotation") ::
     new AccurateMassAnnotation(lcmsProperties.massAccuracy / 1000, lcmsProperties.massIntensity, "annotation") ::
       new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") ::
       List()
@@ -368,7 +369,7 @@ class LCMSTargetAnnotationProperties {
   /**
     * defined mass accuracy in milli dalton for the annotation process
     */
-  @Value("${workflow.lcms.annotation.detection.massAccuracy:5}")
+  @Value("${workflow.lcms.annotation.detection.massAccuracy:10}")
   var massAccuracy: Double = _
 
   /**
@@ -379,7 +380,7 @@ class LCMSTargetAnnotationProperties {
   /**
     * the defined retention index window to use for it's given targets. It's considered in seconds
     */
-  @Value("${workflow.lcms.annotation.detection.riWindow:12}")
+  @Value("${workflow.lcms.annotation.detection.riWindow:5}")
   var retentionIndexWindow: Double = _
 
   /**
