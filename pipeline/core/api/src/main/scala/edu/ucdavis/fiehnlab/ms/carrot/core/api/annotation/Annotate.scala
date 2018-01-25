@@ -23,7 +23,7 @@ abstract class Annotate extends JSONPhaseLogging with JSONSettingsLogging {
     //a bit uggly but no better way right now todo so
     if (this.supportsJSONLogging) {
 
-      val jsonLogger = new JSONPhaseLogging with JSONAlgorithmLogging with JSONTargetLogging with JSONSampleLogging with JSONFeatureLogging {
+      val jsonLogger = new JSONPhaseLogging with JSONAlgorithmLogging with JSONTargetLogging with JSONSampleLogging with JSONFeatureLogging with JSONSettingsLogging {
         /**
           * which phase we require to log
           */
@@ -44,6 +44,10 @@ abstract class Annotate extends JSONPhaseLogging with JSONSettingsLogging {
           * by default we want to log the actual implementation
           */
         override protected val classUnderInvestigation = Annotate.this
+        /**
+          * references to all used settings
+          */
+        override protected val usedSettings = Annotate.this.usedSettings
       }
 
       jsonLogger.logJSON(Map("pass" -> result))
@@ -93,5 +97,5 @@ class SequentialAnnotate(val annotators: List[Annotate]) extends Annotate {
   /**
     * references to all used settings
     */
-  override protected val usedSettings = Map[String,Any]()
+  override protected val usedSettings = Map[String, Any]()
 }

@@ -60,10 +60,19 @@ class RabbitTaskRunner extends MessageListener {
     * @param message
     */
   override final def onMessage(message: Message): Unit = {
-    val content: Task = objectMapper.readValue(message.getBody, classTag[Task].runtimeClass).asInstanceOf[Task]
-    logger.info(s"received new task to process: ${content}")
-    taskRunner.run(content)
-    logger.info(s"processing of task is done, ${content}!")
+    try {
+      val content: Task = objectMapper.readValue(message.getBody, classTag[Task].runtimeClass).asInstanceOf[Task]
+      logger.info(s"received new task to process: ${content}")
+      taskRunner.run(content)
+      logger.info(s"processing of task is done, ${content}!")
+    }
+    catch {
+
+
+      case e:Exception =>
+        logger.error(e.getMessage,e)
+        throw e
+    }
   }
 }
 

@@ -18,8 +18,6 @@ import org.springframework.web.client.RestOperations
 @Configuration
 @ComponentScan
 class MSDialRestProcessorAutoconfiguration extends LazyLogging {
-  @Bean
-  def dfClient: DataFormerClient = new DataFormerClient()
 }
 
 /**
@@ -57,7 +55,7 @@ class MSDialRestProcessor extends LazyLogging {
     * @param input
     * @return
     */
-  @Cacheable(Array("msdialrest"))
+//  @Cacheable(Array("msdialrest"))
   def process(input: File): File = {
     logger.debug(s"processing file: ${input}")
 

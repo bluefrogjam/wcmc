@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component
 @Component
 class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[Target]) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess) with LazyLogging {
 
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.005}")
-  val massAccuracySetting: Double = 0.005
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:5}")
+  val massAccuracySetting: Double = 5
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
@@ -68,12 +68,12 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
   /**
     * needs to be lazily loaded, since the correction settings need to be set first by spring
     */
-  lazy val massAccuracy = new AccurateMassAnnotation(massAccuracySetting, 0,"correction")
+  lazy val massAccuracy = new AccurateMassAnnotation(massAccuracySetting/1000, 0,"correction")
 
   /**
     * allows us to filter the data by the height of the ion
     */
-  lazy val massIntensity = new MassIsHighEnoughAnnotation(massAccuracySetting, minPeakIntensity,"correction")
+  lazy val massIntensity = new MassIsHighEnoughAnnotation(massAccuracySetting/1000, minPeakIntensity,"correction")
 
   /**
     * this defines our regression curve, which is supposed to be utilized during the correction. Lazy loading is required to avoid null pointer exception of the configuration settings
@@ -274,8 +274,8 @@ class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: Library
     */
   def doCorrection(possibleHits: Seq[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample): CorrectedSample = {
 
-    val x: Array[Double] = possibleHits.map(_.target.retentionIndex.toDouble).toArray
-    val y: Array[Double] = possibleHits.map(_.annotation.retentionTimeInSeconds.toDouble).toArray
+    val y: Array[Double] = possibleHits.map(_.target.retentionIndex.toDouble).toArray
+    val x: Array[Double] = possibleHits.map(_.annotation.retentionTimeInSeconds.toDouble).toArray
 
     regression.calibration(x, y)
 
