@@ -18,7 +18,7 @@ class CactusConverter extends Converter {
 
   private def CACTUS_API = "https://cactus.nci.nih.gov/chemical/structure/"
 
-  override final def requires = Map("name" -> "name", "inchikey" -> "stdinchikey", /*"inchicode" -> "stdinchi",*/ "smiles" -> "smiles")
+  override final def requires = Map("name" -> "name", "inchikey" -> "stdinchikey", "smiles" -> "smiles")
 
   override final def provides = Map("inchikey" -> "stdinchikey", "inchicode" -> "stdinchi", "sdf" -> "sdf",
     "smiles" -> "smiles", "cas" -> "cas", "molweight" -> "mw", "formula" -> "formula", "iupacname" -> "iupac_name")
@@ -41,7 +41,7 @@ class CactusConverter extends Converter {
     try {
       val response = template.getForEntity(html, classOf[String], keywordFixed, provides(to))
 
-      Seq(new Hit(keywordFixed, from, to, response.getBody, 1.0f))
+      Seq(Hit(keywordFixed, from, to, response.getBody, 1.0f))
     } catch {
       case ex: HttpClientErrorException if ex.getMessage.contains("404") => {
         logger.warn(s"Cactus response: ${ex.getMessage}")
