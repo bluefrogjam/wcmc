@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.cts3
 
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
+import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Import}
 import org.springframework.web.client.{RestOperations, RestTemplate}
 
 /**
@@ -8,7 +9,6 @@ import org.springframework.web.client.{RestOperations, RestTemplate}
   **/
 @Configuration
 @ComponentScan
+@Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class Cts3AutoConfiguration {
-  @Bean
-  def template: RestOperations = new RestTemplate()
 }
