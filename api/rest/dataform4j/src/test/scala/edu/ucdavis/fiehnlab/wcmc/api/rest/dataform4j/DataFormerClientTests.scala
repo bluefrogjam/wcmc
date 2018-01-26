@@ -1,7 +1,5 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
-import java.io.{File, IOException}
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
@@ -52,6 +50,16 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
       result.isDefined shouldBe true
 
       result.get.getName.toLowerCase.endsWith("mzxml") shouldBe true
+    }
+
+    "convert a raw data file (.d.zip) to mzML" in {
+      val filename = "testA.d.zip"
+
+      val result = dfClient.convert(filename, "mzML")
+
+      result.isDefined shouldBe true
+
+      result.get.getName.toLowerCase.endsWith("mzml") shouldBe true
     }
 
 
