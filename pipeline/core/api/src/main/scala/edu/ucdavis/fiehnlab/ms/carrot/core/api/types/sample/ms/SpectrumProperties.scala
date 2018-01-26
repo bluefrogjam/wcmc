@@ -38,6 +38,11 @@ trait Feature extends AccurateMassSupport {
   val ionMode: Option[IonMode]
 
   /**
+    * the associated complete scan for this feature
+    */
+  val associatedScan : Option[SpectrumProperties] = None
+
+  /**
     * accurate mass of this feature, if applicable
     */
   val massOfDetectedFeature: Option[Ion]
