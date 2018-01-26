@@ -64,7 +64,7 @@ class DataFormerClient extends LazyLogging {
 
   protected def url = s"http://${host}:${port}"
 
-  final def convert(filename: String, extension: String = "abf"): Option[File] = {
+  final def convert(filename: String, extension: String = "mzml"): Option[File] = {
     val data = doConvert(filename, extension)
 
     if (data.isDefined) {
@@ -94,7 +94,7 @@ class DataFormerClient extends LazyLogging {
     * @return
     */
   @Cacheable(value = Array[String]("dataform"), key = "#filename")
-  def doConvert(filename: String, extension: String = "abf"): Option[File] = {
+  def doConvert(filename: String, extension: String = "mzml"): Option[File] = {
 
     if (fserv4j.exists(filename)) {
       val file = fserv4j.load(filename)
@@ -111,6 +111,9 @@ class DataFormerClient extends LazyLogging {
           }
           else if (extension.equalsIgnoreCase("mzxml")) {
             Option(download(filename, FileType.MZXML))
+          }
+          else if (extension.equalsIgnoreCase("mzml")) {
+            Option(download(filename, FileType.MZML))
           }
           else {
             throw new IOException(s"invalid extension provided: ${extension}")
