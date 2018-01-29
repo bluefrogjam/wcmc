@@ -6,6 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.abf.ABFSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent.AgilentSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSampleV2
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
@@ -47,21 +48,13 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
         logger.debug(s"converting ${fileOption.get.getName} to sample")
         val file = fileOption.get
         if (file.getName.toLowerCase().matches(".*\\.(msdial|processed)(?:.gz)?")) { // .*.msdial[.gz]*  same issue as above (blahmsdial.gz  and blah.msdial. | blah.msdial.gz.)
-          Some( MSDialSampleV2(name, file))
+          Some(MSDialSampleV2(name, file))
         }
         else if (file.getName.toLowerCase().matches(".*\\.abf")) { // .*.abf can catch files that end in '.' like blah.abf.
           Some(new ABFSample(name, file, client))
         }
         else if (file.getName.toLowerCase.matches(".*\\.d.zip")) {
-          //covnert it to abf
-          val result = dataFormerClient.convert(name,"abf")
-
-          if (result.isDefined) {
-            Some(new ABFSample(name, result.get, client))
-          }
-          else {
-            throw new IOException(s"sorry on demand conversion of file failed: ${name}")
-          }
+          Some(new AgilentSample(file.getName, file, client, dataFormerClient))
         }
         else {
           Some(MSDKSample(name, file))
