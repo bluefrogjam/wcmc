@@ -128,6 +128,16 @@ public class MSDialProcessingProperties {
 	public double centroidMS2Tolerance = 0.05;
 
     /**
+     * Maximum charge number to search for in isotopic detection
+     */
+    public int maxChargeNumber = 2;
+
+    /**
+     * Maximum isotope to trace (i.e., M + 8)
+     */
+    public int maxTraceNumber = 8;
+
+    /**
 	 * constant to calculate the optimal shape of a gaussian peak
 	 * @return
 	 */
