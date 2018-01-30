@@ -18,6 +18,7 @@
         <module>msdial</module>
         <module>abf</module>
         <module>sampleloader</module>
+        <module>agilent</module>
     </modules>
 
 </project>

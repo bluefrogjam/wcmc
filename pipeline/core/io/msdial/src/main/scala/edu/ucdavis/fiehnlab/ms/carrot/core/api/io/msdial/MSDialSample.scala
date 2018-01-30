@@ -23,6 +23,17 @@ object MSDialSample {
   }
 }
 
+object MSDialSampleV2 {
+  def apply(name: String, file: File): MSDialSampleV2 = {
+    if (file.getName.endsWith("gz")) {
+      new MSDialSampleV2(new GZIPInputStream(new FileInputStream(file)), name)
+    }
+    else {
+      new MSDialSampleV2(new FileInputStream(file), name)
+    }
+  }
+}
+
 /**
   * new MSDial version, which shou
   *
@@ -38,7 +49,6 @@ class MSDialSampleV2(inputStream: InputStream, override val fileName: String) ex
   protected val spectraIdentifier: String = "msms spectrum"
   protected val scanIdentifier: String = "scans"
   protected val completeScan: String = "ms1 isotopes"
-
 
   /**
     * a collection of spectra
