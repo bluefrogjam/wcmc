@@ -63,21 +63,13 @@ class MSDialRestProcessor extends LazyLogging {
       throw new Exception("can't process a folder")
     } else {
 
-      val converted: File = {
-        if (!input.getName.endsWith(".abf")) {
-          dfClient.convert(input.getName,"abf").getOrElse(throw new Exception(s"Can't process ${input}. Error trying to convert to abf"))
-        } else {
-          input
-        }
-      }
-
       //upload file if not on msdial server
-      if (!exists(converted.getName)) {
+      if (!exists(input.getName)) {
         logger.debug(s"${input.getName} doesn't exist, uploading...")
-        upload(converted)
+        upload(input)
       }
 
-      val url: String = s"${msdresturl}/rest/deconvolution/process/${converted.getName}"
+      val url: String = s"${msdresturl}/rest/deconvolution/process/${input.getName}"
       logger.debug(s"invoking: ${url}")
       val response = restTemplate.getForEntity(url, classOf[ServerResponse])
 
@@ -85,7 +77,7 @@ class MSDialRestProcessor extends LazyLogging {
       if (response.getStatusCode != HttpStatus.OK) {
         throw new Exception(s"Response was: ${response.getStatusCode} - ${response.getBody.message}")
       } else {
-        download(converted.getName)
+        download(input.getName)
       }
     }
   }
