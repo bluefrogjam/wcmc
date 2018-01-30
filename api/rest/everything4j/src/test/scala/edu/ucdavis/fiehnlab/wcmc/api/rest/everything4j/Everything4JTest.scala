@@ -39,7 +39,7 @@ class Everything4JTest extends WordSpec with ShouldMatchers with BeforeAndAfterE
 
     }
 
-    "load GLA_CT_Lipids_QC04.abf as abf binary file and is not html" in {
+    "load GLA_CT_Lipids_QC04.abf as abf binary file and is not html" ignore {
       val file = everything4J.loadAsFile("GLA_CT_Lipids_QC04.abf").get
 
 

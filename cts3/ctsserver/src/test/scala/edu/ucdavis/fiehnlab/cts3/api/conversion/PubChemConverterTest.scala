@@ -2,16 +2,14 @@ package edu.ucdavis.fiehnlab.cts3.api.conversion
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.cts3.api.Converter
 import edu.ucdavis.fiehnlab.cts3.model.Hit
-import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.{EnableAutoConfiguration, SpringBootApplication}
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, ComponentScan, Import}
+import org.springframework.context.annotation.{Bean, ComponentScan}
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
@@ -41,19 +39,6 @@ class PubChemConverterTest extends WordSpec with Matchers with LazyLogging {
     "Deny conversion to invalid provision" in {
       converter.canConvert("smiles", "kegg") shouldBe false
     }
-
-//    "behave" ignore {
-//      val hits = converter.doConvert("alanine", "name", "cid")
-//
-//      hits.size should be > 0
-//      hits.head shouldBe a[Hit]
-//
-//      val hit = hits.head
-//      hit.from shouldEqual "name"
-//      hit.to shouldEqual "cid"
-//      hit.result.trim() shouldEqual "602,5950,71080,51283"
-//      hit.score shouldEqual 1.0
-//    }
 
     val fromTest = Map(
       "keywords" -> Array("alanine", "QNAYBMKLOCPYGJ-REOHCLBHSA-N", "CC(=O)Oc1ccccc1C(O)=O", "602"),
