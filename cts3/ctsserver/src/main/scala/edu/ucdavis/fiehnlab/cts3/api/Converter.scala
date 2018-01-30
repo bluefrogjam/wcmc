@@ -22,11 +22,11 @@ trait Converter extends LazyLogging {
     }
   }
 
-  protected def requires: Map[String, String]
+  def requires: Map[String, String]
 
-  protected def provides: Map[String, String]
+  def provides: Map[String, String]
 
-  protected def priority = 0
+  def priority = 0
 
   protected def doConvert(keyword: String, from: String, to: String): Seq[Hit]
 

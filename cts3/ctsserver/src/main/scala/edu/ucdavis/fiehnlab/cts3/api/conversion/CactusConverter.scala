@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.cts3.api.conversion
 
-import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.cts3.api.Converter
 import edu.ucdavis.fiehnlab.cts3.model._
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,6 +12,8 @@ import org.springframework.web.client.{HttpClientErrorException, RestOperations}
   **/
 @Component
 class CactusConverter extends Converter {
+  logger.debug("Creating CactusConverter")
+
   @Autowired
   val template: RestOperations = null
 
