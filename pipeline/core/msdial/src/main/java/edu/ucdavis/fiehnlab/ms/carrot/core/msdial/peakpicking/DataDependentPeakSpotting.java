@@ -47,6 +47,7 @@ public class DataDependentPeakSpotting {
     public List<PeakAreaBean> getPeaks(List<Feature> spectrumList, MSDialProcessingProperties properties) {
 
         logger.info("Starting peak spotting...");
+        logger.debug("spectra: " + spectrumList.size());
 
         List<double[]> peakList;
         List<List<PeakAreaBean>> detectedPeaksList = new ArrayList<>();
@@ -55,7 +56,7 @@ public class DataDependentPeakSpotting {
         double[] mzRange = LCMSDataAccessUtility.getMS1ScanRange(spectrumList, properties.ionMode);
         double startMass = mzRange[0];
         double endMass = mzRange[1];
-        logger.trace("Scan range: ["+ startMass +", "+ endMass +"]");
+        logger.debug("Scan range: [" + startMass + ", " + endMass + "]");
 
         double focusedMass = startMass, massStep = properties.massSliceWidth;
 
@@ -67,12 +68,12 @@ public class DataDependentPeakSpotting {
                 break;
             }
 
-            logger.trace("focusedMass: "+ focusedMass);
+            logger.debug("focusedMass: " + focusedMass);
 
             // Get EIC chromatogram
             peakList = LCMSDataAccessUtility.getMS1PeakList(spectrumList, focusedMass, properties.massSliceWidth,
                     properties.retentionTimeBegin, properties.retentionTimeEnd, properties.ionMode);
-            logger.trace("EIC("+ focusedMass +"): "+ peakList.size());
+            logger.debug("EIC(" + focusedMass + "): " + peakList.size());
 
             if (peakList.isEmpty()) {
                 focusedMass += massStep;
@@ -82,7 +83,7 @@ public class DataDependentPeakSpotting {
             // Get peak detection result
             detectedPeaks = getPeakAreaBeanList(spectrumList, peakList, focusedMass,
                     SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties);
-            logger.trace("PeakDetection("+ focusedMass +"): "+ detectedPeaks.size());
+            logger.debug("PeakDetection(" + focusedMass + "): " + detectedPeaks.size());
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
@@ -91,7 +92,7 @@ public class DataDependentPeakSpotting {
 
             // Filter noise peaks considering smoothing effects
             detectedPeaks = filterPeaksByRawChromatogram(peakList, detectedPeaks);
-            logger.trace("SmoothingFilter("+ focusedMass +"): "+ detectedPeaks.size());
+            logger.debug("SmoothingFilter(" + focusedMass + "): " + detectedPeaks.size());
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
@@ -100,7 +101,7 @@ public class DataDependentPeakSpotting {
 
             // Filtering noise peaks considering baseline effects
             detectedPeaks = getBackgroundSubtractPeaks(detectedPeaks, peakList, properties.backgroundSubtraction);
-            logger.trace("BackgroundSubtract("+ focusedMass +"): "+ detectedPeaks.size());
+            logger.debug("BackgroundSubtract(" + focusedMass + "): " + detectedPeaks.size());
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
@@ -120,7 +121,7 @@ public class DataDependentPeakSpotting {
         detectedPeaks = getCombinedPeakAreaBeanList(detectedPeaksList);
         detectedPeaks = getPeakAreaBeanProperties(detectedPeaks, spectrumList, properties);
 
-        logger.trace("Final detected: "+ detectedPeaks.size());
+        logger.debug("Final detected: " + detectedPeaks.size());
 
         return detectedPeaks;
     }

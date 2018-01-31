@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%date{ISO8601} %level %line --- [%thread] %logger{5} - %msg%n%ex</Pattern>
+        </layout>
+    </appender>
+
+    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils" level="trace"/>
+    <logger name="org" level="info"/>
+
+    <root level="debug">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
