@@ -112,6 +112,12 @@ public class MSDialProcessingProperties {
 	 */
 	public IonMode ionMode = new PositiveMode();
 
+    /**
+     * constant to calculate the optimal shape of a gaussian peak
+     * @return
+     */
+    public double sigma = 0.1;
+
 	/**
 	 * minimum fragment intensity for centroiding
 	 */
@@ -136,12 +142,6 @@ public class MSDialProcessingProperties {
      * Maximum isotope to trace (i.e., M + 8)
      */
     public int maxTraceNumber = 8;
-
-    /**
-	 * constant to calculate the optimal shape of a gaussian peak
-	 * @return
-	 */
-	public double sigma = 0.1;
 
 	public String toString() {
 		return (
