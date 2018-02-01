@@ -207,8 +207,8 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
         logger.debug(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
-          case x: MSSpectra if x.spectrum.isDefined =>
-            x.spectrum.get.relativeSpectra.exists { ion: Ion =>
+          case x: MSSpectra if x.associatedScan.isDefined =>
+            x.associatedScan.get.relativeSpectra.exists { ion: Ion =>
 
               logger.debug(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
@@ -265,8 +265,8 @@ class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minInten
         logger.trace(s"\t=> min: ${min} and max: ${max} ")
 
         correctedSpectra match {
-          case x: MSSpectra if x.spectrum.isDefined =>
-            x.spectrum.get.ions.exists { ion: Ion =>
+          case x: MSSpectra if x.associatedScan.isDefined =>
+            x.associatedScan.get.ions.exists { ion: Ion =>
 
               logger.trace(s"\t\t=> ion mass is ${ion.mass} and intensity is ${ion.intensity}")
 
@@ -316,10 +316,10 @@ class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int, val phase: Stri
       case Some(mass) =>
 
         correctedSpectra match {
-          case x: MSSpectra if x.spectrum.isDefined =>
+          case x: MSSpectra if x.associatedScan.isDefined =>
             logger.trace(s"checking mass: ${mass}")
 
-            x.spectrum.get.ions.exists { ion: Ion =>
+            x.associatedScan.get.ions.exists { ion: Ion =>
               val error = mass - ion.mass
               val ppm = Math.abs(error / mass * 1000000)
               logger.trace(s"\t=> error: ${error} and ppm: ${ppm}")

@@ -184,7 +184,7 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: Sample) e
   /**
     * associated spectrum propties if applicable
     */
-  override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+  override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
     /**
       * a list of model ions used during the deconvolution
       */
@@ -238,4 +238,8 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: Sample
 
     override val msLevel: Short = 2
   })
+  /**
+    * the associated complete scan for this feature
+    */
+  override val associatedScan = None
 }

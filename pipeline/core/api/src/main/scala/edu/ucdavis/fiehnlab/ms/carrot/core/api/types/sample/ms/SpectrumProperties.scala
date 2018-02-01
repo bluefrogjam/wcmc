@@ -40,21 +40,21 @@ trait Feature extends AccurateMassSupport {
   /**
     * the associated complete scan for this feature
     */
-  val associatedScan : Option[SpectrumProperties] = None
+  val associatedScan : Option[SpectrumProperties]
 
   /**
     * accurate mass of this feature, if applicable
     */
   val massOfDetectedFeature: Option[Ion]
 
-  override def toString = s"Feature($scanNumber, $retentionTimeInMinutes, ${massOfDetectedFeature.get.mass})"
+  override def toString = s"Feature($scanNumber, $retentionTimeInMinutes, ${massOfDetectedFeature.get.mass}, ${associatedScan})"
 
   /**
     * returns the accurate mass, of this trait
     *
     * @return
     */
-  override def accurateMass: Option[Double] = if (massOfDetectedFeature.isDefined) {
+  final override def accurateMass: Option[Double] = if (massOfDetectedFeature.isDefined) {
     Option(massOfDetectedFeature.get.mass)
   }
   else {
@@ -120,12 +120,13 @@ trait SpectrumProperties {
     ions.map(x => Ion(x.mass, 100 * x.intensity / maxIntensity))
   }
 
+  override def toString = s"SpectrumProperties($msLevel, $modelIons, $ions)"
 }
 
 /**
   * defines a MS Spectra
   */
-trait MSSpectra extends Feature with SimilaritySupport {
+trait MSSpectra extends Feature  {
 
   override def toString = f"MSSpectra(scanNumber=$scanNumber, retentionTime=$retentionTimeInSeconds%1.2f (s), retentionTime=$retentionTimeInMinutes%1.3f (min))"
 }
@@ -133,7 +134,7 @@ trait MSSpectra extends Feature with SimilaritySupport {
 /**
   * this defines an MSMS spectra
   */
-trait MSMSSpectra extends MSSpectra {
+trait MSMSSpectra extends MSSpectra with SimilaritySupport{
 
   /**
     * the observed pre cursor ion

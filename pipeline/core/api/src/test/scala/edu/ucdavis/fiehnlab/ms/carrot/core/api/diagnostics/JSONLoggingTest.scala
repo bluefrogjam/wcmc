@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, PositiveMode, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
 import edu.ucdavis.fiehnlab.utilities.logging.{JSONLogging, JSONPhaseLogging}
 import org.scalatest.{FunSuite, ShouldMatchers, WordSpec}
 
@@ -176,6 +176,8 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers{
             * accurate mass of this feature, if applicable
             */
           override val massOfDetectedFeature:Option[Ion] = None
+
+          override val associatedScan : Option[SpectrumProperties] = None
         }
       }
 
