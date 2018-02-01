@@ -4,6 +4,7 @@ import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ProcessedSample
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,9 +36,13 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       sample.spectra.size should be > 1
 
       val outSample = msdProcessing.process(sample, properties)
+      properties.minimumAmplitude = 50
+
       logger.debug(s"Sample result: ${outSample}")
       outSample.spectra should not be null
       outSample.spectra.size should be > 0
+
+      outSample shouldBe a [ProcessedSample]
     }
 
     "check peakpicking in RT range [10.00, 10.44)" ignore {
