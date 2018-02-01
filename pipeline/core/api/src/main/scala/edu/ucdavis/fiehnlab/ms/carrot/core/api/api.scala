@@ -29,7 +29,7 @@ package object api {
     /**
       * associated spectrum propties if applicable
       */
-    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+    override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
       /**
         * a list of model ions used during the deconvolution
         */
@@ -71,7 +71,7 @@ package object api {
   val testSpectraWith2Ions = new MSSpectra {
     override val sample:Sample = null
 
-    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+    override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
       /**
         * a list of model ions used during the deconvolution
         */
@@ -115,7 +115,7 @@ package object api {
 
     override val sample:Sample = null
 
-    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+    override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
       /**
         * a list of model ions used during the deconvolution
         */
@@ -159,7 +159,7 @@ package object api {
   val testSpectraWith4Ions = new MSSpectra {
     override val sample:Sample = null
 
-    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+    override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
       /**
         * a list of model ions used during the deconvolution
@@ -200,7 +200,7 @@ package object api {
   val testAccurateMassSpectraWith4Ions = new MSSpectra {
     override val sample:Sample = null
 
-    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+    override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
       /**
         * a list of model ions used during the deconvolution
@@ -239,7 +239,7 @@ package object api {
   val testAccurateMassSpectraWith4Ions2 = new MSSpectra {
     override val sample:Sample = null
 
-    override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+    override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
       /**
         * a list of model ions used during the deconvolution

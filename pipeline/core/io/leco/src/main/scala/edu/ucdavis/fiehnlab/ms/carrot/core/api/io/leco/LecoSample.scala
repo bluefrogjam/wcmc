@@ -72,7 +72,7 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
         */
       override val massOfDetectedFeature: Option[Ion] = None
 
-      override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+      override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
         override val modelIons: Option[List[Double]] = Some(map.get(uniquemassIdentifier).get.toDouble :: List())
 
 

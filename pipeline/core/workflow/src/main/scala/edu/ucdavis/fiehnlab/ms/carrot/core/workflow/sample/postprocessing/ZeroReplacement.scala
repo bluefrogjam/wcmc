@@ -302,8 +302,10 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
       * accurate mass of this feature, if applicable
       */
     override val massOfDetectedFeature: Option[Ion] = Option(ion)
-
-
+    /**
+      * the associated complete scan for this feature
+      */
+    override val associatedScan = value.associatedScan
   }
 
   /**

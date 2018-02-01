@@ -18,12 +18,12 @@ class LecoSampleTest extends WordSpec {
     "ensure that all spectra have the correct properties" in {
       sample.spectra.foreach{ spectra =>
 
-        assert(spectra.spectrum.get.ions.nonEmpty)
+        assert(spectra.associatedScan.get.ions.nonEmpty)
         assert(spectra.retentionTimeInSeconds > 0)
 
-        assert(spectra.spectrum.get.modelIons.size == 1)
+        assert(spectra.associatedScan.get.modelIons.size == 1)
         assert(spectra.purity.get > 0)
-        assert(spectra.spectrum.get.splash != null)
+        assert(spectra.associatedScan.get.splash != null)
 
       }
     }

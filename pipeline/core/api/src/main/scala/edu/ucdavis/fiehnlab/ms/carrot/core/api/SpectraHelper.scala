@@ -10,6 +10,105 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
   */
 object SpectraHelper {
 
+
+  def addMassCalibration(feature: Feature, spectrumProperties: SpectrumProperties,correctedMassOfDetectedFeature: Ion): Feature = {
+
+    feature match {
+      case feat: MSMSSpectra =>
+
+        new MSMSSpectra {
+
+          override val sample: Sample = feature.sample
+          /**
+            * the observed pre cursor ion
+            */
+          override val precursorIon: Double = feat.precursorIon
+          /**
+            * how pure this spectra is
+            */
+          override val purity: Option[Double] = feat.purity
+          /**
+            * specified ion mode for the given feature
+            */
+          override val ionMode: Option[IonMode] = feat.ionMode
+          /**
+            * accurate mass of this feature, if applicable
+            */
+          override val massOfDetectedFeature: Option[Ion] = Some(correctedMassOfDetectedFeature)
+
+          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+
+          /**
+            * the local scan number
+            */
+          override val scanNumber: Int = feat.scanNumber
+          /**
+            * the retention time of this spectra. It should be provided in seconds!
+            */
+          override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
+
+          override val associatedScan: Option[SpectrumProperties] = Some(spectrumProperties)
+        }
+      case feat: MSSpectra =>
+        new MSSpectra {
+          override val sample: Sample = feature.sample
+          /**
+            * how pure this spectra is
+            */
+          override val purity: Option[Double] = feat.purity
+          /**
+            * specified ion mode for the given feature
+            */
+          override val ionMode: Option[IonMode] = feat.ionMode
+          /**
+            * accurate mass of this feature, if applicable
+            */
+          override val massOfDetectedFeature: Option[Ion] = Some(correctedMassOfDetectedFeature)
+
+          override val associatedScan: Option[SpectrumProperties] = Some(spectrumProperties)
+          /**
+            * the local scan number
+            */
+          override val scanNumber: Int = feat.scanNumber
+          /**
+            * the retention time of this spectra. It should be provided in seconds!
+            */
+          override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
+
+        }
+      case feat: Feature =>
+
+        new Feature {
+          override val sample: Sample = feature.sample
+          /**
+            * the retention time of this spectra. It should be provided in seconds!
+            */
+          override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
+          /**
+            * the local scan number
+            */
+          override val scanNumber: Int = feat.scanNumber
+
+          /**
+            * how pure this spectra is
+            */
+          override val purity: Option[Double] = feat.purity
+          /**
+            * specified ion mode for the given feature
+            */
+          override val ionMode: Option[IonMode] = feat.ionMode
+          /**
+            * accurate mass of this feature, if applicable
+            */
+          override val massOfDetectedFeature: Option[Ion] = Some(correctedMassOfDetectedFeature)
+
+          override val associatedScan: Option[SpectrumProperties] = Some(spectrumProperties)
+
+        }
+
+    }
+  }
+
   /**
     * TODO take care of default values, these are missing right now
     *
@@ -26,7 +125,7 @@ object SpectraHelper {
 
         new MSMSSpectra with CorrectedSpectra {
 
-          override val sample:Sample = feature.sample
+          override val sample: Sample = feature.sample
           /**
             * the observed pre cursor ion
             */
@@ -56,10 +155,12 @@ object SpectraHelper {
           override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
 
           override val retentionIndex: Double = _retentionIndex
+
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
         }
       case feat: MSSpectra =>
         new MSSpectra with CorrectedSpectra {
-          override val sample:Sample = feature.sample
+          override val sample: Sample = feature.sample
           /**
             * how pure this spectra is
             */
@@ -73,8 +174,7 @@ object SpectraHelper {
             */
           override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
-          override val spectrum: Option[SpectrumProperties] = feat.spectrum
-
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
           /**
             * the local scan number
             */
@@ -89,7 +189,7 @@ object SpectraHelper {
       case feat: Feature =>
 
         new Feature with CorrectedSpectra {
-          override val sample:Sample = feature.sample
+          override val sample: Sample = feature.sample
           /**
             * the retention time of this spectra. It should be provided in seconds!
             */
@@ -112,6 +212,8 @@ object SpectraHelper {
             * accurate mass of this feature, if applicable
             */
           override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
+
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
 
         }
 
@@ -132,7 +234,7 @@ object SpectraHelper {
     feature match {
       case feat: MSMSSpectra with CorrectedSpectra =>
         new MSMSSpectra with AnnotatedSpectra {
-          override val sample:Sample = feature.sample
+          override val sample: Sample = feature.sample
           /**
             * the observed pre cursor ion
             */
@@ -182,13 +284,14 @@ object SpectraHelper {
             */
           override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
+
         }
       case feat: MSSpectra with CorrectedSpectra =>
         new MSSpectra with AnnotatedSpectra {
-          override val sample:Sample = feature.sample
+          override val sample: Sample = feature.sample
 
-          override val spectrum: Option[SpectrumProperties] = feat.spectrum
-
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
           /**
             * the local scan number
             */
@@ -232,7 +335,7 @@ object SpectraHelper {
       case feat: Feature with CorrectedSpectra =>
 
         new Feature with AnnotatedSpectra {
-          override val sample:Sample = feature.sample
+          override val sample: Sample = feature.sample
           /**
             * the retention time of this spectra. It should be provided in seconds!
             */
@@ -271,6 +374,8 @@ object SpectraHelper {
             * accurate mass of this feature, if applicable
             */
           override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
+
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
         }
 
     }
@@ -281,7 +386,7 @@ object SpectraHelper {
     feature match {
       case feat: MSMSSpectra with AnnotatedSpectra =>
         new MSMSSpectra with QuantifiedSpectra[T] {
-          override val sample:Sample = feature.sample
+          override val sample: Sample = feature.sample
           /**
             * the observed pre cursor ion
             */
@@ -331,16 +436,18 @@ object SpectraHelper {
             * value for this target
             */
           override val quantifiedValue: Option[T] = quantified.quantifiedValue
+
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
         }
       case feat: MSSpectra with AnnotatedSpectra =>
         new MSSpectra with QuantifiedSpectra[T] {
-          override val sample:Sample = feature.sample
+          override val sample: Sample = feature.sample
           /**
             * how pure this spectra is
             */
           override val purity: Option[Double] = feat.purity
-          override val spectrum: Option[SpectrumProperties] = feat.spectrum
 
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
           /**
             * the local scan number
             */
@@ -385,7 +492,7 @@ object SpectraHelper {
       case feat: Feature with AnnotatedSpectra =>
 
         new Feature with QuantifiedSpectra[T] {
-          override val sample:Sample = feature.sample
+          override val sample: Sample = feature.sample
           /**
             * how pure this spectra is
             */
@@ -430,6 +537,8 @@ object SpectraHelper {
             * value for this target
             */
           override val quantifiedValue: Option[T] = quantified.quantifiedValue
+
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
         }
 
     }
