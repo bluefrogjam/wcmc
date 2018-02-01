@@ -120,7 +120,7 @@ public class DataDependentPeakSpotting {
         detectedPeaks = getCombinedPeakAreaBeanList(detectedPeaksList);
         detectedPeaks = getPeakAreaBeanProperties(detectedPeaks, spectrumList, properties);
 
-        logger.trace("Final detected: "+ detectedPeaks.size());
+        logger.debug("Peaks detected: "+ detectedPeaks.size());
 
         return detectedPeaks;
     }

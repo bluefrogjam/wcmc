@@ -24,6 +24,9 @@ public class MSDialProcessing {
         // Isotope detection
         new IsotopeEstimator().setIsotopeInformation(detectedPeaks, properties);
 
+        // Calculate peak properties for deconvolution
+
+
         return null;
     }
 
