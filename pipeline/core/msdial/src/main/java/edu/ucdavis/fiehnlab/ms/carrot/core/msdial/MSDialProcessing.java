@@ -20,6 +20,7 @@ public class MSDialProcessing {
 
         // Peak picking
         List<PeakAreaBean> detectedPeaks = new DataDependentPeakSpotting().getPeaks(spectra, properties);
+        logger.debug("Detected peaks: " + detectedPeaks.size());
 
         // Isotope detection
         new IsotopeEstimator().setIsotopeInformation(detectedPeaks, properties);

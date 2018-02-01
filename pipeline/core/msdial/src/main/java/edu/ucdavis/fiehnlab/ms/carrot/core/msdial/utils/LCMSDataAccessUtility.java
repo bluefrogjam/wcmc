@@ -30,15 +30,16 @@ public class LCMSDataAccessUtility {
 
         for (Feature spectrum : spectrumList) {
             // Filter by msLevel and ion mode
-            if (spectrum.associatedScan().get().msLevel() != 1 || spectrum.ionMode().get() != ionMode) {
+            if (spectrum.associatedScan().get().msLevel() != 1 || !spectrum.ionMode().get().mode().equals(ionMode.mode())) {
                 continue;
             }
 
             for (Ion ion : TypeConverter.getJavaIonList(spectrum)) {
-                if (ion.mass() < minMz)
+                if (ion.mass() < minMz) {
                     minMz = ion.mass();
-                else if (ion.mass() > maxMz)
+                } else if (ion.mass() > maxMz) {
                     maxMz = ion.mass();
+                }
             }
         }
 
