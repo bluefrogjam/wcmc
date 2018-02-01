@@ -50,12 +50,12 @@ public class MSDialProcessingProperties {
 	/**
 	 * # of scans in average a peak has
 	 */
-	public int averagePeakWidth = 10;
+	public int averagePeakWidth = 5;
 
 	/**
 	 * minimum intensity to consider a peak as such
 	 */
-	public double minimumAmplitude = 1000;
+	public double minimumAmplitude = 2500;
 
 	/**
 	 * Accurate or Nominal mass
@@ -121,7 +121,7 @@ public class MSDialProcessingProperties {
 	/**
 	 * Tolerance for MS2 centroiding
 	 */
-	public double centroidMS2Tolerance = 0.05;
+	public double centroidMS2Tolerance = 0.1;
 
     /**
      * Maximum charge number to search for in isotopic detection
@@ -152,7 +152,7 @@ public class MSDialProcessingProperties {
     /**
      * minimum fragment intensity for deconvolution
      */
-    public double amplitudeCutoff = 0;
+    public double amplitudeCutoff = 10;
 
     /**
 	 * constant to calculate the optimal shape of a gaussian peak
