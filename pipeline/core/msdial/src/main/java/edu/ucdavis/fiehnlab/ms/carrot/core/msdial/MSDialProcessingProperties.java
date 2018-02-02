@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
 
 /**
  * Created by diego on 10/13/2016.
@@ -28,7 +29,7 @@ public class MSDialProcessingProperties {
 	public double retentionTimeEnd = 12.5;
 
 	/**
-	 * smoothing algorythm
+	 * smoothing algorithm
 	 * possible values:
 	 *  "LINEAR_WEIGHTED_MOVING_AVERAGE" (default),
 	 *
@@ -105,7 +106,7 @@ public class MSDialProcessingProperties {
 	 * Centroided or Profiled data
 	 * possible values: "centroid" or "profile"
 	 */
-	public String dataType = "centroid";
+	public MSDataType dataType = MSDataType.CENTROID;
 
 	/**
 	 * ionMode
@@ -117,11 +118,6 @@ public class MSDialProcessingProperties {
      * @return
      */
     public double sigma = 0.1;
-
-	/**
-	 * minimum fragment intensity for centroiding
-	 */
-	public double amplitudeCutoff = 10;
 
 	/**
 	 * Tolerance for MS1 centroiding
@@ -142,6 +138,28 @@ public class MSDialProcessingProperties {
      * Maximum isotope to trace (i.e., M + 8)
      */
     public int maxTraceNumber = 8;
+
+    /**
+     * Sets the type of centroiding performed during deconvolution, true indicating
+     * peak detection based and false sweep bin based
+     */
+    public boolean peakDetectionBasedCentroid = true;
+
+    /**
+     *
+     */
+    public boolean removeAfterPrecursor = true;
+
+    /**
+     *
+     */
+    public double keptIsotopeRange = 0.5;
+
+    /**
+     * minimum fragment intensity for deconvolution
+     */
+    public double amplitudeCutoff = 10;
+
 
 	public String toString() {
 		return (
