@@ -113,6 +113,12 @@ public class MSDialProcessingProperties {
 	 */
 	public IonMode ionMode = new PositiveMode();
 
+    /**
+     * constant to calculate the optimal shape of a gaussian peak
+     * @return
+     */
+    public double sigma = 0.1;
+
 	/**
 	 * Tolerance for MS1 centroiding
 	 */
@@ -154,11 +160,6 @@ public class MSDialProcessingProperties {
      */
     public double amplitudeCutoff = 10;
 
-    /**
-	 * constant to calculate the optimal shape of a gaussian peak
-	 * @return
-	 */
-	public double sigma = 0.1;
 
 	public String toString() {
 		return (

@@ -63,9 +63,11 @@ public class LCMSDataAccessUtility {
 
         for (Feature spectrum : spectrumList) {
             // Filter by msLevel, ion mode and retention time
-            if (spectrum.associatedScan().get().msLevel() == 1 && spectrum.ionMode().get() == ionMode &&
-                    spectrum.retentionTimeInMinutes() >= rtBegin && spectrum.retentionTimeInMinutes() <= rtEnd) {
+            if (spectrum.associatedScan().get().msLevel() > 1 || !spectrum.ionMode().get().equals(ionMode) || spectrum.retentionTimeInMinutes() < rtBegin) {
                 continue;
+            }
+            if (spectrum.retentionTimeInMinutes() > rtEnd) {
+                break;
             }
 
             double sum = 0;
@@ -75,7 +77,8 @@ public class LCMSDataAccessUtility {
             List<Ion> massSpectrum = TypeConverter.getJavaIonList(spectrum);
             int startIndex = getMs1StartIndex(focusedMass, massSliceWidth, massSpectrum);
 
-            for (int i = startIndex; i < massSpectrum.size(); i++) {
+            int i =0;
+            for (i = startIndex; i < massSpectrum.size(); i++) {
                 if (massSpectrum.get(i).mass() < focusedMass - massSliceWidth) {
                     continue;
                 } else if (focusedMass - massSliceWidth <= massSpectrum.get(i).mass() && massSpectrum.get(i).mass() <= focusedMass + massSliceWidth) {
@@ -88,9 +91,8 @@ public class LCMSDataAccessUtility {
                 } else if (massSpectrum.get(i).mass() > focusedMass + massSliceWidth) {
                     break;
                 }
-
-                peakList.add(new double[] { spectrum.scanNumber(), spectrum.retentionTimeInMinutes(), maxIntensityMz, sum });
             }
+            peakList.add(new double[] { i, spectrum.retentionTimeInMinutes(), maxMass, sum });
         }
 
         return peakList;
