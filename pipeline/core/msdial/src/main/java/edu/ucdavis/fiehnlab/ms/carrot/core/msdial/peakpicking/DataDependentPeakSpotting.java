@@ -47,7 +47,10 @@ public class DataDependentPeakSpotting {
     public List<PeakAreaBean> getPeaks(List<Feature> spectrumList, MSDialProcessingProperties properties) {
 
         logger.info("Starting peak spotting...");
-        logger.debug("spectra: " + spectrumList.size());
+        logger.trace("spectra: " + spectrumList.size());
+//        for(Feature spec : spectrumList) {
+//            logger.trace(spec.scanNumber() + " => " + spec.associatedScan().get().spectraString());
+//        }
 
         List<double[]> peakList;
         List<List<PeakAreaBean>> detectedPeaksList = new ArrayList<>();
@@ -56,57 +59,55 @@ public class DataDependentPeakSpotting {
         double[] mzRange = LCMSDataAccessUtility.getMS1ScanRange(spectrumList, properties.ionMode);
         double startMass = mzRange[0];
         double endMass = mzRange[1];
-        logger.debug("Scan range: [" + startMass + ", " + endMass + "]");
+        logger.trace("Scan range: [" + String.format("%.5f, %.5f", startMass, endMass) + "]");
 
-        double focusedMass = startMass, massStep = properties.massSliceWidth;
+        float focusedMass = (float) startMass, massStep = (float) properties.massSliceWidth;
 
         while (focusedMass < endMass) {
             if (focusedMass < properties.massRangeBegin) {
                 focusedMass += massStep;
                 continue;
-            } else  if (focusedMass > properties.massRangeEnd) {
+            } else if (focusedMass > properties.massRangeEnd) {
                 break;
             }
 
-            logger.debug("focusedMass: " + focusedMass);
-
             // Get EIC chromatogram
             peakList = LCMSDataAccessUtility.getMS1PeakList(spectrumList, focusedMass, properties.massSliceWidth,
-                    properties.retentionTimeBegin, properties.retentionTimeEnd, properties.ionMode);
-            logger.debug("EIC(" + focusedMass + "): " + peakList.size());
+                  properties.retentionTimeBegin, properties.retentionTimeEnd, properties.ionMode);
 
             if (peakList.isEmpty()) {
                 focusedMass += massStep;
                 continue;
             }
+//            logger.trace("EIC(" + String.format("%.5f", focusedMass) + "): " + peakList.size());
 
             // Get peak detection result
             detectedPeaks = getPeakAreaBeanList(spectrumList, peakList, focusedMass,
-                    SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties);
-            logger.debug("PeakDetection(" + focusedMass + "): " + detectedPeaks.size());
+                  SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties);
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
                 continue;
             }
+//            logger.trace("PeakDetection(" + String.format("%.5f", focusedMass) + "): " + detectedPeaks.size());
 
             // Filter noise peaks considering smoothing effects
             detectedPeaks = filterPeaksByRawChromatogram(peakList, detectedPeaks);
-            logger.debug("SmoothingFilter(" + focusedMass + "): " + detectedPeaks.size());
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
                 continue;
             }
+//            logger.trace("SmoothingFilter(" + String.format("%.5f", focusedMass) + "): " + detectedPeaks.size());
 
             // Filtering noise peaks considering baseline effects
             detectedPeaks = getBackgroundSubtractPeaks(detectedPeaks, peakList, properties.backgroundSubtraction);
-            logger.debug("BackgroundSubtract(" + focusedMass + "): " + detectedPeaks.size());
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
                 continue;
             }
+//            logger.trace("BackgroundSubtract(" + String.format("%.5f", focusedMass) + "): " + detectedPeaks.size());
 
             // Removing peak spot redundancies among slices
             detectedPeaks = removePeakAreaBeanRedundancy(detectedPeaksList, detectedPeaks, massStep);
@@ -114,11 +115,16 @@ public class DataDependentPeakSpotting {
             if (!detectedPeaks.isEmpty()) {
                 detectedPeaksList.add(detectedPeaks);
             }
+//            logger.trace("RemoveRedundancy(" + String.format("%.5f", focusedMass) + "): " + detectedPeaks.size());
 
             focusedMass += massStep;
         }
+//        logger.trace("pre-Final detected: " + detectedPeaksList.size());
+        printDoublePeakList(detectedPeaksList);
 
         detectedPeaks = getCombinedPeakAreaBeanList(detectedPeaksList);
+//        logger.trace("pos-combined detected: " + detectedPeaks.size());
+
         detectedPeaks = getPeakAreaBeanProperties(detectedPeaks, spectrumList, properties);
 
         logger.debug("Final detected: " + detectedPeaks.size());
@@ -126,9 +132,20 @@ public class DataDependentPeakSpotting {
         return detectedPeaks;
     }
 
+    private void printDoublePeakList(List<List<PeakAreaBean>> detectedPeaksList) {
+        for (List<PeakAreaBean> p : detectedPeaksList) {
+            int idx = 0;
+            printPeakList(p, idx);
+        }
+    }
+
+    private void printPeakList(List<PeakAreaBean> p, int idx) {
+        for (PeakAreaBean pp : p) {
+            logger.debug(String.format("%d, %d, %.5f, %.5f, %.5f, %.5f, %.5f", idx++, pp.scanNumberAtPeakTop, pp.rtAtPeakTop, pp.accurateMass, pp.intensityAtPeakTop, pp.sharpenessValue, pp.symmetryValue));
+        }
+    }
 
     /**
-     *
      * @param spectrumList
      * @param peakList
      * @param focusedMass
@@ -139,12 +156,11 @@ public class DataDependentPeakSpotting {
     private List<PeakAreaBean> getPeakAreaBeanList(List<Feature> spectrumList, List<double[]> peakList, double focusedMass,
                                                    SmoothingMethod smoothingMethod, MSDialProcessingProperties properties) {
 
-
         List<double[]> smoothedPeakList = LCMSDataAccessUtility.getSmoothedPeakArray(peakList, smoothingMethod, properties.smoothingLevel);
 
         List<PeakDetectionResult> detectedPeaks = DifferentialBasedPeakDetection.detectPeaks(smoothedPeakList,
-                properties.minimumDataPoints, properties.minimumAmplitude, properties.amplitudeNoiseFactor,
-                properties.slopeNoiseFactor, properties.peaktopNoiseFactor);
+              properties.minimumDataPoints, properties.minimumAmplitude, properties.amplitudeNoiseFactor,
+              properties.slopeNoiseFactor, properties.peaktopNoiseFactor);
 
         if (detectedPeaks.isEmpty()) {
             return Collections.emptyList();
@@ -160,10 +176,10 @@ public class DataDependentPeakSpotting {
             // TODO: Hiroshi has added an excluded mass list checker, which has not been implemented as it is not essential to the peak peaking
             PeakAreaBean peakAreaBean = LCMSDataAccessUtility.getPeakAreaBean(detectedPeak);
             peakAreaBean.accurateMass = peakList.get(detectedPeak.scanNumAtPeakTop)[2];
-            peakAreaBean.ms1LevelDataPointNumber = (int)peakList.get(detectedPeak.scanNumAtPeakTop)[0];
+            peakAreaBean.ms1LevelDataPointNumber = (int) peakList.get(detectedPeak.scanNumAtPeakTop)[0];
             peakAreaBean.ms2LevelDataPointNumber = LCMSDataAccessUtility.getMS2DatapointNumber(
-                    (int)peakList.get(detectedPeak.scanNumAtLeftPeakEdge)[0], (int)peakList.get(detectedPeak.scanNumAtRightPeakEdge)[0],
-                    (float)peakList.get(detectedPeak.scanNumAtPeakTop)[2], properties.centroidMS1Tolerance, spectrumList, properties.ionMode);
+                  (int) peakList.get(detectedPeak.scanNumAtLeftPeakEdge)[0], (int) peakList.get(detectedPeak.scanNumAtRightPeakEdge)[0],
+                  (float) peakList.get(detectedPeak.scanNumAtPeakTop)[2], properties.centroidMS1Tolerance, spectrumList, properties.ionMode);
             peakAreaBeanList.add(peakAreaBean);
         }
 
@@ -178,8 +194,7 @@ public class DataDependentPeakSpotting {
     private static List<PeakAreaBean> filterPeaksByRawChromatogram(List<double[]> peakList, List<PeakAreaBean> detectedPeakAreas) {
         List<PeakAreaBean> newPeakAreas = new ArrayList<>();
 
-        logger.trace("Peak list size: "+ peakList.size() +", Detected peaks size: "+ detectedPeakAreas.size());
-
+        logger.trace("Peak list size: " + peakList.size() + ", Detected peaks size: " + detectedPeakAreas.size());
 
         for (PeakAreaBean peak : detectedPeakAreas) {
             int scanNum = peak.scanNumberAtPeakTop;
@@ -190,7 +205,7 @@ public class DataDependentPeakSpotting {
             if (peakList.get(scanNum - 1)[3] <= 0 || peakList.get(scanNum + 1)[3] <= 0)
                 continue;
 
-            logger.trace("Retaining scan #"+ peak.scanNumberAtPeakTop);
+            logger.trace("Retaining scan #" + peak.scanNumberAtPeakTop);
             newPeakAreas.add(peak);
         }
 
@@ -285,11 +300,11 @@ public class DataDependentPeakSpotting {
                 if (Math.abs(parentPeakAreaBeanList.get(j).accurateMass - detectedPeakAreas.get(i).accurateMass) <= massStep * 0.5) {
                     boolean isOverlapped = isOverlapedChecker(parentPeakAreaBeanList.get(j), detectedPeakAreas.get(i));
 
-                    if (isOverlapped)
+                    if (!isOverlapped)
                         continue;
 
                     double hwhm = ((parentPeakAreaBeanList.get(j).rtAtRightPeakEdge - parentPeakAreaBeanList.get(j).rtAtLeftPeakEdge) +
-                            (detectedPeakAreas.get(i).rtAtRightPeakEdge - detectedPeakAreas.get(i).rtAtLeftPeakEdge)) * 0.25;
+                          (detectedPeakAreas.get(i).rtAtRightPeakEdge - detectedPeakAreas.get(i).rtAtLeftPeakEdge)) * 0.25;
 
                     double tolerance = Math.min(hwhm, 0.03);
 
@@ -318,7 +333,6 @@ public class DataDependentPeakSpotting {
     }
 
     /**
-     *
      * @param peakA
      * @param peakB
      * @return
@@ -347,7 +361,6 @@ public class DataDependentPeakSpotting {
     }
 
     /**
-     *
      * @param peakAreaBeanList
      * @param spectrumList
      * @param properties
@@ -356,9 +369,9 @@ public class DataDependentPeakSpotting {
     private static List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialProcessingProperties properties) {
 
         peakAreaBeanList = peakAreaBeanList.stream()
-                .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
-                .thenComparing(PeakAreaBean::accurateMass))
-                .collect(Collectors.toList());
+              .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
+                    .thenComparing(PeakAreaBean::accurateMass))
+              .collect(Collectors.toList());
 
         for (int i = 0; i < peakAreaBeanList.size(); i++) {
             peakAreaBeanList.get(i).peakID = i;
@@ -366,18 +379,18 @@ public class DataDependentPeakSpotting {
         }
 
         peakAreaBeanList = peakAreaBeanList.stream()
-                .sorted(Comparator.comparing(PeakAreaBean::intensityAtPeakTop))
-                .collect(Collectors.toList());
+              .sorted(Comparator.comparing(PeakAreaBean::intensityAtPeakTop))
+              .collect(Collectors.toList());
 
         if (peakAreaBeanList.size() - 1 > 0) {
             for (int i = 0; i < peakAreaBeanList.size(); i++) {
-                peakAreaBeanList.get(i).amplitudeScoreValue = ((double)i / (peakAreaBeanList.size() - 1));
+                peakAreaBeanList.get(i).amplitudeScoreValue = ((double) i / (peakAreaBeanList.size() - 1));
             }
         }
 
         return peakAreaBeanList.stream()
-                .sorted(Comparator.comparing(PeakAreaBean::peakID))
-                .collect(Collectors.toList());
+              .sorted(Comparator.comparing(PeakAreaBean::peakID))
+              .collect(Collectors.toList());
     }
 
 
