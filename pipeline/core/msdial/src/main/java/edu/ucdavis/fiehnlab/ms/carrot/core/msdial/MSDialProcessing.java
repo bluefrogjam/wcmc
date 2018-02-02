@@ -24,6 +24,8 @@ public class MSDialProcessing {
         // Isotope detection
         new IsotopeEstimator().setIsotopeInformation(detectedPeaks, properties);
 
+        // Calculate peak properties for deconvolution
+
         logger.warn("Returning tha input sample");
         // TODO add deconvolution and return a ProcessedSample
         return sample;
