@@ -77,8 +77,7 @@ public class LCMSDataAccessUtility {
             List<Ion> massSpectrum = TypeConverter.getJavaIonList(spectrum);
             int startIndex = getMs1StartIndex(focusedMass, massSliceWidth, massSpectrum);
 
-            int i =0;
-            for (i = startIndex; i < massSpectrum.size(); i++) {
+            for (int i = startIndex; i < massSpectrum.size(); i++) {
                 if (massSpectrum.get(i).mass() < focusedMass - massSliceWidth) {
                     continue;
                 } else if (focusedMass - massSliceWidth <= massSpectrum.get(i).mass() && massSpectrum.get(i).mass() <= focusedMass + massSliceWidth) {
@@ -92,7 +91,7 @@ public class LCMSDataAccessUtility {
                     break;
                 }
             }
-            peakList.add(new double[] { i, spectrum.retentionTimeInMinutes(), maxMass, sum });
+            peakList.add(new double[] { spectrum.scanNumber(), spectrum.retentionTimeInMinutes(), maxMass, sum });
         }
 
         return peakList;
