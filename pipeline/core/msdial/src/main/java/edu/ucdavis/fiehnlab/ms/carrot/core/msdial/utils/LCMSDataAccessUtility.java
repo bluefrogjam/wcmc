@@ -63,7 +63,7 @@ public class LCMSDataAccessUtility {
 
         for (Feature spectrum : spectrumList) {
             // Filter by msLevel, ion mode and retention time
-            if (spectrum.associatedScan().get().msLevel() > 1 || !spectrum.ionMode().get().equals(ionMode) || spectrum.retentionTimeInMinutes() < rtBegin) {
+            if (spectrum.associatedScan().get().msLevel() > 1 || !spectrum.ionMode().get().mode().equals(ionMode.mode()) || spectrum.retentionTimeInMinutes() < rtBegin) {
                 continue;
             }
             if (spectrum.retentionTimeInMinutes() > rtEnd) {
@@ -258,7 +258,7 @@ public class LCMSDataAccessUtility {
             if (spectrumList.get(i).retentionTimeInMinutes() > endRt)
                 break;
 
-            if (spectrumList.get(i) instanceof MSMSSpectra && spectrumList.get(i).ionMode().get() == ionMode) {
+            if (spectrumList.get(i) instanceof MSMSSpectra && spectrumList.get(i).ionMode().get().mode().equals(ionMode.mode())) {
                 MSMSSpectra spectrum = (MSMSSpectra)spectrumList.get(i);
                 List<Ion> massSpectrum = TypeConverter.getJavaIonList(spectrum);
 
@@ -303,7 +303,7 @@ public class LCMSDataAccessUtility {
             startPoint = 0;
 
         for (int i = startPoint; i < endPoint; i++) {
-            if (spectrumList.get(i) instanceof MSMSSpectra && spectrumList.get(i).ionMode().get() == ionMode) {
+            if (spectrumList.get(i) instanceof MSMSSpectra && spectrumList.get(i).ionMode().get().mode().equals(ionMode.mode())) {
                 MSMSSpectra spectrum = (MSMSSpectra)spectrumList.get(i);
 
                 if (Math.abs(accurateMass - spectrum.precursorIon()) <= tolerance) {
