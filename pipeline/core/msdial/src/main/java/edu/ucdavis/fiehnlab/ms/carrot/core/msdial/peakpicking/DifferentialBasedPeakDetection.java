@@ -86,9 +86,9 @@ public class DifferentialBasedPeakDetection {
             }
         }
 
-        double amplitudeNoise = amplitudeNoiseCandidate.isEmpty() ? 0.0001 : BasicMathematics.BrokenMedian(amplitudeNoiseCandidate);
-        double slopeNoise = slopeNoiseCandidate.isEmpty() ? 0.0001 : BasicMathematics.BrokenMedian(slopeNoiseCandidate);
-        double peaktopNoise = peaktopNoiseCandidate.isEmpty() ? 0.0001 : BasicMathematics.BrokenMedian(peaktopNoiseCandidate);
+        double amplitudeNoise = amplitudeNoiseCandidate.isEmpty() ? 0.0001 : BasicMathematics.brokenMedian(amplitudeNoiseCandidate);
+        double slopeNoise = slopeNoiseCandidate.isEmpty() ? 0.0001 : BasicMathematics.brokenMedian(slopeNoiseCandidate);
+        double peaktopNoise = peaktopNoiseCandidate.isEmpty() ? 0.0001 : BasicMathematics.brokenMedian(peaktopNoiseCandidate);
 
 
         // Search peaks
@@ -149,9 +149,9 @@ public class DifferentialBasedPeakDetection {
                     i++;
                     dataPoints.add(new double[] { peakList.get(i)[0], peakList.get(i)[1], peakList.get(i)[2], peakList.get(i)[3], firstDiffPeakList.get(i), secondDiffPeakList.get(i) });
 
-                    // TODO: multiplcation by peaktopNoiseFoldCriteria was removed in current MS-DIAL repo version!
+                    // TODO: multiplcation by peaktopNoiseFoldCriteria was removed in current MS-DIAL repo version! - it's been added back for now
                     if (!peaktopCheck && (firstDiffPeakList.get(i - 1) > 0 && firstDiffPeakList.get(i) < 0) ||
-                            (firstDiffPeakList.get(i - 1) > 0 && firstDiffPeakList.get(i + 1) < 0) && secondDiffPeakList.get(i) < -1 * peaktopNoise) {
+                            (firstDiffPeakList.get(i - 1) > 0 && firstDiffPeakList.get(i + 1) < 0) && secondDiffPeakList.get(i) < -1 * peaktopNoise * peaktopNoiseFoldCriteria) {
 
                         peaktopCheck = true;
                         peaktopCheckPoint = i;
