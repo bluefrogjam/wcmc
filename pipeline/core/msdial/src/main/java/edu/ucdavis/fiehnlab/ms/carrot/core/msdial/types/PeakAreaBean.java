@@ -61,9 +61,6 @@ public class PeakAreaBean {
 	public double accurateMass() { return accurateMass; }
 	public double intensityAtPeakTop() { return intensityAtPeakTop; }
 	public double peakID() { return peakID; }
-	public double scanNumAtPeakTop() { return scanNumberAtPeakTop; }
-	public double sharpenessValue() { return sharpenessValue; }
-	public double idealSlopeValue() { return idealSlopeValue; }
 
 	@Override
 	public String toString() {
