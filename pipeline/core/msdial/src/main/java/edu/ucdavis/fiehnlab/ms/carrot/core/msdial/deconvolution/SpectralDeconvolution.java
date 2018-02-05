@@ -12,6 +12,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SmoothingMethod;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SpectralCentroiding;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class SpectralDeconvolution {
             double endRt = detectedPeak.rtAtPeakTop + (detectedPeak.rtAtRightPeakEdge - detectedPeak.rtAtLeftPeakEdge);
             double precursorMz = detectedPeak.accurateMass;
 
-            List<Ion> centroidedSpectrum = SpectralCentroiding.getCentroidSpectrum(spectrumList, properties.dataType, detectedPeak.ms2LevelDataPointNumber, properties.centroidMS2Tolerance, properties.peakDetectionBasedCentroid);
+            List<Ion> centroidedSpectrum = new ArrayList<>(SpectralCentroiding.getCentroidSpectrum(spectrumList, properties.dataType, detectedPeak.ms2LevelDataPointNumber, properties.centroidMS2Tolerance, properties.peakDetectionBasedCentroid));
             centroidedSpectrum.sort(Comparator.comparing(Ion::mass));
 
             if (!centroidedSpectrum.isEmpty()) {

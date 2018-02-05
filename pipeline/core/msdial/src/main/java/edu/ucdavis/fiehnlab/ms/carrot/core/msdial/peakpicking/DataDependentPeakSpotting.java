@@ -163,7 +163,7 @@ public class DataDependentPeakSpotting {
             properties.slopeNoiseFactor, properties.peaktopNoiseFactor);
 
         if (detectedPeaks.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         List<PeakAreaBean> peakAreaBeanList = new ArrayList<>();
@@ -326,7 +326,7 @@ public class DataDependentPeakSpotting {
                 return detectedPeakAreas;
 
             if (detectedPeakAreas.isEmpty())
-                return Collections.emptyList();
+                return new ArrayList<>();
         }
 
         return detectedPeakAreas;

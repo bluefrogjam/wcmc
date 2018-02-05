@@ -22,16 +22,19 @@ public class MSDialProcessing {
 
         // Peak picking
         List<PeakAreaBean> detectedPeaks = new DataDependentPeakSpotting().getPeaks(spectra, properties);
+        logger.debug("Peaks after peak detection: " + detectedPeaks.size());
 
-        logger.debug("Peaks before isotope estimation: " + detectedPeaks.size());
         // Isotope detection
         new IsotopeEstimator().setIsotopeInformation(detectedPeaks, properties);
-        logger.debug("Peaks after  isotope estimation: " + detectedPeaks.size());
+        logger.debug("Peaks after isotope estimation: " + detectedPeaks.size());
 
         // Calculate peak properties for deconvolution
         // DataSummary bean does not appear to be used, so skipping that translation
         List<MS2DecResult> deconvolutionResults = new SpectralDeconvolution().getMS2Deconvolution(spectra, detectedPeaks, properties);
-
+        logger.debug("Peaks after deconvolution: " + detectedPeaks.size());
+        for(PeakAreaBean peak: detectedPeaks){
+            logger.debug(peak.toString());
+        }
 
 
         logger.warn("Returning tha input sample");

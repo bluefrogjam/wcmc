@@ -27,7 +27,7 @@ public class SpectralCentroiding {
     public static List<Ion> getCentroidSpectrum(List<Feature> spectrumList, MSDataType dataType, int msScanPoint, double massBin, boolean peakDetectionBasedCentroid) {
 
         if (msScanPoint < 0) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         List<Ion> spectrum = TypeConverter.getJavaIonList(spectrumList.get(msScanPoint));
@@ -36,7 +36,7 @@ public class SpectralCentroiding {
             return spectrum;
         }
 
-        List<Ion> centroidedSpectra = centroid(spectrum, massBin, peakDetectionBasedCentroid);
+        List<Ion> centroidedSpectra = new ArrayList<>(centroid(spectrum, massBin, peakDetectionBasedCentroid));
 
         // Return the original spectrum if the centroided version is empty
         return centroidedSpectra.isEmpty() ? spectrum : centroidedSpectra;
@@ -217,7 +217,7 @@ public class SpectralCentroiding {
 			}
 
 			if (centroidedSpectrum.isEmpty()) {
-				return Collections.emptyList();
+				return new ArrayList<>();
 			}
 
 
