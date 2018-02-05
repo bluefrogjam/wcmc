@@ -11,6 +11,7 @@ object TypeConverter {
 
   /**
     * Converts the Sample spectra Seq to a Java List
+    *
     * @param sample
     * @return
     */
@@ -20,6 +21,7 @@ object TypeConverter {
 
   /**
     * Converts the Feature ion Seq to a Java List
+    *
     * @param spectrum
     * @return
     */
