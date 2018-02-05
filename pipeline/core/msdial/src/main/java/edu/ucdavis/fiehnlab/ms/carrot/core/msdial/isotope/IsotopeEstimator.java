@@ -10,9 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.MolecularFormulaUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by diego on 8/26/2016.
@@ -23,7 +21,6 @@ public class IsotopeEstimator {
 
 
     public void setIsotopeInformation(List<PeakAreaBean> detectedPeakAreas, MSDialProcessingProperties properties) {
-logger.trace("Incoming peaks: " + detectedPeakAreas.size());
         detectedPeakAreas.sort(Comparator.comparing(PeakAreaBean::accurateMass));
 
         int spectrumMargin = 2;
@@ -38,7 +35,8 @@ logger.trace("Incoming peaks: " + detectedPeakAreas.size());
             double focusedRt = peak.rtAtPeakTop;
 
             int startScanIndex = getStartIndexForTargetMass(focusedMass - 0.0001, detectedPeakAreas);
-            List<PeakAreaBean> isotopeCandidates = Collections.singletonList(peak);
+            List<PeakAreaBean> isotopeCandidates = new ArrayList<>();
+            isotopeCandidates.add(peak);
 
             for (int i = startScanIndex; i < detectedPeakAreas.size(); i++) {
                 if (detectedPeakAreas.get(i).peakID == peak.peakID)

@@ -65,7 +65,7 @@ public class IsotopeRatioCalculator {
 
         if (Character.isDigit(formula.charAt(0))) {
             logger.warn("The element composition name format is incorrect for "+ formula);
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         matchElement(formula, "C(?!a|d|e|l|o|r|s|u)([0-9]*)", "C", elementProfile);
@@ -80,7 +80,7 @@ public class IsotopeRatioCalculator {
         matchElement(formula, "C(?!a|d|e|l|o|r|s|u)([0-9]*)", "I", elementProfile);
         matchElement(formula, "C(?!a|d|e|l|o|r|s|u)([0-9]*)", "C", elementProfile);
 
-        return elementProfile.isEmpty() ? Collections.emptyList() : elementProfile;
+        return elementProfile.isEmpty() ? new ArrayList<>() : elementProfile;
     }
 
     private void setIupacReferenceInformation(CompoundProperties compoundProperties) {
@@ -93,7 +93,7 @@ public class IsotopeRatioCalculator {
                 accurateMass += elementProperties.iupacElements.get(0).accurateMass * elementProperties.elementNumber;
             } else {
                 logger.warn(elementProperties.elementName +" is not included in IUPAC reference");
-                compoundProperties.elementProfile = Collections.emptyList();
+                compoundProperties.elementProfile = new ArrayList<>();
                 return;
             }
         }
