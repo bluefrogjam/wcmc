@@ -1,7 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.isotope;
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.isotope.CompoundProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.MassDiffDictionary;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.MolecularFormulaUtility;
 import org.slf4j.Logger;
@@ -288,4 +291,178 @@ logger.trace("Incoming peaks: " + detectedPeakAreas.size());
         return startIndex;
     }
 
+
+    /// <summary>
+    /// peak list must be sorted by m/z (ordering)
+    /// peak should be initialized by new Peak() { Mz = spec[0], Intensity = spec[1], Charge = 1, IsotopeFrag = false, Comment = "NA" }
+    /// </summary>
+
+    /**
+     *
+     * @param peaks
+     * @param maxTraceNumber
+     * @param maxChargeNumber
+     * @param tolerance
+     */
+    public void msmsIsotopeRecognition(List<Peak> peaks, int maxTraceNumber, int maxChargeNumber, double tolerance) {
+
+        for (int i = 0; i < peaks.size(); i++) {
+            Peak peak = peaks.get(i);
+
+            if (!peak.comment.equals("NA"))
+                continue;
+
+            peak.isotopeFragment = false;
+            peak.comment = Integer.toString(i);
+
+            // Charge state checking at M + 1
+            int predChargeNumber = 1;
+
+            for (int j = i + 1; j < peaks.size(); j++) {
+                Peak isotopePeak = peaks.get(j);
+
+                if (isotopePeak.mz > peak.mz + MassDiffDictionary.C13_C12 + tolerance)
+                    break;
+                if (!isotopePeak.comment.equals("NA"))
+                    continue;
+
+                for (int k = maxChargeNumber; k >= 1; k--) {
+                    double predIsotopeMass = peak.mz + MassDiffDictionary.C13_C12 / k;
+                    double diff = Math.abs(predIsotopeMass - isotopePeak.mz);
+
+                    if (diff < tolerance) {
+                        predChargeNumber = k;
+
+                        if (k <= 3) {
+                            break;
+                        } else if (k == 4 || k == 5) {
+                            double predNextIsotopeMass = peak.mz + MassDiffDictionary.C13_C12 / (k - 1);
+                            double nextDiff = Math.abs(predNextIsotopeMass - isotopePeak.mz);
+
+                            if (diff > nextDiff)
+                                predChargeNumber = k - 1;
+
+                            break;
+                        } else if (k >= 6) {
+                            double predNextIsotopeMass = peak.mz + MassDiffDictionary.C13_C12 / (k - 1);
+                            double nextDiff = Math.abs(predNextIsotopeMass - isotopePeak.mz);
+
+                            if (diff > nextDiff) {
+                                predChargeNumber = k - 1;
+                                diff = nextDiff;
+
+                                predNextIsotopeMass = peak.mz + MassDiffDictionary.C13_C12 / (k - 2);
+                                nextDiff = Math.abs(predNextIsotopeMass - isotopePeak.mz);
+
+                                if (diff > nextDiff) {
+                                    predChargeNumber = k - 2;
+                                    diff = nextDiff;
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                if (predChargeNumber != 1)
+                    break;
+            }
+
+            peak.charge = predChargeNumber;
+
+
+            // Isotope grouping till M + 8
+            IsotopePeak[] isotopeTemps = new IsotopePeak[maxTraceNumber + 1];
+            isotopeTemps[0] = new IsotopePeak(0, peak.mz, peak.intensity, i);
+
+            int reminderIndex = i + 1;
+            boolean isFinished = false;
+
+            for (int j = 1; j <= maxTraceNumber; j++) {
+                double predIsotopicMass = peak.mz + j * MassDiffDictionary.C13_C12 / (double)predChargeNumber;
+
+                for (int k = reminderIndex; k < peaks.size(); k++) {
+                    Peak isotopePeak = peaks.get(k);
+
+                    if (!isotopePeak.comment.equals("NA"))
+                        continue;
+
+                    if (predIsotopicMass - tolerance < isotopePeak.mz && isotopePeak.mz < predIsotopicMass + tolerance) {
+                        if (isotopeTemps[j] == null) {
+                            isotopeTemps[j] = new IsotopePeak(j, isotopePeak.mz, isotopePeak.intensity, k);
+                        } else {
+                            if (Math.abs(isotopeTemps[j].mz - predIsotopicMass) > Math.abs(isotopePeak.mz - predIsotopicMass)) {
+                                isotopeTemps[j].mz = isotopePeak.mz;
+                                isotopeTemps[j].intensity = isotopePeak.intensity;
+                                isotopeTemps[j].peakID = k;
+                            }
+                        }
+                    } else if (isotopePeak.mz >= predIsotopicMass + tolerance) {
+                        reminderIndex = k;
+
+                        if (isotopeTemps[j] == null)
+                            isFinished = true;
+
+                        break;
+                    }
+                }
+
+                if (isFinished)
+                    break;
+            }
+
+
+            // Finalize and store
+            double reminderIntensity = peak.intensity;
+            double monoisotopicMass = peak.mz * predChargeNumber;
+            String simulatedFormulaByAlkane = getSimulatedFormulaByAlkane(monoisotopicMass);
+
+            // From here, simple decreasing will be expected for <= 800 Da
+            // Simulated profiles by alkane formula will be projected to the real abundances for the peaks of more than 800 Da
+            CompoundProperties simulatedIsotopicPeaks = null;
+
+            if (monoisotopicMass > 800)
+                simulatedIsotopicPeaks = new IsotopeRatioCalculator().getNominalIsotopeProperty(simulatedFormulaByAlkane, 9);
+
+            for (int j = 1; j <= maxTraceNumber; j++) {
+                if (isotopeTemps[j] == null) break;
+                if (isotopeTemps[j].intensity <= 0) break;
+
+                if (monoisotopicMass <= 800) {
+                    if (isotopeTemps[j - 1].intensity > isotopeTemps[j].intensity) {
+                        peaks.get(isotopeTemps[j].peakID).isotopeFragment = true;
+                        peaks.get(isotopeTemps[j].peakID).charge = peak.charge;
+                        peaks.get(isotopeTemps[j].peakID).comment = Integer.toString(i);
+                    } else {
+                        break;
+                    }
+                } else {
+                    double expRatio = isotopeTemps[j].intensity / isotopeTemps[j - 1].intensity;
+                    double simRatio = simulatedIsotopicPeaks.isotopeProfile.get(j).relativeAbundance / simulatedIsotopicPeaks.isotopeProfile.get(j - 1).relativeAbundance;
+
+                    if (Math.abs(expRatio - simRatio) < 5.0) {
+                        peaks.get(isotopeTemps[j].peakID).isotopeFragment = true;
+                        peaks.get(isotopeTemps[j].peakID).charge = peak.charge;
+                        peaks.get(isotopeTemps[j].peakID).comment = Integer.toString(i);
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+
+    private String getSimulatedFormulaByAlkane(double mass) {
+        double ch2Mass = 14.0;
+        int carbonCount = (int)(mass / ch2Mass);
+        int hCount = carbonCount * 2;
+
+        if (carbonCount == 0 || carbonCount == 1)
+            return "CH2";
+        else {
+            return "C"+ carbonCount +"H"+ hCount;
+        }
+    }
 }

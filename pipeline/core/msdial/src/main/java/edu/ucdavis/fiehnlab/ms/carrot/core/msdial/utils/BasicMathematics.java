@@ -8,9 +8,31 @@ import java.util.List;
  */
 public class BasicMathematics {
 
-    public static double Median(List<Double> list) {
-        if (list == null || list.size() == 0)
-            throw new IllegalArgumentException("The list can't be empty");
+    /**
+     * Far more efficient and less error-prone binomial coefficient
+     * @param n
+     * @param k
+     * @return
+     */
+    public static long binomialCoefficient(int n, int k) {
+        if (k < 0 || k > n) {
+            return 0;
+        } else {
+            int p = 1, q = 1;
+
+            for (int i = 1; i <= Math.min(k, n - k); i++) {
+                p *= n;
+                q *= i;
+                n -= 1;
+            }
+
+            return p / q;
+        }
+    }
+
+	public static double median(List<Double> list) {
+		if (list == null || list.size() == 0)
+			throw new IllegalArgumentException("The list can't be empty");
 
         list.sort(Double::compareTo);
 
@@ -21,9 +43,9 @@ public class BasicMathematics {
         }
     }
 
-    public static double MedianInt(List<Integer> list) {
-        if (list == null || list.size() == 0)
-            throw new IllegalArgumentException("The list can't be empty");
+	public static double medianInt(List<Integer> list) {
+		if (list == null || list.size() == 0)
+			throw new IllegalArgumentException("The list can't be empty");
 
         list.sort(Integer::compareTo);
 
@@ -50,9 +72,9 @@ public class BasicMathematics {
         return sum;
     }
 
-    public static double BrokenMedian(List<Double> list) {
-        List<Double> sortedlist = new ArrayList<>(list);
-        sortedlist.sort(Double::compareTo);
+	public static double brokenMedian(List<Double> list) {
+		List<Double> sortedlist = new ArrayList<>(list);
+		sortedlist.sort(Double::compareTo);
 
         return sortedlist.get(sortedlist.size() / 2);
     }
