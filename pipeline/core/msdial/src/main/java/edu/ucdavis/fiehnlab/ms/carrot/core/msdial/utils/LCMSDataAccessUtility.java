@@ -15,11 +15,12 @@ import java.util.List;
 
 public class LCMSDataAccessUtility {
 
-	private static Logger logger = LoggerFactory.getLogger(LCMSDataAccessUtility.class);
+    private static Logger logger = LoggerFactory.getLogger(LCMSDataAccessUtility.class);
 
 
     /**
      * Get the scan range (min/max m/z) for a given list of spectra
+     *
      * @param spectrumList
      * @param ionMode
      * @return
@@ -43,12 +44,13 @@ public class LCMSDataAccessUtility {
             }
         }
 
-        return new double[] { minMz, maxMz };
+        return new double[]{minMz, maxMz};
     }
 
 
     /**
      * Get a simple EIC from a given list of spectra
+     *
      * @param spectrumList
      * @param focusedMass
      * @param massSliceWidth
@@ -91,16 +93,14 @@ public class LCMSDataAccessUtility {
                     break;
                 }
             }
-            peakList.add(new double[] { spectrum.scanNumber(), spectrum.retentionTimeInMinutes(), maxMass, sum });
+            peakList.add(new double[]{spectrum.scanNumber(), spectrum.retentionTimeInMinutes(), maxMass, sum});
         }
 
         return peakList;
     }
 
 
-
     /**
-     *
      * @param targetMass
      * @param tolerance
      * @param spectrum
@@ -111,14 +111,13 @@ public class LCMSDataAccessUtility {
     }
 
     /**
-     *
      * @param targetMass
      * @param spectrum
      * @return
      */
-	private static int getMs2StartIndex(double targetMass, List<Ion> spectrum) {
-		return getStartIndexForTargetMass(targetMass, spectrum, 0);
-	}
+    private static int getMs2StartIndex(double targetMass, List<Ion> spectrum) {
+        return getStartIndexForTargetMass(targetMass, spectrum, 0);
+    }
 
     /**
      * Finds the start of the chromatographic peak for the selected targetMass
@@ -127,7 +126,7 @@ public class LCMSDataAccessUtility {
      *
      * @param focusedMass
      * @param spectrum
-     * @param tolerance (optional)
+     * @param tolerance   (optional)
      * @return
      */
     private static int getStartIndexForTargetMass(double focusedMass, List<Ion> spectrum, double tolerance) {
@@ -157,7 +156,6 @@ public class LCMSDataAccessUtility {
     }
 
     /**
-     *
      * @param targetRt
      * @param spectrumList
      * @return
@@ -216,8 +214,8 @@ public class LCMSDataAccessUtility {
 //		pab.metaboliteName = "";
 //		pab.adductIonName = "";
 //		pab.libraryID = -1;
-		peak.isotopeWeightNumber = -1;
-		peak.isotopeParentPeakID = -1;
+        peak.isotopeWeightNumber = -1;
+        peak.isotopeParentPeakID = -1;
 //		pab.adductParent = -1;
 //		pab.rtSimilarityValue = -1;
 //		pab.isotopeSimilarityValue = -1;
@@ -233,7 +231,6 @@ public class LCMSDataAccessUtility {
 
 
     /**
-     *
      * @param spectrumList
      * @param precursorMz
      * @param productMz
@@ -244,7 +241,7 @@ public class LCMSDataAccessUtility {
      * @param centroidMS2Tolerance
      * @return
      */
-    public static List<double[]> getMS2Peaklist(List<Feature> spectrumList, double precursorMz, double productMz,double startRt,
+    public static List<double[]> getMS2Peaklist(List<Feature> spectrumList, double precursorMz, double productMz, double startRt,
                                                 double endRt, IonMode ionMode, double centroidedMS1Tolerance, double centroidMS2Tolerance) {
 
         List<double[]> peakList = new ArrayList<>();
@@ -258,7 +255,7 @@ public class LCMSDataAccessUtility {
                 break;
 
             if (spectrumList.get(i) instanceof MSMSSpectra && spectrumList.get(i).ionMode().get().mode().equals(ionMode.mode())) {
-                MSMSSpectra spectrum = (MSMSSpectra)spectrumList.get(i);
+                MSMSSpectra spectrum = (MSMSSpectra) spectrumList.get(i);
                 List<Ion> massSpectrum = TypeConverter.getJavaIonList(spectrum);
 
                 double sum = 0;
@@ -277,7 +274,7 @@ public class LCMSDataAccessUtility {
                     }
                 }
 
-                peakList.add(new double[] { i, spectrum.retentionTimeInMinutes(), 0, sum });
+                peakList.add(new double[]{i, spectrum.retentionTimeInMinutes(), 0, sum});
             }
         }
 
@@ -285,7 +282,6 @@ public class LCMSDataAccessUtility {
     }
 
     /**
-     *
      * @param startPoint
      * @param endPoint
      * @param accurateMass
@@ -303,7 +299,7 @@ public class LCMSDataAccessUtility {
 
         for (int i = startPoint; i < endPoint; i++) {
             if (spectrumList.get(i) instanceof MSMSSpectra && spectrumList.get(i).ionMode().get().mode().equals(ionMode.mode())) {
-                MSMSSpectra spectrum = (MSMSSpectra)spectrumList.get(i);
+                MSMSSpectra spectrum = (MSMSSpectra) spectrumList.get(i);
 
                 if (Math.abs(accurateMass - spectrum.precursorIon()) <= tolerance) {
                     if (maxIntensity < spectrum.associatedScan().get().basePeak().intensity()) {
@@ -318,9 +314,9 @@ public class LCMSDataAccessUtility {
     }
 
 
-
     /**
      * Smooth a peak list with the specified smoothing method and level
+     *
      * @param peaklist
      * @param smoothingMethod
      * @param smoothingLevel

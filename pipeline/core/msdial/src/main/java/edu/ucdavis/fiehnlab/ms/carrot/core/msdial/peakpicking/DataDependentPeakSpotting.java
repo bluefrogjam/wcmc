@@ -73,7 +73,7 @@ public class DataDependentPeakSpotting {
 
             // Get EIC chromatogram
             peakList = LCMSDataAccessUtility.getMS1PeakList(spectrumList, focusedMass, properties.massSliceWidth,
-                  properties.retentionTimeBegin, properties.retentionTimeEnd, properties.ionMode);
+                properties.retentionTimeBegin, properties.retentionTimeEnd, properties.ionMode);
 
             if (peakList.isEmpty()) {
                 focusedMass += massStep;
@@ -83,7 +83,7 @@ public class DataDependentPeakSpotting {
 
             // Get peak detection result
             detectedPeaks = getPeakAreaBeanList(spectrumList, peakList, focusedMass,
-                  SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties);
+                SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties);
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
@@ -119,15 +119,15 @@ public class DataDependentPeakSpotting {
 
             focusedMass += massStep;
         }
-//        logger.trace("pre-Final detected: " + detectedPeaksList.size());
-        printDoublePeakList(detectedPeaksList);
+        logger.debug("pre-Final detected peak count: " + detectedPeaksList.size());
+//        printDoublePeakList(detectedPeaksList);
 
         detectedPeaks = getCombinedPeakAreaBeanList(detectedPeaksList);
-//        logger.trace("pos-combined detected: " + detectedPeaks.size());
+        logger.debug("pos-combined detected peak count: " + detectedPeaks.size());
 
         detectedPeaks = getPeakAreaBeanProperties(detectedPeaks, spectrumList, properties);
 
-        logger.debug("Final detected: " + detectedPeaks.size());
+        logger.debug("Final detected peak count: " + detectedPeaks.size());
 
         return detectedPeaks;
     }
@@ -159,8 +159,8 @@ public class DataDependentPeakSpotting {
         List<double[]> smoothedPeakList = LCMSDataAccessUtility.getSmoothedPeakArray(peakList, smoothingMethod, properties.smoothingLevel);
 
         List<PeakDetectionResult> detectedPeaks = DifferentialBasedPeakDetection.detectPeaks(smoothedPeakList,
-              properties.minimumDataPoints, properties.minimumAmplitude, properties.amplitudeNoiseFactor,
-              properties.slopeNoiseFactor, properties.peaktopNoiseFactor);
+            properties.minimumDataPoints, properties.minimumAmplitude, properties.amplitudeNoiseFactor,
+            properties.slopeNoiseFactor, properties.peaktopNoiseFactor);
 
         if (detectedPeaks.isEmpty()) {
             return Collections.emptyList();
@@ -178,8 +178,8 @@ public class DataDependentPeakSpotting {
             peakAreaBean.accurateMass = peakList.get(detectedPeak.scanNumAtPeakTop)[2];
             peakAreaBean.ms1LevelDataPointNumber = (int) peakList.get(detectedPeak.scanNumAtPeakTop)[0];
             peakAreaBean.ms2LevelDataPointNumber = LCMSDataAccessUtility.getMS2DatapointNumber(
-                  (int) peakList.get(detectedPeak.scanNumAtLeftPeakEdge)[0], (int) peakList.get(detectedPeak.scanNumAtRightPeakEdge)[0],
-                  (float) peakList.get(detectedPeak.scanNumAtPeakTop)[2], properties.centroidMS1Tolerance, spectrumList, properties.ionMode);
+                (int) peakList.get(detectedPeak.scanNumAtLeftPeakEdge)[0], (int) peakList.get(detectedPeak.scanNumAtRightPeakEdge)[0],
+                (float) peakList.get(detectedPeak.scanNumAtPeakTop)[2], properties.centroidMS1Tolerance, spectrumList, properties.ionMode);
             peakAreaBeanList.add(peakAreaBean);
         }
 
@@ -304,7 +304,7 @@ public class DataDependentPeakSpotting {
                         continue;
 
                     double hwhm = ((parentPeakAreaBeanList.get(j).rtAtRightPeakEdge - parentPeakAreaBeanList.get(j).rtAtLeftPeakEdge) +
-                          (detectedPeakAreas.get(i).rtAtRightPeakEdge - detectedPeakAreas.get(i).rtAtLeftPeakEdge)) * 0.25;
+                        (detectedPeakAreas.get(i).rtAtRightPeakEdge - detectedPeakAreas.get(i).rtAtLeftPeakEdge)) * 0.25;
 
                     double tolerance = Math.min(hwhm, 0.03);
 
@@ -355,7 +355,13 @@ public class DataDependentPeakSpotting {
      */
     private static List<PeakAreaBean> getCombinedPeakAreaBeanList(List<List<PeakAreaBean>> detectedPeaksList) {
         List<PeakAreaBean> combinedPeakAreaBeanList = new ArrayList<>();
-        Collections.addAll(detectedPeaksList);
+
+        for(int i = 0; i < detectedPeaksList.size(); i++) {
+            if(detectedPeaksList.size() == 0) continue;
+            for(int j = 0; j < detectedPeaksList.get(i).size(); j++) {
+                combinedPeakAreaBeanList.add(detectedPeaksList.get(i).get(j));
+            }
+        }
 
         return combinedPeakAreaBeanList;
     }
@@ -369,9 +375,9 @@ public class DataDependentPeakSpotting {
     private static List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialProcessingProperties properties) {
 
         peakAreaBeanList = peakAreaBeanList.stream()
-              .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
-                    .thenComparing(PeakAreaBean::accurateMass))
-              .collect(Collectors.toList());
+            .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
+                .thenComparing(PeakAreaBean::accurateMass))
+            .collect(Collectors.toList());
 
         for (int i = 0; i < peakAreaBeanList.size(); i++) {
             peakAreaBeanList.get(i).peakID = i;
@@ -379,8 +385,8 @@ public class DataDependentPeakSpotting {
         }
 
         peakAreaBeanList = peakAreaBeanList.stream()
-              .sorted(Comparator.comparing(PeakAreaBean::intensityAtPeakTop))
-              .collect(Collectors.toList());
+            .sorted(Comparator.comparing(PeakAreaBean::intensityAtPeakTop))
+            .collect(Collectors.toList());
 
         if (peakAreaBeanList.size() - 1 > 0) {
             for (int i = 0; i < peakAreaBeanList.size(); i++) {
@@ -389,8 +395,8 @@ public class DataDependentPeakSpotting {
         }
 
         return peakAreaBeanList.stream()
-              .sorted(Comparator.comparing(PeakAreaBean::peakID))
-              .collect(Collectors.toList());
+            .sorted(Comparator.comparing(PeakAreaBean::peakID))
+            .collect(Collectors.toList());
     }
 
 

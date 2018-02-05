@@ -4,6 +4,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.MassDiffDictionary;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.MolecularFormulaUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,12 +15,12 @@ import java.util.List;
  * Created by diego on 8/26/2016.
  */
 public class IsotopeEstimator {
-
+    private static Logger logger = LoggerFactory.getLogger(IsotopeEstimator.class);
     private static int MAX_ISOTOPE_NUMBER = 8;
 
 
     public void setIsotopeInformation(List<PeakAreaBean> detectedPeakAreas, MSDialProcessingProperties properties) {
-
+logger.trace("Incoming peaks: " + detectedPeakAreas.size());
         detectedPeakAreas.sort(Comparator.comparing(PeakAreaBean::accurateMass));
 
         int spectrumMargin = 2;
@@ -40,7 +42,7 @@ public class IsotopeEstimator {
                     continue;
 
                 if (Math.abs(detectedPeakAreas.get(i).scanNumberAtPeakTop - focusedScanNumber) < spectrumMargin ||
-                        Math.abs(detectedPeakAreas.get(i).rtAtPeakTop - focusedRt) < rtMargin)
+                    Math.abs(detectedPeakAreas.get(i).rtAtPeakTop - focusedRt) < rtMargin)
                     continue;
 
                 if (detectedPeakAreas.get(i).isotopeWeightNumber >= 0)
@@ -60,7 +62,6 @@ public class IsotopeEstimator {
 
 
     /**
-     *
      * @param isotopeCandidates
      * @param properties
      */
@@ -109,7 +110,7 @@ public class IsotopeEstimator {
                             predChargeNumber = j - 1;
                             diff = nextDiff;
 
-                            predNextIsotopeMass = (double)monoIsoPeak.accurateMass + MassDiffDictionary.C13_C12 / (j - 2);
+                            predNextIsotopeMass = (double) monoIsoPeak.accurateMass + MassDiffDictionary.C13_C12 / (j - 2);
                             nextDiff = Math.abs(predNextIsotopeMass - isotopePeak.accurateMass);
 
                             if (diff > nextDiff) {
@@ -141,7 +142,7 @@ public class IsotopeEstimator {
                 PeakAreaBean isotopePeak = isotopeCandidates.get(j);
 
                 if (predIsotopicMass - tolerance < isotopePeak.accurateMass &&
-                        isotopePeak.accurateMass < predIsotopicMass + tolerance) {
+                    isotopePeak.accurateMass < predIsotopicMass + tolerance) {
 
                     if (isotopeTemp[i] == null) {
                         isotopeTemp[i] = new IsotopePeak(i, isotopePeak.accurateMass, isotopePeak.intensityAtPeakTop, j);
@@ -183,11 +184,10 @@ public class IsotopeEstimator {
 
 
     /**
-     *
      * @param isotopeCandidates
      * @param properties
      */
-	private void isotopeCalculation(List<PeakAreaBean> isotopeCandidates, MSDialProcessingProperties properties) {
+    private void isotopeCalculation(List<PeakAreaBean> isotopeCandidates, MSDialProcessingProperties properties) {
 
         PeakAreaBean monoIsoPeak = isotopeCandidates.get(0);
         double ppm = MolecularFormulaUtility.ppmCalculator(200, 200 + properties.centroidMS1Tolerance);
@@ -264,11 +264,10 @@ public class IsotopeEstimator {
             if (isFinished)
                 break;
         }
-	}
+    }
 
 
     /**
-     *
      * @param targetMass
      * @param peakAreaBeans
      */
