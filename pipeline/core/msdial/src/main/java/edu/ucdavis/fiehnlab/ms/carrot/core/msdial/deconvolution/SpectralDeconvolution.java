@@ -44,9 +44,7 @@ public class SpectralDeconvolution {
     private MS2DecResult dataDependentMS2Deconvolution(List<Feature> spectrumList, PeakAreaBean detectedPeak, MSDialProcessingProperties properties) {
 
         MS2DecResult ms2DecResult = new MS2DecResult(detectedPeak);
-        System.out.println("Detected peak: " + detectedPeak.toString());
 
-        // >> MS1 spectrum
         List<Ion> ms1Spectrum = new ArrayList<>(SpectralCentroiding.getCentroidSpectrum(spectrumList, properties.dataType,
             detectedPeak.ms1LevelDataPointNumber, properties.centroidMS1Tolerance, properties.peakDetectionBasedCentroid));
 
