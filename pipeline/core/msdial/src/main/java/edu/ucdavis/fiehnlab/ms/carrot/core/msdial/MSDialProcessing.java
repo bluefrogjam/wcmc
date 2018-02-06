@@ -1,12 +1,14 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ProcessedSample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.deconvolution.SpectralDeconvolution;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.isotope.IsotopeEstimator;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.DataDependentPeakSpotting;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MS2DecResult;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.LCMSDataAccessUtility;
@@ -72,7 +74,7 @@ public class MSDialProcessing {
 
         logger.warn("Returning the input sample");
         // TODO add deconvolution and return a ProcessedSample
-        return sample;
-    }
 
+        return new MSDialProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
+    }
 }

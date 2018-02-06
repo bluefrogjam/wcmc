@@ -27,15 +27,18 @@ public class MS2DecResult {
     public List<double[]> baseChromatogram = new ArrayList<>();
     public List<Double> modelMasses = new ArrayList<>();
 
+    public PeakAreaBean peak;
+
     public MS2DecResult(PeakAreaBean peak) {
-        ms1IsotopicIonM1PeakHeight = peak.ms1IsotopicIonM1PeakHeight;
-        ms1IsotopicIonM2PeakHeight = peak.ms1IsotopicIonM2PeakHeight;
-        peakTopScan = peak.scanNumberAtPeakTop;
-        peakTopRetentionTime = peak.rtAtPeakTop;
-        ms1AccurateMass = peak.accurateMass;
-        ms1PeakHeight = peak.intensityAtPeakTop;
-        ms2DecPeakArea = -1.0;
-        ms2DecPeakHeight = -1.0f;
+        this.peak = peak;
+        this.ms1IsotopicIonM1PeakHeight = peak.ms1IsotopicIonM1PeakHeight;
+        this.ms1IsotopicIonM2PeakHeight = peak.ms1IsotopicIonM2PeakHeight;
+        this.peakTopScan = peak.scanNumberAtPeakTop;
+        this.peakTopRetentionTime = peak.rtAtPeakTop;
+        this.ms1AccurateMass = peak.accurateMass;
+        this.ms1PeakHeight = peak.intensityAtPeakTop;
+        this.ms2DecPeakArea = -1.0;
+        this.ms2DecPeakHeight = -1.0f;
         uniqueMs = -1.0;
     }
 
