@@ -66,7 +66,9 @@ public class LCMSDataAccessUtility {
 
         List<double[]> peakList = new ArrayList<>();
 
-        for (Feature spectrum : spectrumList) {
+        for (int i = 0; i < spectrumList.size(); i++) {
+            Feature spectrum = spectrumList.get(i);
+
             // Filter by msLevel, ion mode and retention time
             if (spectrum.associatedScan().get().msLevel() > 1 || !spectrum.ionMode().get().mode().equals(ionMode.mode()) || spectrum.retentionTimeInMinutes() < rtBegin) {
                 continue;
@@ -82,21 +84,22 @@ public class LCMSDataAccessUtility {
             List<Ion> massSpectrum = TypeConverter.getJavaIonList(spectrum);
             int startIndex = getMs1StartIndex(focusedMass, massSliceWidth, massSpectrum);
 
-            for (int i = startIndex; i < massSpectrum.size(); i++) {
-                if (massSpectrum.get(i).mass() < focusedMass - massSliceWidth) {
+            for (int j = startIndex; j < massSpectrum.size(); j++) {
+                if (massSpectrum.get(j).mass() < focusedMass - massSliceWidth) {
                     continue;
-                } else if (focusedMass - massSliceWidth <= massSpectrum.get(i).mass() && massSpectrum.get(i).mass() <= focusedMass + massSliceWidth) {
-                    sum += massSpectrum.get(i).intensity();
+                } else if (focusedMass - massSliceWidth <= massSpectrum.get(j).mass() && massSpectrum.get(j).mass() <= focusedMass + massSliceWidth) {
+                    sum += massSpectrum.get(j).intensity();
 
-                    if (maxIntensityMz < massSpectrum.get(i).intensity()) {
-                        maxIntensityMz = massSpectrum.get(i).intensity();
-                        maxMass = massSpectrum.get(i).mass();
+                    if (maxIntensityMz < massSpectrum.get(j).intensity()) {
+                        maxIntensityMz = massSpectrum.get(j).intensity();
+                        maxMass = massSpectrum.get(j).mass();
                     }
-                } else if (massSpectrum.get(i).mass() > focusedMass + massSliceWidth) {
+                } else if (massSpectrum.get(j).mass() > focusedMass + massSliceWidth) {
                     break;
                 }
             }
-            peakList.add(new double[]{spectrum.scanNumber(), spectrum.retentionTimeInMinutes(), maxMass, sum});
+
+            peakList.add(new double[]{i, spectrum.retentionTimeInMinutes(), maxMass, sum});
         }
 
         return peakList;
