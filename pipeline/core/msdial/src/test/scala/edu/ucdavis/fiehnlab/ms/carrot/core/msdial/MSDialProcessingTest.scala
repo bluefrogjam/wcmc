@@ -30,14 +30,15 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
 
   "MSDialProcessingTest" should {
 
-    "check peakpicking " in {
-      val sample: MSDKSample = MSDKSample("testA.mzml", new File("src/test/resources/testA.mzml"))
+    "check peakpicking" in {
+      val sample: MSDKSample = MSDKSample("testA.mzml", new File(getClass.getResource("/testA.mzml").getFile))
+
 
       sample.spectra.size should be > 1
 
       val outSample = msdProcessing.process(sample, properties)
 
-      logger.debug(s"Sample result: ${outSample}")
+      logger.debug(s"Sample result: $outSample")
       outSample.spectra should not be null
       outSample.spectra.size should be > 0
 
@@ -45,7 +46,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
     }
 
     "check peakpicking in RT range (1.45 - 1.60)" ignore {
-      val sample: MSDKSample = MSDKSample("testSmall0.mzml", new File("src/test/resources/testSmall0.mzml"))
+      val sample: MSDKSample = MSDKSample("testSmall0.mzml", new File(getClass.getResource("/testSmall0.mzml").getFile))
 
       val outSample = msdProcessing.process(sample, properties)
 
@@ -54,7 +55,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
     }
 
     "check peakpicking in RT range (10.00, 10.44)" ignore {
-      val sample: MSDKSample = MSDKSample("testSmall1.mzml", new File("src/test/resources/testSmall1.mzml"))
+      val sample: MSDKSample = MSDKSample("testSmall1.mzml", new File(getClass.getResource("/testSmall1.mzml").getFile))
 
       val outSample = msdProcessing.process(sample, properties)
 
@@ -62,7 +63,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
     }
 
     "check peakpicking in RT range (5.01, 5.27)" ignore {
-      val sample: MSDKSample = MSDKSample("testSmall2.mzml", new File("src/test/resources/testSmall2.mzml"))
+      val sample: MSDKSample = MSDKSample("testSmall2.mzml", new File(getClass.getResource("/testSmall2.mzml").getFile))
 
       val outSample = msdProcessing.process(sample, properties)
 
