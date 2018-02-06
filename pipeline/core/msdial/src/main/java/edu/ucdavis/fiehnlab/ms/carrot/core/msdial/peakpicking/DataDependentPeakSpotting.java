@@ -45,12 +45,7 @@ public class DataDependentPeakSpotting {
      * @return detected peak areas
      */
     public List<PeakAreaBean> getPeaks(List<Feature> spectrumList, MSDialProcessingProperties properties) {
-
         logger.info("Starting peak spotting...");
-        logger.trace("spectra: " + spectrumList.size());
-//        for(Feature spec : spectrumList) {
-//            logger.trace(spec.scanNumber() + " => " + spec.associatedScan().get().spectraString());
-//        }
 
         List<double[]> peakList;
         List<List<PeakAreaBean>> detectedPeaksList = new ArrayList<>();
@@ -59,9 +54,9 @@ public class DataDependentPeakSpotting {
         double[] mzRange = LCMSDataAccessUtility.getMS1ScanRange(spectrumList, properties.ionMode);
         double startMass = mzRange[0];
         double endMass = mzRange[1];
-        logger.trace("Scan range: [" + String.format("%.5f, %.5f", startMass, endMass) + "]");
 
         float focusedMass = (float) startMass, massStep = (float) properties.massSliceWidth;
+        logger.debug(String.format("Scan range: [%.5f, %.5f] === Focused mass: %.5f", startMass, endMass, focusedMass));
 
         while (focusedMass < endMass) {
             if (focusedMass < properties.massRangeBegin) {

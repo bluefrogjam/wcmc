@@ -30,6 +30,12 @@ public class SpectralCentroiding {
             return new ArrayList<>();
         }
 
+//        if(massBin <= 0.01) {
+//            msScanPoint--;
+//        }
+
+		System.out.println("Spectrum count\tscan point\tmass bin\tdata type\n" + spectrumList.size()+"\t"+ msScanPoint +"\t"+ massBin +"\t"+ dataType);
+
         List<Ion> spectrum = TypeConverter.getJavaIonList(spectrumList.get(msScanPoint));
 
         if (spectrum.isEmpty() || dataType == MSDataType.CENTROID) {
