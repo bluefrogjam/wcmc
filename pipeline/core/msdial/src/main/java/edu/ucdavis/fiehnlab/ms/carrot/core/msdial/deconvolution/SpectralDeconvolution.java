@@ -8,11 +8,11 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MS2DecResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.LCMSDataAccessUtility;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.Smoothing;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SmoothingMethod;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SpectralCentroiding;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class SpectralDeconvolution {
             MS2DecResult ms2DecResult = dataDependentMS2Deconvolution(spectrumList, detectedPeak, properties);
 
             // Replaces deisotopingForMSMSSpectra call
-            new IsotopeEstimator().msmsIsotopeRecognition(ms2DecResult.spectrum, properties.maxTraceNumber, detectedPeak.chargeNumber, properties.centroidMS2Tolerance);
+            new IsotopeEstimator().msmsIsotopeRecognition(ms2DecResult.ms2Spectrum, properties.maxTraceNumber, detectedPeak.chargeNumber, properties.centroidMS2Tolerance);
 
             deconvolutionResults.add(ms2DecResult);
         }
@@ -44,6 +44,11 @@ public class SpectralDeconvolution {
     private MS2DecResult dataDependentMS2Deconvolution(List<Feature> spectrumList, PeakAreaBean detectedPeak, MSDialProcessingProperties properties) {
 
         MS2DecResult ms2DecResult = new MS2DecResult(detectedPeak);
+        System.out.println("Detected peak: " + detectedPeak.toString());
+
+        // >> MS1 spectrum
+        List<Ion> ms1Spectrum = new ArrayList<>(SpectralCentroiding.getCentroidSpectrum(spectrumList, properties.dataType,
+            detectedPeak.ms1LevelDataPointNumber, properties.centroidMS1Tolerance, properties.peakDetectionBasedCentroid));
 
         if (detectedPeak.ms2LevelDataPointNumber == -1) {
             // No MS2 data
@@ -54,42 +59,45 @@ public class SpectralDeconvolution {
             double endRt = detectedPeak.rtAtPeakTop + (detectedPeak.rtAtRightPeakEdge - detectedPeak.rtAtLeftPeakEdge);
             double precursorMz = detectedPeak.accurateMass;
 
-            List<Ion> centroidedSpectrum = new ArrayList<>(SpectralCentroiding.getCentroidSpectrum(spectrumList, properties.dataType, detectedPeak.ms2LevelDataPointNumber, properties.centroidMS2Tolerance, properties.peakDetectionBasedCentroid));
+            List<Ion> centroidedSpectrumList = new ArrayList<>(SpectralCentroiding.getCentroidSpectrum(spectrumList, properties.dataType, detectedPeak.ms2LevelDataPointNumber, properties.centroidMS2Tolerance, properties.peakDetectionBasedCentroid));
+            List<Ion> centroidedSpectrum = new ArrayList<>(centroidedSpectrumList);
             centroidedSpectrum.sort(Comparator.comparing(Ion::mass));
 
             if (!centroidedSpectrum.isEmpty()) {
-                for (Ion ion: centroidedSpectrum) {
+                for (Ion ion : centroidedSpectrum) {
                     if (properties.removeAfterPrecursor && detectedPeak.accurateMass + properties.keptIsotopeRange < ion.mass())
                         continue;
                     if (properties.amplitudeCutoff > ion.intensity())
                         continue;
 
                     List<double[]> ms2PeakList = LCMSDataAccessUtility.getMS2Peaklist(spectrumList, precursorMz, ion.mass(),
-                            startRt, endRt, properties.ionMode, properties.centroidMS1Tolerance, properties.centroidMS2Tolerance);
+                        startRt, endRt, properties.ionMode, properties.centroidMS1Tolerance, properties.centroidMS2Tolerance);
 
-                    ms2PeakList.add(0, new double[] { 0, startRt, ion.mass(), 0 });
-                    ms2PeakList.add(new double[] { 0, endRt, ion.mass(), 0 });
+                    ms2PeakList.add(0, new double[]{0, startRt, ion.mass(), 0});
+                    ms2PeakList.add(new double[]{0, endRt, ion.mass(), 0});
 
                     ms2PeakList = LCMSDataAccessUtility.getSmoothedPeakArray(ms2PeakList,
-                            SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties.smoothingLevel);
+                        SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties.smoothingLevel);
 
                     List<Ion> smoothedMS2PeakList = new ArrayList<>();
 
-                    for (int i = 0; i < ms2PeakList.size(); i++) {
-                        smoothedMS2PeakList.add(new Ion(ms2PeakList.get(i)[2], ms2PeakList.get(i)[3]));
+                    for (double[] aPeak : ms2PeakList) {
+                        smoothedMS2PeakList.add(new Ion(aPeak[2], aPeak[3]));
                     }
 
                     ms2DecResult.peakListList.add(smoothedMS2PeakList);
-                    ms2DecResult.spectrum.add(new Peak(ion.mass(), ion.intensity()));
+                    ms2DecResult.ms2Spectrum.add(new Peak(ion.mass(), ion.intensity()));
                 }
 
-                if (ms2DecResult.spectrum.isEmpty()) {
+                if (ms2DecResult.ms2Spectrum.isEmpty()) {
                     ms2DecResult = new MS2DecResult(detectedPeak);
                 }
             } else {
                 ms2DecResult = new MS2DecResult(detectedPeak);
             }
         }
+
+        ms2DecResult.ms1Spectrum = ms1Spectrum;
 
         return ms2DecResult;
     }

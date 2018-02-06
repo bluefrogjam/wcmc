@@ -44,7 +44,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample shouldBe a[ProcessedSample]
     }
 
-    "check peakpicking in RT range (1.45 - 1.60)" in {
+    "check peakpicking in RT range (1.45 - 1.60)" ignore {
       val sample: MSDKSample = MSDKSample("testSmall0.mzml", new File("src/test/resources/testSmall0.mzml"))
 
       val outSample = msdProcessing.process(sample, properties)
@@ -53,7 +53,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample shouldBe a[ProcessedSample]
     }
 
-    "check peakpicking in RT range (10.00, 10.44)" in {
+    "check peakpicking in RT range (10.00, 10.44)" ignore {
       val sample: MSDKSample = MSDKSample("testSmall1.mzml", new File("src/test/resources/testSmall1.mzml"))
 
       val outSample = msdProcessing.process(sample, properties)
@@ -61,7 +61,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra.size should be > 0
     }
 
-    "check peakpicking in RT range (5.01, 5.27)" in {
+    "check peakpicking in RT range (5.01, 5.27)" ignore {
       val sample: MSDKSample = MSDKSample("testSmall2.mzml", new File("src/test/resources/testSmall2.mzml"))
 
       val outSample = msdProcessing.process(sample, properties)
