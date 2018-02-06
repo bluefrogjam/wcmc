@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils;
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
@@ -9,6 +10,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakDetectionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
