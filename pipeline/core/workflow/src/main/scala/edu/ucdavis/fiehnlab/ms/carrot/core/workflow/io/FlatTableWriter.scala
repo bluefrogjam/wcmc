@@ -4,6 +4,7 @@ import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
@@ -88,9 +89,12 @@ class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
             0.0
           }))
           o.print(seperator)
-          o.print(Math.abs(if (feature.isDefined)( feature.get.accurateMass.getOrElse(0.0) - target.accurateMass.getOrElse(0.0)) * 1000 else {
+          o.print(Math.abs(if (feature.isDefined) (feature.get.accurateMass.getOrElse(0.0) - target.accurateMass.getOrElse(0.0)) * 1000 else {
             0.0
           }))
+
+          o.print(seperator)
+          o.print(if (feature.isDefined) MassAccuracy.calculateMassErrorPPM(feature.get, target).getOrElse(0.0) else {"FAILED"})
 
           o.print(seperator)
           o.print(if (feature.isDefined) feature.get.retentionTimeInSeconds else {
@@ -147,6 +151,9 @@ class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
     o.print(seperator)
     o.print("mass shift (mDa)")
     o.print(seperator)
+    o.print("mass shift (ppm)")
+    o.print(seperator)
+
     o.print("retention time (s)(annotation)")
     o.print(seperator)
     o.print("retention time (min)(annotation)")

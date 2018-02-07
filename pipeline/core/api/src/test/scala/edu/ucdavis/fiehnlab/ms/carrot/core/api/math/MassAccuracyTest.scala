@@ -23,7 +23,7 @@ class MassAccuracyTest extends WordSpec {
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 
-            override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+            override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
               override val ions: Seq[Ion] = Ion(100.3241, 100) :: List()
               override val modelIons: Option[Seq[Double]] = None
@@ -67,7 +67,7 @@ class MassAccuracyTest extends WordSpec {
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 
-            override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+            override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
               override val ions: Seq[Ion] = Ion(100.3241, 100) :: Ion(100.3341, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None
@@ -109,7 +109,7 @@ class MassAccuracyTest extends WordSpec {
             override val scanNumber: Int = 0
 
 
-            override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+            override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
               override val ions: Seq[Ion] = Ion(100.3240, 100) :: Ion(100.3241, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None
@@ -150,7 +150,7 @@ class MassAccuracyTest extends WordSpec {
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 
-            override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+            override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
               override val ions: Seq[Ion] = Ion(1567.6401, 100) :: Ion(100.3341, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None
@@ -191,7 +191,7 @@ class MassAccuracyTest extends WordSpec {
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
 
-            override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+            override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
               override val ions: Seq[Ion] = Ion(1567.5459, 100) :: Ion(100.3341, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None
@@ -235,7 +235,7 @@ class MassAccuracyTest extends WordSpec {
             override val scanNumber: Int = 0
 
 
-            override val spectrum:Option[SpectrumProperties] = Some(new SpectrumProperties {
+            override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
               override val ions: Seq[Ion] = Ion(1567.5459, 100) :: Ion(100.3341, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None

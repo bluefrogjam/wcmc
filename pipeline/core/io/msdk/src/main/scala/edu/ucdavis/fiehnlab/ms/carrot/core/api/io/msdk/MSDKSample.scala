@@ -197,19 +197,6 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: Sample) e
 
     override val msLevel: Short = 1
   })
-
-  override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
-    /**
-      * a list of model ions used during the deconvolution
-      */
-    override val modelIons: Option[List[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override val ions: Seq[Ion] = MSDKSample.build(spectra)
-
-    override val msLevel: Short = 1
-  })
 }
 
 /**
