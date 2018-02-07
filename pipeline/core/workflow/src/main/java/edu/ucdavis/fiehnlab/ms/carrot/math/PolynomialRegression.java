@@ -36,7 +36,7 @@ public class PolynomialRegression implements Regression {
      * Creates a new Polynom object.
      */
     public PolynomialRegression(int derivation) {
-        this.derivation = derivation;
+        this.setDerivation(derivation);
     }
 
 

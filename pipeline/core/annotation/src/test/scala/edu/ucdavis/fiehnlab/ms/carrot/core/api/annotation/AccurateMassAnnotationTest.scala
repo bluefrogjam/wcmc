@@ -46,7 +46,7 @@ object Test {
     /**
       * associated spectrum propties if applicable
       */
-    override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+    override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
       /**
         * a list of model ions used during the deconvolution
         */
