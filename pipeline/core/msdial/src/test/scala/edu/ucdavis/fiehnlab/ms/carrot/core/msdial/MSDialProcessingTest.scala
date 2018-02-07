@@ -1,10 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
-import java.io.File
+import java.io.{File, FileWriter}
+import java.nio.file.Files
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ProcessedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{ProcessedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,7 +45,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra should not be null
       outSample.spectra.size should be > 0
 
-      outSample shouldBe a[ProcessedSample]
+      outSample shouldBe a[MSDialProcessedSample]
     }
 
     "check peakpicking in RT range (1.45 - 1.60)" in {
@@ -51,7 +54,9 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[ProcessedSample]
+      outSample shouldBe a[MSDialProcessedSample]
+
+      saveFile("testSmall0.carrot", outSample.asInstanceOf[MSDialProcessedSample])
     }
 
     "check peakpicking in RT range (10.00 - 10.44)" in {
@@ -60,6 +65,9 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
+      outSample shouldBe a[MSDialProcessedSample]
+
+      saveFile("testSmall1.carrot", outSample.asInstanceOf[MSDialProcessedSample])
     }
 
     "check peakpicking in RT range (4.74 - 5.50)" in {
@@ -68,6 +76,41 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
+      outSample shouldBe a[MSDialProcessedSample]
+
+      saveFile("testSmall2.carrot", outSample.asInstanceOf[MSDialProcessedSample])
+    }
+
+    def saveFile(filename: String, sample: MSDialProcessedSample): Unit = {
+      val file = new File(getClass.getResource("/").getPath + s"/$filename")
+      logger.info(s"Saving ${file.getName} ...")
+      if(file.exists()) file.delete()
+
+      val writer: FileWriter = new FileWriter(file)
+
+      writer.append("Scan#\trt(min)\taccurate Mass\tIntensity\tMS1 spectrum\tMS2spectrum\n")
+
+      sample.spectra.foreach {
+        case spec@(t: MSMSSpectra) =>
+          val s = spec.asInstanceOf[MSMSSpectra]
+          writer.append(s"${s.scanNumber}\t")
+            .append(s"${s.retentionTimeInMinutes.toFloat}\t")
+            .append(s"${s.massOfDetectedFeature.get.mass.toFloat}\t")
+            .append(s"${s.massOfDetectedFeature.get.intensity.toInt}\t")
+            .append(s"${s.associatedScan.get.ions.map(ion => s"${ion.mass.toFloat}:${ion.intensity.toInt}").mkString(" ")}\t")
+            .append(s"${s.spectrum.get.relativeSpectra.map(ion => s"${ion.mass.toFloat}:${ion.intensity.toInt}").mkString(" ")}\n")
+        case spec@(t: Feature) =>
+          writer.append(s"${spec.scanNumber}\t")
+            .append(s"${spec.retentionTimeInMinutes.toFloat}\t")
+            .append(s"${spec.massOfDetectedFeature.get.mass.toFloat}\t")
+            .append(s"${spec.massOfDetectedFeature.get.intensity.toInt}\t")
+            .append(s"${spec.associatedScan.get.ions.map(ion => s"${ion.mass.toFloat}:${ion.intensity.toInt}").mkString(" ")}\t")
+            .append(s"\n")
+      }
+
+      writer.flush()
+      writer.close()
+      logger.info(s"... finished.")
     }
   }
 }
