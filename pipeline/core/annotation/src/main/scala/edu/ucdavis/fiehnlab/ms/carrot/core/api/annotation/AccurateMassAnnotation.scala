@@ -1,8 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
+
+import scala.reflect.internal.Phase
 
 /**
   * considered to be a match, if the accurate mass of the spectra is in the range of
@@ -107,6 +110,104 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
     }
   }
 
+  override protected val phaseToLog = phase
+
+}
+
+/**
+  * we accept if either the mass accuracy is in the correct window for ppm or mDa
+  *
+  * @param massAccuracyInPPM
+  * @param massAccuracyInmDa
+  * @param phase
+  */
+class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, phase: String, minIntensity:Double = 0.0) extends Annotate with LazyLogging {
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+    librarySpectra.precursorMass match {
+      case Some(mass) =>
+
+
+        correctedSpectra match {
+          case x: Feature if x.massOfDetectedFeature.isDefined =>
+
+            val ppmError = MassAccuracy.calculateMassErrorPPM(x, librarySpectra)
+            val massError = MassAccuracy.calculateMassError(x, librarySpectra)
+
+            if (ppmError.isDefined && ppmError.get <= massAccuracyInPPM && x.massOfDetectedFeature.get.intensity > minIntensity) {
+              true
+            }
+            else if (massError.isDefined && massError.get <= massAccuracyInmDa && x.massOfDetectedFeature.get.intensity > minIntensity) {
+              true
+            }
+            else {
+              false
+            }
+          case _ => false
+        }
+
+      case None =>
+        logger.trace(s"no spectra was provided for given library spectra: $librarySpectra")
+        false
+    }
+  }
+
+
+  /**
+    * which phase we require to log
+    */
+  override protected val phaseToLog = phase
+
+  /**
+    * which phase we require to log
+    */
+  override protected val usedSettings = Map("massAccuracyInPPM" -> massAccuracyInPPM, "massAccuracyInDalton" -> massAccuracyInmDa)
+
+}
+
+class MassIsHighEnoughAnnotationPPM(massAccuracyInPPM: Double, minIntensity: Float, val phase: String) extends Annotate with LazyLogging {
+
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings = Map("minIntensity" -> minIntensity, "massAccuracyInPPM" -> massAccuracyInPPM)
+
+  /**
+    * returns true, if the corrected spectra is considered to be a match for the library spectra
+    *
+    * @param correctedSpectra
+    * @param librarySpectra
+    * @return
+    */
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+    librarySpectra.precursorMass match {
+      case Some(mass) =>
+
+
+        correctedSpectra match {
+          case x: Feature if x.massOfDetectedFeature.isDefined =>
+
+            val error = MassAccuracy.calculateMassErrorPPM(correctedSpectra, librarySpectra)
+
+            if (error.isDefined) {
+              if (error.get <= massAccuracyInPPM) {
+                correctedSpectra.massOfDetectedFeature.get.intensity > minIntensity
+              }
+              else {
+                false
+              }
+            }
+            else {
+              false
+            }
+          case _ => false
+        }
+
+      case None =>
+        logger.trace(s"no spectra was provided for given library spectra: $librarySpectra")
+        false
+    }
+  }
+
 
   /**
     * which phase we require to log
@@ -127,7 +228,7 @@ class AccurateMassBasePeakAnnotation(massAccuracyInDalton: Double, phase: String
   *
   * @param massAccuracyInPPM
   */
-class AccurateMassAnnotationPPM(massAccuracyInPPM: Int, val phase: String) extends Annotate with LazyLogging {
+class AccurateMassAnnotationPPM(massAccuracyInPPM: Double, val phase: String) extends Annotate with LazyLogging {
 
   logger.debug(s"mass accuracy: ${massAccuracyInPPM} ppm")
 

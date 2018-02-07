@@ -54,7 +54,7 @@ trait Feature extends AccurateMassSupport {
     *
     * @return
     */
-  final override def accurateMass: Option[Double] = if (massOfDetectedFeature.isDefined) {
+  override def accurateMass: Option[Double] = if (massOfDetectedFeature.isDefined) {
     Option(massOfDetectedFeature.get.mass)
   }
   else {

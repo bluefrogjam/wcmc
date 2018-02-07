@@ -1,12 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -123,7 +124,7 @@ class ZeroReplacementProperties {
   /**
     * window used for noise calculations in seconds, if 0 the whole chromatography will be used
     */
-  var noiseWindowInSeconds: Int = 0
+  var noiseWindowInSeconds: Int = 5
 
 	/**
 		* the defined retention index correction for the peak detection during the replacement
@@ -131,9 +132,9 @@ class ZeroReplacementProperties {
 	var retentionIndexWindowForPeakDetection: Double = 12
 
 	/**
-		* utilized mass accuracy for searches in ppm
+		* utilized mass accuracy for searches
 		*/
-	var massAccuracyPPM: Double = 30
+	var massAccuracy: Double = 0.005
 
   /**
     * extension of our rawdata files, to be used for replacement
@@ -161,7 +162,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 	override def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
 		val receivedTarget = needsReplacement
 
-    val filterByMass = new IncludeByMassRangePPM(receivedTarget, zeroReplacementProperties.massAccuracyPPM)
+    val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracy)
     val filterByRetentionIndexNoise = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionTimeInSeconds, zeroReplacementProperties.noiseWindowInSeconds)
     val filterByRetentionIndex = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionIndex, zeroReplacementProperties.retentionIndexWindowForPeakDetection)
 
@@ -221,7 +222,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     * @param spectra
     * @return
     */
-  private def includeMass(receivedTarget: QuantifiedTarget[Double], filterByMass: IncludeByMassRangePPM, spectra: Feature with CorrectedSpectra) = {
+  private def includeMass(receivedTarget: QuantifiedTarget[Double], filterByMass: Filter[AccurateMassSupport], spectra: Feature with CorrectedSpectra) = {
     val ion = MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get)
 
     if (ion.isDefined) {
@@ -247,13 +248,6 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * which actual spectra has been used for the replacement
     */
   override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
-
-    /**
-      * returns the accurate mass, of this trait
-      *
-      * @return
-      */
-    override def accurateMass = Option(ion.mass)
 
     override val sample:Sample = value.sample
     /**
