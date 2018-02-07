@@ -21,6 +21,9 @@ class SimpleMassCalibration extends PreProcessor with LazyLogging{
     * @param item
     * @return
     */
+
+  override def priortiy: Int = 1
+
   override def doProcess(item: Sample, method: AcquisitionMethod):Sample = {
 
     item.spectra.foreach {
