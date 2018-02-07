@@ -36,12 +36,12 @@ class SimpleMassCalibration extends PreProcessor with LazyLogging {
 
 
         val lockmassLower: Double = f.ionMode match {
-          case Some(mode) if mode.isInstanceOf[PositiveMode] => 121.0508
           case Some(mode) if mode.isInstanceOf[NegativeMode] => 119.0363
+          case _  => 121.0508 //assume positive mode
         }
         val lockmassHigher: Double =  f.ionMode match {
-          case Some(mode) if mode.isInstanceOf[PositiveMode] => 922.0098
           case Some(mode) if mode.isInstanceOf[NegativeMode] => 980.0163
+          case _ => 922.0098 //assume positive mode
         }
 
         try {
