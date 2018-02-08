@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.LazySample
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
@@ -64,7 +65,7 @@ class TaskRunner extends LazyLogging {
         assert(x.fileName.length > 0, "you need to provide a file name!")
 
         try {
-          sampleLoader.getSample(x.fileName)
+          new LazySample(sampleLoader = sampleLoader,x.fileName)
         }
         catch {
           case e: UnsupportedSampleException =>
