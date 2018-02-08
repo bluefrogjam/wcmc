@@ -3,8 +3,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, NegativeMode, PositiveMode, Sample}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, SpectrumProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, NegativeMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -26,7 +26,7 @@ class SimpleMassCalibration extends PreProcessor with LazyLogging {
     * @return
     */
 
-  override def priortiy: Int = 1
+  override def priortiy: Int = 100
 
   override def doProcess(item: Sample, method: AcquisitionMethod):Sample = {
 

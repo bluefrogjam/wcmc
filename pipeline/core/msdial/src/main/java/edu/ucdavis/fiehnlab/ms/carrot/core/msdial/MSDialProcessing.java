@@ -11,11 +11,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class MSDialProcessing {
-
     private static Logger logger = LoggerFactory.getLogger(MSDialProcessing.class);
 
     public Sample process(Sample sample, MSDialProcessingProperties properties) {
@@ -34,7 +35,7 @@ public class MSDialProcessing {
         List<MS2DecResult> deconvolutionResults = new SpectralDeconvolution().getMS2Deconvolution(spectra, detectedPeaks, properties);
         logger.debug("Peaks after deconvolution: " + deconvolutionResults.size());
 
-        logger.warn("Returning the input sample");
+        logger.info("Found " + deconvolutionResults.size() + " deconvoluted features");
 
         return new MSDialProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
     }

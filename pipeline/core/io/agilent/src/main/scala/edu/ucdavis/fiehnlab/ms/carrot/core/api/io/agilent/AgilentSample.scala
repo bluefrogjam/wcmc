@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSampleV2
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
@@ -23,13 +23,7 @@ class AgilentSample(override val fileName: String, file: File, client: MSDialRes
 
     logger.debug(s"converting ${file} to msDialV2 representation")
 
-    val processingResult = client.process(result.get)
-
-    logger.debug(s"processing result is located at: ${processingResult.getAbsolutePath}")
-
-    val spec = MSDialSampleV2(fileName, processingResult).spectra
-    logger.debug(s"deconvolution took: ${(System.nanoTime() - start) / 1000000}ms")
-    spec
+    MSDKSample(fileName, result.get).spectra
   }
 
   /**
