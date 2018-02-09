@@ -59,10 +59,16 @@ class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
 
           o.print(sample.fileName)
           o.print(seperator)
+
           o.print(target.name.getOrElse(f"${target.retentionIndex}%1.2f_${target.precursorMass.getOrElse(0.0)}%1.4f"))
           o.print(seperator)
+
           o.print(data.featuresUsedForCorrection.exists(p => p.target == target))
           o.print(seperator)
+
+          o.print(data.correctionFailed)
+          o.print(seperator)
+
           o.print(
             if (feature.isDefined) {
               target match {
@@ -72,6 +78,7 @@ class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
             } else {
               "FAILED"
             })
+
           o.print(seperator)
           o.print(target.retentionIndex)
           o.print(seperator)
@@ -136,6 +143,9 @@ class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
     o.print(seperator)
     o.print("found at correction")
     o.print(seperator)
+    o.print("correction failed")
+    o.print(seperator)
+
     o.print("replaced value")
     o.print(seperator)
 

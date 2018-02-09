@@ -84,7 +84,8 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
           }
           catch {
             case e: Exception =>
-              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}", e)
+              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e)
+              e.printStackTrace()
               target
           }
         }
@@ -179,9 +180,17 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 
     logger.debug(s"found ${noiseSpectra.size} spectra, to utilize for noise calculation")
 
-    val noise = noiseSpectra.map { spectra =>
+    val noiseIons = noiseSpectra.map { spectra =>
       MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
-    }.min
+    }
+
+    val noise = if(noiseIons.isEmpty){
+      logger.warn("no ions found for noise calculations")
+      0.0
+    }
+    else{
+      noiseIons.min
+    }
 
     logger.debug(s"noise is: ${noise} for target: ${receivedTarget}")
 

@@ -88,13 +88,13 @@ class RabbitTaskAutoconfiguration {
 
 
   @Bean
-  def queue: Queue = new Queue(queueName, false)
+  def queue: Queue = new Queue(queueName, true)
 
   @Bean
-  def exchange = new FanoutExchange(exchangeName)
+  def exchange = new DirectExchange(exchangeName)
 
   @Bean
-  def binding(queue: Queue, exchange: FanoutExchange): Binding = BindingBuilder.bind(queue).to(exchange)
+  def binding(queue: Queue, exchange: DirectExchange): Binding = BindingBuilder.bind(queue).to(exchange).`with`(exchangeName)
 
   @Bean
   def container(connectionFactory: ConnectionFactory): SimpleMessageListenerContainer = {
