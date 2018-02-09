@@ -41,6 +41,32 @@ trait Sample {
 }
 
 /**
+  * defines a sample, which loads data on the fly
+  * instead of pre allocating them in the memory and should help tremendously with processing large data sets
+  */
+class LazySample (sampleLoader: SampleLoader, override val fileName:String) extends Sample with LazyLogging {
+
+  /**
+    * a collection of spectra
+    * belonging to this sample
+    */
+  override lazy val spectra = {
+    logger.info(s"loading sample in memory: ${fileName}")
+    val begin = System.currentTimeMillis()
+    try {
+      sampleLoader.loadSample(fileName).get.spectra
+    }
+    finally {
+      logger.info(s"loading took ${(System.currentTimeMillis() - begin)/1000}s")
+    }
+  }
+
+  override def toString = s"Sample(name is $fileName), unique name is $name"
+
+
+}
+
+/**
   * this defines a sample, which has been processed by the system
   */
 trait ProcessedSample extends Sample {
@@ -191,7 +217,7 @@ trait QuantifiedTarget[T] extends Target {
     */
   val spectra: Option[_ <: Feature with QuantifiedSpectra[T]]
 
-  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex"
+  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex, mass=${accurateMass.getOrElse(0.0)}"
 }
 
 /**

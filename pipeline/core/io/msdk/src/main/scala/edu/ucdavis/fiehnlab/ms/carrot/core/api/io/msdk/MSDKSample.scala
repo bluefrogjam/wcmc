@@ -26,7 +26,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
     * a collection of spectra
     * belonging to this sample
     */
-  override val spectra: Seq[_ <: Feature] = try {
+  override lazy val spectra: Seq[_ <: Feature] = try {
     delegate.getScans.asScala.filter(_.getIntensityValues.nonEmpty).map {
 
       //test all ms scans
