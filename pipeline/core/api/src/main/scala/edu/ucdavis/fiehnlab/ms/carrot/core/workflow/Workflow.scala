@@ -192,9 +192,8 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
                 } catch {
                   case e: Exception =>
 
-                    e.printStackTrace()
                     val exceptionHandling = if (exceptionCallBack != null) {
-                      logger.debug(s"utilizing providing exception handling to handle: ${e.getMessage}")
+                      logger.warn(s"utilizing providing exception handling to handle: ${e.getMessage}", e)
                       exceptionCallBack(sample, clazz, experiment, e)
                     }
                     else {
