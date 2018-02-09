@@ -60,4 +60,3 @@ abstract class Process[I <: Sample, O <: Sample]() {
     */
   def priortiy: Int = 0
 }
-
