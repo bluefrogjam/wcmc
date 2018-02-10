@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.{MSDialProcessing, MSDialProcessingProperties}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Description, Profile}
+import org.springframework.context.annotation.{Bean, Configuration, Description, Profile}
 import org.springframework.stereotype.Component
 
 /**
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component
   **/
 @Component
 @Description("this sends a sample to be processed by peak detection and deconvolution algorithms translated from msdial")
-@Profile(Array("carrot.processing.peakdetection"))
 class PeakDetection extends PreProcessor with LazyLogging {
 
   @Autowired
@@ -33,4 +32,16 @@ class PeakDetection extends PreProcessor with LazyLogging {
   override def doProcess(item: Sample, method: AcquisitionMethod): Sample = {
     msdialProcessor.process(item, processingProperties)
   }
+}
+
+@Configuration
+@Profile(Array("carrot.processing.peakdetection"))
+class PeakDetectionConfiguration() {
+
+  @Bean
+  def msdialProcessing = new MSDialProcessing()
+
+  @Bean
+  def processingProperties = new MSDialProcessingProperties()
+
 }

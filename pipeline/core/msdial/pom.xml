@@ -28,12 +28,6 @@
       <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
       <artifactId>api</artifactId>
       <version>1.0.16-SNAPSHOT</version>
-        <exclusions>
-          <exclusion>
-            <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
-            <artifactId>logging</artifactId>
-          </exclusion>
-        </exclusions>
     </dependency>
 
     <dependency>
