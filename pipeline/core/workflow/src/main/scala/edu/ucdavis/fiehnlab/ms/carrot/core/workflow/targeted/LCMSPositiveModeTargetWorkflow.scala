@@ -121,9 +121,12 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
     */
   override protected def preProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Sample = {
     if (preProcessor.isEmpty) {
+      logger.info(s"PreProcessors: None")
       sample
     }
     else {
+      logger.info(s"PreProcessors: ${preProcessor.asScala.sortBy(_.priortiy).reverse.map(_.getClass.getSimpleName).mkString(";")}")
+
       //TODO could be done more elegant with a fold, but no time to play with it
       val iterator = preProcessor.asScala.sortBy(_.priortiy).reverseIterator
       var temp = iterator.next().process(sample, experiment.acquisitionMethod)
