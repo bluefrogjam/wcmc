@@ -18,7 +18,12 @@
     <appender name="JSON" class="edu.ucdavis.fiehnlab.utilities.logging.JSONLoggingAppender"/>
 
     <!-- populates the database in the backend with content -->
-    <logger name="edu.ucdavis.fiehnlab" level="debug" />
+    <!--<logger name="edu.ucdavis.fiehnlab.wcmc.api.rest" level="off" />-->
+    <!--<logger name="edu.ucdavis.fiehnlab.wcmc.server.fserv" level="off" />-->
+    <!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.schedule" level="off" />-->
+    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.msdial" level="debug" />
+    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow" level="debug" />
+
 
     <!-- uncomment to see caching operations -->
     <!--
