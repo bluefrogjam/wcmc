@@ -11,12 +11,14 @@ import org.springframework.stereotype.Component
 @Profile(Array("carrot.processing.metadata.update"))
 @Description("this updates the sample information management system with metadata from this sample")
 @Component
-class UpdateMetaData extends PreProcessor{
+class UpdateMetaData extends PreProcessor {
   /**
     * actually processes the item (implementations in subclasses)
     *
     * @param item
     * @return
     */
-  override def doProcess(item: Sample, method: AcquisitionMethod) = item
+  override def doProcess(item: Sample, method: AcquisitionMethod): Sample = item
+
+  override def priortiy: Int = 99
 }
