@@ -1,16 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow
 
-import java.io._
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{Reader, Writer}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event._
-import org.springframework.batch.item.ItemProcessor
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
@@ -18,7 +14,7 @@ import scala.collection.JavaConverters._
 /**
   * Implementations of this class, will provide us with detailed workflows how to process and annotate data, depending on platform, etc
   */
-abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with LazyLogging {
+trait Workflow[T] extends LazyLogging {
 
   @Autowired(required = false)
   val postActions: java.util.Collection[PostAction] = new util.ArrayList()
@@ -29,20 +25,18 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
   /**
     * executes required pre processing steps, if applicable
     */
-  protected final def preprocessing(experiment: Experiment): Experiment = {
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(PreProcessingBeginEvent(experiment)))
-    val result = assembleExperiment(
-      experiment, preProcessSample
-    )
+  protected final def preprocessing(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+    eventListeners.asScala.foreach(eventListener => eventListener.handle(PreProcessingBeginEvent(sample)))
+    val result = preProcessSample(sample, acquisitionMethod)
+
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PreProcessingFinishedEvent(result)))
     result
   }
 
-  protected final def postProcessing(experiment: Experiment): Experiment = {
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingBeginEvent(experiment)))
-    val result = assembleExperiment(
-      experiment, postProcessSample
-    )
+  protected final def postProcessing(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+    eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingBeginEvent(sample)))
+    val result = postProcessSample(sample, acquisitionMethod)
+
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingFinishedEvent(result)))
     result
   }
@@ -50,13 +44,15 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
   /**
     * executes the retention index correction, if applicable
     */
-  protected final def correction(experiment: Experiment): Experiment = {
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(CorrectionBeginEvent(experiment)))
+  protected final def correction(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+    eventListeners.asScala.foreach(eventListener => eventListener.handle(CorrectionBeginEvent(sample)))
 
-    val result =
-      assembleExperiment(
-        experiment, correctSample, handleFailedCorrection
-      )
+    val result: Sample = try {
+      correctSample(sample, acquisitionMethod)
+    }
+    catch {
+      case e: Exception => handleFailedCorrection(sample, acquisitionMethod: AcquisitionMethod, e).getOrElse(sample)
+    }
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(CorrectionFinishedEvent(result)))
     result
@@ -65,17 +61,9 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
   /**
     * executes the annotation, if applicable
     */
-  protected final def annotation(experiment: Experiment): Experiment = {
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(AnnotationBeginEvent(experiment)))
-    val result = assembleExperiment(
-      experiment, annotateSample
-    )
-    logger.debug("running post annotation actions")
-    result.classes.foreach { clazz =>
-      clazz.samples.foreach { sample =>
-        postAnnotationAction(sample, clazz, experiment)
-      }
-    }
+  protected final def annotation(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+    eventListeners.asScala.foreach(eventListener => eventListener.handle(AnnotationBeginEvent(sample)))
+    val result = annotateSample(sample, acquisitionMethod)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(AnnotationFinishedEvent(result)))
     result
   }
@@ -83,66 +71,43 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
   /**
     * quantify the sample
     *
-    * @param experiment
+    * @param sample
     * @return
     */
-  protected final def quantify(experiment: Experiment): Experiment = {
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationBeginEvent(experiment)))
-    val result = assembleExperiment(
-      experiment, quantifySample
-    )
+  protected final def quantify(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+    eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationBeginEvent(sample)))
+    val result = quantify(sample, acquisitionMethod)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationFinishedEvent(result)))
     result
   }
 
-  protected def quantifySample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): QuantifiedSample[T]
-
-  /**
-    * does something with these data after all annotations have be done
-    *
-    * @param sample
-    * @param experimentClass
-    * @param experiment
-    */
-  protected final def postAnnotationAction(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
-    postActions.asScala.foreach { x =>
-
-      logger.info(s"running side action: ${x}")
-      x.run(sample, experimentClass, experiment)
-    }
-  }
+  protected def quantifySample(sample: Sample, acquisitionMethod: AcquisitionMethod): QuantifiedSample[T]
 
   /**
     * annotate the given sample
     *
     * @param sample
-    * @param experimentClass
-    * @param experiment
     * @return
     */
-  protected def annotateSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): AnnotatedSample
+  protected def annotateSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample
 
   /**
     * corrects the given sample
     *
     * @param sample
-    * @param experimentClass
-    * @param experiment
     * @return
     */
-  protected def correctSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): CorrectedSample
+  protected def correctSample(sample: Sample, acquisitionMethod: AcquisitionMethod): CorrectedSample
 
   /**
     * this method is used to handle failed corrections
     *
     * @param sample
-    * @param experimentClass
-    * @param experiment
     * @param exception
     * @return
     */
-  protected def handleFailedCorrection(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment, exception: Exception): Option[CorrectedSample] = {
-    logger.warn(s"correction failed, sample ${sample} will be removed from experiment!")
+  protected def handleFailedCorrection(sample: Sample, acquisitionMethod: AcquisitionMethod, exception: Exception): Option[CorrectedSample] = {
+    logger.warn(s"correction failed, sample ${sample} will be removed from sample!")
     None
   }
 
@@ -150,125 +115,40 @@ abstract class Workflow[T] extends ItemProcessor[Experiment, Experiment] with La
     * preprocesses the given sample
     *
     * @param sample
-    * @param experimentClass
-    * @param experiment
     * @return
     */
-  protected def preProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Sample
+  protected def preProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample
 
   /**
     * provides us with a post processed sample
     *
     * @param sample
-    * @param experimentClass
-    * @param experiment
     * @return
     */
-  protected def postProcessSample(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): AnnotatedSample
+  protected def postProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample
 
   /**
-    * assembles a new experiment, based on the provided callback function
+    * processes a sample and returns it, ready to be exported to a destination of your desire
     *
-    * TODO
-    *
-    * final needs to be removed, so we can parallized it using a task runner
-    * at a later stage
-    *
-    * @param experiment        experiment
-    * @param callback          method to handle the processing
-    * @param exceptionCallBack what todo in case of an exception and is an optional argument
+    * @param sample
     * @return
     */
-  private final def assembleExperiment(experiment: Experiment, callback: (Sample, ExperimentClass, Experiment) => Sample, exceptionCallBack: (Sample, ExperimentClass, Experiment, Exception) => Option[Sample] = null) = {
-    Experiment(
-
-      classes = experiment.classes.collect {
-        case clazz: ExperimentClass =>
-          ExperimentClass(
-            samples = clazz.samples.collect {
-              case sample: Sample =>
-                try {
-                  callback(sample, clazz, experiment)
-                } catch {
-                  case e: Exception =>
-
-                    val exceptionHandling = if (exceptionCallBack != null) {
-                      logger.warn(s"utilizing providing exception handling to handle: ${e.getMessage}", e)
-                      exceptionCallBack(sample, clazz, experiment, e)
-                    }
-                    else {
-                      logger.warn(s"error in sample found, skipping it: ${sample.fileName}")
-                      logger.warn(e.getMessage, e)
-
-                      None
-                    }
-
-                    if (exceptionHandling.isDefined) {
-                      exceptionHandling.get
-                    }
-                    else {
-                      None
-                    }
-                }
-            }.collect {
-              case sample: Sample => sample
-            }.seq.toSeq,
-
-            matrix = clazz.matrix
-          )
-      },
-      name = experiment.name,
-      acquisitionMethod = experiment.acquisitionMethod
-    )
-  }
-
-  /**
-    * exports the data and provides us with an input stream, where we can read the result from
-    */
-  protected final def export(experiment: Experiment, writer: Writer[Sample]): InputStream = {
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(ExportBeginEvent(experiment)))
-
-    val out = new ByteArrayOutputStream()
-
-    val classes: Seq[ExperimentClass] = experiment.classes
-
-    writer.writeHeader(out)
-    classes.foreach { clazz =>
-      clazz.samples.foreach { sample =>
-        logger.info(s"writing sample ${sample}")
-        writer.write(out, sample)
-        out.flush()
-      }
-    }
-    writer.writeFooter(out)
-    out.flush()
-    out.close()
-
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(ExportFinishedEvent(experiment)))
-    new ByteArrayInputStream(out.toByteArray)
-  }
-
-  /**
-    * process an experiment and returns it as quantified data set. Other steps can than work on it
-    * directly afterwards without the involvement of writers and readers
-    *
-    * @param experiment
-    * @return
-    */
-  final def process(experiment: Experiment): Experiment = {
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(experiment)))
+  final def process(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+    eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(sample)))
 
     val result = quantify(
+      postProcessing(
       annotation(
         correction(
           preprocessing(
-            experiment
-          )
-        )
-      )
+            sample, acquisitionMethod
+          ), acquisitionMethod
+        ), acquisitionMethod
+      ), acquisitionMethod
+      ), acquisitionMethod
     )
 
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessFinishedEvent(experiment)))
+    eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessFinishedEvent(sample)))
     result
   }
 }
