@@ -4,7 +4,6 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4JAutoConfiguration
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,9 +20,6 @@ class AgilentSampleTest extends WordSpec with LazyLogging with ShouldMatchers{
 
 
   @Autowired
-  val client: MSDialRestProcessor = null
-
-  @Autowired
   val loader: FServ4jClient = null
 
   @Autowired
@@ -37,7 +33,7 @@ class AgilentSampleTest extends WordSpec with LazyLogging with ShouldMatchers{
 
     "spectra" in {
 
-      val sample = new AgilentSample(name, loader.loadAsFile(name).get, client, dataFormerClient)
+      val sample = new AgilentSample(name, loader.loadAsFile(name).get, dataFormerClient)
 
       logger.info(s"spectra: ${sample.spectra.size}")
 

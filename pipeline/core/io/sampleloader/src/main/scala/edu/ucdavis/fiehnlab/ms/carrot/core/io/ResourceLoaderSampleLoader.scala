@@ -54,7 +54,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
           Some(new ABFSample(name, file, client))
         }
         else if (file.getName.toLowerCase.matches(".*\\.d.zip")) {
-          Some(new AgilentSample(file.getName, file, client, dataFormerClient))
+          Some(new AgilentSample(file.getName, file, dataFormerClient))
         }
         else {
           Some(MSDKSample(name, file))
