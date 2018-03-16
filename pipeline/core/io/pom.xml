@@ -15,8 +15,6 @@
     <modules>
         <module>leco</module>
         <module>msdk</module>
-        <module>msdial</module>
-        <module>abf</module>
         <module>sampleloader</module>
         <module>agilent</module>
     </modules>
