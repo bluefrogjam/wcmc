@@ -102,6 +102,15 @@
                                             </div>
                                         </div>
                                     </form>
+                                    <form>
+                                        <div class="form-group">
+                                            <label>
+                                                <input id="deleteLib" type="button" class="btn"
+                                                       value="Delete library {{library.chromatographicMethod.name}}"
+                                                       ng-click="deleteLibrary(library.chromatographicMethod.name)"/>
+                                            </label>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
