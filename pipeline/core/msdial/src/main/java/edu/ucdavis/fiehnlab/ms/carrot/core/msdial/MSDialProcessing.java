@@ -11,13 +11,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public class MSDialProcessing {
-    private static Logger logger = LoggerFactory.getLogger(MSDialProcessing.class);
+    private Logger logger = LoggerFactory.getLogger(MSDialProcessing.class);
 
     public Sample process(Sample sample, MSDialProcessingProperties properties) {
         List<Feature> spectra = TypeConverter.getJavaSpectrumList(sample);

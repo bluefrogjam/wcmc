@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
@@ -20,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","quantify-by-scan"))
+@ActiveProfiles(Array("backend-txt","quantify-by-scan","carrot.processing.peakdetection"))
 class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -34,6 +35,9 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
 	@Autowired
 	val loader: SampleLoader = null
+
+  @Autowired
+  val deco: PeakDetection = null
 
   /**
     * used to verify picked scans are correct
@@ -49,7 +53,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
       assert(annotation.targets != null)
     }
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST01.abf", "B5_P20Lipids_Pos_NIST02.abf"))
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST01.d.zip", "B5_P20Lipids_Pos_NIST02.d.zip"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)
@@ -57,7 +61,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
     val method = AcquisitionMethod(None)
 
     //correct the data
-    val correctedSample = purityComputed.map((item: Sample) => correction.process(item, method))
+    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item,method), method))
 
     correctedSample.foreach { sample =>
       s"process ${sample} without recursive annotation and with preferring mass accuracy over retention index distance" in {
