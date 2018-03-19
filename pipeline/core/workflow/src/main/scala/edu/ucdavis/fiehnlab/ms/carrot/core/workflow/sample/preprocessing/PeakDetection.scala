@@ -13,13 +13,14 @@ import org.springframework.stereotype.Component
   **/
 @Component
 @Description("this sends a sample to be processed by peak detection and deconvolution algorithms translated from msdial")
+@Profile(Array("carrot.processing.peakdetection"))
 class PeakDetection extends PreProcessor with LazyLogging {
 
   @Autowired
-  val msdialProcessor: MSDialProcessing = null
+  private val msdialProcessor: MSDialProcessing = null
 
   @Autowired
-  val processingProperties: MSDialProcessingProperties = null
+  private val processingProperties: MSDialProcessingProperties = null
 
   override def priortiy: Int = 50
 
@@ -32,16 +33,4 @@ class PeakDetection extends PreProcessor with LazyLogging {
   override def doProcess(item: Sample, method: AcquisitionMethod): Sample = {
     msdialProcessor.process(item, processingProperties)
   }
-}
-
-@Configuration
-@Profile(Array("carrot.processing.peakdetection"))
-class PeakDetectionConfiguration() {
-
-  @Bean
-  def msdialProcessing = new MSDialProcessing()
-
-  @Bean
-  def processingProperties = new MSDialProcessingProperties()
-
 }

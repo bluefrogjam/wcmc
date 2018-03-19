@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PeakDetection
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
@@ -19,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt", "carrot.report.quantify.height"))
+@ActiveProfiles(Array("backend-txt", "carrot.report.quantify.height","carrot.processing.peakdetection"))
 class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -34,19 +35,22 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
   @Autowired
   val quantification: QuantifyByHeightProcess = null
 
+  @Autowired
+  val deco: PeakDetection = null
+
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
   "QuantifyByHeightProcessTest" should {
 
     val method = AcquisitionMethod(None)
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.abf", "B5_SA0002_P20Lipids_Pos_1FL_1006.abf"))
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.d.zip", "B5_SA0002_P20Lipids_Pos_1FL_1006.d.zip"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)
 
     //correct the data
-    val correctedSample = purityComputed.map((item: Sample) => correction.process(item, method))
+    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item,method), method))
 
     val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method))
 

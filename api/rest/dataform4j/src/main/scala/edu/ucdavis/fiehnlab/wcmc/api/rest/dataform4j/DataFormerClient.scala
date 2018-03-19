@@ -4,7 +4,7 @@ import java.io._
 import java.net.URL
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import org.apache.commons.io.IOUtils
 import org.apache.http.impl.client.HttpClientBuilder
@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate
   *
   * sends a raw data file to DataFormer rest service to be converted into .abf and .mzml and then sends the result to fserv
   */
-class DataFormerClient extends LazyLogging {
+class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
   @Value("${wcmc.api.rest.dataformer.host:phobos.fiehnlab.ucdavis.edu}")
   private val host: String = ""
 
@@ -32,8 +32,6 @@ class DataFormerClient extends LazyLogging {
   @Value("${wcmc.api.rest.dataformer.storage:#{systemProperties['java.io.tmpdir']}}")
   private val storage: String = ""
 
-  @Autowired
-  private val fserv4j: ResourceLoader = null
 
   @Value("${wcmc.api.rest.dataformer.conversiontimeout:120}")
   private val conversionTimeout: Int = 0
@@ -199,5 +197,5 @@ object FileType extends Enumeration {
 class DataFormerAutoConfiguration extends LazyLogging {
 
   @Bean
-  def dataform: DataFormerClient = new DataFormerClient
+  def dataform(delegatingResourceLoader: DelegatingResourceLoader): DataFormerClient = new DataFormerClient(delegatingResourceLoader)
 }

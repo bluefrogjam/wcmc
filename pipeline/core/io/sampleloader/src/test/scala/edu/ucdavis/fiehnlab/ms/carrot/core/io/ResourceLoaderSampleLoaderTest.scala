@@ -2,10 +2,9 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
 import java.io.File
 
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -28,31 +27,20 @@ class ResourceLoaderSampleLoaderTest extends WordSpec {
 
   "ResourceLoaderSampleLoaderTest" should {
 
-    "able to load sample file.msdial" in {
 
-      val sample = loader.loadSample("file.msdial")
+    "able to load sample B5_P20Lipids_Pos_NIST02" in {
+
+      val sample = loader.loadSample("B5_P20Lipids_Pos_NIST02.mzML")
 
       assert(sample.isDefined)
-      assert(sample.get.fileName == "file.msdial")
+      assert(sample.get.fileName == "B5_P20Lipids_Pos_NIST02.mzML")
     }
 
-    "check if samples exist" must {
-
-      "suceed" in {
-        assert(loader.sampleExists("file.msdial"))
-
-        assert(loader.sampleExists("test.txt"))
-      }
-
-      "fail" in {
-        assert(!loader.sampleExists("fileNotFound.msdial"))
-      }
-    }
   }
 }
 
 @Configuration
-@ComponentScan(basePackageClasses = Array(classOf[MSDialRestProcessor]))
+@ComponentScan(basePackageClasses = Array(classOf[ResourceLoaderSampleLoaderTestConfiguration],classOf[DelegatingResourceLoader]))
 @Import(Array(classOf[CaseClassToJSONSerializationAutoConfiguration]))
 class ResourceLoaderSampleLoaderTestConfiguration {
 
@@ -60,7 +48,7 @@ class ResourceLoaderSampleLoaderTestConfiguration {
   def resourceLoader: ResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
 
   @Bean
-  def loader: ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(resourceLoader)
+  def loader(delegatingResourceLoader: DelegatingResourceLoader): ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(delegatingResourceLoader)
 
   @Bean
   def client:FServ4jClient = new FServ4jClient(

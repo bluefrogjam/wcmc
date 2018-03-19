@@ -36,7 +36,11 @@ class FServ4JClientTestConfiguration{
 class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {
 
   override protected def beforeEach(): Unit = {
-    new File(s"$directory/test.txt").delete()
+    val f = new File(s"$directory/test.txt")
+    logger.warn(s"file located at: ${f.getAbsolutePath}")
+    if(f.exists()) {
+      f.delete() should be(true)
+    }
   }
 
   @Value("${wcmc.server.fserv.directory:storage}")
@@ -50,8 +54,6 @@ class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfter
   "FServ4jClientTest" should {
 
     "upload. exist and download" in {
-
-      fserv.exists("test.txt") should be(false)
 
       fserv.upload(new File("src/test/resources/test.txt"))
 
