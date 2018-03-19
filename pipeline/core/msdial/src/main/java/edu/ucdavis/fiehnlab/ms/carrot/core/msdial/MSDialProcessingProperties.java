@@ -3,10 +3,15 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by diego on 10/13/2016.
  */
+@ConfigurationProperties
+@Component
 public class MSDialProcessingProperties {
     /**
      * omit masses smaller than this
