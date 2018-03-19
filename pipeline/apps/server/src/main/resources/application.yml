@@ -19,8 +19,8 @@ mona:
     server:
       user: admin
       password: admin
-      host: localhost
-      port: 9090
+      host: megamona.fiehnlab.ucdavis.edu
+      port: 80
 
 server:
   port: 18080

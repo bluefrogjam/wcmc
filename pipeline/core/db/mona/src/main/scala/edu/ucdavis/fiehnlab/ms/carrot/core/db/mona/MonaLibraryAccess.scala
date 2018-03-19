@@ -605,6 +605,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
   */
 @Configuration
 @ComponentScan(basePackageClasses = Array(classOf[MonaSpectrumRestClient], classOf[MonaLibraryAccess]))
+@Profile(Array("carrot.targets.mona"))
 @Import(Array(classOf[RestClientConfig]))
 class MonaLibraryAccessAutoConfiguration {
 

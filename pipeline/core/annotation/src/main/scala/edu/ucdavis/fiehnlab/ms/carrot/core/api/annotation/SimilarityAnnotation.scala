@@ -36,6 +36,13 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
             logger.trace(s"\t=> matches: ${result}")
             result
 
+          case y: MSSpectra if y.associatedScan.isDefined =>
+            val value = algorithm.compute(convertSpectra(y.associatedScan.get.spectraString), convertSpectra(x.spectrum.get.spectraString))
+            logger.trace(s"computed match is: ${value}, we are utilizing a MS1 similarity match!")
+            val result = value > simmilarityOffset
+            logger.trace(s"\t=> matches: ${result}")
+            result
+
           case _ =>
             logger.trace("\t=> not a spectra, it's a feature!")
             false

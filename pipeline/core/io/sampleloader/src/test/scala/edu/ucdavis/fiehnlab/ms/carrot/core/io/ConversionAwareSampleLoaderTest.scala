@@ -27,15 +27,14 @@ class ConversionAwareSampleLoaderTest extends WordSpec {
 
     "able to load sample B5_P20Lipids_Pos_NIST02" in {
 
-      val sample = loader.loadSample("B5_P20Lipids_Pos_NIST02.mzXML")
+      val sample = loader.loadSample("B5_P20Lipids_Pos_NIST02.mzML")
 
       assert(sample.isDefined)
-      assert(sample.get.fileName == "B5_P20Lipids_Pos_NIST02.mzXML")
+      assert(sample.get.fileName == "B5_P20Lipids_Pos_NIST02.mzML")
     }
 
   }
 }
-
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration], classOf[Everything4JAutoConfiguration]))
 class ConversionAwareSampleLoaderTestConfiguration {
 
