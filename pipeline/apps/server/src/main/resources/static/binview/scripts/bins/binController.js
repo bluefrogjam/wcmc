@@ -132,5 +132,12 @@
             saveSvgAsPng(document.getElementsByClassName('st-base')[0], 'diff-' + bin + '-' + lib + '.png', { scale: 5 });
         };
 
+        $scope.deleteLibrary = function(lib){
+            var library = {name:lib};
+            $http.post("/rest/library/delete", library).then(
+            function() {
+                document.reload();
+            });
+        }
     }
 })();
