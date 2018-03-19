@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event
 import java.util.Date
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 
 
 /**
@@ -18,33 +19,33 @@ sealed trait WorkflowEvent {
   /**
     * associated experiment, for this event
     */
-  val experiment: Experiment
+  val sample: Sample
 }
 
-case class ProcessBeginEvent(experiment: Experiment) extends WorkflowEvent
+case class ProcessBeginEvent(sample: Sample) extends WorkflowEvent
 
-case class ProcessFinishedEvent(experiment: Experiment) extends WorkflowEvent
+case class ProcessFinishedEvent(sample: Sample) extends WorkflowEvent
 
-case class PreProcessingBeginEvent(experiment: Experiment) extends WorkflowEvent
+case class PreProcessingBeginEvent(sample: Sample) extends WorkflowEvent
 
-case class PreProcessingFinishedEvent(experiment: Experiment) extends WorkflowEvent
+case class PreProcessingFinishedEvent(sample: Sample) extends WorkflowEvent
 
-case class PostProcessingBeginEvent(experiment: Experiment) extends WorkflowEvent
+case class PostProcessingBeginEvent(sample: Sample) extends WorkflowEvent
 
-case class PostProcessingFinishedEvent(experiment: Experiment) extends WorkflowEvent
+case class PostProcessingFinishedEvent(sample: Sample) extends WorkflowEvent
 
-case class CorrectionBeginEvent(experiment: Experiment) extends WorkflowEvent
+case class CorrectionBeginEvent(sample: Sample) extends WorkflowEvent
 
-case class CorrectionFinishedEvent(experiment: Experiment) extends WorkflowEvent
+case class CorrectionFinishedEvent(sample: Sample) extends WorkflowEvent
 
-case class AnnotationBeginEvent(experiment: Experiment) extends WorkflowEvent
+case class AnnotationBeginEvent(sample: Sample) extends WorkflowEvent
 
-case class AnnotationFinishedEvent(experiment: Experiment) extends WorkflowEvent
+case class AnnotationFinishedEvent(sample: Sample) extends WorkflowEvent
 
-case class QuantificationBeginEvent(experiment: Experiment) extends WorkflowEvent
+case class QuantificationBeginEvent(sample: Sample) extends WorkflowEvent
 
-case class QuantificationFinishedEvent(experiment: Experiment) extends WorkflowEvent
+case class QuantificationFinishedEvent(sample: Sample) extends WorkflowEvent
 
-case class ExportBeginEvent(experiment: Experiment) extends WorkflowEvent
+case class ExportBeginEvent(sample: Sample) extends WorkflowEvent
 
-case class ExportFinishedEvent(experiment: Experiment) extends WorkflowEvent
+case class ExportFinishedEvent(sample: Sample) extends WorkflowEvent

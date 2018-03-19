@@ -5,7 +5,7 @@ import java.util.zip.GZIPInputStream
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{SpectrumProperties, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import io.github.msdk.datamodel.{MsScan, MsSpectrumType, PolarityType, RawDataFile}
 import io.github.msdk.io.mzdata.MzDataFileImportMethod
@@ -26,7 +26,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
     * a collection of spectra
     * belonging to this sample
     */
-  override val spectra: Seq[_ <: Feature] = try {
+  override lazy val spectra: Seq[_ <: Feature] = try {
     delegate.getScans.asScala.filter(_.getIntensityValues.nonEmpty).map {
 
       //test all ms scans
@@ -181,10 +181,11 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: Sample) e
   override val purity: Option[Double] = None
   override val ionMode: Option[IonMode] = mode
   override val massOfDetectedFeature: Option[Ion] = None
+
   /**
     * associated spectrum propties if applicable
     */
-  override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+  override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
     /**
       * a list of model ions used during the deconvolution
       */
@@ -226,6 +227,19 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: Sample
   /**
     * associated spectrum propties if applicable
     */
+  override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
+    /**
+      * a list of model ions used during the deconvolution
+      */
+    override val modelIons: Option[List[Double]] = None
+    /**
+      * all the defined ions for this spectra
+      */
+    override val ions: Seq[Ion] = MSDKSample.build(spectra)
+
+    override val msLevel: Short = 2
+  })
+
   override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
     /**
       * a list of model ions used during the deconvolution

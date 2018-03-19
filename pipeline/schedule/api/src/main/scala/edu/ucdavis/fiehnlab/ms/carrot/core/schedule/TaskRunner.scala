@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.LazySample
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
@@ -56,15 +57,16 @@ class TaskRunner extends LazyLogging {
     assert(task.name != null)
 
     logger.info(s"executing received task: ${task} and discovering ${task.samples.size} files")
-//    val pb = new ProgressBar(s"${task.name}: raw data discovery", task.samples.size)
-//    pb.start()
+    //    val pb = new ProgressBar(s"${task.name}: raw data discovery", task.samples.size)
+    //    pb.start()
     val classes: Seq[ExperimentClass] = task.samples.groupBy(_.matrix).map { entry =>
       val samples = entry._2.map { x =>
         assert(x.fileName != null, "you need to provide a file name!")
         assert(x.fileName.length > 0, "you need to provide a file name!")
 
         try {
-          sampleLoader.getSample(x.fileName)
+          //processes the actual sample
+          workflow.process(new LazySample(sampleLoader = sampleLoader, x.fileName), task.acquisitionMethod)
         }
         catch {
           case e: UnsupportedSampleException =>
@@ -72,16 +74,14 @@ class TaskRunner extends LazyLogging {
             null
         }
         finally {
-//          pb.step()
+          //          pb.step()
         }
       }.filter(x => x != null)
 
       ExperimentClass(samples.seq, Option(entry._1))
     }.toSeq
 
-    logger.info("rawdata discovery complete")
-
-//    pb.stop()
+    //    pb.stop()
 
     val experiment = Experiment(
       classes,
@@ -89,14 +89,12 @@ class TaskRunner extends LazyLogging {
       acquisitionMethod = task.acquisitionMethod
     )
 
-    logger.info(s"starting to process the generated experiment: ${experiment}")
-    val result = workflow.process(experiment)
 
 
     //send the processed result to the storage engine.
     storage.asScala.par.foreach { x: ResultStorage =>
       try {
-        x.store(result, task)
+        x.store(experiment, task)
       }
       catch {
         case e: Exception =>

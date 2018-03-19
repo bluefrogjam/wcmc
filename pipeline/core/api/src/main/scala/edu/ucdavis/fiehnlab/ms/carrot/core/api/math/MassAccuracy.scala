@@ -18,13 +18,13 @@ object MassAccuracy extends LazyLogging {
     */
   def findClosestIon(spectra: Feature, targetMass: Double): Option[Ion] = {
     spectra match {
-      case x: MSSpectra if x.spectrum.isDefined =>
-          if(x.spectrum.get.ions.isEmpty){
+      case x: Feature if x.associatedScan.isDefined =>
+          if(x.associatedScan.get.ions.isEmpty){
             logger.warn(s"${x} has no IONS!")
             None
           }
           else {
-            Some(x.spectrum.get.ions.minBy(p => Math.abs(p.mass - targetMass)))
+            Some(x.associatedScan.get.ions.minBy(p => Math.abs(p.mass - targetMass)))
           }
 
       case x: Feature =>

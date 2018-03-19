@@ -12,7 +12,7 @@ class ExcludeBasePeakSpectra(override val basePeaks: List[Double], override val 
   override def include(spectra: MSSpectra): Boolean = {
     basePeaks.exists { peak =>
 
-      val result = !(peak > (spectra.spectrum.get.basePeak.mass - accuracy) && peak < (spectra.spectrum.get.basePeak.mass + accuracy))
+      val result = !(peak > (spectra.associatedScan.get.basePeak.mass - accuracy) && peak < (spectra.associatedScan.get.basePeak.mass + accuracy))
 
       logger.debug(s"it's considered to be accepted: ${result} with an accuracy of ${accuracy}")
       result

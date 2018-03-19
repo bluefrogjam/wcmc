@@ -15,8 +15,8 @@ class IncludesBasePeakSpectra(val basePeaks: List[Double], val accuracy: Double 
     */
   override def include(spectra: MSSpectra): Boolean = {
     basePeaks.exists { peak =>
-      logger.debug(s"basePeak of spectra is ${spectra.spectrum.get.basePeak.mass} compared to ${peak}")
-      val result = peak > (spectra.spectrum.get.basePeak.mass - accuracy) && peak < (spectra.spectrum.get.basePeak.mass + accuracy)
+      logger.debug(s"basePeak of spectra is ${spectra.associatedScan.get.basePeak.mass} compared to ${peak}")
+      val result = peak > (spectra.associatedScan.get.basePeak.mass - accuracy) && peak < (spectra.associatedScan.get.basePeak.mass + accuracy)
 
       logger.debug(s"it's considered to be accepted: ${result} with an accuracy of ${accuracy}")
       result
