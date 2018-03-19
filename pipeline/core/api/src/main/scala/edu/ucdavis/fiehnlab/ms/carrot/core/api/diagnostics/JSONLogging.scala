@@ -59,6 +59,11 @@ trait JSONSampleLogging extends JSONLogging {
     * @return
     */
   override def buildMessage(): Map[String, Any] = {
-    super.buildMessage() + ("sample" -> sampleToLog.fileName)
+    if(sampleToLog != null) {
+      super.buildMessage() + ("sample" -> sampleToLog.fileName)
+    }
+    else{
+      super.buildMessage()
+    }
   }
 }

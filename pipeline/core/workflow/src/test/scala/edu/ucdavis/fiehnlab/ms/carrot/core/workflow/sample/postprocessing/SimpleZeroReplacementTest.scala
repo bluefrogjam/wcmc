@@ -7,12 +7,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height","carrot.processing.replacement.simple"))
+@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height","carrot.processing.replacement.simple", "carrot.processing.peakdetection"))
 class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers{
 
   @Autowired
@@ -30,6 +30,8 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrection = null
 
+  @Autowired
+  val deco: PeakDetection = null
 
   @Autowired
   val annotation: LCMSTargetAnnotationProcess = null
@@ -47,7 +49,10 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
     val sample:QuantifiedSample[Double] =
       quantify.process(annotation.process(
                 correction.process(
-                  loader.getSample("B5_P20Lipids_Pos_QC000.abf"), method
+                  deco.process(
+                  loader.getSample("B5_P20Lipids_Pos_QC000.d.zip"), method
+                  ),
+                  method
                 ), method
               ), method)
 

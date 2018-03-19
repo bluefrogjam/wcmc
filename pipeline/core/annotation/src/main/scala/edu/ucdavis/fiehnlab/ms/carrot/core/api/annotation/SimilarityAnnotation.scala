@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.Spectrum
 import edu.ucdavis.fiehnlab.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.math.spectrum.BinByRoundingMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
 import edu.ucdavis.fiehnlab.util.Utilities
 
 /**
@@ -29,9 +29,16 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
     librarySpectra match {
       case x: Target =>
         correctedSpectra match {
-          case y: MSSpectra if y.spectrum.isDefined =>
+          case y: MSMSSpectra if y.associatedScan.isDefined =>
             val value = algorithm.compute(convertSpectra(y.spectrum.get.spectraString), convertSpectra(x.spectrum.get.spectraString))
             logger.trace(s"computed match is: ${value}")
+            val result = value > simmilarityOffset
+            logger.trace(s"\t=> matches: ${result}")
+            result
+
+          case y: MSSpectra if y.associatedScan.isDefined =>
+            val value = algorithm.compute(convertSpectra(y.associatedScan.get.spectraString), convertSpectra(x.spectrum.get.spectraString))
+            logger.trace(s"computed match is: ${value}, we are utilizing a MS1 similarity match!")
             val result = value > simmilarityOffset
             logger.trace(s"\t=> matches: ${result}")
             result

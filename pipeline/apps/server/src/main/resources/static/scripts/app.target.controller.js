@@ -193,7 +193,7 @@ angular.module('app')
                     // Handle string values for checkboxes when pasted
                     if (angular.isDefined($scope.data[i].riMarker)) {
                         if ((angular.isString($scope.data[i].riMarker) && $scope.data[i].riMarker == 'TRUE') || $scope.data[i].riMarker == true) {
-                          target.riMarker = true;
+                            target.riMarker = true;
                         } else {
                             target.riMarker = false;
                         }

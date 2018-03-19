@@ -51,7 +51,7 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 
     val method = AcquisitionMethod(None)
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.abf", "B5_P20Lipids_Pos_QC000.abf"))
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.d.zip", "B5_P20Lipids_Pos_QC000.d.zip"))
 
     //correct the data
     val correctedSample = samples.map((item: Sample) => correction.process(item, method))
