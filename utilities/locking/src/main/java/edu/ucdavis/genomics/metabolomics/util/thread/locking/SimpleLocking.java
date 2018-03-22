@@ -3,6 +3,7 @@ package edu.ucdavis.genomics.metabolomics.util.thread.locking;
 import edu.ucdavis.genomics.metabolomics.exception.LockingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -21,23 +22,18 @@ import java.util.Vector;
  * @version Dec 6, 2005
  */
 @Component
-@Profile("sjp.locking.simple")
+@Profile("sjp.locking.local")
 public class SimpleLocking extends AbstractLocking {
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 2L;
 
-	private static SimpleLocking instance;
+
+	@Value("${sjp.locking.timeout:5000}")
+	private long timeout;
 
 	private Logger logger = LoggerFactory.getLogger(getClass().getName());
-
-	public static SimpleLocking getInstance() {
-		if (instance == null) {
-			instance = new SimpleLocking();
-		}
-		return instance;
-	}
 
 	/**
 	 * contains all locked objects
@@ -114,7 +110,7 @@ public class SimpleLocking extends AbstractLocking {
 
 	public long getTimeout() throws LockingException {
 
-		return 1000;
+		return timeout;
 	}
 
 	public void setSleepTime(long sleepTime) {

@@ -7,6 +7,9 @@ import edu.ucdavis.genomics.metabolomics.exception.LockingException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.concurrent.locks.Lock;
 
 import static org.junit.Assert.assertTrue;
 
@@ -22,6 +25,10 @@ public abstract class AbstractLockableTest {
 
 	private boolean failed;
 
+
+	@Autowired
+	private Lockable lock;
+
 	/**
 	 * how high should be the load for the locking algorythm
 	 * 
@@ -29,26 +36,16 @@ public abstract class AbstractLockableTest {
 	 */
 	protected abstract int getLoad();
 
-	@Before
-	public void setUp() throws Exception {
-
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
 	@Test
 	public void testGetTimeout() throws LockingException {
-		assertTrue(getLockable().getTimeout() > 0);
+		assertTrue(lock.getTimeout() > 0);
 	}
 
 	@Test
 	public void testAquireRessourceObjectLongNoTimeout() throws Exception {
 		System.err.println("create threads...");
 
-		WaitingThreadGroup group = new WaitingThreadGroup("my group");
-
+        WaitingThreadGroup group = new WaitingThreadGroup("dadsa");
 		for (int i = 0; i < this.getLoad(); i++) {
 			this.startLockingTask(i, 900000000, group);
 		}
@@ -66,13 +63,9 @@ public abstract class AbstractLockableTest {
 	}
 
 	@Test
-	public void testAquireRessourceObjectLong() throws Exception {
+	public void testAquireRessourceObjectLongShouldTimeout() throws Exception {
 		failed = false;
-
-		// 5 is way to short to finish one of these threads so we should have 4
-		// timeouts!
-		WaitingThreadGroup group = new WaitingThreadGroup("my group");
-
+        WaitingThreadGroup group = new WaitingThreadGroup("dadsa");
 		for (int i = 0; i < this.getLoad(); i++) {
 			this.startLockingTask(i, 1, group);
 		}
@@ -80,15 +73,6 @@ public abstract class AbstractLockableTest {
 		waitForOperation(group);
 		assertTrue(failed);
 	}
-
-	/**
-	 * returns the correct implementation
-	 * 
-	 * @author wohlgemuth
-	 * @version Dec 6, 2005
-	 * @return
-	 */
-	protected abstract Lockable getLockable();
 
 	/**
 	 * simple test needed for testing the locking
@@ -99,28 +83,26 @@ public abstract class AbstractLockableTest {
 	 */
 	class ThreadTestTimeout extends Thread {
 		long timeout = 0;
-		Lockable lockable;
 		String name;
 
 		public ThreadTestTimeout(ThreadGroup group, long timeout, String string) {
 			super(group, string);
 			this.timeout = timeout;
 			name = string;
-			lockable = getLockable();
 			this.start();
 		}
 
 		public void run() {
 			try {
 				System.err.println(name + " aquire ressource");
-				lockable.aquireRessource(ressource, timeout);
+				lock.aquireRessource(ressource, timeout);
 				for (int i = 0; i < 80; i++) {
 					Thread.sleep(50);
 					System.err.print(name);
 				}
 				System.err.println();
 				System.err.println(name + " release ressource");
-				lockable.releaseRessource(ressource);
+				lock.releaseRessource(ressource);
 				System.err.println(name + " done");
 			} catch (Exception e) {
 				e.printStackTrace();
