@@ -15,11 +15,13 @@
         <module>compress</module>
         <module>casetojson</module>
         <module>loader</module>
+        <module>locking</module>
+        <module>sjp</module>
         <module>minix</module>
         <module>metadata</module>
         <module>email</module>
         <module>logging</module>
-        <module>sjp</module>
+
     </modules>
 
 
