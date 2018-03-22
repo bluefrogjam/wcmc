@@ -9,18 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>utilities</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>compress</module>
-        <module>casetojson</module>
-        <module>loader</module>
-        <module>minix</module>
-        <module>metadata</module>
-        <module>email</module>
-        <module>logging</module>
-        <module>sjp</module>
-    </modules>
+    <artifactId>binbase</artifactId>
 
 
 </project>
