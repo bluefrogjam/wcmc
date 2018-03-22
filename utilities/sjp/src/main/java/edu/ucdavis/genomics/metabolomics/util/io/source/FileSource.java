@@ -21,10 +21,6 @@ public class FileSource implements Source {
 	 */
 	private File file;
 
-	public FileSource() {
-
-	}
-
 	public FileSource(File file) throws ConfigurationException {
 		this.setIdentifier(file);
 	}
@@ -71,22 +67,22 @@ public class FileSource implements Source {
 		if (o instanceof String) {
 			file = new File((String) o);
 		}
-		else if (o instanceof File == false) {
+		else if (!(o instanceof File)) {
 			throw new ConfigurationException("o is not of type java.io.File");
 		}
 		else {
 			file = (File) o;
 		}
 
-		if (file.exists() == false) {
+		if (!file.exists()) {
 			throw new ConfigurationException("o does not exist, " + file);
 		}
 
-		if (file.isFile() == false) {
+		if (!file.isFile()) {
 			throw new ConfigurationException("o is not a file, " + file);
 		}
 
-		if (file.isDirectory() == true) {
+		if (file.isDirectory()) {
 			throw new ConfigurationException("o is a directory, must be a file! " + file);
 		}
 	}

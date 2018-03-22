@@ -5,12 +5,12 @@ package edu.ucdavis.genomics.metabolomics.util.io.dest;
 
 import edu.ucdavis.genomics.metabolomics.exception.ConfigurationException;
 import edu.ucdavis.genomics.metabolomics.util.io.source.ByteArraySource;
-import edu.ucdavis.genomics.metabolomics.util.io.source.ByteArraySourceFactoryImpl;
 import edu.ucdavis.genomics.metabolomics.util.io.source.Source;
+import junit.framework.TestCase;
 
 import java.io.*;
 
-public class ByteArrayDestinationTest extends AbstractDestinationTest {
+public class ByteArrayDestinationTest extends TestCase {
 	public ByteArrayDestinationTest() {
 		super();
 	}
@@ -40,14 +40,5 @@ public class ByteArrayDestinationTest extends AbstractDestinationTest {
         
     }
 
-	@Override
-	protected String getDestinationFactoryImpl() {
-		return ByteArrayDestinationFactoryImpl.class.getName();
-	}
-
-	@Override
-	protected String getSourceFactoryImpl() {
-		return ByteArraySourceFactoryImpl.class.getName();
-	}
 
 }

@@ -38,6 +38,8 @@ public class FileDestination implements Destination{
         super();
         logger.info("using directory: " + dir);
         this.dir = dir;
+
+        new File(dir).mkdirs();
     }
 
     /**
@@ -66,7 +68,7 @@ public class FileDestination implements Destination{
         }
         else if(o instanceof String){
             if(dir != null){
-                file = new File(this.dir + File.separator + o);
+                file = new File(new File(this.dir) , o.toString());
                 logger.info("final filename is: " + file.getAbsolutePath());
                 if(file.getParentFile().exists() == false){
                 	logger.debug("create directory strucure since parent dircetory does not exist");
