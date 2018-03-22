@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sop desc="transfomation of the samples like discussed at the 11-10-2005">
+
+	<!-- transform to crosstable -->
+	<crosstable combine="true" sizedown="100" attribute="height">	
+		<!--the needed headers -->
+		<header>
+			<param value="retention_index"/>
+			<param value="quantmass"/>
+			<param value="id"/>
+		</header>
+		
+		<!-- provided statistics -->
+		<statistic>
+			<zero-replacement method="edu.ucdavis.genomics.metabolomics.util.statistics.replacement.ReplaceWithMean" range="class" folder="mean/class">
+				<normalize method="edu.ucdavis.genomics.metabolomics.util.statistics.normalize.NormalizeOnSum" folder="normalized"/>
+			</zero-replacement>
+			<zero-replacement method="edu.ucdavis.genomics.metabolomics.util.statistics.replacement.ReplaceWithMean" range="experiment" folder="mean/experiment">
+				<normalize method="edu.ucdavis.genomics.metabolomics.util.statistics.normalize.NormalizeOnSum" folder="normalized"/>
+			</zero-replacement>
+			<zero-replacement method="edu.ucdavis.genomics.metabolomics.util.statistics.replacement.ReplaceWithMin" range="experiment" folder="min/experiment">
+				<normalize method="edu.ucdavis.genomics.metabolomics.util.statistics.normalize.NormalizeOnSum" folder="normalized"/>
+			</zero-replacement>	
+			<zero-replacement method="edu.ucdavis.genomics.metabolomics.util.statistics.replacement.ReplaceWithMin" range="class" folder="min/class">
+				<normalize method="edu.ucdavis.genomics.metabolomics.util.statistics.normalize.NormalizeOnSum" folder="normalized"/>
+			</zero-replacement>			
+		</statistic>
+	</crosstable>
+
+	<!-- export the rawdata -->
+	<rawdata folder="rawdata"/>
+</sop>

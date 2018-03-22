@@ -11,6 +11,7 @@ package edu.ucdavis.genomics.metabolomics.util.io.zip;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
 import java.util.zip.GZIPOutputStream;
 
 

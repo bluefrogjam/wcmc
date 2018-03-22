@@ -3,6 +3,8 @@ package edu.ucdavis.genomics.metabolomics.util.thread.locking;
 import edu.ucdavis.genomics.metabolomics.exception.LockingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -18,6 +20,8 @@ import java.util.Vector;
  * @author wohlgemuth
  * @version Dec 6, 2005
  */
+@Component
+@Profile("sjp.locking.simple")
 public class SimpleLocking extends AbstractLocking {
 	/**
 	 *
