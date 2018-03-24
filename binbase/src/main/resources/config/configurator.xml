@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--dient zum konfigurieren von configurationsparametern-->
+<config>
+	<!--hier werden allgemeine properties gesetzt welches das programm benoetigt-->
+	<parameter>
+		<!-- how we use reports and lock ressources-->
+		<param
+			name="edu.ucdavis.genomics.metabolomics.util.status.ReportFactory"
+			value="edu.ucdavis.genomics.metabolomics.binbase.cluster.status.EJBReportFactory"
+			public="true" />
+		<param
+			name="edu.ucdavis.genomics.metabolomics.util.thread.locking.LockableFactory"
+			value="edu.ucdavis.genomics.metabolomics.binbase.cluster.locking.EJBLockingFactory"
+			public="true" />
+		<param
+			name="edu.ucdavis.genomics.metabolomics.util.statistics.data.DataFileFactory"
+			value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.data.sql.SQLResultDataFileFactory"
+			public="true" />
+
+		<param
+			name="edu.ucdavis.genomics.metabolomics.util.statistics.collecting.RuntimeStatisticsFactory"
+			value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.statistics.RuntimeStatisticCollectorFactoryImpl"
+			public="true" />
+
+		<param
+			name="edu.ucdavis.genomics.metabolomics.binbase.bci.setupX.SetupXFactory"
+			value="edu.ucdavis.genomics.metabolomics.binbase.bci.setupX.DelegateSetupXFactory"
+			public="true" />
+	</parameter>
+
+	<!-- targetbereich-->
+
+	<!--target welches dir konfiugrationsangaben fuer die binbase sqlstatements bereitstellt-->
+	<target name="binbase.sql">
+		<!--spezifieziert welche klasse fur die konfiguration des algorythmus benutzt werden soll-->
+		<class
+			name="edu.ucdavis.genomics.metabolomics.util.config.xml.XMLConfiguration" />
+
+		<!--wo liegen die dateien -->
+		<parameter>
+			<data>/config/sql.xml</data>
+			<factory>
+				edu.ucdavis.genomics.metabolomics.util.io.source.ResourceSourceFactory
+			</factory>
+		</parameter>
+	</target>
+
+	<target name="binbase.config">
+		<!--spezifieziert welche klasse fur die konfiguration des algorythmus benutzt werden soll-->
+		<class
+			name="edu.ucdavis.genomics.metabolomics.util.config.xml.XMLConfiguration" />
+
+		<!--wo liegen die dateien -->
+		<parameter>
+			<data>/config/binbase.xml</data>
+			<factory>
+				edu.ucdavis.genomics.metabolomics.util.io.source.ResourceSourceFactory
+			</factory>
+		</parameter>
+	</target>
+</config>

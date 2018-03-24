@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+
+	<!-- root section to define main logging level and main appender -->
+	<root>
+		<appender-ref ref="console" />
+		<!--
+                <appender-ref ref="file" />
+        -->
+	</root>
+
+	<!--  filters for not needed jboss stuff -->
+	<category
+			name="edu"
+			additivity="true">
+		<priority value="debug" />
+	</category>
+
+	<category
+			name="edu.ucdavis.genomics.metabolomics.binbase.algorythm.util.Update"
+			additivity="true">
+		<priority value="info" />
+	</category>
+
+	<!--
+	<category
+			name="edu.ucdavis.genomics.metabolomics.binbase.algorythm"
+			additivity="true">
+		<priority value="info" />
+	</category>
+
+-->
+
+	<!-- appender definitions -->
+
+	<!-- keep the logger running in its own thread to avoid performance hits -->
+	<appender name="async" class="org.apache.log4j.AsyncAppender">
+		<appender-ref ref="console" />
+	</appender>
+
+	<!-- log the output the console -->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<param name="Threshold" value="debug" />
+
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				   value="[%d{ABSOLUTE}] [%-5p] [%t] [%-5c] [%m]%n" />
+		</layout>
+	</appender>
+
+</log4j:configuration>

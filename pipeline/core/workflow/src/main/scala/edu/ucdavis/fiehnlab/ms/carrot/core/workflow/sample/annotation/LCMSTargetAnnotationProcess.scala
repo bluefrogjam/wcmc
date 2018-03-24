@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 import scala.collection.immutable.ListMap
@@ -18,6 +19,7 @@ import scala.collection.immutable.ListMap
   * Created by wohlgemuth on 6/23/16.
   */
 @Component
+@Profile(Array("carrot.lcms"))
 class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSTargetAnnotationProperties) extends AnnotationProcess[Target, CorrectedSample, AnnotatedSample](targets) with LazyLogging {
 
   /**
