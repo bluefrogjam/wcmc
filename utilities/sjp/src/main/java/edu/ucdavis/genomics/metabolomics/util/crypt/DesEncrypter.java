@@ -3,8 +3,8 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.crypt;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BASE64DecoderStream;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BASE64EncoderStream;
+
+import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -15,6 +15,7 @@ import javax.crypto.spec.PBEParameterSpec;
 import java.io.UnsupportedEncodingException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.KeySpec;
+import java.util.Base64;
 
 /**
  * crypts and decrypts strings
@@ -78,7 +79,7 @@ public final class DesEncrypter {
 
             // Encode bytes to base64 to get a string
            
-            return BASE64EncoderStream.encode(enc);
+            return Base64.getEncoder().encode(enc);
         } catch (javax.crypto.BadPaddingException e) {
         } catch (IllegalBlockSizeException e) {
         } catch (UnsupportedEncodingException e) {
@@ -89,7 +90,7 @@ public final class DesEncrypter {
     public String decrypt(byte[] str) {
         try {
             // Decode base64 to get bytes
-            byte[] dec = BASE64DecoderStream.decode(str);
+            byte[] dec = Base64.getDecoder().decode(str);
 
             // Decrypt
             byte[] utf8 = dcipher.doFinal(dec);
