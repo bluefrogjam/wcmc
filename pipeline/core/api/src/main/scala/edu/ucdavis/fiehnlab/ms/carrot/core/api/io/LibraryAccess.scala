@@ -1,11 +1,15 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
+import scala.collection.JavaConverters._
 import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Primary
+import org.springframework.stereotype.Component
 
 import scala.io.Source
 
@@ -28,44 +32,160 @@ trait LibraryAccess[T <: Target] {
     *
     * @param target
     */
-  def add(target: T,acquisitionMethod: AcquisitionMethod,sample:Option[Sample]): Unit = {
-    add(Seq(target),acquisitionMethod,sample)
+  def add(target: T, acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
+    add(Seq(target), acquisitionMethod, sample)
   }
 
   /**
     * this will update the existing target with the provided values
+    *
     * @param target
     * @param acquisitionMethod
     */
-  def update(target: T, acquisitionMethod: AcquisitionMethod):Boolean
+  def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean
 
   /**
     * deletes a specified target from the library
+    *
     * @param target
     * @param acquisitionMethod
     */
-  def delete(target: T, acquisitionMethod: AcquisitionMethod) : Unit
+  def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit
 
   /**
     * deletes the complete library
     */
-  def deleteAll : Unit = {
-    libraries.foreach{ x =>
-      load(x).foreach( y => delete(y,x))
+  def deleteAll: Unit = {
+    libraries.foreach { x =>
+      load(x).foreach(y => delete(y, x))
     }
   }
+
   /**
     * adds a list of targets
     *
     * @param targets
     */
-  def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod,sample:Option[Sample] = None)
+  def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample] = None)
 
   /**
     * returns all associated acuqisiton methods for this library
+    *
     * @return
     */
-  def libraries : Seq[AcquisitionMethod]
+  def libraries: Seq[AcquisitionMethod]
+}
+
+/**
+  * a read only implementation, which ignores any write access
+  *
+  * @tparam T
+  */
+trait ReadonlyLibrary[T <: Target] extends LibraryAccess[T] {
+
+  /**
+    * this will update the existing target with the provided values
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean = false
+
+  /**
+    * deletes a specified target from the library
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = {}
+
+  /**
+    * adds a list of targets
+    *
+    * @param targets
+    */
+  override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {}
+
+}
+
+@Primary
+@Component
+class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[ LibraryAccess[T]] ) extends LibraryAccess[T] {
+
+  /**
+    * loads all the spectra from the library
+    * applicable for the given acquistion method
+    *
+    * @return
+    */
+  override def load(acquisitionMethod: AcquisitionMethod): Iterable[T] = {
+    val targets = delegates.asScala.find(_.load(acquisitionMethod).nonEmpty)
+
+    if (targets.isDefined) {
+      targets.get.load(acquisitionMethod)
+    }
+    else {
+      Seq.empty
+    }
+  }
+
+  /**
+    * this will update the existing target with the provided values
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean = {
+    val targets = delegates.asScala.filter(!_.isInstanceOf[ReadonlyLibrary[T]]).find(_.load(acquisitionMethod).nonEmpty)
+
+    if (targets.isDefined) {
+      targets.get.update(target, acquisitionMethod)
+    }
+    else {
+      false
+    }
+  }
+
+  /**
+    * deletes a specified target from the library
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = {
+    val targets = delegates.asScala.filter(!_.isInstanceOf[ReadonlyLibrary[T]]).find(_.load(acquisitionMethod).nonEmpty)
+
+    if (targets.isDefined) {
+      targets.get.delete(target, acquisitionMethod)
+    }
+    else {
+      false
+    }
+
+  }
+
+  /**
+    * adds a list of targets
+    *
+    * @param targets
+    */
+  override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
+    val t = delegates.asScala.filter(!_.isInstanceOf[ReadonlyLibrary[T]]).find(_.load(acquisitionMethod).nonEmpty)
+
+    if (t.isDefined) {
+      t.get.add(targets, acquisitionMethod, sample)
+    }
+
+  }
+
+  /**
+    * returns all associated acuqisiton methods for this library
+    *
+    * @return
+    */
+  override def libraries: Seq[AcquisitionMethod] = {
+    delegates.asScala.flatMap(_.libraries)
+  }
 }
 
 /**
@@ -73,7 +193,7 @@ trait LibraryAccess[T <: Target] {
   *
   * @param file
   */
-class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\t") extends LibraryAccess[T] with LazyLogging{
+class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\t") extends LibraryAccess[T] with LazyLogging {
 
   /**
     * returns all associated acuqisiton methods for this library
@@ -170,7 +290,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     *
     * @param targets
     */
-  override def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod,sample:Option[Sample]): Unit = {
+  override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
 
     logger.info(s"updating library at: ${file.getAbsolutePath}")
     val out = new FileWriter(file, true)
@@ -201,8 +321,8 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     logger.info(s"updating library at: ${file.getAbsolutePath}")
     val out = new FileWriter(file, false)
 
-    load(acquisitionMethod).filterNot(_.equals(target)).foreach{ x =>
-      writeTarget(out,x)
+    load(acquisitionMethod).filterNot(_.equals(target)).foreach { x =>
+      writeTarget(out, x)
     }
 
 
