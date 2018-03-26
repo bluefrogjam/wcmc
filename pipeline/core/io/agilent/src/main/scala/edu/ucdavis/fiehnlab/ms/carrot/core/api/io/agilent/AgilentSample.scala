@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSampleV2
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
