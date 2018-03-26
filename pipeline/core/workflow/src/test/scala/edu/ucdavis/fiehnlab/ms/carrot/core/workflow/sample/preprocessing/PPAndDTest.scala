@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt", "carrot.processing.peakdetection", "quantify-by-scan"))
+@ActiveProfiles(Array("backend-txt-lcms", "carrot.processing.peakdetection", "quantify-by-scan"))
 class PPAndDTest extends WordSpec with Matchers with LazyLogging {
   @Autowired
   val peakDetection: PeakDetection = null
