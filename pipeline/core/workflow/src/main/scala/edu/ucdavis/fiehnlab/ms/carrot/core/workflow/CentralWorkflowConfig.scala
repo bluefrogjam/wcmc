@@ -1,8 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow
 
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.io.{ConversionAwareSampleLoader, ResourceLoaderSampleLoader}
+import edu.ucdavis.fiehnlab.ms.carrot.core.io.ConversionAwareSampleLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation._
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.context.annotation._
 @Configuration
 @Import(Array(classOf[WorkflowConfig]))
 @ComponentScan(basePackageClasses = Array(classOf[DelegatingResourceLoader]))
+@EnableConfigurationProperties
 class CentralWorkflowConfig {
 
   /**

@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMST
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantificationProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{LCMSProperties, Workflow}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
@@ -18,9 +18,6 @@ import scala.collection.JavaConverters._
   * a postive mode based LCMS target workflow
   */
 class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
-
-  @Autowired
-  val lcmsLCMSProperties: LCMSProperties = null
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrection = null
