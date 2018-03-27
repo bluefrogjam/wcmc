@@ -27,8 +27,6 @@ class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
       properties.config should not be (null)
       properties.config.size() should be (1)
 
-      properties.test should be ("efg")
-
     }
     "property required standards needs to be defined" in {
       properties.requiredStandards should be (5)
