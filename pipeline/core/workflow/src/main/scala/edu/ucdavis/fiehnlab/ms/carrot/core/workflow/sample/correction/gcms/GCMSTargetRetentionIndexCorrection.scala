@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
-@Profile(Array("carrot.gcms"))
+@Profile(Array("carrot.gcms.correction"))
 class GCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[Target], val config:GCMSLibraryProperties) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess) with LazyLogging {
   /**
     * subclasses need to overwrite this method with the exact wished behavior
