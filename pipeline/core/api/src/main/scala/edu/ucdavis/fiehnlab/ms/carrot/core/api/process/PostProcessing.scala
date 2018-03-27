@@ -1,6 +1,5 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
+package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.Process
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
 
 /**

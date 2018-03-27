@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
@@ -26,8 +26,8 @@ class Carrot {
     * @return
     */
   @Bean
-  def workflow: LCMSPositiveModeTargetWorkflow[Double] = {
-    new LCMSPositiveModeTargetWorkflow()
+  def workflow: Workflow[Double] = {
+    new Workflow[Double]()
   }
 
   @Bean

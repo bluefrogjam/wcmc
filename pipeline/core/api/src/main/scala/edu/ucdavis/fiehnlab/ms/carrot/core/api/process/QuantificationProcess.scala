@@ -1,17 +1,15 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
+package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Sample, Target, _}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Primary, Profile}
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 /**

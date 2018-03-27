@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSTargetRetentionIndexCorrection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSTargetRetentionIndexCorrectionProcess
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,10 +11,10 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
 @ActiveProfiles(Array("carrot.gcms","carrot.gcms.correction"))
-class GCMSTargetRetentionIndexCorrectionTest extends WordSpec with ShouldMatchers{
+class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers{
 
   @Autowired
-  val correction:GCMSTargetRetentionIndexCorrection = null;
+  val correction:GCMSTargetRetentionIndexCorrectionProcess = null;
 
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
