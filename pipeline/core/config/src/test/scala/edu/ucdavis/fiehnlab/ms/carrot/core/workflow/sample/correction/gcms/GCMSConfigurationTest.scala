@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
+@ActiveProfiles(Array("carrot.gcms"))
 @SpringBootTest
 class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
 

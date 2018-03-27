@@ -9,15 +9,17 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties, NestedConfigurationProperty}
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Profile}
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
+
 import scala.collection.JavaConverters._
 import scala.beans.BeanProperty
 
 
 @EnableConfigurationProperties
 @Configuration
+@Profile(Array("carrot.gcms"))
 class GCMSTargetConfiguration {
 
   @Bean
