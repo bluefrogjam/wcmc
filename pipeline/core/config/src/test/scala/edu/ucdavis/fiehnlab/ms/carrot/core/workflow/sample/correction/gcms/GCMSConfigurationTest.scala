@@ -1,17 +1,17 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.gcms"))
+@SpringBootTest
 class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
 
   @Autowired
@@ -26,11 +26,24 @@ class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
       properties.config should not be (null)
       properties.config.size() should be (1)
 
+      properties.test should be ("efg")
+
     }
     "property required standards needs to be defined" in {
-      properties.requiredStandards should not be(0)
       properties.requiredStandards should be (5)
     }
+
+    "property config 0 needs 13 standard" in {
+      properties.config.get(0).targets.size() should be (13)
+    }
+
+
   }
+
+}
+
+
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+class TestApplication{
 
 }

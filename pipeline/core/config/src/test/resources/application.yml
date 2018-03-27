@@ -143,7 +143,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.01
-              minSimilarity: ~
+              minSimilarity: 600
               qualifierIon: 410
               required: false
               retentionIndex: 1006900
@@ -178,9 +178,3 @@ carrot:
       requiredStandards: 5
       test: "efg"
   test: efg
-msdial:
-  connectTimeoutMillis: 250
-  readTimeoutMillis: 250000
-spectrum:
-  minimizer:
-    basePeakRatio: 0.0001

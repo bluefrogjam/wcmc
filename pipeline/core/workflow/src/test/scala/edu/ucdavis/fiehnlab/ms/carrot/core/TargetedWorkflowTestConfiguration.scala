@@ -7,7 +7,6 @@ import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
-import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4JAutoConfiguration
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -18,7 +17,6 @@ import org.springframework.context.annotation._
   * Test configuration of a LCMS target workflow
   */
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Configuration
 class TargetedWorkflowTestConfiguration extends LazyLogging {
 
   @Autowired
