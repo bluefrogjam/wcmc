@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception.NotEnoughStandardsFoundException
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PeakDetection
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -19,11 +19,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt-lcms","quantify-by-scan","carrot.processing.peakdetection"))
-class LCMSRetentionIndexCorrectionTest extends WordSpec with LazyLogging{
+@ActiveProfiles(Array("backend-txt-lcms","quantify-by-scan","carrot.processing.peakdetection","carrot.lcms"))
+class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging{
 
   @Autowired
-  val correction: LCMSTargetRetentionIndexCorrection = null
+  val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
   @Autowired
   val loader:SampleLoader = null

@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.{AnnotationProcess, CorrectionProcess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception._
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetRetentionIndexCorrection @Autowired()(val libraryAccess: LibraryAccess[Target]) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess) with LazyLogging {
+class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends CorrectionProcess(libraryAccess) with LazyLogging {
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
   val massAccuracySetting: Double = 5

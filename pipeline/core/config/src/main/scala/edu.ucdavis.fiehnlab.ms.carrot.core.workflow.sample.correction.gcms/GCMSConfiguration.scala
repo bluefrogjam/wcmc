@@ -98,6 +98,7 @@ case class GCMSCorrectionTarget(target: GCMSRetentionIndexTarget) extends Target
 
 @Component
 @Validated
+@Profile(Array("carrot.gcms"))
 @ConfigurationProperties(prefix = "carrot.gcms.correction", ignoreUnknownFields = false, ignoreInvalidFields = false)
 class GCMSLibraryProperties {
 
