@@ -10,7 +10,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.correction.gcms"))
+@ActiveProfiles(Array("carrot.gcms","carrot.gcms.correction"))
 class GCMSTargetRetentionIndexCorrectionTest extends WordSpec with ShouldMatchers{
 
   @Autowired
