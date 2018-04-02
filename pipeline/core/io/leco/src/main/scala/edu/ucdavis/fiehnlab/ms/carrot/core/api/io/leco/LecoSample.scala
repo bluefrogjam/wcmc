@@ -30,9 +30,14 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
     * @return
     */
   def readFile(inputStream: InputStream): List[LecoSpectrum] = {
-    val lines: Iterator[String] = Source.fromInputStream(inputStream, "ISO-8859-1").getLines()
+    val lines: Iterator[String] = Source.fromInputStream(inputStream, "ISO-8859-1").getLines().map(_.toLowerCase)
 
     if (lines.hasNext) {
+
+      //drop first line
+      lines.next()
+
+      //extract the header
       val headers = lines.next().toLowerCase().split("\t")
       var scan: Int = 0
 
@@ -42,8 +47,15 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
           val map = (headers zip contents).toMap
 
           scan = scan + 1
-          buildSpectra(scan, map)
-      }.toList
+          try {
+            buildSpectra(scan, map)
+          }
+          catch {
+            case x: Exception =>
+              logger.warn(x.getMessage, x)
+              return null
+          }
+      }.filter(_ != null).toList
     }
     else {
       throw new IOException(s"sorry the file: ${fileName} contained no lines!")
@@ -59,24 +71,23 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
     */
   def buildSpectra(scan: Int, map: Map[String, String]): LecoSpectrum = {
 
-
     val spec = new LecoSpectrum {
 
-      val sample:Sample = LecoSample.this
-      override val purity: Option[Double] = Some(map.get(purityIdentifier).get.toDouble)
+      val sample: Sample = LecoSample.this
+      override val purity: Option[Double] = Some(map(purityIdentifier).replaceAll(",", ".").toDouble)
       override val scanNumber: Int = scan
 
-      override val retentionTimeInSeconds: Double = map.get(retentionTimeSecondsIdentifier).get.toDouble
+      override val retentionTimeInSeconds: Double = map(retentionTimeSecondsIdentifier).replaceAll(",", ".").toDouble
       /**
         * accurate mass of this feature, if applicable
         */
       override val massOfDetectedFeature: Option[Ion] = None
 
       override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
-        override val modelIons: Option[List[Double]] = Some(map.get(uniquemassIdentifier).get.toDouble :: List())
+        override val modelIons: Option[List[Double]] = Some(map(uniquemassIdentifier).replaceAll(",", ".").toDouble :: List())
 
 
-        override val ions: List[Ion] = map.get(spectraIdentifier).get.toString.split(" ").collect {
+        override val ions: List[Ion] = map(spectraIdentifier).toString.split(" ").collect {
           case x: String =>
             val values = x.split(":")
 
@@ -88,8 +99,10 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
           */
         override val msLevel: Short = 1
       })
-
-
+      /**
+        * associated spectrum propties if applicable
+        */
+      override lazy val spectrum: Option[SpectrumProperties] = associatedScan
     }
     spec
   }

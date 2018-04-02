@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
 
   @Autowired
-  val properties:GCMSLibraryProperties = null
+  val properties:GCMSCorrectionLibraryProperties = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -34,6 +34,10 @@ class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
 
     "property config 0 needs 13 standard" in {
       properties.config.get(0).targets.size() should be (13)
+    }
+
+    "should be in nominal mass mode" in {
+      properties.config.get(0).isNominal() should be (true)
     }
 
 

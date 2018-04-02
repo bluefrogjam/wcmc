@@ -16,7 +16,7 @@ abstract class AnnotationProcess[T <: Target, I <: Sample, O <: Sample](targets:
     * @return
     */
   final override def doProcess(input: I, method: AcquisitionMethod): O = {
-    process(input, targets.load(method).filter(_.confirmed))
+    process(input, targets.load(method).filter(_.confirmed),method )
   }
 
   /**
@@ -25,7 +25,7 @@ abstract class AnnotationProcess[T <: Target, I <: Sample, O <: Sample](targets:
     * @param input
     * @return
     */
-  def process(input: I, targets: Iterable[T]): O
+  def process(input: I, targets: Iterable[T], method: AcquisitionMethod): O
 }
 
 /**
