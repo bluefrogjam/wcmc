@@ -1,22 +1,13 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
-import java.util
-
-import org.springframework.context.annotation.Bean
-import org.springframework.data.redis.cache.RedisCacheManager
-import org.springframework.data.redis.cache.RedisCachePrefix
-import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.data.redis.serializer.RedisSerializer
-import org.springframework.data.redis.serializer.StringRedisSerializer
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.http.MediaType
 import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, CorsRegistry, WebMvcConfigurerAdapter}
 
@@ -27,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 class Carrot {
 
   @Value("${server.port}")
-  val port: Integer = null
+  val port: Integer = 0
 
   /**
     * should be done over a profile TODO
@@ -53,7 +44,7 @@ object Carrot extends App {
 }
 
 @Configuration
-@ComponentScan
+//@ComponentScan
 class CarrotCors extends WebMvcConfigurerAdapter {
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {
