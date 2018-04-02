@@ -31,6 +31,18 @@ class PeakDetection extends PreProcessor with LazyLogging {
     * @return
     */
   override def doProcess(item: Sample, method: AcquisitionMethod): Sample = {
+    if (method.chromatographicMethod.get.ionMode.isDefined) {
+      processingProperties.ionMode = method.chromatographicMethod.get.ionMode.get
+    }
     msdialProcessor.process(item, processingProperties)
   }
+}
+
+@Configuration
+class PeakDetectionConfiguration {
+  @Bean
+  def msdialProcessor: MSDialProcessing = new MSDialProcessing()
+
+  @Bean
+  def processingProperties: MSDialProcessingProperties = new MSDialProcessingProperties()
 }
