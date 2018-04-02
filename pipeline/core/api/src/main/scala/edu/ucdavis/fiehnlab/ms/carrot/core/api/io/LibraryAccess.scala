@@ -4,8 +4,8 @@ import java.io._
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
 
 import scala.io.Source
 
@@ -24,7 +24,7 @@ trait LibraryAccess[T <: Target] {
   def load(acquisitionMethod: AcquisitionMethod): Iterable[T]
 
   /**
-    * adds a new target to the internal list of targets
+    * adds a new target to the internal list of targets for the selected method
     *
     * @param target
     */
@@ -33,14 +33,16 @@ trait LibraryAccess[T <: Target] {
   }
 
   /**
-    * this will update the existing target with the provided values
+    * this will update the existing target with the provided values in the selected method
+    *
     * @param target
     * @param acquisitionMethod
     */
   def update(target: T, acquisitionMethod: AcquisitionMethod):Boolean
 
   /**
-    * deletes a specified target from the library
+    * deletes a specified target from the acquisition method
+    *
     * @param target
     * @param acquisitionMethod
     */
@@ -62,10 +64,18 @@ trait LibraryAccess[T <: Target] {
   def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod,sample:Option[Sample] = None)
 
   /**
-    * returns all associated acuqisiton methods for this library
+    * returns all associated acquisition methods for this library
+    *
     * @return
     */
   def libraries : Seq[AcquisitionMethod]
+
+  /**
+    * deletes the specified acquisition method from the list
+    *
+    * @param library
+    */
+  def deleteLibrary(acquisitionMethod: AcquisitionMethod) = {}
 }
 
 /**
@@ -80,7 +90,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     *
     * @return
     */
-  override def libraries: Seq[AcquisitionMethod] = AcquisitionMethod(None) :: List()
+  override def libraries: Seq[AcquisitionMethod] = Seq.empty
 
   /**
     * loads all the spectra from the library
