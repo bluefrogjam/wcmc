@@ -102,12 +102,14 @@
                                             </div>
                                         </div>
                                     </form>
+                                    <br/>
                                     <form>
                                         <div class="form-group">
                                             <label>
-                                                <input id="deleteLib" type="button" class="btn"
-                                                       value="Delete library {{library.chromatographicMethod.name}}"
-                                                       ng-click="deleteLibrary(library.chromatographicMethod.name)"/>
+                                                <input type="button" id="deleteLib" class="btn"
+                                                       ng-show="binSettings.libraries.length"
+                                                       value="Delete library {{binSettings.acquisition}}"
+                                                       ng-click="deleteLibrary(binSettings.acquisition)"/>
                                             </label>
                                         </div>
                                     </form>
