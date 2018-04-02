@@ -5,6 +5,14 @@ carrot:
         -
           description: "This is the class Gerstel injector FAME marker configuration"
           name: Gerstel
+          column: rtx5
+          allowedBasePeaks:
+            - 87.0
+            - 117.0
+            - 147.0
+            - 174.0
+            - 130.0
+          minimumPeakIntensity: 10000
           targets:
             -
               identifier: "z C08 FAME internal standard"
@@ -13,7 +21,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.06
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 127
               required: true
               retentionIndex: 262320
@@ -26,7 +34,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.05
-              minSimilarity: 700
+              minSimilarity: 0.7
               qualifierIon: 141
               required: true
               retentionIndex: 323120
@@ -39,7 +47,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.01
-              minSimilarity: 700
+              minSimilarity: 0.7
               qualifierIon: 155
               required: true
               retentionIndex: 381020
@@ -52,7 +60,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.005
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 214
               required: true
               retentionIndex: 487220
@@ -65,7 +73,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.008
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 242
               required: false
               retentionIndex: 582620
@@ -78,7 +86,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.01
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 270
               required: false
               retentionIndex: 668720
@@ -91,7 +99,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.01
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 298
               required: false
               retentionIndex: 747420
@@ -104,7 +112,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.01
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 326
               required: false
               retentionIndex: 819620
@@ -117,7 +125,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.01
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 354
               required: false
               retentionIndex: 886620
@@ -130,7 +138,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.01
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 382
               required: true
               retentionIndex: 948820
@@ -143,7 +151,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.01
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 410
               required: false
               retentionIndex: 1006900
@@ -156,7 +164,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.001
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 438
               required: true
               retentionIndex: 1061700
@@ -169,7 +177,7 @@ carrot:
               minApexSn: 50
               minDistanceRatio: 1.2
               minQualifierRatio: 0.001
-              minSimilarity: 600
+              minSimilarity: 0.6
               qualifierIon: 466
               required: true
               retentionIndex: 1113100

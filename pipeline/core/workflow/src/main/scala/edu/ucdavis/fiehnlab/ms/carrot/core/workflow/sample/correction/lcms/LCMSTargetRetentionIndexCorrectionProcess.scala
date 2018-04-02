@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.{AnnotationProcess, CorrectionProcess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception._
@@ -80,7 +81,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   /**
     * this defines our regression curve, which is supposed to be utilized during the correction. Lazy loading is required to avoid null pointer exception of the configuration settings
     */
-  lazy val regression: Regression = new CombinedRegression(linearSamples, polynomialOrder)
+  override lazy val regression: Regression = new CombinedRegression(linearSamples, polynomialOrder)
 
   /**
     * attmeps to find a Seq of possible matching spectra
@@ -138,14 +139,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     }
   }
 
-  /**
-    * subclasses need to overwrite this method with the exact wished behavior
-    *
-    * @param input
-    * @return
-    */
-  override def process(input: Sample, target: Iterable[Target]): CorrectedSample = {
-
+  protected def findCorrectionTargets(input: Sample, target: Iterable[Target],method: AcquisitionMethod): Seq[TargetAnnotation[Target, Feature]] = {
     val targets = target.filter(_.isRetentionIndexStandard)
     logger.debug(s"correction sample: ${input} with ${targets.size} defined standards")
 
@@ -209,9 +203,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
     //verify that there
     verifyAnnotations(optimizedMatches, input)
-
-    //do the actual correction and return the sample for further processing
-    doCorrection(optimizedMatches, input, regression, input)
+    optimizedMatches
   }
 
   /**
@@ -224,48 +216,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     if (possibleHits.size < minimumFoundStandards) {
       throw new NotEnoughStandardsFoundException(s"sorry we did not find enough standards in this sample: ${input.fileName} for a successful correction. We only found ${possibleHits.size}, but require ${minimumFoundStandards}")
     }
-  }
-
-  /**
-    * executes the actual correction of the samples
-    *
-    * @param possibleHits
-    * @param sampleToCorrect
-    * @param regression
-    * @return
-    */
-  def doCorrection(possibleHits: Seq[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample): CorrectedSample = {
-
-    //library
-    val y: Array[Double] = possibleHits.map(_.target.retentionIndex.toDouble).toArray
-
-    //annotations
-    val x: Array[Double] = possibleHits.map(_.annotation.retentionTimeInSeconds.toDouble).toArray
-
-    regression.calibration(x, y)
-
-    logger.info(s"${regression.toString}\n")
-
-    val correctedSpectra: Seq[_ <: Feature with CorrectedSpectra] = sampleToCorrect.spectra.map(x => SpectraHelper.addCorrection(x, regression.computeY(x.retentionTimeInSeconds)))
-
-    /**
-      * generates a new corrected sample object
-      * and computes all it's properties
-      */
-
-    new CorrectedSample {
-      //needs to be possible to replace this with a different sample later
-      override val correctedWith: Sample = sampleUsedForCorrection
-
-      //generate our new spectra collection
-      override val spectra: Seq[_ <: Feature with CorrectedSpectra] = correctedSpectra
-
-      //the original data, this sample is based on
-      override val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]] = possibleHits
-      override val regressionCurve: Regression = regression
-      override val fileName: String = sampleToCorrect.fileName
-    }
-
   }
 
   /**

@@ -6,6 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Sample, Target, _}
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +28,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
     * @param input
     * @return
     */
-  final override def process(input: AnnotatedSample, targets: Iterable[Target]): QuantifiedSample[T] = {
+  final override def process(input: AnnotatedSample, targets: Iterable[Target], method: AcquisitionMethod): QuantifiedSample[T] = {
 
     logger.debug(s"quantify sample: ${input.fileName}")
     /**

@@ -5,7 +5,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionIndexDifference}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.{AnnotateSampleProcess, AnnotationProcess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -20,7 +21,7 @@ import scala.collection.immutable.ListMap
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSTargetAnnotationProperties) extends AnnotationProcess[Target, CorrectedSample, AnnotatedSample](targets) with LazyLogging {
+class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSTargetAnnotationProperties) extends AnnotateSampleProcess(targets) with LazyLogging {
 
   /**
     * are we in debug mode, adds some sorting and prettifying for debug messages
@@ -234,7 +235,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     * @param input
     * @return
     */
-  override def process(input: CorrectedSample, targets: Iterable[Target]): AnnotatedSample = {
+  override def process(input: CorrectedSample, targets: Iterable[Target], method: AcquisitionMethod): AnnotatedSample = {
     logger.info(s"Annotating sample: ${input.name}")
 
     /**

@@ -21,30 +21,47 @@ import scala.beans.BeanProperty
 @Configuration
 @Profile(Array("carrot.gcms"))
 @ComponentScan
-class GCMSTargetConfiguration {
+class GCMSCorrectionTargetConfiguration {
 
+  /**
+    * defines a library access method, based on all methods
+    * defines in the yaml file
+    * @param properties
+    * @return
+    */
   @Bean
-  def correctionTargets(properties: GCMSLibraryProperties): LibraryAccess[GCMSCorrectionTarget] = {
+  def correctionTargets(properties: GCMSCorrectionLibraryProperties): LibraryAccess[GCMSCorrectionTarget] = {
 
     val libs = properties.config.asScala.map { x =>
 
       new ReadonlyLibrary[GCMSCorrectionTarget] {
-        override def load(acquisitionMethod: AcquisitionMethod): Iterable[GCMSCorrectionTarget] = x.targets.asScala.map(GCMSCorrectionTarget)
+        override def load(acquisitionMethod: AcquisitionMethod): Iterable[GCMSCorrectionTarget] = {
+
+          acquisitionMethod.chromatographicMethod match {
+            case Some(method) if method.name.equals(x.name) =>
+              method.column match {
+                case Some(column) if column.equals(x.column) =>
+                  x.targets.asScala.map(GCMSCorrectionTarget)
+                case None => Seq.empty
+              }
+
+            case None => Seq.empty
+          }
+
+        }
 
         override def libraries: Seq[AcquisitionMethod] = Seq.empty
       }.asInstanceOf[LibraryAccess[GCMSCorrectionTarget]]
     }.toSeq.asJava
 
     new DelegateLibraryAccess[GCMSCorrectionTarget](libs)
-
-    null
   }
 
 }
 
-case class GCMSCorrectionTarget(target: GCMSRetentionIndexTarget) extends Target {
+case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) extends Target {
 
-  val config: GCMSRetentionIndexTarget = target
+  val config: GCMSRetentionIndexTargetConfiguration = target
   /**
     * a name for this spectra
     */
@@ -100,7 +117,7 @@ case class GCMSCorrectionTarget(target: GCMSRetentionIndexTarget) extends Target
 @Validated
 @Profile(Array("carrot.gcms"))
 @ConfigurationProperties(prefix = "carrot.gcms.correction", ignoreUnknownFields = false, ignoreInvalidFields = false)
-class GCMSLibraryProperties {
+class GCMSCorrectionLibraryProperties {
 
   /**
     * all our targets
@@ -116,10 +133,7 @@ class GCMSLibraryProperties {
     */
   @Min(1)
   @BeanProperty
-  var requiredStandards: Int = 0
-
-  @BeanProperty
-  var test: String = "abc"
+  var requiredStandards: Int = 6
 
 }
 
@@ -129,7 +143,7 @@ class GCMSLibraryConfiguration {
   @Valid
   @Size(min = 1)
   @NestedConfigurationProperty
-  val targets: java.util.List[GCMSRetentionIndexTarget] = new util.ArrayList[GCMSRetentionIndexTarget]()
+  val targets: java.util.List[GCMSRetentionIndexTargetConfiguration] = new util.ArrayList[GCMSRetentionIndexTargetConfiguration]()
 
   @BeanProperty
   @NotBlank
@@ -138,9 +152,39 @@ class GCMSLibraryConfiguration {
   @BeanProperty
   @NotBlank
   var description: String = ""
+
+  @BeanProperty
+  @NotBlank
+  var column:String = ""
+
+  /**
+    * how high do peaks have to be to be considered as targets
+    * for RI correction
+    */
+  @BeanProperty
+  var minimumPeakIntensity:Float = 0
+
+  /**
+    * which base peaks do we allow
+    */
+  @BeanProperty
+  @NotEmpty
+  var allowedBasePeaks: java.util.List[Double] = new util.ArrayList[Double]()
+
+  /**
+    * what is our allowed mass accuracy
+    * if 0, we assume we are running in nominal mass mode!
+    */
+  var massAccuracy: Double = 0.0
+
+  /**
+    * helper method to check for nominal mass
+    * @return
+    */
+  def isNominal() : Boolean = massAccuracy.equals(0.0)
 }
 
-class GCMSRetentionIndexTarget {
+class GCMSRetentionIndexTargetConfiguration {
   @BeanProperty
   @NotBlank
   var identifier: String = _
@@ -180,7 +224,7 @@ class GCMSRetentionIndexTarget {
   var maxDistanceRatio: Double = 0.0
 
   @BeanProperty
-  @DecimalMax("1000.0")
+  @DecimalMax("1.0")
   @DecimalMin("0.0")
   var minSimilarity: Double = 0.0
 
