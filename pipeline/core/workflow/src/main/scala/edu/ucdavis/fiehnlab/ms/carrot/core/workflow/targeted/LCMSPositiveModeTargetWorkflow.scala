@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.PostProcessing
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.exception.InvalidSampleTypeException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantificationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.{LCMSProperties, Workflow}
@@ -36,22 +37,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
   val postProcessor: java.util.List[PostProcessing[T]] = new util.ArrayList[PostProcessing[T]]()
 
   @Autowired
-  val annotate: LCMSTargetAnnotationProcess = null
-
-  override protected def quantifySample(sample: Sample, acquisitionMethod: AcquisitionMethod): QuantifiedSample[T] = sample match {
-    case s: AnnotatedSample =>
-      logger.info(s"quantify sample: $s")
-      var temp = quantificationProcess.process(s, acquisitionMethod)
-
-      logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen data type: $s")
-      quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
-        logger.info(s"executing: $x")
-        temp = x.process(temp, acquisitionMethod)
-      }
-
-      temp
-  }
-
+  val annotation: LCMSTargetAnnotationProcess = null
 
   /**
     * this method is used to handle failed corrections
@@ -122,7 +108,7 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
       sample
     }
     else {
-      logger.info(s"PreProcessors: ${preProcessor.asScala.sortBy(_.priortiy).reverse.map(_.getClass.getSimpleName).mkString(";")}")
+      logger.info(s"PreProcessors: ${preProcessor.asScala.sortBy(_.priortiy).reverse.map(_.getClass.getSimpleName).mkString(" > ")}")
 
       //TODO could be done more elegant with a fold, but no time to play with it
       val iterator = preProcessor.asScala.sortBy(_.priortiy).reverseIterator
@@ -150,9 +136,33 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
     * @param sample
     * @return
     */
-  override protected def annotateSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample = sample match {
-    case c: CorrectedSample => annotate.process(c, acquisitionMethod)
+  override protected def annotateSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample =
+    sample match {
+      case c: CorrectedSample => annotation.process(c, acquisitionMethod)
+    }
+
+
+  /**
+    * quantify sample
+    *
+    * @param sample
+    * @param acquisitionMethod
+    * @return
+    */
+  override protected def quantifySample(sample: Sample, acquisitionMethod: AcquisitionMethod): QuantifiedSample[T] = sample match {
+    case s: AnnotatedSample =>
+      logger.info(s"quantify sample: $s")
+      var temp = quantificationProcess.process(s, acquisitionMethod)
+
+      logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen data type: $s")
+      quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
+        logger.info(s"executing: $x")
+        temp = x.process(temp, acquisitionMethod)
+      }
+
+      temp
   }
+
 
   /**
     * provides us with a post processed sample
@@ -177,5 +187,6 @@ class LCMSPositiveModeTargetWorkflow[T] @Autowired() extends Workflow[T] {
         temp
       }
 
+    case _ => throw new InvalidSampleTypeException(s"Invalid sample type for postProcessing, expected QuantifiedSample")
   }
 }
