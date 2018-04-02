@@ -76,7 +76,7 @@ trait Workflow[T] extends LazyLogging {
     */
   protected final def quantify(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationBeginEvent(sample)))
-    val result = quantify(sample, acquisitionMethod)
+    val result = quantifySample(sample, acquisitionMethod)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationFinishedEvent(result)))
     result
   }
@@ -136,15 +136,15 @@ trait Workflow[T] extends LazyLogging {
   final def process(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(sample)))
 
-    val result = quantify(
-      postProcessing(
-      annotation(
-        correction(
-          preprocessing(
-            sample, acquisitionMethod
+    val result = postProcessing(
+      quantify(
+        annotation(
+          correction(
+            preprocessing(
+              sample, acquisitionMethod
+            ), acquisitionMethod
           ), acquisitionMethod
         ), acquisitionMethod
-      ), acquisitionMethod
       ), acquisitionMethod
     )
 
