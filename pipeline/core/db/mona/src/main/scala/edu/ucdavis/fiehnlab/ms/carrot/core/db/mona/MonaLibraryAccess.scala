@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
 import java.util.Date
-import java.util.concurrent.{ExecutorService, Executors, Semaphore}
-import javax.annotation.PostConstruct
+import java.util.concurrent.{ExecutorService, Executors}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
@@ -14,8 +13,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
+import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
-import org.springframework.cache.annotation.{CacheEvict, Cacheable}
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
@@ -565,7 +565,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
   /**
     * deletes a specified target from the library
     *
-    * @param target
+    * @param t
     * @param acquisitionMethod
     */
   @CacheEvict(value = Array("monacache"), allEntries = true)
@@ -597,6 +597,13 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     val spectrum = generateSpectrum(target, acquisitionMethod, None).get
     this.monaSpectrumRestClient.update(spectrum, spectrum.id)
     true
+  }
+
+  @CacheEvict(value = Array("monacache"), allEntries = true)
+  override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
+    logger.info(s"about to delete ${acquisitionMethod.chromatographicMethod.get.name}")
+
+    load(acquisitionMethod).foreach(t => delete(t, acquisitionMethod))
   }
 }
 
