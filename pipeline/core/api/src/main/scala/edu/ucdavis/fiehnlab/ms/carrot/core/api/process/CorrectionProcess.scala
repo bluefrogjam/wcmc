@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, StandardAnnotatedTwice, StandardsNotInOrderException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Sample, Target, TargetAnnotation}
@@ -25,10 +26,58 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     */
   override final def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod): CorrectedSample = {
 
-    val optimizedMatches: Seq[TargetAnnotation[Target, Feature]] = findCorrectionTargets(input, target,method)
+    val optimizedMatches = findCorrectionTargets(input, target,method)
+
+
 
     //do the actual correction and return the sample for further processing
     doCorrection(optimizedMatches, input, regression, input)
+  }
+
+
+  /**
+    * verifies that one standard is not annotate twice
+    *
+    * @param optimizedMatches
+    * @return
+    */
+  def verifyAnnotations(optimizedMatches: Iterable[TargetAnnotation[Target, Feature]], input: Sample) = {
+    if (optimizedMatches.map(_.target).toSet.size != optimizedMatches.size) {
+      throw new StandardAnnotatedTwice(s"one of the standards, was annotated twice in sample ${input.fileName}!")
+    }
+  }
+
+  /**
+    * minimum required count of standards found
+    * @return
+    */
+  protected def getMinimumFoundStandards: Int
+
+  /**
+    * check that the found annotations are enough to satisfy the need for correction
+    *
+    * @param possibleHits
+    */
+  def verifyCount(possibleHits: Iterable[TargetAnnotation[Target, Feature]], input: Sample) = {
+    //ensure we found enough standards
+    if (possibleHits.size < getMinimumFoundStandards) {
+      throw new NotEnoughStandardsFoundException(s"sorry we did not find enough standards in this sample: ${input.fileName} for a successful correction. We only found ${possibleHits.size}, but require ${getMinimumFoundStandards}")
+    }
+  }
+
+  /**
+    * verifies the order of the annotated retention index standards or throws an exception
+    *
+    * @param possibleHits
+    */
+  def verifyOrder(possibleHits: Iterable[TargetAnnotation[Target, Feature]], input: Sample) = {
+    possibleHits.foreach { x =>
+      logger.info(s"validating order for ${x.target.name} with ${x.target.retentionIndex} against annotation ${x.annotation.retentionTimeInSeconds}")
+    }
+    //brian would suggest to delete standards, which are out of order in case they are the same compound with different ionisations and come very close together
+    if (!possibleHits.sliding(2).forall(x => x.head.annotation.retentionTimeInSeconds <= x.last.annotation.retentionTimeInSeconds)) {
+      throw new StandardsNotInOrderException(s"one or more standards in this sample  ${input.fileName} where not annotated in ascending order of their retention times! Sample was ${input.fileName}")
+    }
   }
 
   /**
@@ -40,7 +89,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     * @param target
     * @return
     */
-  protected def findCorrectionTargets(input: Sample, target: Iterable[Target],method: AcquisitionMethod): Seq[TargetAnnotation[Target, Feature]]
+  protected def findCorrectionTargets(input: Sample, target: Iterable[Target],method: AcquisitionMethod): Iterable[TargetAnnotation[Target, Feature]]
 
     /**
     * executes the actual correction of the samples
@@ -50,7 +99,18 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     * @param regression
     * @return
     */
-  def doCorrection(possibleHits: Seq[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample): CorrectedSample = {
+  def doCorrection(possibleHits: Iterable[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample): CorrectedSample = {
+
+
+
+    //make sure they are in numerical order
+    verifyOrder(possibleHits, sampleUsedForCorrection)
+
+    //verify we got enough standards
+    verifyCount(possibleHits, sampleUsedForCorrection)
+
+    //verify that there
+    verifyAnnotations(possibleHits, sampleUsedForCorrection)
 
     //library
     val y: Array[Double] = possibleHits.map(_.target.retentionIndex.toDouble).toArray
@@ -77,7 +137,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
       override val spectra: Seq[_ <: Feature with CorrectedSpectra] = correctedSpectra
 
       //the original data, this sample is based on
-      override val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]] = possibleHits
+      override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = possibleHits
       override val regressionCurve: Regression = regression
       override val fileName: String = sampleToCorrect.fileName
     }

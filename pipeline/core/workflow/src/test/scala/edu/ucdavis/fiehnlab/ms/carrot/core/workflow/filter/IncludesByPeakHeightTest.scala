@@ -23,7 +23,7 @@ class IncludesByPeakHeightTest extends WordSpec {
       }
 
       "spectra is excluded since it had an Ion of I00 with Int < 30" in {
-        assert(filter.include(testSpectraWith3Ions))
+        assert(!filter.include(testSpectraWith3Ions))
       }
     }
 
@@ -39,7 +39,7 @@ class IncludesByPeakHeightTest extends WordSpec {
       }
 
       "spectra is excluded since it had an Ion of I00 with Int < 30" in {
-        assert(filter.include(testSpectraWith3Ions))
+        assert(!filter.include(testSpectraWith3Ions))
       }
     }
   }

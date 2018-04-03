@@ -3,7 +3,7 @@ carrot:
     correction:
       config:
         -
-          description: "This is the class Gerstel injector FAME marker configuration"
+          description: "This is the Gerstel injector FAME marker configuration"
           name: Gerstel
           column: rtx5
           allowedBasePeaks:
@@ -12,7 +12,7 @@ carrot:
             - 147.0
             - 174.0
             - 130.0
-          minimumPeakIntensity: 10000
+          minimumPeakIntensity: 1000
           targets:
             -
               identifier: "z C08 FAME internal standard"
