@@ -97,7 +97,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
         override val quantifiedTargets: Seq[QuantifiedTarget[Double]] = replacedSpectra
         override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = sample.noneAnnotated
         override val correctedWith: Sample = sample.correctedWith
-        override val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]] = sample.featuresUsedForCorrection
+        override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = sample.featuresUsedForCorrection
         override val regressionCurve: Regression = sample.regressionCurve
         override val fileName: String = sample.fileName
         /**

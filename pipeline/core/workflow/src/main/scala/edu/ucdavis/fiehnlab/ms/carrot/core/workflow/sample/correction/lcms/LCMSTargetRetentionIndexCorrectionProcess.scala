@@ -1,15 +1,14 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.{AnnotationProcess, CorrectionProcess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsDefinedException, RequiredStandardNotFoundException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception._
 import edu.ucdavis.fiehnlab.ms.carrot.math.CombinedRegression
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
@@ -44,18 +43,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     */
   @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
   var minimumFoundStandards: Int = 16
-
-  /**
-    * we are utilizing the setting to group close by retention targets. This is mostly required, since we can't guarantee the order
-    * if markers, if they come at the same time, but have different ionization and so we rather drop them
-    * and only use one ionization product.
-    *
-    * This step happens after the required attribute was checked and so should not cause any issues with the required standards
-    *
-    * This setting needs to be provided in seconds
-    */
-  @Value("${wcmc.pipeline.workflow.config.correction.groupStandard:25}")
-  var groupCloseByRetentionIndexStandardDifference: Int = 10
   /**
     * how many data points are required for the linear regression at the beginning and the end of the curve
     */
@@ -67,6 +54,18 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     */
   @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
   val polynomialOrder: Int = 5
+  /**
+    * we are utilizing the setting to group close by retention targets. This is mostly required, since we can't guarantee the order
+    * if markers, if they come at the same time, but have different ionization and so we rather drop them
+    * and only use one ionization product.
+    *
+    * This step happens after the required attribute was checked and so should not cause any issues with the required standards
+    *
+    * This setting needs to be provided in seconds
+    */
+  @Value("${wcmc.pipeline.workflow.config.correction.groupStandard:25}")
+  var groupCloseByRetentionIndexStandardDifference: Int = 10
+
 
   /**
     * needs to be lazily loaded, since the correction settings need to be set first by spring
@@ -127,18 +126,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     result
   }
 
-  /**
-    * verifies that one standard is not annotate twice
-    *
-    * @param optimizedMatches
-    * @return
-    */
-  def verifyAnnotations(optimizedMatches: Seq[TargetAnnotation[Target, Feature]], input: Sample) = {
-    if (optimizedMatches.map(_.target).toSet.size != optimizedMatches.size) {
-      new StandardAnnotatedTwice(s"one of the standards, was annotated twice in sample ${input.fileName}!")
-    }
-  }
-
   protected def findCorrectionTargets(input: Sample, target: Iterable[Target],method: AcquisitionMethod): Seq[TargetAnnotation[Target, Feature]] = {
     val targets = target.filter(_.isRetentionIndexStandard)
     logger.debug(s"correction sample: ${input} with ${targets.size} defined standards")
@@ -194,42 +181,13 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     logger.info(s"${matches.size} possible matches for RI markers were found")
     //do some optimization for us
     val optimizedMatches = optimize(matches)
-
-    //make sure they are in numerical order
-    verifyOrder(optimizedMatches, input)
-
-    //verify we got enough standards
-    verifyCount(optimizedMatches, input)
-
-    //verify that there
-    verifyAnnotations(optimizedMatches, input)
     optimizedMatches
   }
 
   /**
-    * check that the found annotations are enough to satisfy the need for correction
+    * minimum required count of standards found
     *
-    * @param possibleHits
+    * @return
     */
-  def verifyCount(possibleHits: Seq[TargetAnnotation[Target, Feature]], input: Sample) = {
-    //ensure we found enough standards
-    if (possibleHits.size < minimumFoundStandards) {
-      throw new NotEnoughStandardsFoundException(s"sorry we did not find enough standards in this sample: ${input.fileName} for a successful correction. We only found ${possibleHits.size}, but require ${minimumFoundStandards}")
-    }
-  }
-
-  /**
-    * verifies the order of the annotated retention index standards or throws an exception
-    *
-    * @param possibleHits
-    */
-  def verifyOrder(possibleHits: Seq[TargetAnnotation[Target, Feature]], input: Sample) = {
-    possibleHits.foreach { x =>
-      logger.info(s"validating order for ${x.target.name} with ${x.target.retentionIndex} (${x.target.accurateMass.get}) against annotation ${x.annotation.retentionTimeInSeconds}")
-    }
-    //brian would suggest to delete standards, which are out of order in case they are the same compound with different ionisations and come very close together
-    if (!possibleHits.sliding(2).forall(x => x.head.annotation.retentionTimeInSeconds <= x.last.annotation.retentionTimeInSeconds)) {
-      throw new StandardsNotInOrderException(s"one or more standards in this sample  ${input.fileName} where not annotated in ascending order of their retention times! Sample was ${input.fileName}")
-    }
-  }
+  override protected def getMinimumFoundStandards: Int = minimumFoundStandards
 }

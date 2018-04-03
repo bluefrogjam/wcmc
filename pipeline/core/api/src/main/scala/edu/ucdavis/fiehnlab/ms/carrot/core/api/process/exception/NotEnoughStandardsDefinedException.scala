@@ -1,7 +1,8 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.exception
+package edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception
 
 /**
   * is thrown when there were not enough standards defined for this correction model
+  *
   * @param message
   */
 class NotEnoughStandardsDefinedException(override val message: String) extends RetentionIndexCorrectionException(message)

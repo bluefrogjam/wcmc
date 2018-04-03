@@ -77,7 +77,7 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
       override val purity: Option[Double] = Some(map(purityIdentifier).replaceAll(",", ".").toDouble)
       override val scanNumber: Int = scan
 
-      override val retentionTimeInSeconds: Double = map(retentionTimeSecondsIdentifier).replaceAll(",", ".").toDouble
+      override val retentionTimeInSeconds: Double = map(retentionTimeSecondsIdentifier).replaceAll(",", ".").toDouble * 1000 //fix to deal with old BinBase RT time by factor 1000 issues
       /**
         * accurate mass of this feature, if applicable
         */
