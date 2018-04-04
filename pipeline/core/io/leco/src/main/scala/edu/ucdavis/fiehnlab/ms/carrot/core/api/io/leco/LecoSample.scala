@@ -34,11 +34,11 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
 
     if (lines.hasNext) {
 
-      //drop first line
-      lines.next()
+
+      val first = lines.next()
 
       //extract the header
-      val headers = lines.next().toLowerCase().split("\t")
+      val headers = if ( first.isEmpty )lines.next().toLowerCase().split("\t") else first.toLowerCase.split("\t")
       var scan: Int = 0
 
       lines.collect {
