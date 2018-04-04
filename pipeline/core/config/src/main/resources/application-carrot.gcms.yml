@@ -12,15 +12,17 @@ carrot:
             - 147.0
             - 174.0
             - 130.0
-          minimumPeakIntensity: 10000
+          minimumPeakIntensity: 1000
           targets:
             -
               identifier: "z C08 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
               maxQualifierRatio: 0.24
               minApexSn: 50
-              minDistanceRatio: 1.2
-              minQualifierRatio: 0.06
+              minQualifierRatio: 0.07
               minSimilarity: 0.6
               qualifierIon: 127
               required: true
@@ -29,10 +31,12 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C09 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
               maxQualifierRatio: 0.19
               minApexSn: 50
-              minDistanceRatio: 1.2
               minQualifierRatio: 0.05
               minSimilarity: 0.7
               qualifierIon: 141
@@ -42,10 +46,13 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C10 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
+
               maxQualifierRatio: 0.15
               minApexSn: 50
-              minDistanceRatio: 1.2
               minQualifierRatio: 0.01
               minSimilarity: 0.7
               qualifierIon: 155
@@ -55,10 +62,13 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C12 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
+
               maxQualifierRatio: 0.1
               minApexSn: 50
-              minDistanceRatio: 1.2
               minQualifierRatio: 0.005
               minSimilarity: 0.6
               qualifierIon: 214
@@ -68,10 +78,12 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C14 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
               maxQualifierRatio: 0.05
               minApexSn: 50
-              minDistanceRatio: 1.2
               minQualifierRatio: 0.008
               minSimilarity: 0.6
               qualifierIon: 242
@@ -81,10 +93,12 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C16 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
               maxQualifierRatio: 0.05
               minApexSn: 50
-              minDistanceRatio: 1.2
               minQualifierRatio: 0.01
               minSimilarity: 0.6
               qualifierIon: 270
@@ -94,10 +108,12 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C18 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
               maxQualifierRatio: 0.05
               minApexSn: 50
-              minDistanceRatio: 1.2
               minQualifierRatio: 0.01
               minSimilarity: 0.6
               qualifierIon: 298
@@ -107,10 +123,12 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C20 FAME internal standard"
-              maxDistanceRatio: 1.5
-              maxQualifierRatio: 0.05
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
+              maxQualifierRatio: 0.07
               minApexSn: 50
-              minDistanceRatio: 1.2
               minQualifierRatio: 0.01
               minSimilarity: 0.6
               qualifierIon: 326
@@ -120,10 +138,12 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C22 FAME internal standard"
-              maxDistanceRatio: 1.5
-              maxQualifierRatio: 0.05
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
+              maxQualifierRatio: 0.07
               minApexSn: 50
-              minDistanceRatio: 1.2
               minQualifierRatio: 0.01
               minSimilarity: 0.6
               qualifierIon: 354
@@ -133,10 +153,12 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C24 FAME internal standard"
-              maxDistanceRatio: 1.5
-              maxQualifierRatio: 0.06
+              distanceRatios:
+                -
+                  min: 1.2
+                  max: 1.5
+              maxQualifierRatio: 0.07
               minApexSn: 50
-              minDistanceRatio: 1.2
               minQualifierRatio: 0.01
               minSimilarity: 0.6
               qualifierIon: 382
@@ -146,10 +168,12 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C26 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.1
+                  max: 1.5
               maxQualifierRatio: 0.07
               minApexSn: 50
-              minDistanceRatio: 1.1
               minQualifierRatio: 0.01
               minSimilarity: 0.6
               qualifierIon: 410
@@ -159,10 +183,12 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C28 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.1
+                  max: 1.5
               maxQualifierRatio: 0.07
               minApexSn: 50
-              minDistanceRatio: 1.1
               minQualifierRatio: 0.001
               minSimilarity: 0.6
               qualifierIon: 438
@@ -172,10 +198,16 @@ carrot:
               uniqueMass: 87
             -
               identifier: "z C30 FAME internal standard"
-              maxDistanceRatio: 1.5
+              distanceRatios:
+                -
+                  min: 1.0
+                  max: 1.5
+                -
+                  min: 0.8
+                  max: 1.2
+
               maxQualifierRatio: 0.07
               minApexSn: 50
-              minDistanceRatio: 1.0
               minQualifierRatio: 0.001
               minSimilarity: 0.6
               qualifierIon: 466

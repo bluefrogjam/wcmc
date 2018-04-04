@@ -38,7 +38,7 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
       val first = lines.next()
 
       //extract the header
-      val headers = if ( first.isEmpty )lines.next().toLowerCase().split("\t") else first.toLowerCase.split("\t")
+      val headers = if (first.isEmpty) lines.next().toLowerCase().split("\t") else first.toLowerCase.split("\t")
       var scan: Int = 0
 
       lines.collect {
@@ -51,8 +51,9 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
             buildSpectra(scan, map)
           }
           catch {
-            case x: Exception =>
+            case x: Throwable =>
               logger.warn(x.getMessage, x)
+              logger.warn(s"line was: \n${line}\n")
               return null
           }
       }.filter(_ != null).toList
@@ -84,11 +85,12 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
       override val massOfDetectedFeature: Option[Ion] = None
 
       override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
+
         override val modelIons: Option[List[Double]] = Some(map(uniquemassIdentifier).replaceAll(",", ".").toDouble :: List())
 
 
         override val ions: List[Ion] = map(spectraIdentifier).toString.split(" ").collect {
-          case x: String =>
+          case x: String if x.split(":").size == 2 =>
             val values = x.split(":")
 
             Ion(values(0).toDouble, values(1).toFloat)

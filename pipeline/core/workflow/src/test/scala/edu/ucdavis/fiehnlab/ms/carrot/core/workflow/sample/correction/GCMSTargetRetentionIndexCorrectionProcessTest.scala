@@ -35,26 +35,24 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
         sample.name should be("060712afisa86_1")
       }
 
-            "allow to process data while loading a configuration from the Gerstel default Method" must {
-              /*
+      "allow to process data while loading a configuration from the Gerstel default Method" must {
 
-                      "for sample 060712afisa86_1" should {
+        "for sample 060712afisa86_1" should {
 
-                        val result = correction.process(sampleLoader.getSample("060712afisa86_1.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
+          val result = correction.process(sampleLoader.getSample("060712afisa86_1.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
 
-                        result.featuresUsedForCorrection.foreach { x =>
-                          logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
-                        }
+          result.featuresUsedForCorrection.foreach { x =>
+            logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
+          }
 
-                        logger.info("")
-                        "be at least as good as past calculation in BinBase" in {
-                          //old correction only has 7 results
-                          assert(result.featuresUsedForCorrection.size >= 7)
+          logger.info("")
+          "be at least as good as past calculation in BinBase" in {
+            //old correction only has 7 results
+            assert(result.featuresUsedForCorrection.size >= 7)
 
-                        }
+          }
 
-                      }
-              */
+        }
 
         "for sample 180321bZKsa26_1" should {
 
@@ -69,10 +67,22 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
           }
 
         }
-      }
 
-      "and not fail" in {
 
+        "for sample 180213aJKsa01_1" should {
+
+          "BinBase cannot handle this sample, due to a new inject, which is based on Agilent, so it should fail with the Gerstel method" in {
+            val result = correction.process(sampleLoader.getSample("180213aJKsa01_1.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
+
+            result.featuresUsedForCorrection.foreach { x =>
+              logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
+            }
+
+
+            assert(result.featuresUsedForCorrection.size >= 13)
+          }
+
+        }
       }
     }
   }
