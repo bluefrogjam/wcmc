@@ -40,6 +40,10 @@ class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
       properties.config.get(0).isNominal() should be (true)
     }
 
+    "have distance ratios" in {
+      properties.config.get(0).targets.get(0).distanceRatios.size() should be (1)
+    }
+
 
   }
 

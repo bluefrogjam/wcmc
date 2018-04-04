@@ -18,7 +18,7 @@ import scala.collection.JavaConverters._
 @Component
 @Profile(Array("carrot.gcms"))
 class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[Target], val config: GCMSCorrectionLibraryProperties) extends CorrectionProcess(libraryAccess) with LazyLogging {
-  override lazy val regression: Regression = new CombinedRegression(2,5)
+  override lazy val regression: Regression = new CombinedRegression(2, 5)
 
   /**
     * abstract method to acutall find out targets
@@ -51,49 +51,22 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
         val spectraWithCorrectBasePeak = msSpectra.filter(includeByBasePeakFilter.include)
         val spectraWithCorrectionIntensity = spectraWithCorrectBasePeak.filter(includeByIntensityFilter.include)
 
+        logger.info("searching for validation target")
         //find the target with the highest possible similarity match, to utilize it for distance ratio validation at a later point
-
         val distanceValidationTarget = targets.collect {
           case target: GCMSCorrectionTarget =>
-            (target, spectraWithCorrectionIntensity.maxBy(x => Similarity.compute(x.asInstanceOf[SimilaritySupport], target)))
-        }.maxBy(x => Similarity.compute(x._2.asInstanceOf[SimilaritySupport], x._1))
+            findMatchToTarget(config, spectraWithCorrectionIntensity, None, target)
+        }.filter(_ != null).maxBy(x => Similarity.compute(x.annotation.asInstanceOf[SimilaritySupport], x.target))
 
+        logger.info("searching for matches")
         //find potential targets
         val potentialMatches = targets.collect {
           case target: GCMSCorrectionTarget =>
-            logger.info(s"evaluating target: ${target}")
-            //check for similarity
-            val similarity = new IncludeBySimilarity(target, target.config.minSimilarity)
-            val ionRatios = new IncludeByIonRatio(target.config.qualifierIon, target.config.minQualifierRatio, target.config.maxQualifierRatio, config.massAccuracy)
-            val distanceRatio = new IncludeByDistanceRatio(distanceValidationTarget._1, distanceValidationTarget._2, target, target.config.minDistanceRatio, target.config.maxDistanceRatio)
-
-            val similarityMatches = spectraWithCorrectionIntensity.collect {
-              case x: SimilaritySupport => x
-            }.filter(similarity.include)
-
-            //check for qualifier
-            val ionRatioMatches = similarityMatches.filter(ionRatios.include)
-
-            //validate by distance ratio
-            val distanceRatioValidated = ionRatioMatches.filter(distanceRatio.include)
-
-            //deal with double annotation
-            if (distanceRatioValidated.size == 1) {
-              TargetAnnotation(target.asInstanceOf[Target], distanceRatioValidated.head.asInstanceOf[Feature])
-            }
-            else if (distanceRatioValidated.size > 1) {
-              //pick closest
-              TargetAnnotation(target.asInstanceOf[Target], distanceRatioValidated.minBy(x => Math.abs(x.retentionTimeInSeconds - target.retentionIndex)).asInstanceOf[Feature])
-            }
-            else {
-              //nothing found :(
-              null
-            }
-
+            findMatchToTarget(config, spectraWithCorrectionIntensity, Option(distanceValidationTarget), target)
         }.filter(_ != null)
 
 
-        logger.info(s"matches: ${potentialMatches.size}")
+        logger.info(s"potential matches: ${potentialMatches.size}")
 
         potentialMatches
       case None =>
@@ -101,6 +74,63 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     }
 
 
+  }
+
+  /**
+    * finds a match to a target, with a possible validation target
+    *
+    * @param config
+    * @param spectraWithCorrectionIntensity
+    * @param distanceValidationTarget
+    * @param target
+    * @return
+    */
+  private def findMatchToTarget(config: GCMSLibraryConfiguration, spectraWithCorrectionIntensity: Seq[MSSpectra], distanceValidationTarget: Option[TargetAnnotation[Target, Feature]], target: GCMSCorrectionTarget): TargetAnnotation[Target, Feature] = {
+    logger.info(s"evaluating target: ${target}")
+    //check for similarity
+    val similarity = new IncludeBySimilarity(target, target.config.minSimilarity)
+    val ionRatios = new IncludeByIonRatio(target.config.qualifierIon, target.config.minQualifierRatio, target.config.maxQualifierRatio, config.massAccuracy)
+
+    val similarityMatches = spectraWithCorrectionIntensity.collect {
+      case x: SimilaritySupport => x
+    }.filter(similarity.include)
+
+    //check for qualifier
+    val ionRatioMatches = similarityMatches.filter(ionRatios.include)
+
+    logger.info(s"ion ratio matches: ${ionRatioMatches.size}")
+    //validate by distance ratio
+
+    val validated = if (distanceValidationTarget.isDefined) {
+      val distanceRatioValidated = target.config.distanceRatios.asScala.map { x =>
+        ionRatioMatches.filter(new IncludeByDistanceRatio(distanceValidationTarget.get.target, distanceValidationTarget.get.annotation, target, x.min, x.max).include)
+      }.filter(_.nonEmpty).sortBy(_.size)
+
+      if(distanceRatioValidated.isEmpty) {
+        logger.warn("no matches found for distance ratio, reconsider your configuration!")
+        Seq.empty
+      }
+      else{
+        distanceRatioValidated.head
+      }
+    }
+    else {
+      ionRatioMatches
+    }
+
+    logger.info(s"validated matches: ${validated.size}")
+    //deal with double annotation
+    if (validated.size == 1) {
+      TargetAnnotation(target.asInstanceOf[Target], validated.head.asInstanceOf[Feature])
+    }
+    else if (validated.size > 1) {
+      //pick closest
+      TargetAnnotation(target.asInstanceOf[Target], validated.minBy(x => Math.abs(x.retentionTimeInSeconds - target.retentionIndex)).asInstanceOf[Feature])
+    }
+    else {
+      //nothing found :(
+      null
+    }
   }
 
   /**

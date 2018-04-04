@@ -215,13 +215,10 @@ class GCMSRetentionIndexTargetConfiguration {
   var maxQualifierRatio: Double = 0.0
 
   @BeanProperty
-  @DecimalMax("10.0")
-  @DecimalMin("-10.0")
-  var minDistanceRatio: Double = 0.0
-  @BeanProperty
-  @DecimalMax("10.0")
-  @DecimalMin("-10.0")
-  var maxDistanceRatio: Double = 0.0
+  @Valid
+  @Size(min = 1)
+  @NestedConfigurationProperty
+  val distanceRatios: java.util.List[RatioConfiguration] = new util.ArrayList[RatioConfiguration]()
 
   @BeanProperty
   @DecimalMax("1.0")
@@ -241,4 +238,16 @@ class GCMSRetentionIndexTargetConfiguration {
   @NotBlank
   var spectra: String = _
 
+}
+
+class RatioConfiguration{
+  @BeanProperty
+  @DecimalMax("10.0")
+  @DecimalMin("-10.0")
+  var min:Double = 0.0
+
+  @BeanProperty
+  @DecimalMax("10.0")
+  @DecimalMin("-10.0")
+  var max:Double = 0.0
 }
