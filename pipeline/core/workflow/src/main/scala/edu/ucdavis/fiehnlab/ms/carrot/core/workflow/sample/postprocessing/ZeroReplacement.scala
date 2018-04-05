@@ -259,7 +259,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     */
   override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
 
-    override val sample:Sample = value.sample
+    override val sample:String = value.sample
     /**
       * which sample was used for the replacement
       */
