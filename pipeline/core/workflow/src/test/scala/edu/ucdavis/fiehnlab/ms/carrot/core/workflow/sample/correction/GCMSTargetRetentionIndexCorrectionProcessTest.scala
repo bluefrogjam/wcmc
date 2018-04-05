@@ -69,21 +69,48 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
         }
 
 
-        "for sample 180213aJKsa01_1" should {
+        "180213aJKsa01_1" :: "180213aJKsa02_1" :: "180213aJKsa03_1" :: "180213aJKsa04_1" :: "180213aJKsa05_1" :: List() foreach { sample =>
 
-          "BinBase cannot handle this sample, due to a new injector, which is based on Agilent, so it should fail with the Gerstel method" in {
-            val result = correction.process(sampleLoader.getSample("180213aJKsa01_1.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
+          s"for sample $sample" should {
 
-            result.featuresUsedForCorrection.foreach { x =>
-              logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
+            "old BinBase cannot handle this sample, due to a new injector, which is based on Agilent, so it should fail with the Gerstel method" in {
+              val result = correction.process(sampleLoader.getSample(s"${sample}.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
+
+              result.featuresUsedForCorrection.foreach { x =>
+                logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
+              }
+
+
+              assert(result.featuresUsedForCorrection.size >= 13)
             }
 
-
-            assert(result.featuresUsedForCorrection.size >= 13)
           }
 
         }
+
+/*
+        "180321sqlva01" :: "180321sqlva02" :: "180321sqlva03" :: "180321sqlva04" :: "180321sqlva05" :: List() foreach { sample =>
+
+          s"for sample $sample acquired by " should {
+
+            "old BinBase cannot handle this sample, due to a new injector, which is based on Agilent, so it should fail with the Gerstel method" in {
+              val result = correction.process(sampleLoader.getSample(s"${sample}.csv"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
+
+              result.featuresUsedForCorrection.foreach { x =>
+                logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
+              }
+
+
+              assert(result.featuresUsedForCorrection.size >= 13)
+            }
+
+          }
+
+        }
+
+*/
       }
+
     }
   }
 }
