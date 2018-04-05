@@ -1,13 +1,12 @@
 package edu.ucdavis.fiehnlab.utilities.logging
 
-import javax.annotation.PostConstruct
-
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
 import com.typesafe.scalalogging.LazyLogging
+import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.stereotype.Component
 
 /**
   * required as a static reference, since logback loggers are by defaul
@@ -20,7 +19,7 @@ object JSONLoggingAppender {
 /**
   * should only be used for debugging and not production code! It is slow....,
   */
-@Component
+@Profile(Array("carrot.logging.json.enable"))
 class JSONLoggingAppender extends AppenderBase[ILoggingEvent] with LazyLogging {
 
   @Autowired
