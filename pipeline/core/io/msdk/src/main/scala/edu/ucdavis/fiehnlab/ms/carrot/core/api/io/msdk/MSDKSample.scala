@@ -41,28 +41,28 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
           spectra.getPolarity match {
             case PolarityType.NEGATIVE =>
               spectra.getSpectrumType match {
-                case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(NegativeMode()),this) with Centroided
-                case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(NegativeMode()),this) with Profiled
+                case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(NegativeMode()),this.fileName) with Centroided
+                case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(NegativeMode()),this.fileName) with Profiled
                 case _ => {
                   logger.warn("Unrecognized spectrum type, setting to profiled")
-                  new MSDKMSSpectra(spectra, Some(NegativeMode()),this) with Profiled
+                  new MSDKMSSpectra(spectra, Some(NegativeMode()),this.fileName) with Profiled
                 }
               }
             case PolarityType.POSITIVE =>
-              new MSDKMSSpectra(spectra, Some(PositiveMode()),this)
+              new MSDKMSSpectra(spectra, Some(PositiveMode()),this.fileName)
             case _ =>
-              new MSDKMSSpectra(spectra, None,this)
+              new MSDKMSSpectra(spectra, None,this.fileName)
           }
         }
         else {
           //discover which mixins we need
           spectra.getPolarity match {
             case PolarityType.NEGATIVE =>
-              new MSDKMSMSSpectra(spectra, Some(NegativeMode()),this)
+              new MSDKMSMSSpectra(spectra, Some(NegativeMode()),this.fileName)
             case PolarityType.POSITIVE =>
-              new MSDKMSMSSpectra(spectra, Some(PositiveMode()),this)
+              new MSDKMSMSSpectra(spectra, Some(PositiveMode()),this.fileName)
             case _ =>
-              new MSDKMSMSSpectra(spectra, None,this)
+              new MSDKMSMSSpectra(spectra, None,this.fileName)
           }
         }
 
@@ -174,7 +174,7 @@ object MSDKSample extends LazyLogging {
   *
   * @param spectra
   */
-class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: Sample) extends MSSpectra {
+class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: String) extends MSSpectra {
   override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
 
   override val scanNumber: Int = spectra.getScanNumber
@@ -204,7 +204,7 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: Sample) e
   *
   * @param spectra
   */
-class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: Sample) extends MSMSSpectra {
+class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) extends MSMSSpectra {
   override val precursorIon: Double = if (spectra.getIsolations.isEmpty) {
     //this is just bad, but seems to be a real value in some files
     0.0

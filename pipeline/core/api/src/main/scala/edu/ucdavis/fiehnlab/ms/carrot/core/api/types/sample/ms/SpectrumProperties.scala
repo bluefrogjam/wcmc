@@ -9,7 +9,7 @@ trait Feature extends AccurateMassSupport {
   /**
     * the associated sample
     */
-  val sample:Sample
+  val sample:String
 
   /**
     * how pure this spectra is

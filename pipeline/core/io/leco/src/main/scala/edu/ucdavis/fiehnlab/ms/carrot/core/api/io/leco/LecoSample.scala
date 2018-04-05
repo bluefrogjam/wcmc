@@ -74,7 +74,7 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
 
     val spec = new LecoSpectrum {
 
-      val sample: Sample = LecoSample.this
+      val sample: String = LecoSample.this.fileName
       override val purity: Option[Double] = Some(map(purityIdentifier).replaceAll(",", ".").toDouble)
       override val scanNumber: Int = scan
 
