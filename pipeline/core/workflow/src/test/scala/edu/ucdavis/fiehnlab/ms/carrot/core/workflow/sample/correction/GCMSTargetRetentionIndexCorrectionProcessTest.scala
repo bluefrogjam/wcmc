@@ -71,7 +71,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
         "for sample 180213aJKsa01_1" should {
 
-          "BinBase cannot handle this sample, due to a new inject, which is based on Agilent, so it should fail with the Gerstel method" in {
+          "BinBase cannot handle this sample, due to a new injector, which is based on Agilent, so it should fail with the Gerstel method" in {
             val result = correction.process(sampleLoader.getSample("180213aJKsa01_1.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
 
             result.featuresUsedForCorrection.foreach { x =>
