@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--dient zum konfigurieren von configurationsparametern-->
+<config>
+
+    <!-- targetbereich-->
+
+    <!--target welches dir konfiugrationsangaben fuer die binbase sqlstatements bereitstellt-->
+    <target name="test2">
+        <!--spezifieziert welche klasse fur die konfiguration des algorythmus benutzt werden soll-->
+        <class
+            name="edu.ucdavis.genomics.metabolomics.util.config.xml.XMLConfiguration"/>
+
+        <!--wo liegen die dateien -->
+        <parameter>
+            <data>src/test/resources/configurator2.xml</data>
+            <factory>
+                edu.ucdavis.genomics.metabolomics.util.io.source.FileSourceFactoryImpl
+            </factory>
+        </parameter>
+    </target>
+
+    <test>
+        <value name="22"/>
+    </test>
+
+    <test2>
+        <value></value>
+    </test2>
+
+
+    <test3>
+        <test1/>
+        <test2>
+            <test1>
+                another value
+            </test1>
+        </test2>
+        <test4/>
+        <test5/>
+
+    </test3>
+</config>

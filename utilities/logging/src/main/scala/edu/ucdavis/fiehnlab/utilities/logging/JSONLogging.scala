@@ -5,7 +5,7 @@ import java.util.Date
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.typesafe.scalalogging.LazyLogging
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Profile}
 
 /**
   * simple diagnostics helper to simplify logging for us
@@ -93,6 +93,7 @@ trait JSONAlgorithmLogging extends JSONLogging {
 
 }
 
+@Profile(Array("carrot.logging.json.enable"))
 @Configuration
 class JSONLoggingConfiguration {
 
