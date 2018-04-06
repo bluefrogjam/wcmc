@@ -115,7 +115,7 @@ trait SpectrumProperties {
     */
   def relativeSpectra: Seq[Ion] = {
 
-    val maxIntensity: Double = ions.maxBy(_.intensity).intensity
+    val maxIntensity: Float = ions.maxBy(_.intensity).intensity
 
     ions.map(x => Ion(x.mass, 100 * x.intensity / maxIntensity))
   }
