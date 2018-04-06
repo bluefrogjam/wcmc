@@ -3,10 +3,11 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.QuantifyByScanProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSRetentionIndexCorrectionProcessTest
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
@@ -24,7 +25,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 class TGDetectionAnnotationBugTest extends WordSpec with LazyLogging {
 
   @Autowired
-  val correction: LCMSTargetRetentionIndexCorrection = null
+  val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
   @Autowired
   val annotation: LCMSTargetAnnotationProcess = null

@@ -5,26 +5,26 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, QuantifiedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PeakDetection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlg on 7/1/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt", "carrot.report.quantify.height","carrot.processing.peakdetection"))
+@ActiveProfiles(Array("backend-txt-lcms", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms"))
 class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
-  val correction: LCMSTargetRetentionIndexCorrection = null
+  val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
   @Autowired
   val loader: SampleLoader = null

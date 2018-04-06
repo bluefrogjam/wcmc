@@ -10,10 +10,10 @@ import edu.ucdavis.fiehnlab.wcmc.server.fserv.FServ
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http._

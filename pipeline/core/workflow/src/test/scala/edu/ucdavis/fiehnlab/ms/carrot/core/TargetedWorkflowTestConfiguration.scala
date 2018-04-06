@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
-import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4JAutoConfiguration
+import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4J
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -18,7 +18,6 @@ import org.springframework.context.annotation._
   * Test configuration of a LCMS target workflow
   */
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-@Configuration
 class TargetedWorkflowTestConfiguration extends LazyLogging {
 
   @Autowired
@@ -39,9 +38,9 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
     *
     * @return
     */
-  @Profile(Array("backend-txt"))
+  @Profile(Array("backend-txt-lcms"))
   @Bean
-  def targetLibrary: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
+  def targetLibraryLCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
 
 
   @Bean
@@ -49,4 +48,8 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
     "testfserv.fiehnlab.ucdavis.edu",
     80
   )
+
+
+  @Bean
+  def everything4JEclipse: Everything4J = new Everything4J("eclipse.fiehnlab.ucdavis.edu")
 }

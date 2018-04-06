@@ -5,11 +5,13 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionIndexDifference}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotationProcess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotateSampleProcess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 import scala.collection.immutable.ListMap
@@ -18,7 +20,8 @@ import scala.collection.immutable.ListMap
   * Created by wohlgemuth on 6/23/16.
   */
 @Component
-class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSTargetAnnotationProperties) extends AnnotationProcess[Target, CorrectedSample, AnnotatedSample](targets) with LazyLogging {
+@Profile(Array("carrot.lcms"))
+class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSTargetAnnotationProperties) extends AnnotateSampleProcess(targets) with LazyLogging {
 
   /**
     * are we in debug mode, adds some sorting and prettifying for debug messages
@@ -27,11 +30,9 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
 
   //our defined filters to find possible matches are registered in here
-  lazy val filters: SequentialAnnotate = new SequentialAnnotate(
-    new MassAccuracyPPMorMD(5,lcmsProperties.massAccuracy, "annotation",lcmsProperties.massIntensity) ::
-      new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") ::
-      List()
-  )
+  lazy val filters: SequentialAnnotate = new SequentialAnnotate(new MassAccuracyPPMorMD(5,lcmsProperties.massAccuracy, "annotation",lcmsProperties.massIntensity) ::
+        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") ::
+        List())
 
   /**
     * finds a match between the target and the sequence of spectra
@@ -232,7 +233,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     * @param input
     * @return
     */
-  override def process(input: CorrectedSample, targets: Iterable[Target]): AnnotatedSample = {
+  override def process(input: CorrectedSample, targets: Iterable[Target], method: AcquisitionMethod): AnnotatedSample = {
     logger.info(s"Annotating sample: ${input.name}")
 
     /**
@@ -316,7 +317,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
       override val spectra: Seq[_ <: Feature with AnnotatedSpectra with CorrectedSpectra] = annotatedSpectra
       override val correctedWith: Sample = input.correctedWith
-      override val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]] = input.featuresUsedForCorrection
+      override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = input.featuresUsedForCorrection
       override val regressionCurve: Regression = input.regressionCurve
       override val fileName: String = input.fileName
       override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = noneAnnotatedSpectra

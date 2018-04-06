@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.targeted.LCMSPositiveModeTargetWorkflow
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 /**
   * Created by wohlgemuth on 9/7/17.
   */
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]), scanBasePackages = Array("edu.ucdavis.fiehnlab.wcmc.pipeline"))
 class Carrot {
 
   @Value("${server.port}")
@@ -26,8 +26,8 @@ class Carrot {
     * @return
     */
   @Bean
-  def workflow: LCMSPositiveModeTargetWorkflow[Double] = {
-    new LCMSPositiveModeTargetWorkflow()
+  def workflow: Workflow[Double] = {
+    new Workflow[Double]()
   }
 
   @Bean
@@ -44,7 +44,6 @@ object Carrot extends App {
 }
 
 @Configuration
-//@ComponentScan
 class CarrotCors extends WebMvcConfigurerAdapter {
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {

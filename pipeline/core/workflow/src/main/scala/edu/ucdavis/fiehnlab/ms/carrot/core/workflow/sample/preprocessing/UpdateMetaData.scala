@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import org.springframework.context.annotation.{Description, Profile}
