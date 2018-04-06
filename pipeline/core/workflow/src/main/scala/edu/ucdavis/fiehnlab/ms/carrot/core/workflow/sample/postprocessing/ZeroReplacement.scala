@@ -226,7 +226,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           /**
             * the associated sample
             */
-          override val sample: Sample = quantSample
+          override val sample: String = quantSample.fileName
           /**
             * the retention time of this spectra. It should be provided in seconds!
             */
