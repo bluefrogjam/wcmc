@@ -101,13 +101,26 @@ class LibraryController extends LazyLogging {
 
   @DeleteMapping(value = Array("deleteLibrary/{library}"))
   def deleteLibrary(@PathVariable("library") library: String): Unit = {
-    logger.info(s"User requested library: ${library}'s deletion...")
+    logger.debug(s"User requested library: ${library}'s deletion...")
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == library => x
     }
 
     if (acquisitionMethod.isDefined) {
       libraryAccess.deleteLibrary(acquisitionMethod.get)
+    }
+  }
+
+  @DeleteMapping(value = Array("deleteTarget/{library}/{target}"))
+  def deleteTarget(@PathVariable("library") library: String, @PathVariable("target") target: String): Unit = {
+    logger.info(s"User requested target: ${target}'s deletion...")
+    var acquisitionMethod = libraryAccess.libraries.collectFirst {
+      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == library => x
+    }
+
+    if (acquisitionMethod.isDefined) {
+      var toBeDeleted = libraryAccess.load(acquisitionMethod.get).filter(_.name == target).head
+      libraryAccess.delete(toBeDeleted, acquisitionMethod.get)
     }
   }
 }
@@ -239,7 +252,7 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
         /**
           * all the defined ions for this spectra
           */
-        override val ions: Seq[Ion] = Seq(Ion(target.precursor, 100.0))
+        override val ions: Seq[Ion] = Seq(Ion(target.precursor, 100.0f))
         /**
           * the msLevel of this spectra
           */

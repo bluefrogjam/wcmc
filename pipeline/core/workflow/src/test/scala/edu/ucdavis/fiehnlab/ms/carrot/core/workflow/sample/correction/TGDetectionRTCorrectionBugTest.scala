@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader, 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -29,7 +30,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 class TGDetectionRTCorrectionBugTest extends WordSpec with LazyLogging {
 
   @Autowired
-  val correction: LCMSTargetRetentionIndexCorrection = null
+  val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
   @Autowired
   val loader: SampleLoader = null

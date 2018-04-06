@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sql>
+    <!-- static sql without inherintance -->
+    <static>
+        <nextLinkId>SELECT nextval('link_id')</nextLinkId>
+        <nextBinId>SELECT nextval('bin_id')</nextBinId>
+        <nextSpectraId>SELECT nextval('spectra_id')</nextSpectraId>
+        <nextSampleId>SELECT nextval('sample_id')</nextSampleId>
+        <updateSampleStatus>
+            UPDATE samples set status = ? where sample_id = ?
+        </updateSampleStatus>
+        <updateSamplePriority>
+            UPDATE samples set priority = ? where sample_id
+            = ?
+        </updateSamplePriority>
+        <idExist>
+            SELECT sample_id from samples where sample_id = ?
+        </idExist>
+        <spectraIdExist>
+            SELECT spectra_id from spectra where spectra_id = ?
+        </spectraIdExist>
+
+        <binIdExist>SELECT bin_id from bin where bin_id = ?</binIdExist>
+        <resultLinkIdExist>SELECT id from result_link where id = ?
+        </resultLinkIdExist>
+    </static>
+
+    <!-- sql with inherintance -->
+    <edu>
+        <ucdavis>
+            <genomics>
+                <metabolomics>
+                    <binbase>
+                        <algorythm>
+                            <util>
+                                <sql>
+                                    <UpdateBinBase>
+                                        <update>update samples set machine = ?, operator = ?, run_id =
+                                            ?,setupx_id = ? where sample_id = ?
+                                        </update>
+                                        <visibleSample>Select sample_name,sample_id,setupx_id from
+                                            samples where visible = 'TRUE' order by sample_id DESC
+                                        </visibleSample>
+                                        <allSamples>Select sample_name,sample_id,setupx_id from
+                                            samples order by sample_id DESC
+                                        </allSamples>
+                                        <dropClassInfo>delete from sample_info where sample_id = ?
+                                        </dropClassInfo>
+                                        <insertClassInfo>insert into
+                                            sample_info(sample_id,key_id,value,id) values(?,?,?,?)
+                                        </insertClassInfo>
+                                        <insertClassKey>insert into meta_key(key_id,key) values(?,?)
+                                        </insertClassKey>
+                                        <selectClassKey>select key_id from META_KEY where key = ?
+                                        </selectClassKey>
+                                        <selectSampleIdsBySampleName>SELECT sample_id FROM samples
+                                            where sample_name = ?
+                                        </selectSampleIdsBySampleName>
+                                    </UpdateBinBase>
+                                </sql>
+                                <SQLResultCreator>
+                                    <checkForResult>
+                                        SELECT result_id from result
+                                        where name = ?
+                                    </checkForResult>
+                                    <checkForSamples>
+                                        SELECT sample_id,class from
+                                        samples where
+                                        sample_name = ?
+                                        and visible = 'TRUE' and
+                                        finished = 'TRUE'
+                                    </checkForSamples>
+                                    <deleteExistingResult>
+                                        DELETE from result where
+                                        result_id = ?
+                                    </deleteExistingResult>
+                                    <deleteExistingResultLink>
+                                        DELETE from result_link where
+                                        result_id = ?
+                                    </deleteExistingResultLink>
+                                    <insertResult>
+                                        INSERT INTO result
+                                        VALUES(?,?,?,?,?)
+                                    </insertResult>
+                                    <insertResultLink>
+                                        INSERT INTO result_link
+                                        VALUES(?,?,?,?)
+                                    </insertResultLink>
+                                    <nextResultId>
+                                        SELECT nextval('result_id')
+                                    </nextResultId>
+                                    <nextResultLinkId>
+                                        SELECT nextval('link_id')
+                                    </nextResultLinkId>
+                                </SQLResultCreator>
+                            </util>
+                            <statistics>
+                                <RuntimeStatisticCollector>
+                                    <insert>
+                                        insert into
+                                        runtime(sample_id,operation,start,"end","group",type)
+                                        VALUES(?,?,?,?,?,?)
+                                    </insert>
+                                    <update>
+                                        update runtime set start = ?,
+                                        "end" = ? where sample_id
+                                        = ?
+                                        and operation = ? and "group" =
+                                        ? and type = ?
+                                    </update>
+                                    <select>
+                                        SELECT * from runtime where
+                                        sample_id = ? and operation
+                                        = ?
+                                        and "group" = ? and type = ?
+                                    </select>
+                                </RuntimeStatisticCollector>
+                            </statistics>
+                            <Import>
+                                <quality>
+                                    <QualityClassGenerator>
+                                        <pattern>
+                                            SELECT pattern from type
+                                            where id = ?
+                                        </pattern>
+                                        <sampleNames>
+                                            select name from rawdata
+                                            where name ~* ? and name
+                                            ~*
+                                            ?
+                                        </sampleNames>
+                                    </QualityClassGenerator>
+                                </quality>
+                                <data>
+                                    <handler>
+                                        <DatabaseImportHandler>
+                                            <entry>
+                                                INSERT INTO
+                                                SPECTRA(uniquemass,signal_noise,purity,retention_index,sample_id,retention_time,apex,spectra,apex_sn,leco,spectra_id)
+                                                VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                                            </entry>
+                                            <sample>
+                                                INSERT INTO
+                                                SAMPLES(sample_id,sample_name,class,"allowNewBin",finished,saturated,version,configuration_id,correction_failed,status,type,visible,date,sod,setupx_id,operator,machine,run_id,date_of_import)
+                                                VALUES(?,?,?,?,'FALSE',?,?,?,'FALSE',?,?,'TRUE',?,?,?,?,?,?,?)
+                                            </sample>
+                                            <sample2>
+                                                INSERT INTO
+                                                QUANTIFICATION(sample_id)
+                                                VALUES(?)
+                                            </sample2>
+                                            <sample3>
+                                                UPDATE samples set
+                                                visible = 'FALSE' where
+                                                sample_name = ? and
+                                                sample_id != ?
+                                            </sample3>
+                                            <version>
+                                                SELECT version FROM
+                                                SAMPLES WHERE
+                                                sample_name = ?
+                                                order by
+                                                version
+                                            </version>
+                                            <configuration>
+                                                SELECT configuration_id
+                                                FROM CONFIGURATION
+                                                WHERE
+                                                configuration_id = ?
+                                            </configuration>
+                                            <insertConfiguration>
+                                                INSERT INTO
+                                                CONFIGURATION(configuration_id,data)
+                                                VALUES(?,?)
+                                            </insertConfiguration>
+                                            <addPartition></addPartition>
+                                        </DatabaseImportHandler>
+                                    </handler>
+                                </data>
+                                <msp>
+                                    <MapHandler>
+                                        <bin>
+                                            INSERT INTO
+                                            BIN(spectra_id,uniquemass,retention_index,apex_sn,purity,sample_id,apex,spectra,quantmass,name,signal_noise,bin_id)
+                                            VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+                                        </bin>
+                                        <spectra>
+                                            INSERT INTO
+                                            SPECTRA(uniquemass,signal_noise,purity,retention_index,sample_id,spectra_id,retention_time,apex,spectra,apex_sn,bin_id,match,new_bin)
+                                            VALUES(?,?,?,?,?,?,?,?,?,?,?,1000,'TRUE')
+                                        </spectra>
+                                        <sample>
+                                            INSERT INTO
+                                            SAMPLES(sample_id,sample_name,class,"allowNewBin",finished,saturated,version,configuration_id)
+                                            VALUES(?,?,?,?,?,?,?,?)
+                                        </sample>
+                                    </MapHandler>
+                                </msp>
+                                <type>
+                                    <TypeFinder>
+                                        <type>SELECT * FROM type</type>
+                                    </TypeFinder>
+                                </type>
+                                <SingleThreadClassImporter>
+                                    <bin>
+                                        SELECT a.bin_id FROM samples b,
+                                        bin a where a.sample_id =
+                                        b.sample_id and b.finished =
+                                        'FALSE' and b.class = ?
+                                    </bin>
+                                    <deleteSpectra>
+                                        UPDATE SPECTRA set bin_id = null
+                                        WHERE bin_id = ?
+                                    </deleteSpectra>
+                                    <deleteBin>
+                                        DELETE FROM BIN WHERE bin_id = ?
+                                    </deleteBin>
+                                    <sample>
+                                        UPDATE samples set finished =
+                                        'TRUE' where sample_id = ?
+                                    </sample>
+                                    <allowNewBin>
+                                        SELECT "allowNewBin" from
+                                        samples where sample_id =
+                                        ?
+                                    </allowNewBin>
+                                </SingleThreadClassImporter>
+                            </Import>
+                            <matching>
+                                <SimpleMatching>
+                                    <libraryStatement>
+                                        select
+                                        *
+                                        from BIN a where a.bin_id
+                                        not in ( SELECT bin_id from
+                                        SPECTRA where
+                                        sample_id = ? and bin_id is not null)
+                                        ORDER BY retention_index
+                                        ASC
+                                    </libraryStatement>
+                                    <unknownStatement>
+                                        SELECT
+                                        spectra_id,retention_index,uniquemass,purity,apex_sn,sample_id,uniquemass,apex,spectra,retention_time,leco
+                                        FROM SPECTRA WHERE sample_id = ?
+                                        AND bin_id is null ORDER BY
+                                        apex_sn DESC
+                                    </unknownStatement>
+
+                                </SimpleMatching>
+                                <RecrusiveCorrection>
+                                    <libraryStatement>
+                                        select a.* ,b.* from BIN a,
+                                        STANDARD b where
+                                        a.bin_id =
+                                        b.bin_id ORDER BY
+                                        a.retention_index DESC
+                                    </libraryStatement>
+                                    <libraryAllStatement>
+                                        select a.*, b.* from BIN a,
+                                        STANDARD b
+                                        WHERE a.bin_id =
+                                        b.bin_id ORDER BY
+                                        a.retention_index ASC
+                                    </libraryAllStatement>
+                                    <unknownStatement>
+                                        SELECT spectra_id,retention_time
+                                        AS
+                                        retention_index,uniquemass,purity,apex_sn,sample_id,uniquemass,apex,spectra,leco
+                                        FROM SPECTRA WHERE sample_id = ?
+                                        ORDER BY retention_index DESC
+                                    </unknownStatement>
+                                </RecrusiveCorrection>
+                                <anotation>
+                                    <IonFilter>
+                                        <select>
+                                            SELECT * FROM BIN_RATIO
+                                            WHERE bin_id = ?
+                                        </select>
+                                    </IonFilter>
+                                </anotation>
+
+                            </matching>
+                            <result>
+                                <DatabaseResultHandler>
+                                    <newBinStatementBin>
+                                        INSERT INTO
+                                        BIN(spectra_id,uniquemass,retention_index,apex_sn,purity,sample_id,apex,spectra,quantmass,bin_id,name,signal_noise,export)
+                                        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+                                    </newBinStatementBin>
+                                    <newBinStatementAnalysis>
+                                        UPDATE SPECTRA set bin_id =
+                                        ?,match =
+                                        1000 ,new_bin = 'TRUE'
+                                        where spectra_id = ?
+                                    </newBinStatementAnalysis>
+                                    <assignBinStatement>
+                                        UPDATE SPECTRA set bin_id = ? ,
+                                        match = ?
+                                        ,found_at_correction =
+                                        ? WHERE spectra_id = ?
+                                    </assignBinStatement>
+                                    <assignBinStatementUpdateApex>
+                                        UPDATE SPECTRA set apex = ?
+                                        where
+                                        spectra_id = ?
+                                    </assignBinStatementUpdateApex>
+                                    <binStatement>
+                                        SELECT retention_index FROM BIN
+                                        where bin_id = ?
+                                    </binStatement>
+                                    <getBinApex>
+                                        SELECT apex,spectra FROM BIN
+                                        WHERE bin_id = ?
+                                    </getBinApex>
+                                    <updateBinApex>
+                                        UPDATE BIN SET apex = ? WHERE
+                                        bin_id = ?
+                                    </updateBinApex>
+                                    <updateBinSpec>
+                                        UPDATE BIN SET spectra = ?,
+                                        apex_sn = ?,
+                                        signal_noise = ?,
+                                        purity = ? WHERE bin_id = ?
+                                    </updateBinSpec>
+                                </DatabaseResultHandler>
+                                <ProblematicResultHandler>
+                                    <newBinStatementBin>
+                                        INSERT INTO
+                                        BIN(spectra_id,uniquemass,retention_index,apex_sn,purity,sample_id,apex,spectra,quantmass,bin_id,name,signal_noise,export)
+                                        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+                                    </newBinStatementBin>
+                                    <newBinStatementAnalysis>
+                                        UPDATE SPECTRA set bin_id =
+                                        currval('bin_id'),match = 1000
+                                        ,new_bin = 'TRUE' where
+                                        spectra_id = ?
+                                    </newBinStatementAnalysis>
+                                    <assignBinStatement>
+                                        UPDATE SPECTRA set bin_id = ? ,
+                                        match = ?
+                                        ,found_at_correction =
+                                        ?,problematic = 'TRUE' WHERE
+                                        spectra_id =
+                                        ?
+                                    </assignBinStatement>
+                                    <assignBinStatementUpdateApex>
+                                        UPDATE SPECTRA set apex = ?
+                                        where
+                                        spectra_id = ?
+                                    </assignBinStatementUpdateApex>
+                                    <binStatement>
+                                        SELECT retention_index FROM BIN
+                                        where bin_id = ?
+                                    </binStatement>
+                                    <getBinApex>
+                                        SELECT apex,spectra FROM BIN
+                                        WHERE bin_id = ?
+                                    </getBinApex>
+                                    <updateBinApex>
+                                        UPDATE BIN SET apex = ? WHERE
+                                        bin_id = ?
+                                    </updateBinApex>
+                                    <updateBinSpec>
+                                        UPDATE BIN SET spectra = ?,
+                                        apex_sn = ?,
+                                        signal_noise = ?,
+                                        purity = ? WHERE bin_id = ?
+                                    </updateBinSpec>
+                                </ProblematicResultHandler>
+                            </result>
+                            <methods>
+                                <CorrectionMethod>
+                                    <update>
+                                        UPDATE SPECTRA SET
+                                        retention_index = ? WHERE
+                                        spectra_id = ?
+                                    </update>
+                                    <select>
+                                        SELECT
+                                        retention_index,spectra_id FROM
+                                        SPECTRA WHERE sample_id = ?
+                                        ORDER BY retention_index
+                                    </select>
+                                    <correctionFailed>
+                                        UPDATE SAMPLES set
+                                        correction_failed = ?,
+                                        "allowNewBin" = ? where
+                                        sample_id = ?
+                                    </correctionFailed>
+                                    <sample>
+                                        select sample_name, sod,
+                                        date,machine from samples where
+                                        sample_id = ?
+                                    </sample>
+
+                                    <sod>
+                                        select sample_id, sample_name
+                                        from samples where sod = ? and sample_name not similar to
+                                        '%_bl[0-9]*_[0-9]%' and
+                                        date_trunc('day',date::date) = date_trunc('day',?::date) and machine = ? and
+                                        machine != '?' and visible = 'TRUE' and correction_failed = 'FALSE'
+                                        order by sample_name
+                                    </sod>
+                                    <sameDay>
+                                        select sample_id, sample_name
+                                        from samples where date_trunc('day',date::date) = date_trunc('day',?::date) and
+                                        sample_name not similar to
+                                        '%_bl[0-9]*_[0-9]%' and
+                                        correction_failed = 'FALSE' and
+                                        machine = ? and machine != '?' and visible = 'TRUE' order by
+                                        sample_name
+                                    </sameDay>
+                                    <lastDay>
+                                        select sample_id, sample_name
+                                        from samples where date_trunc('day',date::date) = date_trunc('day',?::date) and
+                                        sample_name not similar to
+                                        '%_bl[0-9]*_[0-9]%'
+                                        and correction_failed = 'FALSE'
+                                        and machine = ? and machine !=
+                                        '?' and visible = 'TRUE' order by sample_name
+                                    </lastDay>
+                                    <correctedWith>
+                                        UPDATE SAMPLES set
+                                        "correctedWith" = ? where
+                                        sample_id = ?
+                                    </correctedWith>
+
+                                    <reset>
+                                        update spectra set
+                                        retention_index = retention_time,
+                                        bin_id = null
+
+                                        where sample_id = ?
+                                    </reset>
+                                </CorrectionMethod>
+                            </methods>
+                            <validate>
+                                <CalculateBinAvability>
+                                    <finished>
+                                        SELECT sample_id FROM SAMPLES
+                                        WHERE finished = 'TRUE'
+                                        AND
+                                        class = ? AND visible = 'TRUE'
+                                    </finished>
+                                    <notfinished>
+                                        SELECT sample_id FROM SAMPLES
+                                        WHERE finished =
+                                        'FALSE' AND
+                                        class = ? AND visible = 'TRUE'
+                                    </notfinished>
+                                    <all>
+                                        SELECT sample_id FROM SAMPLES
+                                        WHERE class = ? AND visible =
+                                        'TRUE'
+                                    </all>
+                                    <bin>
+                                        SELECT bin_id FROM SPECTRA WHERE
+                                        sample_id = ? AND bin_id =
+                                        ? AND problematic = 'FALSE'
+                                    </bin>
+                                </CalculateBinAvability>
+                            </validate>
+                            <thread>
+                                <RemoveWrongBinThread>
+                                    <spectraAnalysis>
+                                        UPDATE SPECTRA set bin_id = null
+                                        WHERE bin_id =
+                                        ?
+                                    </spectraAnalysis>
+                                    <bin>
+                                        DELETE FROM BIN WHERE bin_id = ?
+                                    </bin>
+                                </RemoveWrongBinThread>
+                            </thread>
+                            <export>
+                                <ExportResult>
+                                    <sampleVersion>
+                                        SELECT version,result FROM
+                                        QUANTIFICATION WHERE
+                                        sample_id =
+                                        ?
+                                    </sampleVersion>
+                                    <sample>
+                                        SELECT sample_id FROM
+                                        RESULT_LINK WHERE result_id = ?
+                                    </sample>
+                                    <sampleCount>
+                                        SELECT count(sample_id) FROM
+                                        RESULT_LINK WHERE
+                                        result_id = ?
+                                    </sampleCount>
+                                    <bin>
+                                        SELECT
+                                        bin_id,name,quantmass,spectra,apex_sn
+                                        ,
+                                        retention_index, group_id FROM
+                                        BIN WHERE export = 'TRUE' ORDER
+                                        BY bin_id ASC
+                                    </bin>
+                                    <virtualbin>
+                                        SELECT bin_id,name FROM
+                                        view_virtualbin WHERE export
+                                        =
+                                        'TRUE'
+                                    </virtualbin>
+                                    <virtualbinCount>
+                                        SELECT count(bin_id) FROM
+                                        view_virtualbin WHERE
+                                        export =
+                                        'TRUE'
+                                    </virtualbinCount>
+                                    <binCount>
+                                        SELECT count(bin_id) FROM BIN
+                                        WHERE export = 'TRUE'
+                                    </binCount>
+                                    <fetchVersion>
+                                        SELECT count(bin_id) FROM bin
+                                        WHERE export =
+                                        'TRUE'
+                                    </fetchVersion>
+                                    <fetchRefrencesClass>
+                                        SELECT * FROM reference_class
+                                    </fetchRefrencesClass>
+                                    <fetchRefrences>
+                                        SELECT * FROM reference where
+                                        bin_id = ? and
+                                        class_id = ?
+                                    </fetchRefrences>
+                                    <isStandard>
+                                        SELECT a.bin_id from bin a,
+                                        standard b where
+                                        a.bin_id =
+                                        b.bin_id and a.bin_id = ?
+                                    </isStandard>
+                                </ExportResult>
+                                <SampleExport>
+                                    <quant>
+                                        SELECT * FROM spectra where
+                                        sample_id = ? and bin_id = ?
+                                    </quant>
+                                    <sample>
+                                        SELECT sample_name,class,
+                                        setupx_id,correction_failed
+                                        FROM
+                                        SAMPLES WHERE sample_id = ?
+                                    </sample>
+                                    <bin>
+                                        SELECT bin_id,name,quantmass
+                                        FROM BIN WHERE export = 'TRUE'
+                                        ORDER BY bin_id
+                                    </bin>
+                                    <virtualquant>
+                                        SELECT
+                                        SPECTRA.uniquemass,SPECTRA.signal_noise,SPECTRA.purity,SPECTRA.retention_index,SPECTRA.spectra_id,SPECTRA.retention_time,SPECTRA.spectra,SPECTRA.apex_sn,
+                                        SPECTRA.match, SPECTRA.bin_id AS
+                                        real_bin FROM
+                                        SPECTRA,VIRTUAL_BIN WHERE
+                                        SPECTRA.sample_id = ? AND
+                                        SPECTRA.bin_id =
+                                        VIRTUAL_BIN.parent_id AND
+                                        VIRTUAL_BIN.bin_id =
+                                        ?
+                                    </virtualquant>
+                                    <virtualbin>
+                                        SELECT bin_id,name,quantmass
+                                        FROM view_virtualbin
+                                        WHERE
+                                        export = 'TRUE'
+                                    </virtualbin>
+                                    <virtualProperty>
+                                        SELECT * FROM VIRTUAL_BIN WHERE
+                                        export = 'TRUE'
+                                        AND parent_id =
+                                        ?
+                                    </virtualProperty>
+                                </SampleExport>
+
+                                <SQLExportService>
+                                    <id>
+                                        SELECT max(result_id) FROM
+                                        result where setupx = ?
+                                    </id>
+                                </SQLExportService>
+
+                                <dest>
+                                    <QuantificationTableDestination>
+                                        <update>
+                                            UPDATE QUANTIFICATION set
+                                            result = ?, version = ?
+                                            where
+                                            sample_id=?
+                                        </update>
+                                        <insert>
+                                            INSERT INTO
+                                            quantification(version,sample_id,result)
+                                            values(?,?,?)
+                                        </insert>
+                                        <select>
+                                            SELECT result FROM
+                                            quantification where
+                                            sample_id = ?
+                                        </select>
+                                        <version>
+                                            SELECT count(bin_id) FROM
+                                            bin WHERE export = 'TRUE'
+                                        </version>
+                                    </QuantificationTableDestination>
+                                </dest>
+                                <source>
+                                    <QuantificationTableSource>
+                                        <select>
+                                            SELECT result FROM
+                                            quantification where
+                                            sample_id = ?
+                                        </select>
+                                    </QuantificationTableSource>
+                                </source>
+                            </export>
+                        </algorythm>
+                        <server>
+                            <ExportServer>
+                                <id>
+                                    select sample_id from SAMPLES a
+                                    where a.setupx_id = ? and
+                                    visible =
+                                    'TRUE'
+                                </id>
+                            </ExportServer>
+                        </server>
+                    </binbase>
+                </metabolomics>
+            </genomics>
+        </ucdavis>
+    </edu>
+</sql>

@@ -1,12 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
-import java.io.File
+import java.io.{File, FileInputStream}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent.AgilentSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSampleV2
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.leco.LecoSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
@@ -45,6 +45,9 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
         val file = fileOption.get
         if (file.getName.toLowerCase.matches(".*\\.d.zip")) {
           Some(new AgilentSample(file.getName, file, dataFormerClient))
+        }
+        else if (file.getName.toLowerCase.matches(".*\\.txt")) {
+          Some(new LecoSample(new FileInputStream(file), name))
         }
         else {
           Some(MSDKSample(name, file))

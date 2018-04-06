@@ -1,10 +1,6 @@
-#hystrix.command.default.execution.timeout.enabled: false
-
-#feign.hystrix.enable: false
-
 msdial:
   connectTimeoutMillis: 250
   readTimeoutMillis: 250000
-#  proxyUrl: http://localhost:8080
-
-spectrum.minimizer.basePeakRatio: 0.0001
+spectrum:
+  minimizer:
+    basePeakRatio: 0.0001

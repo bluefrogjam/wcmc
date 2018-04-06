@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
 import java.io.File
 
-import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
+import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.junit.runner.RunWith
@@ -30,10 +30,10 @@ class ResourceLoaderSampleLoaderTest extends WordSpec {
 
     "able to load sample B5_P20Lipids_Pos_NIST02" in {
 
-      val sample = loader.loadSample("B5_P20Lipids_Pos_NIST02.mzML")
+      val sample = loader.loadSample("B5_P20Lipids_Pos_NIST02.d.zip")
 
       assert(sample.isDefined)
-      assert(sample.get.fileName == "B5_P20Lipids_Pos_NIST02.mzML")
+      assert(sample.get.fileName == "B5_P20Lipids_Pos_NIST02.d.zip")
     }
 
   }
