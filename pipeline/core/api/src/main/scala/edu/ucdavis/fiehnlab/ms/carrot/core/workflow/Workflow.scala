@@ -94,7 +94,7 @@ class Workflow[T] extends LazyLogging {
     */
   protected final def quantify(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationBeginEvent(sample)))
-    val result = quantify(sample, acquisitionMethod)
+    val result = quantifySample(sample, acquisitionMethod)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationFinishedEvent(result)))
     result
   }
@@ -108,15 +108,15 @@ class Workflow[T] extends LazyLogging {
   final def process(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(sample)))
 
-    val result = quantify(
-      postProcessing(
-      annotation(
-        correction(
-          preprocessing(
-            sample, acquisitionMethod
+    val result = postProcessing(
+      quantify(
+        annotation(
+          correction(
+            preprocessing(
+              sample, acquisitionMethod
+            ), acquisitionMethod
           ), acquisitionMethod
         ), acquisitionMethod
-      ), acquisitionMethod
       ), acquisitionMethod
     )
 
@@ -124,7 +124,7 @@ class Workflow[T] extends LazyLogging {
     result
   }
 
-   protected def quantifySample(sample: Sample, acquisitionMethod: AcquisitionMethod): QuantifiedSample[T] = sample match {
+  protected def quantifySample(sample: Sample, acquisitionMethod: AcquisitionMethod): QuantifiedSample[T] = sample match {
     case s: AnnotatedSample =>
       logger.info(s"quantify sample: $s")
       var temp = quantificationProcess.process(s, acquisitionMethod)
@@ -146,7 +146,7 @@ class Workflow[T] extends LazyLogging {
     * @param exception
     * @return
     */
-   protected def handleFailedCorrection(sample: Sample, acquisitionMethod: AcquisitionMethod, exception: Exception): Option[CorrectedSample] = {
+  protected def handleFailedCorrection(sample: Sample, acquisitionMethod: AcquisitionMethod, exception: Exception): Option[CorrectedSample] = {
     /*
     if (lcmsLCMSProperties.allowCorrectionFailedFallback) {
       exception match {
@@ -202,7 +202,7 @@ class Workflow[T] extends LazyLogging {
     * @param sample
     * @return
     */
-   protected def preProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+  protected def preProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
     if (preProcessor.isEmpty) {
       logger.info(s"PreProcessors: None")
       sample
@@ -228,7 +228,7 @@ class Workflow[T] extends LazyLogging {
     * @param sample
     * @return
     */
-   protected def correctSample(sample: Sample, acquisitionMethod: AcquisitionMethod): CorrectedSample = correction.process(sample, acquisitionMethod)
+  protected def correctSample(sample: Sample, acquisitionMethod: AcquisitionMethod): CorrectedSample = correction.process(sample, acquisitionMethod)
 
   /**
     * annotate the given sample
@@ -236,7 +236,7 @@ class Workflow[T] extends LazyLogging {
     * @param sample
     * @return
     */
-   protected def annotateSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample = sample match {
+  protected def annotateSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample = sample match {
     case c: CorrectedSample => annotate.process(c, acquisitionMethod)
   }
 
@@ -246,7 +246,7 @@ class Workflow[T] extends LazyLogging {
     * @param sample
     * @return
     */
-   protected def postProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample = sample match {
+  protected def postProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample = sample match {
     case s: QuantifiedSample[T] =>
       if (postProcessor.isEmpty) {
         s
