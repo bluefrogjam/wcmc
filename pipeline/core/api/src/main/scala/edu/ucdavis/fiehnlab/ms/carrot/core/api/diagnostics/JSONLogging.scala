@@ -51,7 +51,7 @@ trait JSONSampleLogging extends JSONLogging {
   /**
     * which sample we require to log
     */
-  protected val sampleToLog: Sample
+  protected val sampleToLog: String
 
   /**
     * adds the provided sample information
@@ -60,7 +60,7 @@ trait JSONSampleLogging extends JSONLogging {
     */
   override def buildMessage(): Map[String, Any] = {
     if(sampleToLog != null) {
-      super.buildMessage() + ("sample" -> sampleToLog.fileName)
+      super.buildMessage() + ("sample" -> sampleToLog)
     }
     else{
       super.buildMessage()

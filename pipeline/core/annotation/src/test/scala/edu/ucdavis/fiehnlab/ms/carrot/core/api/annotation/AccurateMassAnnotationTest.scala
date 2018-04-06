@@ -42,7 +42,7 @@ object Test {
                                  override val massOfDetectedFeature: Option[Ion]
                                 ) extends MSSpectra {
 
-    val sample:Sample = null
+    val sample:String = null
     /**
       * associated spectrum propties if applicable
       */

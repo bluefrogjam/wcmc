@@ -17,7 +17,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
       assert(test.isMatch(
 
         new MSSpectra with CorrectedSpectra {
-          val sample:Sample = null
+          val sample:String = null
 
           override val purity: Option[Double] = None
           override val ionMode: Option[IonMode] = None
@@ -75,7 +75,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
       assert(!test.isMatch(
 
         new MSSpectra with CorrectedSpectra {
-          val sample:Sample = null
+          val sample:String = null
 
           override val purity: Option[Double] = None
           override val ionMode: Option[IonMode] = None
