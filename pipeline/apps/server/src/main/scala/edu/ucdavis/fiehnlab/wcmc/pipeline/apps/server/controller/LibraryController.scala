@@ -101,7 +101,7 @@ class LibraryController extends LazyLogging {
 
   @DeleteMapping(value = Array("deleteLibrary/{library}"))
   def deleteLibrary(@PathVariable("library") library: String): Unit = {
-    logger.info(s"User requested library: ${library}'s deletion...")
+    logger.debug(s"User requested library: ${library}'s deletion...")
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == library => x
     }
@@ -112,7 +112,17 @@ class LibraryController extends LazyLogging {
   }
 
   @DeleteMapping(value = Array("deleteTarget/{library}/{target}"))
-  def deleteTarget()
+  def deleteTarget(@PathVariable("library") library: String, @PathVariable("target") target: String): Unit = {
+    logger.info(s"User requested target: ${target}'s deletion...")
+    var acquisitionMethod = libraryAccess.libraries.collectFirst {
+      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == library => x
+    }
+
+    if (acquisitionMethod.isDefined) {
+      var toBeDeleted = libraryAccess.load(acquisitionMethod.get).filter(_.name == target).head
+      libraryAccess.delete(toBeDeleted, acquisitionMethod.get)
+    }
+  }
 }
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
