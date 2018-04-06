@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 /**
   * Created by wohlgemuth on 9/7/17.
   */
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]), scanBasePackages = Array("edu.ucdavis.fiehnlab.wcmc.pipeline"))
 class Carrot {
 
   @Value("${server.port}")
@@ -44,7 +44,6 @@ object Carrot extends App {
 }
 
 @Configuration
-//@ComponentScan
 class CarrotCors extends WebMvcConfigurerAdapter {
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {

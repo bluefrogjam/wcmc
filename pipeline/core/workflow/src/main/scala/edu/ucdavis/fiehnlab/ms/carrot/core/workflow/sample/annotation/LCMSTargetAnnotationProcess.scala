@@ -30,11 +30,9 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
 
   //our defined filters to find possible matches are registered in here
-  lazy val filters: SequentialAnnotate = new SequentialAnnotate(
-    new MassAccuracyPPMorMD(5,lcmsProperties.massAccuracy, "annotation",lcmsProperties.massIntensity) ::
-      new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") ::
-      List()
-  )
+  lazy val filters: SequentialAnnotate = new SequentialAnnotate(new MassAccuracyPPMorMD(5,lcmsProperties.massAccuracy, "annotation",lcmsProperties.massIntensity) ::
+        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") ::
+        List())
 
   /**
     * finds a match between the target and the sequence of spectra

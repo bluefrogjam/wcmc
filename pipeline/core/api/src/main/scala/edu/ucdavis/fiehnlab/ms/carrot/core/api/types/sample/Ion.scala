@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 /**
   * defines an ion
   */
-case class Ion(mass: Double, intensity: Double) {
+case class Ion(mass: Double, intensity: Float) {
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[Ion]
 

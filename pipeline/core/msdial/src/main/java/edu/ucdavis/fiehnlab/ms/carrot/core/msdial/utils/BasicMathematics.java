@@ -72,9 +72,9 @@ public class BasicMathematics {
         return sum;
     }
 
-	public static double brokenMedian(List<Double> list) {
-		List<Double> sortedlist = new ArrayList<>(list);
-		sortedlist.sort(Double::compareTo);
+	public static double brokenMedian(List<Float> list) {
+		List<Float> sortedlist = new ArrayList<>(list);
+		sortedlist.sort(Float::compareTo);
 
         return sortedlist.get(sortedlist.size() / 2);
     }
