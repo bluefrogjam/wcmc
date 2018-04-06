@@ -11,8 +11,7 @@ import org.springframework.context.annotation._
   * Created by wohlgemuth on 7/14/17.
   */
 @Configuration
-@Import(Array(classOf[WorkflowConfig]))
-@ComponentScan(basePackageClasses = Array(classOf[DelegatingResourceLoader]))
+@ComponentScan
 @EnableConfigurationProperties
 @EnableCaching
 class CentralWorkflowConfig {

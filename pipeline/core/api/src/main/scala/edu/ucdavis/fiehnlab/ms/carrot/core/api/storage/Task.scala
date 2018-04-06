@@ -40,7 +40,7 @@ case class Task(
   * @param fileName
   * @param matrix
   */
-case class SampleToProcess(fileName: String, className: String, comment: String, label: String, matrix: Matrix)
+case class SampleToProcess(fileName: String, className: String = "", comment: String = "", label: String = "", matrix: Matrix = Matrix("", "", "", Seq.empty))
 
 /**
   * provides a simple interface to store results somewhere
