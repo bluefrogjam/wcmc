@@ -80,7 +80,7 @@ public class SpectralDeconvolution {
                     List<Ion> smoothedMS2PeakList = new ArrayList<>();
 
                     for (double[] aPeak : ms2PeakList) {
-                        smoothedMS2PeakList.add(new Ion(aPeak[2], aPeak[3]));
+                        smoothedMS2PeakList.add(new Ion(aPeak[2], (float)aPeak[3]));
                     }
 
                     ms2DecResult.peakListList.add(smoothedMS2PeakList);

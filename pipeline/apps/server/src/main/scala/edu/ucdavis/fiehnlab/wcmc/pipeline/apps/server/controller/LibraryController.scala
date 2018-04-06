@@ -110,6 +110,9 @@ class LibraryController extends LazyLogging {
       libraryAccess.deleteLibrary(acquisitionMethod.get)
     }
   }
+
+  @DeleteMapping(value = Array("deleteTarget/{library}/{target}"))
+  def deleteTarget()
 }
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
@@ -239,7 +242,7 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
         /**
           * all the defined ions for this spectra
           */
-        override val ions: Seq[Ion] = Seq(Ion(target.precursor, 100.0))
+        override val ions: Seq[Ion] = Seq(Ion(target.precursor, 100.0f))
         /**
           * the msLevel of this spectra
           */
