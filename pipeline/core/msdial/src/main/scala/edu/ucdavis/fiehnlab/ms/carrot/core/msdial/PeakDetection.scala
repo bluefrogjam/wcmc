@@ -1,12 +1,11 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing
+package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.{MSDialProcessing, MSDialProcessingProperties}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Bean, Configuration, Description, Profile}
+import org.springframework.context.annotation.{Description, Profile}
 import org.springframework.stereotype.Component
 
 /**

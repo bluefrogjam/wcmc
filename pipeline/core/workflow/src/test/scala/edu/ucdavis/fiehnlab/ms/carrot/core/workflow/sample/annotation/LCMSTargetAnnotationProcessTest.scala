@@ -3,11 +3,11 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.QuantifyByScanProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PeakDetection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec

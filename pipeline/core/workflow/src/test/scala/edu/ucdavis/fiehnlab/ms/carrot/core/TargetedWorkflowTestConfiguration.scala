@@ -42,10 +42,6 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
   @Bean
   def targetLibraryLCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
 
-  @Profile(Array("backend-txt-gcms"))
-  @Bean
-  def targetLibraryGCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("gcms-targets.txt").get, "\t")
-
 
   @Bean
   def client:FServ4jClient = new FServ4jClient(
