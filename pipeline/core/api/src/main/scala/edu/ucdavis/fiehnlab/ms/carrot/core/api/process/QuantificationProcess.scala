@@ -165,40 +165,6 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
   protected def computeValue(target: Target, spectra: Feature): Option[T]
 }
 
-/**
-  * quantifies the data in the given sample by height
-  *
-  * @param properties
-  */
-@Component
-@Profile(Array("carrot.report.quantify.height"))
-class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends QuantificationProcess[Double](libraryAccess) {
 
-  /**
-    * computes the height by utilizing the mass from the target
-    *
-    * @param target
-    * @param spectra
-    * @return
-    */
-  protected override def computeValue(target: Target, spectra: Feature): Option[Double] = if (spectra.massOfDetectedFeature.isDefined) Some(spectra.massOfDetectedFeature.get.intensity) else None
-}
 
-/**
-  * reports the scan for each annotated spectra, which can be used to confirm and fine tune the system
-  *
-  * @param properties
-  */
-@Component
-@Profile(Array("quantify-by-scan"))
-class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends QuantificationProcess[Int](libraryAccess) {
 
-  /**
-    * computes the height by utilizing the mass from the target
-    *
-    * @param target
-    * @param spectra
-    * @return
-    */
-  protected override def computeValue(target: Target, spectra: Feature): Option[Int] = Some(spectra.scanNumber)
-}

@@ -55,6 +55,9 @@ class TaskRunner extends LazyLogging {
     assert(task.acquisitionMethod != null)
     assert(task.email != null)
     assert(task.name != null)
+    assert(task.samples != null)
+    assert(task.samples.nonEmpty)
+
 
     logger.info(s"executing received task: ${task} and discovering ${task.samples.size} files")
     //    val pb = new ProgressBar(s"${task.name}: raw data discovery", task.samples.size)

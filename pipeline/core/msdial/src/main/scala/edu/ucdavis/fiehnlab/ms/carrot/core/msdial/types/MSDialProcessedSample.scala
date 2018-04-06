@@ -28,7 +28,7 @@ class MSDialProcessedSample(ms2DecResults: util.List[MS2DecResult], mode: IonMod
         /**
           * the associated sample
           */
-        override val sample: Sample = MSDialProcessedSample.this
+        override val sample: String = MSDialProcessedSample.this.fileName
 
         /**
           * the retention time of this spectra. It should be provided in seconds!
@@ -75,7 +75,7 @@ class MSDialProcessedSample(ms2DecResults: util.List[MS2DecResult], mode: IonMod
         /**
           * the associated sample
           */
-        override val sample: Sample = MSDialProcessedSample.this
+        override val sample: String = MSDialProcessedSample.this.fileName
 
         /**
           * the retention time of this spectra. It should be provided in seconds!
