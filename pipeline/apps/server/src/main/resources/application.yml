@@ -1,7 +1,7 @@
 spring:
   profiles:
     active:  carrot.targets.mona, carrot.target.dynamic, carrot.report.quantify.height, carrot.store.result.fserv4j, carrot.output.writer.flat, carrot.processing.replacement.simple, carrot.processing.peakdetection, carrot.lcms
-  http:
+  servlet:
     multipart:
       max-file-size: 2048MB
       max-request-size: 2048MB
@@ -30,7 +30,7 @@ email:
   host: smtp.gmail.com
   port: 25
   username: binbase@gmail.com
-  pass: BinBase2018
+  pass: fiehnlab-2018
 
 #which rest backend to use
 wcmc:
