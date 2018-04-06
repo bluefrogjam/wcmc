@@ -63,7 +63,7 @@ abstract class Annotate extends JSONPhaseLogging with JSONSettingsLogging {
   * this defines a sequential annotator, if all annotations pass
   * it will consider the annotation to be a success
   */
-class SequentialAnnotate(val annotators: List[Annotate]) extends Annotate {
+class SequentialAnnotate(val annotators: Seq[Annotate]) extends Annotate {
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -74,14 +74,7 @@ class SequentialAnnotate(val annotators: List[Annotate]) extends Annotate {
     */
   override def doMatch(unknown: Feature, target: Target): Boolean = {
     if (annotators.nonEmpty) {
-      annotators.foreach { annotator =>
-        val result = annotator.isMatch(unknown, target)
-
-        if (!result) {
-          return false
-        }
-      }
-      true
+      annotators.forall(_.isMatch(unknown, target))
     }
     else {
       false
