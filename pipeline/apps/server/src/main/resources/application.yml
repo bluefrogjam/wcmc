@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active:  carrot.targets.mona, carrot.target.dynamic, carrot.report.quantify.height, carrot.store.result.fserv4j, carrot.output.writer.flat, carrot.processing.replacement.simple, carrot.processing.peakdetection
+    active:  carrot.targets.mona, carrot.target.dynamic, carrot.report.quantify.height, carrot.store.result.fserv4j, carrot.output.writer.flat, carrot.processing.replacement.simple, carrot.processing.peakdetection, carrot.lcms
   http:
     multipart:
       max-file-size: 2048MB
