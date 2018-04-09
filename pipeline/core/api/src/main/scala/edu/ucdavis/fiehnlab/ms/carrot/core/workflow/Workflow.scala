@@ -99,52 +99,6 @@ class Workflow[T] extends LazyLogging {
     result
   }
 
-  //  protected def quantifySample(sample: Sample, acquisitionMethod: AcquisitionMethod): QuantifiedSample[T]
-  //
-  //  /**
-  //    * annotate the given sample
-  //    *
-  //    * @param sample
-  //    * @return
-  //    */
-  //  protected def annotateSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample
-  //
-  //  /**
-  //    * corrects the given sample
-  //    *
-  //    * @param sample
-  //    * @return
-  //    */
-  //  protected def correctSample(sample: Sample, acquisitionMethod: AcquisitionMethod): CorrectedSample
-  //
-  //  /**
-  //    * this method is used to handle failed corrections
-  //    *
-  //    * @param sample
-  //    * @param exception
-  //    * @return
-  //    */
-  //  protected def handleFailedCorrection(sample: Sample, acquisitionMethod: AcquisitionMethod, exception: Exception): Option[CorrectedSample] = {
-  //    logger.warn(s"correction failed, sample ${sample} will be removed from sample!")
-  //    None
-  //  }
-  //
-  //  /**
-  //    * preprocesses the given sample
-  //    *
-  //    * @param sample
-  //    * @return
-  //    */
-  //  protected def preProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample
-  //
-  //  /**
-  //    * provides us with a post processed sample
-  //    *
-  //    * @param sample
-  //    * @return
-  //    */
-  //  protected def postProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample
-
   /**
     * processes a sample and returns it, ready to be exported to a destination of your desire
     *
@@ -238,7 +192,7 @@ class Workflow[T] extends LazyLogging {
       None
     }
     */
-    logger.warn("TODO!!!")
+    logger.warn(s"Correction failed misserably with error: ${exception.getMessage}")
     None
   }
 

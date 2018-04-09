@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include:  carrot.lcms, carrot.targets.mona, carrot.target.dynamic, carrot.report.quantify.height, carrot.store.result.fserv4j, carrot.output.writer.flat, carrot.processing.replacement.simple, carrot.processing.peakdetection
+    include:  file.source.localhost, file.source.luna, file.source.eclipse, carrot.lcms, carrot.targets.mona, carrot.target.dynamic, carrot.report.quantify.height, carrot.store.result.fserv4j, carrot.output.writer.flat, carrot.processing.replacement.simple, carrot.processing.peakdetection
 
 #which rabbit mq to use
   rabbitmq:

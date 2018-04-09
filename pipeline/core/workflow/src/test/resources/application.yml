@@ -3,7 +3,7 @@ workflow:
   correction:
     massAccuracy: 150
   files:
-    targets: "/targets_full.txt"
+    targets: "/targets.txt"
 
 
 wcmc:

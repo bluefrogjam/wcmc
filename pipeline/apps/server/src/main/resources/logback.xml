@@ -9,9 +9,9 @@
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>[%date{HH:mm:ss.SSS} - %-5level %C{0}] : %m%n%ex{short}</Pattern>
         </encoder>
-        <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
-        <!--<level>info</level>-->
-        <!--</filter>-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
     </appender>
 
     <!-- logs to the local database for ease of diagnostics -->
