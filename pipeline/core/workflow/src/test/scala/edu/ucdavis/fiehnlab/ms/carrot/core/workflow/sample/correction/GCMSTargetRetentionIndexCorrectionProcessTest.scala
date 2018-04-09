@@ -73,7 +73,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
           s"for sample $sample" should {
 
-            "old BinBase cannot handle this sample, due to a new injector, which is based on Agilent, so it should fail with the Gerstel method" in {
+            "old BinBase cannot handle this sample, due to a new injector, which is based on Agilent, but carrot algorithm should be able to find it" in {
               val result = correction.process(sampleLoader.getSample(s"${sample}.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
 
               result.featuresUsedForCorrection.foreach { x =>
@@ -81,7 +81,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
               }
 
 
-              assert(result.featuresUsedForCorrection.size >= 13)
+              assert(result.featuresUsedForCorrection.size >= 12)
             }
 
           }

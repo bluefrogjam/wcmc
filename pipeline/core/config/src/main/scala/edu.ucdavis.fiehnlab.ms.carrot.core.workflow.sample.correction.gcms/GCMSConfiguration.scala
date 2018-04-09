@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
 import java.util
+
 import javax.validation.Valid
 import javax.validation.constraints._
-
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
@@ -86,6 +86,7 @@ case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) e
     * is this target required for a successful retention index correction
     */
   override var requiredForCorrection: Boolean = target.required
+
   /**
     * is this a retention index correction standard
     */
@@ -170,7 +171,6 @@ class GCMSLibraryConfiguration {
   @BeanProperty
   @NotEmpty
   var allowedBasePeaks: java.util.List[Double] = new util.ArrayList[Double]()
-
   /**
     * what is our allowed mass accuracy
     * if 0, we assume we are running in nominal mass mode!
@@ -237,6 +237,9 @@ class GCMSRetentionIndexTargetConfiguration {
   @BeanProperty
   @NotBlank
   var spectra: String = _
+
+  @BeanProperty
+  var validationTarget:Boolean = true
 
 }
 

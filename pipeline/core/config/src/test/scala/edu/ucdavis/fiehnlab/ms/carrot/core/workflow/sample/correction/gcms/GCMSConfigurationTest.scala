@@ -44,6 +44,17 @@ class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
       properties.config.get(0).targets.get(0).distanceRatios.size() should be (1)
     }
 
+    "must be a validation target" in {
+      properties.config.get(0).targets.get(0).validationTarget should be (true)
+    }
+
+    "must not be a validation target" in {
+      properties.config.get(0).targets.get(12).validationTarget should be (false)
+    }
+
+
+
+
 
   }
 
