@@ -60,8 +60,6 @@ class TaskRunner extends LazyLogging {
 
 
     logger.info(s"executing received task: ${task} and discovering ${task.samples.size} files")
-    //    val pb = new ProgressBar(s"${task.name}: raw data discovery", task.samples.size)
-    //    pb.start()
     val classes: Seq[ExperimentClass] = task.samples.groupBy(_.matrix).map { entry =>
       val samples = entry._2.map { x =>
         assert(x.fileName != null, "you need to provide a file name!")
@@ -76,15 +74,10 @@ class TaskRunner extends LazyLogging {
             logger.warn(s"discovered a none supported sample format, ignoring it: ${x.fileName}")
             null
         }
-        finally {
-          //          pb.step()
-        }
       }.filter(x => x != null)
 
       ExperimentClass(samples.seq, Option(entry._1))
     }.toSeq
-
-    //    pb.stop()
 
     val experiment = Experiment(
       classes,

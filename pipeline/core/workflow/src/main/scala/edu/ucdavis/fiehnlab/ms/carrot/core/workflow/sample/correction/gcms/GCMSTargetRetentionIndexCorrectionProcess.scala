@@ -54,7 +54,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
         logger.info("searching for validation target")
         //find the target with the highest possible similarity match, to utilize it for distance ratio validation at a later point
         val distanceValidationTarget = targets.collect {
-          case target: GCMSCorrectionTarget =>
+          case target: GCMSCorrectionTarget if target.config.validationTarget =>
             findMatchToTarget(config, spectraWithCorrectionIntensity, None, target)
         }.filter(_ != null).maxBy(x => Similarity.compute(x.annotation.asInstanceOf[SimilaritySupport], x.target))
 
