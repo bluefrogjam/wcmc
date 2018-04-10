@@ -13,6 +13,11 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
+@ActiveProfiles(Array("carrot.gcms", "carrot.gcms.correction","carrot.gcms.library.binbase"))
+class GCMSTargetRetentionIndexCorrectionProcessWithBinBaseTest extends GCMSTargetRetentionIndexCorrectionProcessTest
+
+@RunWith(classOf[SpringJUnit4ClassRunner])
+@SpringBootTest
 @ActiveProfiles(Array("carrot.gcms", "carrot.gcms.correction"))
 class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers {
 
@@ -37,9 +42,11 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
       "allow to process data while loading a configuration from the Gerstel default Method" must {
 
+        val method = AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", instrument = Some("LECO-GC-TOF"), column = Some("rtx5recal"), None)))
+
         "for sample 060712afisa86_1" should {
 
-          val result = correction.process(sampleLoader.getSample("060712afisa86_1.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
+          val result = correction.process(sampleLoader.getSample("060712afisa86_1.txt"), method)
 
           result.featuresUsedForCorrection.foreach { x =>
             logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
@@ -56,7 +63,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
         "for sample 180321bZKsa26_1" should {
 
-          val result = correction.process(sampleLoader.getSample("180321bZKsa26_1.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
+          val result = correction.process(sampleLoader.getSample("180321bZKsa26_1.txt"), method)
 
           result.featuresUsedForCorrection.foreach { x =>
             logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
@@ -74,7 +81,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
           s"for sample $sample" should {
 
             "old BinBase cannot handle this sample, due to a new injector, which is based on Agilent, but carrot algorithm should be able to find it" in {
-              val result = correction.process(sampleLoader.getSample(s"${sample}.txt"), AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", None, column = Some("rtx5"), None))))
+              val result = correction.process(sampleLoader.getSample(s"${sample}.txt"), method)
 
               result.featuresUsedForCorrection.foreach { x =>
                 logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
