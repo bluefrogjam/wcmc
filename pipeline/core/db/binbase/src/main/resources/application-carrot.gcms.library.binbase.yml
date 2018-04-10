@@ -6,6 +6,7 @@ carrot:
   gcms:
     library:
       binbase:
+        instrument: LECO-GC-TOF
         columns:
           - rtx5recal
           - volatile

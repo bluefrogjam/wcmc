@@ -5,7 +5,8 @@ carrot:
         -
           description: "This is the class Gerstel injector FAME marker configuration"
           name: Gerstel
-          column: rtx5
+          column: rtx5recal
+          instrument: LECO-GC-TOF
           allowedBasePeaks:
             - 87.0
             - 117.0
