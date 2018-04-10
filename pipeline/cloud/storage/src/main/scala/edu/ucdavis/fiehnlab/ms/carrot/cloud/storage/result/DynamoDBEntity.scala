@@ -1,8 +1,6 @@
-package edu.ucdavis.fiehnlab.ms.carrot.cloud.storage
+package edu.ucdavis.fiehnlab.ms.carrot.cloud.storage.result
 
 import com.amazonaws.services.dynamodbv2.datamodeling._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, TargetAnnotation}
 import org.socialsignin.spring.data.dynamodb.repository.{EnableScan, EnableScanCount}
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.{Page, Pageable}
