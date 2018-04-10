@@ -1,17 +1,15 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.binbase
 
-import java.sql.{Connection, ResultSet}
-import java.util.Properties
-
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.ReadonlyLibrary
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, PuritySupport, Target, UniqueMassSupport}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import java.sql.Connection
-import java.sql.DriverManager
+import java.sql.{Connection, DriverManager, ResultSet}
 import java.util
-
+import java.util.Properties
 import javax.validation.constraints.{NotBlank, NotEmpty}
+
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.ReadonlyLibrary
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
 
 import scala.beans.BeanProperty
+import scala.collection.JavaConverters._
 
 /**
   * provides us with a read only access to the binbase database library
@@ -26,7 +25,7 @@ import scala.beans.BeanProperty
   */
 @Component
 @Profile(Array("carrot.gcms.library.binbase"))
-class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) extends ReadonlyLibrary[BinBaseTarget] {
+class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) extends ReadonlyLibrary[BinBaseTarget] with LazyLogging{
   /**
     * loads all the spectra from the library
     * applicable for the given acquistion method
@@ -65,6 +64,7 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) ext
     props.setProperty("user", column)
     props.setProperty("password", config.password)
 
+    logger.info(s"connecting too ${url}")
     DriverManager.getConnection(url, props)
 
   }
@@ -74,7 +74,17 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) ext
     *
     * @return
     */
-  override def libraries: Seq[AcquisitionMethod] = ???
+  override def libraries: Seq[AcquisitionMethod] = config.columns.asScala.map { column =>
+    AcquisitionMethod(Option(
+      ChromatographicMethod(
+        config.name,
+        Option("Leco GC-TOF"),
+        Option(column),
+        Option(PositiveMode())
+      )
+    )
+    )
+  }
 }
 
 @Component
@@ -98,10 +108,14 @@ class BinBaseConnectionProperties {
   @BeanProperty
   @NotEmpty
   var columns: java.util.List[String] = new util.ArrayList[String]()
+
+  @BeanProperty
+  @NotBlank
+  var name: String = "remote:"
 }
 
 
-case class BinBaseTarget(result: ResultSet) extends Target with PuritySupport with UniqueMassSupport {
+case class BinBaseTarget(result: ResultSet) extends Target with PuritySupport with UniqueMassSupport with LazyLogging {
   /**
     * a name for this spectra
     */
@@ -142,11 +156,16 @@ case class BinBaseTarget(result: ResultSet) extends Target with PuritySupport wi
     /**
       * a list of model ions used during the deconvolution
       */
-    override val modelIons: Option[Seq[Double]] = Option(result.getString("apex").split("+").map(_.toDouble))
+    override val modelIons: Option[Seq[Double]] = {
+
+      Option({
+        result.getString("apex").trim.split("\\++").map(_.toDouble)
+      })
+    }
     /**
       * all the defined ions for this spectra
       */
-    override val ions: Seq[Ion] = result.getString("spectra").split(" ").map { p =>
+    override val ions: Seq[Ion] = result.getString("spectra").trim.split(" ").map { p =>
       val data = p.split(":")
 
       Ion(data(0).toDouble, data(1).toDouble)
