@@ -13,10 +13,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ActiveProfiles(Array("carrot.gcms"))
 @SpringBootTest
-class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
+class GCMSConfigurationTest extends WordSpec with ShouldMatchers {
 
   @Autowired
-  val properties:GCMSCorrectionLibraryProperties = null
+  val properties: GCMSCorrectionLibraryProperties = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -25,35 +25,36 @@ class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
     "a list of different target configurations" in {
 
       properties.config should not be (null)
-      properties.config.size() should be (1)
+      properties.config.size() should be(1)
 
     }
     "property required standards needs to be defined" in {
-      properties.requiredStandards should be (5)
+      properties.requiredStandards should be(5)
     }
 
     "property config 0 needs 13 standard" in {
-      properties.config.get(0).targets.size() should be (13)
+      properties.config.get(0).targets.size() should be(13)
     }
 
     "should be in nominal mass mode" in {
-      properties.config.get(0).isNominal() should be (true)
+      properties.config.get(0).isNominal() should be(true)
     }
 
     "have distance ratios" in {
-      properties.config.get(0).targets.get(0).distanceRatios.size() should be (1)
+      properties.config.get(0).targets.get(0).distanceRatios.size() should be(1)
     }
 
     "must be a validation target" in {
-      properties.config.get(0).targets.get(0).validationTarget should be (true)
+      properties.config.get(0).targets.get(0).validationTarget should be(true)
     }
 
     "must not be a validation target" in {
-      properties.config.get(0).targets.get(12).validationTarget should be (false)
+      properties.config.get(0).targets.get(12).validationTarget should be(false)
     }
 
-
-
+    "must have the correct instrument" in {
+      properties.config.get(0).instrument should be("LECO-GC-TOF")
+    }
 
 
   }
@@ -62,6 +63,6 @@ class GCMSConfigurationTest extends WordSpec with ShouldMatchers{
 
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class TestApplication{
+class TestApplication {
 
 }

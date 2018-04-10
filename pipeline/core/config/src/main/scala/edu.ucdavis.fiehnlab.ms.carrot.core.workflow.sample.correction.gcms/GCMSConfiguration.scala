@@ -26,6 +26,7 @@ class GCMSCorrectionTargetConfiguration {
   /**
     * defines a library access method, based on all methods
     * defines in the yaml file
+    *
     * @param properties
     * @return
     */
@@ -38,14 +39,20 @@ class GCMSCorrectionTargetConfiguration {
         override def load(acquisitionMethod: AcquisitionMethod): Iterable[GCMSCorrectionTarget] = {
 
           acquisitionMethod.chromatographicMethod match {
-            case Some(method) if method.name.equals(x.name) =>
+            case Some(method) =>
               method.column match {
                 case Some(column) if column.equals(x.column) =>
-                  x.targets.asScala.map(GCMSCorrectionTarget)
-                case None => Seq.empty
+                  method.instrument match {
+                    case Some(instrument) if instrument.equals(x.instrument) =>
+                      x.targets.asScala.map(GCMSCorrectionTarget)
+                    case _ =>
+                      Seq.empty
+                  }
+
+                case _ => Seq.empty
               }
 
-            case None => Seq.empty
+            case _ => Seq.empty
           }
 
         }
@@ -156,14 +163,17 @@ class GCMSLibraryConfiguration {
 
   @BeanProperty
   @NotBlank
-  var column:String = ""
+  var column: String = ""
 
+  @BeanProperty
+  @NotBlank
+  var instrument: String = ""
   /**
     * how high do peaks have to be to be considered as targets
     * for RI correction
     */
   @BeanProperty
-  var minimumPeakIntensity:Float = 0
+  var minimumPeakIntensity: Float = 0
 
   /**
     * which base peaks do we allow
@@ -179,9 +189,10 @@ class GCMSLibraryConfiguration {
 
   /**
     * helper method to check for nominal mass
+    *
     * @return
     */
-  def isNominal() : Boolean = massAccuracy.equals(0.0)
+  def isNominal(): Boolean = massAccuracy.equals(0.0)
 }
 
 class GCMSRetentionIndexTargetConfiguration {
@@ -239,18 +250,18 @@ class GCMSRetentionIndexTargetConfiguration {
   var spectra: String = _
 
   @BeanProperty
-  var validationTarget:Boolean = true
+  var validationTarget: Boolean = true
 
 }
 
-class RatioConfiguration{
+class RatioConfiguration {
   @BeanProperty
   @DecimalMax("10.0")
   @DecimalMin("-10.0")
-  var min:Double = 0.0
+  var min: Double = 0.0
 
   @BeanProperty
   @DecimalMax("10.0")
   @DecimalMin("-10.0")
-  var max:Double = 0.0
+  var max: Double = 0.0
 }

@@ -6,10 +6,11 @@ import java.util.Properties
 import javax.validation.constraints.{NotBlank, NotEmpty}
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.ReadonlyLibrary
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSCorrectionTarget
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -25,14 +26,14 @@ import scala.collection.JavaConverters._
   */
 @Component
 @Profile(Array("carrot.gcms.library.binbase"))
-class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) extends ReadonlyLibrary[BinBaseTarget] with LazyLogging{
+class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, correction: LibraryAccess[GCMSCorrectionTarget]) extends ReadonlyLibrary[Target] with LazyLogging {
   /**
     * loads all the spectra from the library
     * applicable for the given acquistion method
     *
     * @return
     */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[BinBaseTarget] = {
+  override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = {
     acquisitionMethod.chromatographicMethod match {
       case Some(method) =>
         method.column match {
@@ -42,11 +43,15 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) ext
             try {
               val res = connection.createStatement().executeQuery("select * from bin where bin_id not in (select bin_id from standard)")
 
-              new Iterator[BinBaseTarget] {
+              val annotations = new Iterator[Target] {
                 def hasNext = res.next()
 
-                def next() = BinBaseTarget(res)
+                def next() = BinBaseTarget(res).asInstanceOf[Target]
               }.toSeq
+
+              val correctionMarkers = correction.load(acquisitionMethod)
+
+              annotations ++ correctionMarkers
             }
             finally {
               connection.close()
@@ -57,7 +62,7 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) ext
     }
   }
 
-  def generateConnection(column: String): Connection = {
+  protected def generateConnection(column: String): Connection = {
     classOf[org.postgresql.Driver]
     val url = s"jdbc:postgresql://${config.host}/${config.database}"
     val props = new Properties
@@ -78,7 +83,7 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) ext
     AcquisitionMethod(Option(
       ChromatographicMethod(
         config.name,
-        Option("Leco GC-TOF"),
+        Option(config.instrument),
         Option(column),
         Option(PositiveMode())
       )
@@ -112,6 +117,10 @@ class BinBaseConnectionProperties {
   @BeanProperty
   @NotBlank
   var name: String = "remote:"
+
+  @BeanProperty
+  @NotEmpty
+  var instrument: String = ""
 }
 
 
