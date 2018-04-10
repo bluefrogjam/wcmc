@@ -26,7 +26,11 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     */
   override final def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod): CorrectedSample = {
 
-    val optimizedMatches = findCorrectionTargets(input, target,method)
+    val retentionIndexMarkers = target.filter(_.isRetentionIndexStandard)
+
+    assert(retentionIndexMarkers.nonEmpty,"please ensure you have some retention index targets defined!")
+
+    val optimizedMatches = findCorrectionTargets(input, retentionIndexMarkers,method)
 
 
 
