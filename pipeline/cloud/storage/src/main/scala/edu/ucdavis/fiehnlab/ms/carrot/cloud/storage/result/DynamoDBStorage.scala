@@ -1,9 +1,9 @@
-package edu.ucdavis.fiehnlab.ms.carrot.cloud.storage
+package edu.ucdavis.fiehnlab.ms.carrot.cloud.storage.result
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
