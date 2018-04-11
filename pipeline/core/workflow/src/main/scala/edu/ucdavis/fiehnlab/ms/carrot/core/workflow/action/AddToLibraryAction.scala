@@ -149,9 +149,9 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     * @return
     */
   def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod): Boolean = {
-    val riFilter = new IncludeByRetentionIndexTimeWindow(newTarget.retentionIndex,retentionIndexWindow)
-    val massFilter = new IncludeByMassRangePPM(newTarget,accurateMassWindow)
-    val similarityFilter = new IncludeBySimilarity(newTarget,minimumSimilarity)
+    val riFilter = new IncludeByRetentionIndexTimeWindow(newTarget.retentionIndex,"targetGeneration",retentionIndexWindow)
+    val massFilter = new IncludeByMassRangePPM(newTarget,accurateMassWindow,"targetGeneration")
+    val similarityFilter = new IncludeBySimilarity(newTarget,minimumSimilarity,"targetGeneration")
 
     //we only accept MS2 and higher for this
     val toMatch = targets.load(acquisitionMethod).filter(_.spectrum.isDefined)
@@ -160,9 +160,9 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
 
     //MS1+ spectra filter
     val msmsSpectra = toMatch.filter(_.spectrum.get.msLevel > 1)
-    val filteredByRi = msmsSpectra.filter(riFilter.include)
-    val filtedByMass = filteredByRi.filter(massFilter.include)
-    val filteredBySimilarity = filtedByMass.filter(similarityFilter.include)
+    val filteredByRi = msmsSpectra.filter(riFilter.include(_,applicationContext))
+    val filtedByMass = filteredByRi.filter(massFilter.include(_,applicationContext))
+    val filteredBySimilarity = filtedByMass.filter(similarityFilter.include(_,applicationContext))
 
     logger.debug(s"existing targets: ${toMatch.size}")
     logger.debug(s"after MS level filter: ${msmsSpectra.size} targets are left")

@@ -2,12 +2,8 @@ carrot:
   gcms:
     library:
       binbase:
-        instrument: LECO-GC-TOF
         password: c258083
         host: 127.0.0.1
-        columns:
-          - rtx5recal
-          - volatile2
 workflow:
   correction:
     massAccuracy: 150

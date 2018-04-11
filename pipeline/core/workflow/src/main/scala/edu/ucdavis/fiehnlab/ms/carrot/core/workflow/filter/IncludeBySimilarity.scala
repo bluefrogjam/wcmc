@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Similarity
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SimilaritySupport
+import org.springframework.context.ApplicationContext
 
 /**
   * checks if the spectra matches the given similarity, based on the cutoff
@@ -10,14 +11,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SimilaritySupport
   * @param origin
   * @param cutoff needs to be less than 1
   */
-class IncludeBySimilarity(val origin: SimilaritySupport, val cutoff: Double) extends Filter[SimilaritySupport] {
+class IncludeBySimilarity(val origin: SimilaritySupport, val cutoff: Double, val phaseToLog: String) extends Filter[SimilaritySupport] {
 
   assert(cutoff <= 1)
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
     */
-  override def include(spectra: SimilaritySupport): Boolean = {
+  protected override def doInclude(spectra: SimilaritySupport, applicationContext: ApplicationContext): Boolean = {
     val result = Similarity.compute(spectra, origin)
 
     assert(result <= 1.0)
@@ -25,4 +26,9 @@ class IncludeBySimilarity(val origin: SimilaritySupport, val cutoff: Double) ext
     result >= cutoff
 
   }
+
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings: Map[String, Any] = Map("minSimilarity" -> cutoff, "target" -> origin)
 }

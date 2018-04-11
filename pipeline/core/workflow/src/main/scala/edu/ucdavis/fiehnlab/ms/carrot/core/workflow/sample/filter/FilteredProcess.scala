@@ -31,7 +31,7 @@ class FilteredProcess @Autowired()(val filters: List[Filter[Feature]]) extends P
       var reject = true
 
       filters.foreach { filter =>
-        if (filter.exclude(spectra)) {
+        if (filter.exclude(spectra,applicationContext)) {
           reject = false
         }
       }

@@ -164,9 +164,9 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 	override def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
 		val receivedTarget = needsReplacement
 
-    val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracy)
-    val filterByRetentionIndexNoise = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionTimeInSeconds, zeroReplacementProperties.noiseWindowInSeconds)
-    val filterByRetentionIndex = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionIndex, zeroReplacementProperties.retentionIndexWindowForPeakDetection)
+    val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracy,"replacement")
+    val filterByRetentionIndexNoise = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionTimeInSeconds,"replacement", zeroReplacementProperties.noiseWindowInSeconds)
+    val filterByRetentionIndex = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionIndex,"replacement", zeroReplacementProperties.retentionIndexWindowForPeakDetection)
 
     //first calculate noise for this ion trace
     val noiseSpectra = rawdata.spectra.filter { spectra =>
@@ -175,7 +175,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
         includeMass(receivedTarget, filterByMass, spectra)
       }
       else {
-        includeMass(receivedTarget, filterByMass, spectra) && filterByRetentionIndexNoise.include(spectra)
+        includeMass(receivedTarget, filterByMass, spectra) && filterByRetentionIndexNoise.include(spectra,applicationContext)
       }
     }
 
@@ -205,7 +205,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     logger.debug(s"found ${replacementValueSpectra.size} spectra,after mass filter for target ${receivedTarget}")
 
     val filteredByTime: Seq[Feature with CorrectedSpectra] = replacementValueSpectra.filter { spectra =>
-      filterByRetentionIndex.include(spectra)
+      filterByRetentionIndex.include(spectra,applicationContext)
     }
     logger.debug(s"found ${filteredByTime.size} spectra,after mass filter for target ${receivedTarget}")
 
@@ -243,7 +243,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           * @return
           */
         override def accurateMass: Option[Double] = Some(ion.get.mass)
-      }
+      },applicationContext
       )
     }
     else {

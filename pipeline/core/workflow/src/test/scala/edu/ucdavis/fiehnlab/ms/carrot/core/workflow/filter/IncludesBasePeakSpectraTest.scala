@@ -11,37 +11,37 @@ class IncludesBasePeakSpectraTest extends WordSpec {
   "IncludeBasePeakSpectraTest" should {
 
     "for accurate matches " must {
-      val filter = new IncludesBasePeakSpectra(List(100))
+      val filter = new IncludesBasePeakSpectra(List(100),"test")
 
       "include spectra with basepeak 100" in {
 
-        assert(filter.include(testSpectraWith1Ion))
+        assert(filter.include(testSpectraWith1Ion,null))
       }
       "include another spectra with basepeak 100" in {
 
-        assert(filter.include(testSpectraWith2Ions))
+        assert(filter.include(testSpectraWith2Ions,null))
       }
 
       "do not include spectra with basepeak 130" in {
 
-        assert(!filter.include(testSpectraWith3Ions))
+        assert(!filter.include(testSpectraWith3Ions,null))
       }
     }
 
     "for nominal masses" must {
-      val filter = new IncludesBasePeakSpectra(List(100),0.0)
+      val filter = new IncludesBasePeakSpectra(List(100),"test",0.0)
 
       "include spectra with basepeak 100" in {
-        assert(filter.include(testSpectraWith1Ion))
+        assert(filter.include(testSpectraWith1Ion,null))
       }
       "include another spectra with basepeak 100" in {
 
-        assert(filter.include(testSpectraWith2Ions))
+        assert(filter.include(testSpectraWith2Ions,null))
       }
 
       "do not include spectra with basepeak 130" in {
 
-        assert(!filter.include(testSpectraWith3Ions))
+        assert(!filter.include(testSpectraWith3Ions,null))
       }
     }
   }
