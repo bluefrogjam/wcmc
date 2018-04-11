@@ -20,7 +20,4 @@ class DynamoDBConfig {
     AmazonDynamoDBClientBuilder.standard.withRegion(region)build()
   }
 
-  @Bean
-  def provider: AWSCredentialsProvider = new DefaultAWSCredentialsProviderChain
-
 }

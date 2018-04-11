@@ -12,7 +12,9 @@
     <artifactId>cloud</artifactId>
     <packaging>pom</packaging>
     <modules>
+        <module>aws</module>
         <module>storage</module>
+        <module>bucket</module>
     </modules>
 
 
