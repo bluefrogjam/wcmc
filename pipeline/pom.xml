@@ -19,7 +19,6 @@
         <module>core</module>
         <module>schedule</module>
         <module>apps</module>
-        <module>cloud</module>
     </modules>
 
 </project>

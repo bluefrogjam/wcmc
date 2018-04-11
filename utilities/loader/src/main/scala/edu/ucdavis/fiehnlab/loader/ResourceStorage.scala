@@ -9,7 +9,15 @@ trait ResourceStorage {
 
   /**
     * store the given file
+    *
     * @param file
     */
   def store(file: File)
+
+  /**
+    * deletes the given file from the storage
+    *
+    * @param name
+    */
+  def delete(name: String)
 }
