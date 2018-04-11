@@ -10,14 +10,14 @@ class ExcludeBasePeakSpectraTest extends WordSpec {
 
   "ExcludeBasePeakSpectraTest" should {
 
-    val filter = new ExcludeBasePeakSpectra(100 :: List())
+    val filter = new ExcludeBasePeakSpectra(100 :: List(),"test")
 
     "base peak with base peak 100 should be excluded" in {
-      assert(!filter.include(testSpectraWith1Ion))
+      assert(!filter.include(testSpectraWith1Ion,null))
     }
 
     "base peak with basepeak 130 should be included" in {
-      assert(filter.include(testSpectraWith3Ions))
+      assert(filter.include(testSpectraWith3Ions,null))
     }
   }
 }

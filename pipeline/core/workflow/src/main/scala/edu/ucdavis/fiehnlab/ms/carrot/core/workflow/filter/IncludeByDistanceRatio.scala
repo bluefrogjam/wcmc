@@ -3,14 +3,15 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
+import org.springframework.context.ApplicationContext
 
-class IncludeByDistanceRatio(val targetBest: Target, val annotationBest: Feature, val targetToTest: Target, val minRatio: Double, val maxRatio: Double) extends Filter[Feature] {
+class IncludeByDistanceRatio(val targetBest: Target, val annotationBest: Feature, val targetToTest: Target, val minRatio: Double, val maxRatio: Double,val phaseToLog: String) extends Filter[Feature] {
   logger.info(s"using ${targetBest} as reference target vs ${targetToTest}")
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
     */
-  override def include(spectra: Feature): Boolean = {
+  protected override def doInclude(spectra: Feature,applicationContext: ApplicationContext): Boolean = {
     val distanceTargets = Math.abs(targetBest.retentionIndex - targetToTest.retentionIndex)
     val distanceAnnotation = Math.abs(annotationBest.retentionTimeInSeconds - spectra.retentionTimeInSeconds)
 
@@ -35,4 +36,13 @@ class IncludeByDistanceRatio(val targetBest: Target, val annotationBest: Feature
       ratio >= minRatio && ratio <= maxRatio
     }
   }
+
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings: Map[String, Any] = Map(
+    "targetValidation" -> targetBest,
+    "annotationValidation" -> annotationBest,
+    "targetToEvaluate" -> targetBest
+  )
 }
