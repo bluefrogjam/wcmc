@@ -6,6 +6,7 @@ import java.io.{File, FileInputStream, InputStream}
 import java.util.Date
 import javax.annotation.PostConstruct
 
+import com.amazonaws.regions.{Region, Regions}
 import com.amazonaws.services.s3.model.CreateBucketRequest
 import com.amazonaws.services.s3.{AmazonS3, AmazonS3Client}
 import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
@@ -25,14 +26,15 @@ class BucketStorage @Autowired()(client: AmazonS3, properties: BucketStorageConf
 
   @PostConstruct
   def init() = {
-    if(!client.doesBucketExist(properties.name)){
-      logger.info(s"creating new bucker with name: ${properties.name}")
-      client.createBucket(new CreateBucketRequest(properties.name))
+    if (!client.doesBucketExist(properties.name)) {
+      logger.info(s"creating new bucket with name: ${properties.name}")
+      client.createBucket(new CreateBucketRequest(properties.name, properties.region))
     }
-    else{
+    else {
       logger.info(s"bucket with name ${properties.name} already exists")
     }
   }
+
   /**
     *
     * uploads a file to the bucket
@@ -69,7 +71,9 @@ class BucketStorage @Autowired()(client: AmazonS3, properties: BucketStorageConf
 class BucketStorageConfigurationProperties {
 
   @BeanProperty
-  var name: String = ""
+  var name: String = "carrot-data"
+
+  var region: String = Regions.US_EAST_2.getName
 
   @BeanProperty
   val timeOfLife: Long = 0
@@ -80,9 +84,7 @@ class BucketStorageConfigurationProperties {
 @ComponentScan
 @Profile(Array("carrot.resource.store.bucket"))
 class BucketStorageConfiguration {
-  @Value("${aws.region:us-east-1}")
-  val region = ""
 
   @Bean
-  def client(amazonAWSCredentials: AWSCredentialsProvider): AmazonS3 = AmazonS3ClientBuilder.standard.withRegion(region).withCredentials(amazonAWSCredentials).build
+  def client(amazonAWSCredentials: AWSCredentialsProvider, properties: BucketStorageConfigurationProperties): AmazonS3 = AmazonS3ClientBuilder.standard.withRegion(properties.region).withCredentials(amazonAWSCredentials).build
 }
