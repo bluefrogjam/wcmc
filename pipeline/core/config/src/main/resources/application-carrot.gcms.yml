@@ -5,7 +5,6 @@ carrot:
         -
           column: rtx5recal
           instrument: LECO-GC-TOF
-          description: "This is the Gerstel injector FAME marker configuration"
           deconvolution: CHROMA-TOF
           version: 4.25
           filter:

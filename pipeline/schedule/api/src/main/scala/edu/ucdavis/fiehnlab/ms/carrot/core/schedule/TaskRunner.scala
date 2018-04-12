@@ -7,7 +7,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.LazySample
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
@@ -67,7 +66,7 @@ class TaskRunner extends LazyLogging {
 
         try {
           //processes the actual sample
-          workflow.process(new LazySample(sampleLoader = sampleLoader, x.fileName), task.acquisitionMethod)
+          workflow.process(sampleLoader.loadSample(x.fileName).get, task.acquisitionMethod)
         }
         catch {
           case e: UnsupportedSampleException =>
