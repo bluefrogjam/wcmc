@@ -1,8 +1,7 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.{GCMSCorrectionLibraryProperties, GCMSCorrectionTarget}
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 
