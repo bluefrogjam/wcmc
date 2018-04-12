@@ -49,7 +49,7 @@ case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) e
     override val ions: Seq[Ion] = target.spectra.split(" ").map { x =>
 
       val v = x.split(":")
-      Ion(v(0).toDouble, v(1).toDouble)
+      Ion(v(0).toDouble, v(1).toFloat)
     }
     /**
       * the msLevel of this spectra
