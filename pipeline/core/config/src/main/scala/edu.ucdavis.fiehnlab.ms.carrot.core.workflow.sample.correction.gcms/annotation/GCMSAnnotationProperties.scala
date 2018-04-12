@@ -58,7 +58,7 @@ class GCMSAnnotationLibraryProperties {
   @Size(min = 1)
   @BeanProperty
   @NestedConfigurationProperty
-  var sifterFilterProperties: java.util.List[SifterFilterProperties] = new util.ArrayList[SifterFilterProperties]()
+  var filter: java.util.List[SifterFilterConfigurations] = new util.ArrayList[SifterFilterConfigurations]()
 }
 
 /**
@@ -94,5 +94,15 @@ class SifterFilterProperties {
   @BeanProperty
   @DecimalMin("0.0")
   var maxSignalNoise: Double = Double.MaxValue
+
+}
+
+class SifterFilterConfigurations{
+
+  @Valid
+  @Size(min = 1)
+  @BeanProperty
+  @NestedConfigurationProperty
+  var matching: java.util.List[SifterFilterProperties] = new util.ArrayList[SifterFilterProperties]()
 
 }
