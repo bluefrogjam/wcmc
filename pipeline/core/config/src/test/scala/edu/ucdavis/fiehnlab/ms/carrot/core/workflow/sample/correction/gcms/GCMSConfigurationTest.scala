@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.GCMSCorrectionLibraryProperties
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
