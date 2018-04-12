@@ -3,13 +3,15 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, ProcessedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, SpectrumProperties}
 
 import scala.collection.JavaConverters._
 
 
 class MSDialProcessedSample(ms2DecResults: util.List[MS2DecResult], mode: IonMode, override val fileName: String) extends ProcessedSample with LazyLogging {
+
+  override val properties: Option[SampleProperties] = None
 
   override val spectra: Seq[_ <: Feature] = ms2DecResults.asScala.map { x: MS2DecResult =>
     if (x.peak.ms2LevelDataPointNumber == -1) {

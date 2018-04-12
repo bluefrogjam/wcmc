@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, SampleProperties}
 import org.scalatest.WordSpec
 import org.springframework.context.ApplicationContext
 
@@ -105,6 +105,10 @@ class FilteredProcessTest extends WordSpec {
     override val spectra: List[_ <: MSSpectra] = testSpectraWith1Ion :: List()
 
     override val fileName: String = "test"
+    /**
+      * associated properties
+      */
+    override val properties: Option[SampleProperties] = None
   }
 
   /**

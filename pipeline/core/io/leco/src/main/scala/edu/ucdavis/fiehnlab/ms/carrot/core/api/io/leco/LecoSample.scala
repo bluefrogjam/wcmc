@@ -4,7 +4,7 @@ import java.io.{IOException, InputStream}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample, SampleProperties}
 
 import scala.io.Source
 
@@ -97,4 +97,9 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
       uniqueMass = map(uniquemassIdentifier).toDouble
     )
   }
+
+  /**
+    * associated properties
+    */
+  override val properties: Option[SampleProperties] = None
 }

@@ -105,6 +105,8 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
           * which file was used for the gap filling
           */
         override val gapFilledWithFile: String = rawdata.get.fileName
+        override val properties: Option[SampleProperties] = sample.properties
+
       }
     }
     //toss exception

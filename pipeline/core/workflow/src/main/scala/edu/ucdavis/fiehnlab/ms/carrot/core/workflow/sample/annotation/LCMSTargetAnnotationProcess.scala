@@ -333,6 +333,10 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
       override val regressionCurve: Regression = input.regressionCurve
       override val fileName: String = input.fileName
       override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = noneAnnotatedSpectra
+      /**
+        * associated properties
+        */
+      override val properties: Option[SampleProperties] = input.properties
     }
   }
 
