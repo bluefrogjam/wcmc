@@ -1,39 +1,32 @@
 carrot:
   gcms:
-    annotations:
+    annotation:
       config:
         -
           name: Gerstel
           column: rtx5recal
           instrument: LECO-GC-TOF
-          description: "This is the class Gerstel injector FAME marker configuration"
-          sifterFilterProperties:
+          description: "This is the Gerstel injector FAME marker configuration"
+          filter:
             -
-              minPurity:
-              maxPurity:
-              minSimilarity:
-              maxSimilarity:
-              minSignalNoise:
-              maxSignalNoise:
-            -
-              minPurity:
-              maxPurity:
-              minSimilarity:
-              maxSimilarity:
-              minSignalNoise:
-              maxSignalNoise:
-            -
-              minPurity:
-              maxPurity:
-              minSimilarity:
-              maxSimilarity:
-              minSignalNoise:
-              maxSignalNoise:
+              matching:
+                -
+                  maxPurity: 0.05
+                  minSimilarity: 0.8
+                  minSignalNoise: 500
+                -
+                  maxPurity: 0.05
+                  minSimilarity: 0.7
+                  minSignalNoise: 50
+                -
+                  maxPurity: 0.05
+                  minSimilarity: 0.6
+                  minSignalNoise: 5
 
     correction:
       config:
         -
-          description: "This is the class Gerstel injector FAME marker configuration"
+          description: "This is the Gerstel injector FAME marker configuration"
           name: Gerstel
           column: rtx5recal
           instrument: LECO-GC-TOF
