@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j
 
 import java.io._
-import java.net.{URI, URL}
+import java.net.{URI, URL, URLEncoder}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.LazyLogging
@@ -32,26 +32,29 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     * @return
     */
   override def load(name: String): Option[InputStream] = {
-    val url = s"http://${host}:${port}?s=${name.replaceAll("\\s", "%20")}&j=1&path_column=1"
-    logger.info(s"checking url: ${url}")
+    val url = s"http://${host}:${port}?s=${name.replaceAll("\\s", "+")}&j=1&path_column=1"
+    logger.info(s"load is checking url: ${url}")
 
     val data = objectMapper.readValue(new URL(url),classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")
 
     if (data.isEmpty) {
-      logger.info("no data received...")
+      logger.info(s"${name} is not a file, verifying folder...")
       val folder = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "folder")
 
       if (folder.isEmpty) {
+        logger.warn(s"we can't identify what type of resource '${name}' is...")
         None
       } else {
+        logger.info(s"${name} is a folder, compressing now.")
         val content = createZip(folder.head.name, folder.head.path)
+        logger.info("returning compressed stream...")
         Option(content)
       }
     } else {
       val encoded = s"${data.head.path.replaceAll("\\\\","/").replaceAll("\\s","%20").replaceAll(":","%3A")}/${data.head.name}"
       val uri = s"http://${host}:${port}/${encoded}"
 
-      logger.info(s"loading from URI: ${uri}")
+      logger.info(s"loading file from URI: ${uri}")
       val content = new URI(uri).toURL
 
 
@@ -147,8 +150,8 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     * @return
     */
   override def exists(name: String): Boolean = {
-    val url = s"http://${host}:${port}?s=${name}&j=1&path_column=1"
-    logger.info(s"checking url: ${url}")
+    val url = s"http://${host}:${port}?s=${URLEncoder.encode(name, "UTF8")}&j=1&path_column=1"
+    logger.info(s"exists is checking url: ${new URL(url)}")
 
     val result  = objectMapper.readValue(new URL(url), classOf[Search]).results.nonEmpty
 

@@ -10,7 +10,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for f in args.files:
-        df = pd.read_csv(f)
+        df = pd.read_csv(f, encoding="utf-8", dtype={'filename': str, 'target': str,
+                                                     'found at correction': bool, 'correction failed': bool,
+                                                     'replaced value': bool, 'retention index (target)': float,
+                                                     'mass (target)': float, 'retention index (annotation)': float,
+                                                     'mass (annotation)': float, 'retention index shift': float,
+                                                     'mass shift (mDa)': float, 'mass shift (ppm)': float,
+                                                     'retention time (s)(annotation)': float,
+                                                     'retention time (min)(annotation)': float,
+                                                     'height (annotation)': float})
         grouped = df.groupby('filename')
 
         df = None
