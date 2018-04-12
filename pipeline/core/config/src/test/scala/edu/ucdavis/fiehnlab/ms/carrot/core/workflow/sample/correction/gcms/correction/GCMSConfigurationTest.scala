@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction
 
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -6,9 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ActiveProfiles(Array("carrot.gcms"))
@@ -44,13 +43,21 @@ class GCMSConfigurationTest extends WordSpec with ShouldMatchers {
       properties.config.get(0).targets.get(0).distanceRatios.size() should be(1)
     }
 
+    "must be a validation target" in {
+      properties.config.get(0).targets.get(0).validationTarget should be(true)
+    }
+
+    "must not be a validation target" in {
+      properties.config.get(0).targets.get(12).validationTarget should be(false)
+    }
+
+    "must have the correct instrument" in {
+      properties.config.get(0).instrument should be("LECO-GC-TOF")
+    }
+
 
   }
 
 }
-
-
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class TestApplication {
-
-}
+class GCMSConfigurationTestApplication

@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, NegativeMode, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, NegativeMode, Sample, SampleProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.math.LinearRegression
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -29,7 +29,7 @@ class SimpleMassCalibration extends PreProcessor with LazyLogging {
 
   override def priortiy: Int = 100
 
-  override def doProcess(item: Sample, method: AcquisitionMethod):Sample = {
+  override def doProcess(item: Sample, method: AcquisitionMethod): Sample = {
 
 
     //negative mass for calibration
@@ -41,9 +41,9 @@ class SimpleMassCalibration extends PreProcessor with LazyLogging {
 
         val lockmassLower: Double = f.ionMode match {
           case Some(mode) if mode.isInstanceOf[NegativeMode] => 119.0363
-          case _  => 121.0508 //assume positive mode
+          case _ => 121.0508 //assume positive mode
         }
-        val lockmassHigher: Double =  f.ionMode match {
+        val lockmassHigher: Double = f.ionMode match {
           case Some(mode) if mode.isInstanceOf[NegativeMode] => 980.0163
           case _ => 922.0098 //assume positive mode
         }
@@ -55,7 +55,7 @@ class SimpleMassCalibration extends PreProcessor with LazyLogging {
           val secondaery = f.associatedScan.get.ions.filter { i => i.mass > (lockmassHigher - 0.015) && i.mass < (lockmassHigher + 0.015) }.maxBy(p => p.intensity)
 
           val linaer = new LinearRegression()
-          linaer.calibration(Array(primaery.mass,secondaery.mass),Array(lockmassLower,lockmassHigher))
+          linaer.calibration(Array(primaery.mass, secondaery.mass), Array(lockmassLower, lockmassHigher))
 
           val correctedIons = f.associatedScan.get.ions.map { ion: Ion =>
             ion.copy(mass = linaer.computeY(ion.mass))
@@ -100,6 +100,9 @@ class SimpleMassCalibration extends PreProcessor with LazyLogging {
         * the unique file name of the sample
         */
       override val fileName: String = item.fileName
+
+      override val properties: Option[SampleProperties] = item.properties
+
     }
   }
 }

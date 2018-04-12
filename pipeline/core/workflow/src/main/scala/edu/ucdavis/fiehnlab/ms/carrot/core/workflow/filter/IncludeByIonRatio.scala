@@ -1,7 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SimilaritySupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{AccurateMassSupport, MSSpectra, SimilaritySupport}
+import org.springframework.context.ApplicationContext
 
 /**
   * includes spectra, which have a certain ion to base peak ratio in a defined range
@@ -11,7 +12,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, Simil
   * @param maxRatio
   * @param massAccuracy
   */
-class IncludeByIonRatio(val ion: Double, val minRatio: Double, val maxRatio: Double, val massAccuracy: Double = 0.0) extends Filter[MSSpectra] {
+class IncludeByIonRatio(val ion: Double, val minRatio: Double, val maxRatio: Double, val phaseToLog: String, val massAccuracy: Double = 0.0) extends Filter[MSSpectra] {
 
   logger.info(s"searching for ratio against ion ${ion}")
 
@@ -20,7 +21,7 @@ class IncludeByIonRatio(val ion: Double, val minRatio: Double, val maxRatio: Dou
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
     */
-  override def include(spectra: MSSpectra): Boolean = {
+  protected override def doInclude(spectra: MSSpectra, applicationContext: ApplicationContext): Boolean = {
 
     val (ions, basePeak) = spectra match {
       case x: SimilaritySupport => (x.spectrum.get.ions, x.spectrum.get.basePeak)
@@ -51,4 +52,9 @@ class IncludeByIonRatio(val ion: Double, val minRatio: Double, val maxRatio: Dou
 
     exists
   }
+
+  /**
+    * references to all used settings
+    */
+  override protected val usedSettings: Map[String, Any] = Map("ion" -> ion, "minRatio" -> minRatio, "maxRatio" -> maxRatio, "nominalMass" -> isNominal, "massAccuracyInDalton" -> massAccuracy)
 }

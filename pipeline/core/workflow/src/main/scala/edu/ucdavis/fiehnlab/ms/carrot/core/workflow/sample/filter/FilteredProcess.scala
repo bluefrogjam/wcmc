@@ -4,7 +4,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.Process
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{ProcessedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{ProcessedSample, Sample, SampleProperties}
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -31,7 +31,7 @@ class FilteredProcess @Autowired()(val filters: List[Filter[Feature]]) extends P
       var reject = true
 
       filters.foreach { filter =>
-        if (filter.exclude(spectra)) {
+        if (filter.exclude(spectra,applicationContext)) {
           reject = false
         }
       }
@@ -44,6 +44,8 @@ class FilteredProcess @Autowired()(val filters: List[Filter[Feature]]) extends P
     new ProcessedSample {
       override val spectra: Seq[_ <: Feature] = result
       override val fileName: String = sample.fileName
+      override val properties: Option[SampleProperties] = sample.properties
+
     }
   }
 }
