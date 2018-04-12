@@ -38,11 +38,6 @@ class GCMSAnnotationLibraryProperties {
   @BeanProperty
   @NotBlank
   @NotNull
-  var name: String = null
-
-  @BeanProperty
-  @NotBlank
-  @NotNull
   var instrument: String = null
 
   @BeanProperty
@@ -53,6 +48,14 @@ class GCMSAnnotationLibraryProperties {
   @BeanProperty
   @NotBlank
   var column: String = null
+
+  @BeanProperty
+  @NotBlank
+  var deconvolution:String = "internal"
+
+  @BeanProperty
+  @NotBlank
+  var version:String = ""
 
   @Valid
   @Size(min = 1)

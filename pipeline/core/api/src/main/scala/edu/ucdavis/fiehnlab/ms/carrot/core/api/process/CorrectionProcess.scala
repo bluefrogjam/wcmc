@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, StandardAnnotatedTwice, StandardsNotInOrderException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Sample, Target, TargetAnnotation}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -144,6 +144,8 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
       override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = possibleHits
       override val regressionCurve: Regression = regression
       override val fileName: String = sampleToCorrect.fileName
+
+      override val properties: Option[SampleProperties] = sampleToCorrect.properties
     }
 
   }
