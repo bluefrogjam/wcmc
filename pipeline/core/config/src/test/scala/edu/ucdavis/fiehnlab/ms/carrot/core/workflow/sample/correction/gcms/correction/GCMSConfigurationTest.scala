@@ -1,6 +1,5 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.GCMSCorrectionLibraryProperties
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,7 +8,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ActiveProfiles(Array("carrot.gcms"))
@@ -61,9 +59,5 @@ class GCMSConfigurationTest extends WordSpec with ShouldMatchers {
   }
 
 }
-
-
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class TestApplication {
-
-}
+class GCMSConfigurationTestApplication

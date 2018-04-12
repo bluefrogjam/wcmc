@@ -2,22 +2,33 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.anno
 
 import java.util
 import javax.validation.Valid
-import javax.validation.constraints.{DecimalMax, DecimalMin, NotBlank, Size}
+import javax.validation.constraints._
 
-import org.springframework.boot.context.properties.{ConfigurationProperties, NestedConfigurationProperty}
-import org.springframework.context.annotation.Profile
+import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties, NestedConfigurationProperty}
+import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}
+import org.springframework.stereotype.Component
+import org.springframework.validation.annotation.Validated
 
 import scala.beans.BeanProperty
 
+@EnableConfigurationProperties
+@Configuration
+@Profile(Array("carrot.gcms"))
+@ComponentScan
+class GCMSAnnotationConfigurations
+
+@Validated
 @Profile(Array("carrot.gcms"))
 @ConfigurationProperties(prefix = "carrot.gcms.annotation", ignoreUnknownFields = false, ignoreInvalidFields = false)
+@Component
 class GCMSAnnotationProperties {
+
   @Valid
   @Size(min = 1)
   @BeanProperty
   @NestedConfigurationProperty
-  var config: java.util.List[GCMSAnnotationProperties] = new util.ArrayList[GCMSAnnotationProperties]()
-}00
+  var config: java.util.List[GCMSAnnotationLibraryProperties] = new util.ArrayList[GCMSAnnotationLibraryProperties]()
+}
 
 /**
   * configuration for a specific gcms annotation library
@@ -26,15 +37,18 @@ class GCMSAnnotationLibraryProperties {
 
   @BeanProperty
   @NotBlank
+  @NotNull
   var name: String = null
 
   @BeanProperty
   @NotBlank
+  @NotNull
   var instrument: String = null
 
   @BeanProperty
   @NotBlank
-  var descritpion: String = "none provided"
+  @NotNull
+  var description: String = "none provided"
 
   @BeanProperty
   @NotBlank
