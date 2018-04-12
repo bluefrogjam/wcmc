@@ -21,6 +21,11 @@ trait Sample {
   val fileName: String
 
   /**
+    * associated properties
+    */
+  val properties: Option[SampleProperties]
+
+  /**
     * provides us with the given extension of the file name
     */
   val extension: String = {
@@ -41,10 +46,27 @@ trait Sample {
 }
 
 /**
+  * additional sample properties
+  */
+trait SampleProperties {
+
+  /**
+    * pre processing properties, like if other software already processed these data, run a deconvolution, etc
+    */
+  val preprocessing: Option[SamplePreProcessing] = None
+
+}
+
+trait SamplePreProcessing {
+  val software: String
+  val version: String
+}
+
+/**
   * defines a sample, which loads data on the fly
   * instead of pre allocating them in the memory and should help tremendously with processing large data sets
   */
-class LazySample (sampleLoader: SampleLoader, override val fileName:String) extends Sample with LazyLogging {
+class LazySample(sampleLoader: SampleLoader, override val fileName: String, val properties: Option[SampleProperties]) extends Sample with LazyLogging {
 
   /**
     * a collection of spectra
@@ -57,7 +79,7 @@ class LazySample (sampleLoader: SampleLoader, override val fileName:String) exte
       sampleLoader.loadSample(fileName).get.spectra
     }
     finally {
-      logger.info(s"loading took ${(System.currentTimeMillis() - begin)/1000}s")
+      logger.info(s"loading took ${(System.currentTimeMillis() - begin) / 1000}s")
     }
   }
 
@@ -239,21 +261,4 @@ trait GapFilledTarget[T] extends QuantifiedTarget[T] {
 
   override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
 
-}
-
-class ProxySample(fName: String, loader: SampleLoader) extends Sample with LazyLogging {
-  /**
-    * load the spectra once they are needed, but not before, but don't execute this more than once
-    */
-  lazy override val spectra: Seq[_ <: Feature] = {
-    logger.debug(s"loading spectra from ${fName}...")
-    loader.getSample(fName).spectra
-  }
-
-  /**
-    * the unique file name of the sample
-    */
-  override val fileName: String = fName
-
-  override def toString = s"Sample($name)"
 }

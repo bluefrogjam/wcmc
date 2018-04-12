@@ -3,11 +3,40 @@ carrot:
     annotation:
       config:
         -
-          name: Gerstel
           column: rtx5recal
           instrument: LECO-GC-TOF
           description: "This is the Gerstel injector FAME marker configuration"
+          deconvolution: CHROMA-TOF
+          version: 4.25
           filter:
+            -
+              matching:
+                -
+                  maxPurity: 0.05
+                  minSimilarity: 0.8
+                  minSignalNoise: 500
+                -
+                  maxPurity: 0.05
+                  minSimilarity: 0.7
+                  minSignalNoise: 50
+                -
+                  maxPurity: 0.05
+                  minSimilarity: 0.6
+                  minSignalNoise: 5
+            -
+              matching:
+                -
+                  maxPurity: 0.05
+                  minSimilarity: 0.8
+                  minSignalNoise: 500
+                -
+                  maxPurity: 0.05
+                  minSimilarity: 0.7
+                  minSignalNoise: 50
+                -
+                  maxPurity: 0.05
+                  minSimilarity: 0.6
+                  minSignalNoise: 5
             -
               matching:
                 -
