@@ -1,13 +1,16 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{Regression, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SimilaritySupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target, TargetAnnotation}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter._
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.{GCMSCorrectionLibraryProperties, GCMSCorrectionTarget, GCMSLibraryConfiguration}
 import edu.ucdavis.fiehnlab.ms.carrot.math.CombinedRegression
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
@@ -40,29 +43,47 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
       case Some(config) =>
 
-        val includeByBasePeakFilter = new IncludesBasePeakSpectra(config.allowedBasePeaks.asScala, config.massAccuracy)
-        val includeByIntensityFilter = new IncludesByPeakHeight(config.allowedBasePeaks.asScala, config.massAccuracy, config.minimumPeakIntensity)
+        val includeByBasePeakFilter = new IncludesBasePeakSpectra(config.allowedBasePeaks.asScala, "correction", config.massAccuracy) with JSONSampleLogging {
+          /**
+            * which sample we require to log
+            */
+          override protected val sampleToLog: String = input.name
+        }
+
+        val includeByIntensityFilter = new IncludesByPeakHeight(config.allowedBasePeaks.asScala, "correction", config.massAccuracy, config.minimumPeakIntensity) with JSONSampleLogging {
+          /**
+            * which sample we require to log
+            */
+          override protected val sampleToLog: String = input.name
+        }
+
 
         //filters all our spectra
         val msSpectra = input.spectra.collect {
           case x: MSSpectra => x
         }
 
-        val spectraWithCorrectBasePeak = msSpectra.filter(includeByBasePeakFilter.include)
-        val spectraWithCorrectionIntensity = spectraWithCorrectBasePeak.filter(includeByIntensityFilter.include)
+        val spectraWithCorrectBasePeak = msSpectra.filter(includeByBasePeakFilter.include(_, applicationContext))
+        val spectraWithCorrectionIntensity = spectraWithCorrectBasePeak.filter(includeByIntensityFilter.include(_, applicationContext))
 
         logger.info("searching for validation target")
         //find the target with the highest possible similarity match, to utilize it for distance ratio validation at a later point
-        val distanceValidationTarget = targets.collect {
-          case target: GCMSCorrectionTarget =>
-            findMatchToTarget(config, spectraWithCorrectionIntensity, None, target)
-        }.filter(_ != null).maxBy(x => Similarity.compute(x.annotation.asInstanceOf[SimilaritySupport], x.target))
+        val distanceValidationTargets = targets.collect {
+          case target: GCMSCorrectionTarget if target.config.validationTarget =>
+            findMatchToTarget(config, spectraWithCorrectionIntensity, None, target,input)
+        }.filter(_ != null)
+
+        if(distanceValidationTargets.isEmpty){
+          throw new NotEnoughStandardsFoundException(s"${input.name} has 0 discovered standards!")
+        }
+
+        val distanceValidationTarget = distanceValidationTargets.maxBy(x => Similarity.compute(x.annotation.asInstanceOf[SimilaritySupport], x.target))
 
         logger.info("searching for matches")
         //find potential targets
         val potentialMatches = targets.collect {
           case target: GCMSCorrectionTarget =>
-            findMatchToTarget(config, spectraWithCorrectionIntensity, Option(distanceValidationTarget), target)
+            findMatchToTarget(config, spectraWithCorrectionIntensity, Option(distanceValidationTarget), target,input)
         }.filter(_ != null)
 
 
@@ -85,25 +106,43 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     * @param target
     * @return
     */
-  private def findMatchToTarget(config: GCMSLibraryConfiguration, spectraWithCorrectionIntensity: Seq[MSSpectra], distanceValidationTarget: Option[TargetAnnotation[Target, Feature]], target: GCMSCorrectionTarget): TargetAnnotation[Target, Feature] = {
+  private def findMatchToTarget(config: GCMSLibraryConfiguration, spectraWithCorrectionIntensity: Seq[MSSpectra], distanceValidationTarget: Option[TargetAnnotation[Target, Feature]], target: GCMSCorrectionTarget, input: Sample): TargetAnnotation[Target, Feature] = {
     logger.info(s"evaluating target: ${target}")
     //check for similarity
-    val similarity = new IncludeBySimilarity(target, target.config.minSimilarity)
-    val ionRatios = new IncludeByIonRatio(target.config.qualifierIon, target.config.minQualifierRatio, target.config.maxQualifierRatio, config.massAccuracy)
+    val similarity = new IncludeBySimilarity(target, target.config.minSimilarity, "correction") with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = input.name
+    }
+
+    val ionRatios = new IncludeByIonRatio(target.config.qualifierIon, target.config.minQualifierRatio, target.config.maxQualifierRatio, "correction", config.massAccuracy) with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = input.name
+    }
+
 
     val similarityMatches = spectraWithCorrectionIntensity.collect {
       case x: SimilaritySupport => x
-    }.filter(similarity.include)
+    }.filter(similarity.include(_, applicationContext))
 
     //check for qualifier
-    val ionRatioMatches = similarityMatches.filter(ionRatios.include)
+    val ionRatioMatches = similarityMatches.filter(ionRatios.include(_, applicationContext))
 
     logger.info(s"ion ratio matches: ${ionRatioMatches.size}")
     //validate by distance ratio
 
     val validated = if (distanceValidationTarget.isDefined) {
       val distanceRatioValidated = target.config.distanceRatios.asScala.map { x =>
-        ionRatioMatches.filter(new IncludeByDistanceRatio(distanceValidationTarget.get.target, distanceValidationTarget.get.annotation, target, x.min, x.max).include)
+        ionRatioMatches.filter(new IncludeByDistanceRatio(distanceValidationTarget.get.target, distanceValidationTarget.get.annotation, target, x.min, x.max, "correction") with JSONSampleLogging {
+          /**
+            * which sample we require to log
+            */
+          override protected val sampleToLog: String = input.name
+        }
+          .include(_, applicationContext))
       }.filter(_.nonEmpty).sortBy(_.size)
 
       if (distanceRatioValidated.isEmpty) {

@@ -1,4 +1,9 @@
-
+carrot:
+  gcms:
+    library:
+      binbase:
+        password: c258083
+        host: 127.0.0.1
 workflow:
   correction:
     massAccuracy: 150

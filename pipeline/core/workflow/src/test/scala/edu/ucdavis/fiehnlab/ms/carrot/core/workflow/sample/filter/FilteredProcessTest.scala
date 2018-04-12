@@ -3,8 +3,9 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, SampleProperties}
 import org.scalatest.WordSpec
+import org.springframework.context.ApplicationContext
 
 /**
   * Created by wohlg_000 on 4/22/2016.
@@ -17,7 +18,16 @@ class FilteredProcessTest extends WordSpec {
 
       val filteredProcess = new FilteredProcess(
         List(new Filter[Feature]() {
-          override def include(spectra: Feature): Boolean = true
+          protected override def doInclude(spectra: Feature,applicationContext:ApplicationContext): Boolean = true
+
+          /**
+            * which phase we require to log
+            */
+          override protected val phaseToLog: String = "test"
+          /**
+            * references to all used settings
+            */
+          override protected val usedSettings: Map[String, Any] = Map()
         })
       )
 
@@ -29,7 +39,16 @@ class FilteredProcessTest extends WordSpec {
 
       val filteredProcess = new FilteredProcess(
         List(new Filter[Feature]() {
-          override def include(spectra: Feature): Boolean = false
+          protected override def doInclude(spectra: Feature,applicationContext:ApplicationContext): Boolean = false
+
+          /**
+            * which phase we require to log
+            */
+          override protected val phaseToLog: String = "test"
+          /**
+            * references to all used settings
+            */
+          override protected val usedSettings: Map[String, Any] = Map()
         })
       )
 
@@ -43,10 +62,28 @@ class FilteredProcessTest extends WordSpec {
         List(
 
           new Filter[Feature]() {
-            override def include(spectra: Feature): Boolean = false
+            protected override def doInclude(spectra: Feature,applicationContext:ApplicationContext): Boolean = false
+
+            /**
+              * which phase we require to log
+              */
+            override protected val phaseToLog: String = "test"
+            /**
+              * references to all used settings
+              */
+            override protected val usedSettings: Map[String, Any] = Map()
           },
           new Filter[Feature]() {
-            override def include(spectra: Feature): Boolean = true
+            protected override def doInclude(spectra: Feature,applicationContext:ApplicationContext): Boolean = true
+
+            /**
+              * which phase we require to log
+              */
+            override protected val phaseToLog: String = "test"
+            /**
+              * references to all used settings
+              */
+            override protected val usedSettings: Map[String, Any] = Map()
           }
         )
       )
@@ -68,6 +105,10 @@ class FilteredProcessTest extends WordSpec {
     override val spectra: List[_ <: MSSpectra] = testSpectraWith1Ion :: List()
 
     override val fileName: String = "test"
+    /**
+      * associated properties
+      */
+    override val properties: Option[SampleProperties] = None
   }
 
   /**

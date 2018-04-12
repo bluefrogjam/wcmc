@@ -7,12 +7,11 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, StandardAnnotatedTwice, StandardsNotInOrderException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Sample, Target, TargetAnnotation}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
   * defines a correction process
-  *
   * @param libraryAccess
   */
 abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[Target]) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess) with LazyLogging {
@@ -27,7 +26,11 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     */
   override final def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod): CorrectedSample = {
 
-    val optimizedMatches = findCorrectionTargets(input, target, method)
+    val retentionIndexMarkers = target.filter(_.isRetentionIndexStandard)
+
+    assert(retentionIndexMarkers.nonEmpty,"please ensure you have some retention index targets defined!")
+
+    val optimizedMatches = findCorrectionTargets(input, retentionIndexMarkers,method)
 
 
 
@@ -50,7 +53,6 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
 
   /**
     * minimum required count of standards found
-    *
     * @return
     */
   protected def getMinimumFoundStandards: Int
@@ -141,6 +143,8 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
       override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = possibleHits
       override val regressionCurve: Regression = regression
       override val fileName: String = sampleToCorrect.fileName
+
+      override val properties: Option[SampleProperties] = sampleToCorrect.properties
     }
 
   }

@@ -4,10 +4,9 @@ import java.io.InputStream
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{Reader, SampleLoader}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ProxySample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
@@ -40,7 +39,7 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
       case line: String =>
         if (!line.startsWith("#")) {
           val data = line.split(properties.delimiter)
-          val sample = new ProxySample(data(0), loader)
+          val sample = loader.loadSample(data(0)).get
 
           if (data.size == 1) {
             ("none", sample)

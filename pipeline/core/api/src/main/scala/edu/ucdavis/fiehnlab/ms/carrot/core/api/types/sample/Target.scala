@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 /**
   * Defines a target for a targeted based approach
   */
-trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSupport with Serializable{
+trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSupport with Serializable {
 
   /**
     * a name for this spectra
@@ -115,3 +115,11 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
   * this defines an annotation for a target
   */
 case class TargetAnnotation[T <: Target, A <: Feature](target: T, annotation: A)
+
+trait UniqueMassSupport {
+  val uniqueMass: Double
+}
+
+trait PuritySupport {
+  val purity: Double
+}
