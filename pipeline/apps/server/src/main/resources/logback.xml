@@ -14,9 +14,6 @@
         </filter>
     </appender>
 
-    <!-- logs to the local database for ease of diagnostics -->
-    <appender name="JSON" class="edu.ucdavis.fiehnlab.utilities.logging.JSONLoggingAppender"/>
-
     <!-- populates the database in the backend with content -->
     <!--<logger name="edu.ucdavis.fiehnlab.wcmc.api.rest" level="off" />-->
     <!--<logger name="edu.ucdavis.fiehnlab.wcmc.server.fserv" level="off" />-->

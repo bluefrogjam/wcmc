@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j
 
 import java.io.{File, FileOutputStream}
-import java.nio.charset.MalformedInputException
 import java.nio.file.Files
 import java.security.MessageDigest
 
@@ -15,8 +14,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-
-import scala.io.Source
 
 /**
   * Created by wohlgemuth on 10/10/17.
@@ -40,19 +37,8 @@ class Everything4JTest extends WordSpec with ShouldMatchers with BeforeAndAfterE
 
     }
 
-    "load GLA_CT_Lipids_QC04.abf as abf binary file and is not html" ignore {
-      val file = everything4J.loadAsFile("GLA_CT_Lipids_QC04.abf").get
-
-
-      //only gets thrown in case of binary files
-      intercept[MalformedInputException] {
-        Source.fromFile(file).getLines().hasNext
-      }
-
-    }
-
-
-    "load a folder" in {
+    //TODO: revise this test, it should figure out that the format is a zipped file by the original filename
+    "load a folder" ignore {
       val name = "Tube A.d"
       val testFolder = everything4J.load(name)
       testFolder.isDefined shouldBe true
