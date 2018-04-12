@@ -29,9 +29,15 @@ trait JSONLogging extends LazyLogging {
     * as well as return
     */
   final def logJSON(map: Map[String, Any] = Map()): String = {
-    if (supportsJSONLogging) {
+    if (supportsJSONLogging && JSONLoggingAppender.mongoTemplate != null) {
       val message = JSONLogging.objectMapper.writeValueAsString(buildMessage() ++ map)
-      logger.debug(s"isMatch JSON:${message}")
+      try {
+        JSONLoggingAppender.mongoTemplate.insert(message, "carrot_logging")
+      }
+      catch {
+        case x: Exception =>
+          logger.warn(s"error: ${x.getMessage}\n ${message}\n", x)
+      }
       message
     }
     else {
@@ -88,7 +94,16 @@ trait JSONAlgorithmLogging extends JSONLogging {
   protected val classUnderInvestigation: Any
 
   override def buildMessage(): Map[String, Any] = {
-    super.buildMessage() + ("algorithm" -> classUnderInvestigation.getClass.getSimpleName)
+
+    val name = {
+      if(classUnderInvestigation.getClass.getSimpleName.contains("$anon$")){
+        classUnderInvestigation.getClass.getSuperclass.getSimpleName
+      }
+      else{
+        classUnderInvestigation.getClass.getSuperclass.getSimpleName
+      }
+    }
+    super.buildMessage() + ("algorithm" -> name)
   }
 
 }

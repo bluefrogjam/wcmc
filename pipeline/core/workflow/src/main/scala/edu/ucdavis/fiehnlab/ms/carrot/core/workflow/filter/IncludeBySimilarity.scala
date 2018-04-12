@@ -18,12 +18,12 @@ class IncludeBySimilarity(val origin: SimilaritySupport, val cutoff: Double, val
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
     */
-  protected override def doInclude(spectra: SimilaritySupport, applicationContext: ApplicationContext): Boolean = {
+  protected override def doIncludeWithDetails(spectra: SimilaritySupport, applicationContext: ApplicationContext): (Boolean,Any) = {
     val result = Similarity.compute(spectra, origin)
 
     assert(result <= 1.0)
 
-    result >= cutoff
+    (result >= cutoff,result)
 
   }
 
