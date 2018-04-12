@@ -51,7 +51,7 @@ class Everything4JTest extends WordSpec with ShouldMatchers with BeforeAndAfterE
     }
 
 
-    "load a folder" in {
+    "load a folder" ignore {
       val name = "Tube A.d"
       val testFolder = everything4J.load(name)
       testFolder.isDefined shouldBe true
