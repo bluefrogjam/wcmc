@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.math.similarity.{CompositeSimilarity, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
@@ -120,11 +121,11 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
 
           }
 
-          if (!targetAlreadyExists(newTarget, acquisitionMethod)) {
+          if (!targetAlreadyExists(newTarget, acquisitionMethod, sample)) {
             targets.add(
               newTarget
 
-              , acquisitionMethod,None
+              , acquisitionMethod, None
             )
           }
           else {
@@ -148,21 +149,37 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     * @param newTarget
     * @return
     */
-  def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod): Boolean = {
-    val riFilter = new IncludeByRetentionIndexTimeWindow(newTarget.retentionIndex,"targetGeneration",retentionIndexWindow)
-    val massFilter = new IncludeByMassRangePPM(newTarget,accurateMassWindow,"targetGeneration")
-    val similarityFilter = new IncludeBySimilarity(newTarget,minimumSimilarity,"targetGeneration")
+  def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, sample: Sample): Boolean = {
+    val riFilter = new IncludeByRetentionIndexTimeWindow(newTarget.retentionIndex, "targetGeneration", retentionIndexWindow) with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = sample.fileName
+    }
+    val massFilter = new IncludeByMassRangePPM(newTarget, accurateMassWindow, "targetGeneration") with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = sample.fileName
+    }
+
+    val similarityFilter = new IncludeBySimilarity(newTarget, minimumSimilarity, "targetGeneration") with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = sample.fileName
+    }
+
 
     //we only accept MS2 and higher for this
     val toMatch = targets.load(acquisitionMethod).filter(_.spectrum.isDefined)
 
 
-
     //MS1+ spectra filter
     val msmsSpectra = toMatch.filter(_.spectrum.get.msLevel > 1)
-    val filteredByRi = msmsSpectra.filter(riFilter.include(_,applicationContext))
-    val filtedByMass = filteredByRi.filter(massFilter.include(_,applicationContext))
-    val filteredBySimilarity = filtedByMass.filter(similarityFilter.include(_,applicationContext))
+    val filteredByRi = msmsSpectra.filter(riFilter.include(_, applicationContext))
+    val filtedByMass = filteredByRi.filter(massFilter.include(_, applicationContext))
+    val filteredBySimilarity = filtedByMass.filter(similarityFilter.include(_, applicationContext))
 
     logger.debug(s"existing targets: ${toMatch.size}")
     logger.debug(s"after MS level filter: ${msmsSpectra.size} targets are left")

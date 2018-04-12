@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
@@ -66,17 +67,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   @Value("${wcmc.pipeline.workflow.config.correction.groupStandard:25}")
   var groupCloseByRetentionIndexStandardDifference: Int = 10
 
-
-  /**
-    * needs to be lazily loaded, since the correction settings need to be set first by spring
-    */
-  lazy val massAccuracy = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction")
-
-  /**
-    * allows us to filter the data by the height of the ion
-    */
-  lazy val massIntensity = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction", minIntensity = minPeakIntensity)
-
   /**
     * this defines our regression curve, which is supposed to be utilized during the correction. Lazy loading is required to avoid null pointer exception of the configuration settings
     */
@@ -138,8 +128,34 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     }
 
 
+    /**
+      * needs to be lazily loaded, since the correction settings need to be set first by spring
+      */
+    val massAccuracy = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction") with JSONSampleLogging{
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = input.fileName
+    }
+
+    /**
+      * allows us to filter the data by the height of the ion
+      */
+    val massIntensity = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction", minIntensity = minPeakIntensity) with JSONSampleLogging{
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = input.fileName
+    }
+
+
     //our defined filters to find possible matches are registered in here
-    val filters: SequentialAnnotate = new SequentialAnnotate(massAccuracy :: massIntensity :: List())
+    val filters: SequentialAnnotate = new SequentialAnnotate(massAccuracy :: massIntensity :: List()) with JSONSampleLogging{
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = input.fileName
+    }
 
     /**
       * find possible matches for our specified standards

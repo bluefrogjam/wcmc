@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionIndexDifference}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.{AnnotateSampleProcess, AnnotationProcess}
@@ -28,14 +29,6 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     */
   lazy val debug: Boolean = logger.underlying.isDebugEnabled()
 
-
-  //our defined filters to find possible matches are registered in here
-  lazy val filters: SequentialAnnotate = new SequentialAnnotate(
-    new MassAccuracyPPMorMD(5,lcmsProperties.massAccuracy, "annotation",lcmsProperties.massIntensity) ::
-      new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") ::
-      List()
-  )
-
   /**
     * finds a match between the target and the sequence of spectra
     *
@@ -43,7 +36,24 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     * @param spectra
     * @return
     */
-  def findMatchesForTarget(target: Target, spectra: Seq[_ <: Feature with CorrectedSpectra]): Seq[_ <: Feature with CorrectedSpectra] = {
+  def findMatchesForTarget(target: Target, spectra: Seq[_ <: Feature with CorrectedSpectra], sample: Sample): Seq[_ <: Feature with CorrectedSpectra] = {
+    val filters: SequentialAnnotate = new SequentialAnnotate(
+      new MassAccuracyPPMorMD(5, lcmsProperties.massAccuracy, "annotation", lcmsProperties.massIntensity) with JSONSampleLogging {
+        /**
+          * which sample we require to log
+          */
+        override protected val sampleToLog: String = sample.fileName
+      } ::
+        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging {
+          /**
+            * which sample we require to log
+            */
+          override protected val sampleToLog: String = sample.fileName
+        }
+        ::
+        List()
+    )
+
     val result = spectra.collect {
       case spectra: Feature with CorrectedSpectra if filters.isMatch(spectra, target) =>
         spectra
@@ -337,7 +347,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     logger.debug(s"defined targets: ${targets.size}")
     val possibleHits: Seq[(Target, _ <: Feature with CorrectedSpectra)] = targets.toList.sortBy(_.retentionTimeInMinutes).collect {
       case target: Target =>
-        val matches = findMatchesForTarget(target, spectra)
+        val matches = findMatchesForTarget(target, spectra, sample)
 
         logger.debug(s"found ${matches.size} matches for $target")
 
