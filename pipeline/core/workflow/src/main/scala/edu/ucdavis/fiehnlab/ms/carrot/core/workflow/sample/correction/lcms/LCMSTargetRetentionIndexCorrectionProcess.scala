@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsDefinedException, RequiredStandardNotFoundException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -24,6 +24,9 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
   val massAccuracySetting: Double = 5
+
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:6}")
+  val rtAccuracySetting: Double = 6
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
@@ -84,6 +87,24 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   }
 
   /**
+    * Calculates the gaussian similarity of the spectrum accurate mass vs target precursor mass as well as spectrum rt
+    * vs target rt and averages the result
+    * @param spectrum
+    * @param standard
+    * @return
+    */
+  private def gaussianSimilarity(spectrum: Feature, standard: Target): Double = {
+    if (spectrum.accurateMass.isDefined && standard.precursorMass.isDefined) {
+      val mzSimilarity = math.exp(-0.5 * math.pow((spectrum.accurateMass.get - standard.precursorMass.get) / massAccuracySetting, 2))
+      val rtSimilarity = math.exp(-0.5 * math.pow((spectrum.retentionTimeInMinutes - standard.retentionTimeInMinutes) / rtAccuracySetting, 2))
+
+      (mzSimilarity + rtSimilarity) / 2
+    } else {
+      0.0
+    }
+  }
+
+  /**
     * attempts to find the best hit. In case we have multiple annotations
     *
     * @param standard
@@ -93,9 +114,11 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   def findBestHit(standard: Target, spectra: Seq[_ <: Feature]): TargetAnnotation[Target, Feature] = {
     //best hit is defined as the mass with the smallest mass error
     //if we prefer mass accurracy
-    //TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
+//    TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
     //if we we prefer mass intensity
-    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
+//    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
+    // if we prefer a combination of the two
+    TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(_, standard)))
   }
 
   /**
