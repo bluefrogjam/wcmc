@@ -144,7 +144,7 @@ class ZeroReplacementProperties {
   /**
     * extension of our rawdata files, to be used for replacement
     */
-  var fileExtension: List[String] = "mzXML" :: List()
+  var fileExtension: List[String] = "mzML" :: List()
 }
 
 /**
@@ -207,7 +207,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 
     val noise = if (noiseIons.isEmpty) {
       logger.warn("no ions found for noise calculations")
-      0.0
+      0.0f
     }
     else {
       noiseIons.min
@@ -242,7 +242,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           /**
             * how pure this spectra is
             */
-          override val purity: Option[Double] = Some(0)
+          override val purity: Option[Double] = Some(0.0)
           /**
             * the associated sample
             */
@@ -262,7 +262,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           /**
             * accurate mass of this feature, if applicable
             */
-          override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, 0))
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, 0.0f))
 
           override val retentionIndex: Double = receivedTarget.retentionIndex
         }
@@ -276,7 +276,12 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     val ion = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get).get
 
     logger.debug(s"found best spectra for replacement: $value")
-    val noiseCorrectedValue: Double = ion.intensity - noise
+    val noiseCorrectedValue: Float = if(noise <= ion.intensity) {
+      ion.intensity - noise
+    } else {
+      logger.warn(s"selected ion's intensity is lower than noise, replaceing with 0")
+      0.0f
+    }
 
     /**
       * build target object
