@@ -118,7 +118,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     //if we we prefer mass intensity
 //    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
     // if we prefer a combination of the two
-    TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(_, standard)))
+    TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(x, standard)))
   }
 
   /**
