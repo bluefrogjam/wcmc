@@ -131,7 +131,11 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     //if several adducts are found, which come at the same time, only use the one which is closest to it's accurate mass
     //sorting is required since groupBy doesn't respsect order
     val result = matches.groupBy(_.target.retentionIndex).collect {
-      case x if x._2.nonEmpty => x._2.minBy(y => Math.abs(y.target.accurateMass.get - y.annotation.accurateMass.get))
+      case x if x._2.nonEmpty =>
+        // x._2.minBy(y => Math.abs(y.target.accurateMass.get - y.annotation.accurateMass.get))
+
+        // Instead of using the best mass accuracy, use the most abundant adduct for correction
+        x._2.maxBy(_.annotation.massOfDetectedFeature.get.intensity)
     }.toSeq.sortBy(_.target.retentionIndex)
 
     logger.info(s"after optimization, we kepts ${result.size} ri standards out of ${matches.size}")
