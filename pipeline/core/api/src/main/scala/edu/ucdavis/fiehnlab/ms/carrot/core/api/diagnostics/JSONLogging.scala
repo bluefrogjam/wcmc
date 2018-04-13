@@ -15,7 +15,7 @@ trait JSONTargetLogging extends JSONLogging {
     */
   protected val targetToLog: Target
 
-  override def buildMessage(): Map[String, Any] = super.buildMessage() + ("target" -> Map("name" -> targetToLog.name.getOrElse("unknown"), "rt" -> targetToLog.retentionTimeInSeconds, "ri" -> targetToLog.retentionIndex, "mass" -> targetToLog.accurateMass.getOrElse(0.0)))
+  override def buildMessage(): Map[String, Any] = super.buildMessage() + ("target" -> targetToLog)
 
 }
 
