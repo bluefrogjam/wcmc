@@ -5,12 +5,10 @@ package edu.ucdavis.genomics.metabolomics.util.statistics;
 
 import edu.ucdavis.genomics.metabolomics.util.statistics.replacement.NoReplacement;
 import edu.ucdavis.genomics.metabolomics.util.statistics.replacement.ZeroReplaceable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-
 import java.util.List;
 import java.util.Vector;
 
@@ -85,7 +83,7 @@ public abstract class AbstractStatistic implements Statistics {
 
     /**
      * @see edu.ucdavis.genomics.metabolomics.binbase.utils.transform.Statistics#generateGraphics(boolean,
-     *      File)
+     * File)
      */
     public void generateGraphics(boolean value, File dir) {
     }

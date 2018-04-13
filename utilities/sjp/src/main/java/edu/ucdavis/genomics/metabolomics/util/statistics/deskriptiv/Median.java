@@ -16,7 +16,6 @@ import java.util.Vector;
  */
 public class Median extends Mean {
     /**
-     *
      * @uml.property name="mean"
      * @uml.associationEnd multiplicity="(0 1)"
      */
@@ -52,10 +51,10 @@ public class Median extends Mean {
 
             for (int i = 0; i < array.size(); i++) {
                 Object v = array.get(i);
-                
+
                 Object o = v;
-                if(o instanceof FormatObject){
-                	o = ((FormatObject)o).getValue();
+                if (o instanceof FormatObject) {
+                    o = ((FormatObject) o).getValue();
                 }
 
                 if (o instanceof String) {
@@ -75,7 +74,7 @@ public class Median extends Mean {
                 } else {
                     throw new WrongTypeOfValueException(
                         "value has not the right class, is a " +
-                        o.getClass().getName());
+                            o.getClass().getName());
                 }
             }
         } else {
@@ -106,7 +105,7 @@ public class Median extends Mean {
             } else {
                 throw new WrongTypeOfValueException(
                     "value has not the right class, is a " +
-                    o.getClass().getName());
+                        o.getClass().getName());
             }
         }
 

@@ -25,8 +25,8 @@ public class DiscardZeros implements ZeroReplaceable {
         for (int i = 0; i < array.size(); i++) {
             Object value = array.get(i);
             Object o = value;
-            if(o instanceof FormatObject){
-            	o = ((FormatObject)o).getValue();
+            if (o instanceof FormatObject) {
+                o = ((FormatObject) o).getValue();
             }
             if (o instanceof String) {
                 double d = Double.parseDouble(o.toString());
@@ -45,15 +45,15 @@ public class DiscardZeros implements ZeroReplaceable {
             } else {
                 throw new WrongTypeOfValueException(
                     "value has not the right class, is a " +
-                    o.getClass().getName());
+                        o.getClass().getName());
             }
         }
 
         return list;
     }
 
-	@Override
-	public String getDescription() {
-		return "removes any of the zeros from the given list";
-	}
+    @Override
+    public String getDescription() {
+        return "removes any of the zeros from the given list";
+    }
 }

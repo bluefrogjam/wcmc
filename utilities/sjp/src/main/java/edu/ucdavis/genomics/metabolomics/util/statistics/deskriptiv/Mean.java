@@ -4,14 +4,13 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv;
 
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-
 import edu.ucdavis.genomics.metabolomics.exception.WrongTypeOfValueException;
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
  */
 public class Mean extends Meanable {
     /**
-     *
      * @uml.property name="logger"
      * @uml.associationEnd multiplicity="(1 1)"
      */
@@ -46,6 +44,7 @@ public class Mean extends Meanable {
 
     /**
      * berechnet das arimethrische mittel
+     *
      * @version Aug 20, 2003
      * @author wohlgemuth
      * <br>
@@ -58,13 +57,13 @@ public class Mean extends Meanable {
 
         while (it.hasNext() == true) {
             Object v = it.next();
-            
+
             Object o = v;
-            if(o instanceof FormatObject){
-            	o = ((FormatObject)o).getValue();
+            if (o instanceof FormatObject) {
+                o = ((FormatObject) o).getValue();
             }
-            
-            
+
+
             if (o instanceof String) {
                 try {
                     double value = Double.parseDouble((String) o);
@@ -94,7 +93,7 @@ public class Mean extends Meanable {
             } else {
                 throw new WrongTypeOfValueException(
                     "value has not the right class, is a " +
-                    o.getClass().getName());
+                        o.getClass().getName());
             }
         }
 

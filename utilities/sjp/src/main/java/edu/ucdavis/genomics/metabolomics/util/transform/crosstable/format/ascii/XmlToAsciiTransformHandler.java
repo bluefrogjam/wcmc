@@ -5,12 +5,10 @@
 package edu.ucdavis.genomics.metabolomics.util.transform.crosstable.format.ascii;
 
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.XMLtoFileTransformHandler;
-
 import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.Iterator;
 import java.util.List;
 

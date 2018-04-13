@@ -3,20 +3,15 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-
 import edu.ucdavis.genomics.metabolomics.exception.WrongTypeOfValueException;
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
+
+import java.util.*;
 
 
 /**
  * @author wohlgemuth
  * berechnet den modus
- *
  */
 public class Modus extends DeskriptiveMethod {
     /**
@@ -44,10 +39,10 @@ public class Modus extends DeskriptiveMethod {
 
         while (it.hasNext()) {
             Object v = it.next();
-            
+
             Object o = v;
-            if(o instanceof FormatObject){
-            	o = ((FormatObject)o).getValue();
+            if (o instanceof FormatObject) {
+                o = ((FormatObject) o).getValue();
             }
 
             if (map.containsKey(o)) {
@@ -81,7 +76,7 @@ public class Modus extends DeskriptiveMethod {
         } else {
             throw new WrongTypeOfValueException(
                 "value has not the right class, is a " +
-                id.getClass().getName());
+                    id.getClass().getName());
         }
 
         return modus;

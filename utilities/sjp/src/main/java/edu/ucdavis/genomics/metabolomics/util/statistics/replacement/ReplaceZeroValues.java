@@ -4,10 +4,10 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.statistics.replacement;
 
-import java.util.List;
-
 import edu.ucdavis.genomics.metabolomics.util.statistics.data.DataFile;
 import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.Meanable;
+
+import java.util.List;
 
 
 /**
@@ -19,14 +19,12 @@ import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.Meanable;
  */
 public class ReplaceZeroValues {
     /**
-     *
      * @uml.property name="file"
      * @uml.associationEnd multiplicity="(0 1)"
      */
     DataFile file = null;
 
     /**
-     *
      * @uml.property name="mean"
      * @uml.associationEnd multiplicity="(0 1)"
      */
@@ -36,18 +34,16 @@ public class ReplaceZeroValues {
      * @author wohlgemuth
      * @version Aug 20, 2003
      * <br>
-     *
      */
     public ReplaceZeroValues() {
         super();
     }
 
     /**
+     * @param datafile
      * @version Aug 20, 2003
      * @author wohlgemuth
      * <br>
-     * @param datafile
-     *
      * @uml.property name="file"
      */
     public void setFile(DataFile datafile) {
@@ -55,11 +51,10 @@ public class ReplaceZeroValues {
     }
 
     /**
+     * @return
      * @version Aug 20, 2003
      * @author wohlgemuth
      * <br>
-     * @return
-     *
      * @uml.property name="file"
      */
     public DataFile getFile() {
@@ -67,11 +62,10 @@ public class ReplaceZeroValues {
     }
 
     /**
+     * @param meanable
      * @version Aug 20, 2003
      * @author wohlgemuth
      * <br>
-     * @param meanable
-     *
      * @uml.property name="mean"
      */
     public void setMean(Meanable meanable) {
@@ -79,11 +73,10 @@ public class ReplaceZeroValues {
     }
 
     /**
+     * @return
      * @version Aug 20, 2003
      * @author wohlgemuth
      * <br>
-     * @return
-     *
      * @uml.property name="mean"
      */
     public Meanable getMean() {
@@ -92,10 +85,10 @@ public class ReplaceZeroValues {
 
     /**
      * f?hrt die ersetzungen durch
+     *
      * @version Aug 20, 2003
      * @author wohlgemuth
      * <br>
-     *
      */
     public void run() {
         int columnCount = file.getColumnCount();

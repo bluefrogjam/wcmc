@@ -30,7 +30,7 @@ import java.util.Map;
 
 /**
  * @author Gert Wohlgemuth
- *
+ * <p>
  * diese klasse stellt die grundlage aller parser da. Dabei gibt es diverse
  * inputmethoden wir urls oder files... <b>um mit der klasse zu arbeiten muss
  * eine konkreteklasse gebildet werden, welche die daten dann parst. Die
@@ -39,7 +39,7 @@ import java.util.Map;
  * gibt keinen ?ffentlichen Konstruktor
  */
 public abstract class Parser {
-	
+
     /**
      * der handler f?r die datenausgabe
      *
@@ -63,7 +63,6 @@ public abstract class Parser {
      * gibt den verwendeten handler zur?ck
      *
      * @return
-     *
      * @uml.property name="handler"
      */
     public ParserHandler getHandler() {
@@ -75,7 +74,7 @@ public abstract class Parser {
      *
      * @param parserclass
      * @return @throws
-     *         InstantiationException
+     * InstantiationException
      * @throws IllegalAccessException
      */
     public static Parser create(Class<?> parserclass)
@@ -85,7 +84,6 @@ public abstract class Parser {
 
     /**
      * @param handler The handler to set.
-     *
      * @uml.property name="handler"
      */
     public void setHandler(ParserHandler handler) {
@@ -93,9 +91,7 @@ public abstract class Parser {
     }
 
     /**
-     * @param properties
-     *            The properties to set.
-     *
+     * @param properties The properties to set.
      * @uml.property name="properties"
      */
     public void setProperties(Map<?, ?> properties) {
@@ -104,7 +100,6 @@ public abstract class Parser {
 
     /**
      * @return Returns the properties.
-     *
      * @uml.property name="properties"
      */
     public Map<?, ?> getProperties() {
@@ -116,13 +111,13 @@ public abstract class Parser {
      *
      * @param parserclass
      * @return @throws
-     *         InstantiationException
+     * InstantiationException
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
     public Parser create(String parserclass)
-        throws InstantiationException, IllegalAccessException, 
-            ClassNotFoundException {
+        throws InstantiationException, IllegalAccessException,
+        ClassNotFoundException {
         return (Parser) Class.forName(parserclass).newInstance();
     }
 
@@ -194,8 +189,7 @@ public abstract class Parser {
     /**
      * parse eine url
      *
-     * @param url
-     *            die url die geparst werden soll
+     * @param url     die url die geparst werden soll
      * @param handler
      * @throws ParseException
      * @throws IOException
@@ -262,7 +256,8 @@ public abstract class Parser {
 
     /**
      * wird bei beendigung des parsers aufgerufen
-     * @throws ParserException 
+     *
+     * @throws ParserException
      */
     protected void finish() throws ParserException {
     }

@@ -21,10 +21,11 @@ public abstract class XMLtoFileTransformHandler
     extends AbstractXMLTransformHandler {
     /**
      * setzt die ausgabedatei
+     *
+     * @param file
      * @version Aug 14, 2003
      * @author wohlgemuth
      * <br>
-     * @param file
      */
     public final void setFile(File file) {
         try {
@@ -36,10 +37,11 @@ public abstract class XMLtoFileTransformHandler
 
     /**
      * setzt die ausgabe datei
+     *
+     * @param file
      * @version Aug 14, 2003
      * @author wohlgemuth
      * <br>
-     * @param file
      */
     public final void setFile(String file) {
         this.setFile(new File(file));

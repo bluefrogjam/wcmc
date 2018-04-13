@@ -1,7 +1,6 @@
 package edu.ucdavis.genomics.metabolomics.util.math.test;
 
 import edu.ucdavis.genomics.metabolomics.util.math.Similarity;
-
 import junit.framework.TestCase;
 
 
@@ -36,22 +35,23 @@ public class SimilarityTest extends TestCase {
         assertTrue((sim.calculateSimimlarity() - 1000) < 0.0001);
     }
 
-    public void testSpeed(){
-    	int count = 100000;
+    public void testSpeed() {
+        int count = 100000;
 
         sim.setLibrarySpectra("11:11 12:12 13:13 19:44 133:434");
         sim.setUnknownSpectra("11:11 12:12 13:13 19:44 133:434");
 
-    	long begin = System.nanoTime();
+        long begin = System.nanoTime();
 
-    	for(int i = 0; i < count; i++){
+        for (int i = 0; i < count; i++) {
             sim.calculateSimimlarity();
-    	}
-    	
-    	long end = System.nanoTime();
-    	
-    	System.out.println((end-begin)/count);
+        }
+
+        long end = System.nanoTime();
+
+        System.out.println((end - begin) / count);
     }
+
     /**
      * DOCUMENT ME!
      *

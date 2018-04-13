@@ -356,37 +356,37 @@
     <class>
         <!-- the matching class for the samples -->
         <matching
-                value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.SimpleMatching"/>
+            value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.SimpleMatching"/>
         <!-- the used matching class for the retention index correction and standardfinding -->
         <correction
-                value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.RecrusiveCorrection"/>
+            value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.RecrusiveCorrection"/>
         <!-- what algorythm are we want to use -->
         <algorythm
-                value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.StandardAlgorithmHandler"/>
+            value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.StandardAlgorithmHandler"/>
         <!-- whats the wanted setupX factory implementation -->
         <setupx
-                value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.setupX.EjbSetupXFactory"/>
+            value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.setupX.EjbSetupXFactory"/>
 
         <!--  defines how we import the data -->
         <import>
             <!-- the class defines which provider to use, or better what kind of format the source delivers, the source defines the kind of datasource -->
             <provider
-                    class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.data.provider.PegasusASCIIIProvider"
-                    source="edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.data.source.FileSource"/>
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.data.provider.PegasusASCIIIProvider"
+                source="edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.data.source.FileSource"/>
         </import>
 
         <!-- defined filters for the import and matching. they are executed in order, so depending on the order you can reach different speeds -->
         <filters>
             <filter
-                    class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.RetentionIndexFilter"/>
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.RetentionIndexFilter"/>
             <filter
-                    class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.UniqueRatioFilter"/>
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.UniqueRatioFilter"/>
             <filter
-                    class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.UniqueIonFilter"/>
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.UniqueIonFilter"/>
             <filter
-                    class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.SifterFilter"/>
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.SifterFilter"/>
             <filter
-                    class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.IonFilter"/>
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.IonFilter"/>
         </filters>
 
         <!-- list of modifiers to modify unknown massspecs in BinBase 4.2 and newer -->

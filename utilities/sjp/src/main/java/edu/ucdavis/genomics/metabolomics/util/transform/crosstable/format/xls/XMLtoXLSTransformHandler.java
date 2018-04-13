@@ -4,24 +4,18 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.transform.crosstable.format.xls;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import org.xml.sax.SAXException;
-
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.XMLtoFileTransformHandler;
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.BinObject;
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.MetaObject;
 import edu.ucdavis.genomics.metabolomics.util.xls.ColoredSplitToSheets;
 import edu.ucdavis.genomics.metabolomics.util.xls.Splitter;
+import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
 
 
 /**
@@ -33,7 +27,6 @@ import edu.ucdavis.genomics.metabolomics.util.xls.Splitter;
  */
 public class XMLtoXLSTransformHandler extends XMLtoFileTransformHandler {
     /**
-     *
      * @uml.property name="sheeter"
      * @uml.associationEnd multiplicity="(0 1)"
      */
@@ -42,7 +35,7 @@ public class XMLtoXLSTransformHandler extends XMLtoFileTransformHandler {
     /**
      * DOCUMENT ME!
      */
-    private Collection<Map<String,FormatObject<?>>> data = new Vector<Map<String,FormatObject<?>>>();
+    private Collection<Map<String, FormatObject<?>>> data = new Vector<Map<String, FormatObject<?>>>();
 
     /**
      * DOCUMENT ME!
@@ -57,7 +50,6 @@ public class XMLtoXLSTransformHandler extends XMLtoFileTransformHandler {
      * DOCUMENT ME!
      *
      * @param split DOCUMENT ME!
-     *
      * @uml.property name="sheeter"
      */
     public void setSheeter(Splitter split) {
@@ -80,14 +72,14 @@ public class XMLtoXLSTransformHandler extends XMLtoFileTransformHandler {
      */
     public void endTransform() {
         try {
-            Iterator<Map<String,FormatObject<?>>> it = data.iterator();
+            Iterator<Map<String, FormatObject<?>>> it = data.iterator();
             sheeter.addLine(new Vector<FormatObject<?>>());
             sheeter.addLine(new Vector<FormatObject<?>>());
 
             boolean first = true;
 
             while (it.hasNext()) {
-                Map <String,FormatObject<?>>map = it.next();
+                Map<String, FormatObject<?>> map = it.next();
                 Set<String> c = map.keySet();
 
                 if (first) {
@@ -112,7 +104,7 @@ public class XMLtoXLSTransformHandler extends XMLtoFileTransformHandler {
 
                 while (itx.hasNext()) {
                     Object header = itx.next();
-                    list.add( map.get(header));
+                    list.add(map.get(header));
                 }
 
                 sheeter.setHeader(true);
@@ -153,7 +145,7 @@ public class XMLtoXLSTransformHandler extends XMLtoFileTransformHandler {
      *
      * @param map DOCUMENT ME!
      */
-    public void writeBinProperties(Map<String,FormatObject<?>> map) {
+    public void writeBinProperties(Map<String, FormatObject<?>> map) {
         data.add(map);
     }
 

@@ -84,7 +84,7 @@ public class CSVHandler implements ParserHandler {
 
     /**
      * @see edu.ucdavis.genomics.metabolomics.binbase.parser.ParserHandler#startElement(String,
-     *      String)
+     * String)
      */
     public void startElement(String name, String value) {
         buffer.append(value.replaceAll("\t", " ").trim() + "\t");

@@ -4,48 +4,25 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.xls;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.*;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.slf4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.BinObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ClassObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.CombinedObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ContentObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ErrorObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.HeaderFormat;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.MetaObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.NullObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ProblematicObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.RefrenceObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.SampleObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ZeroObject;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author wohlgemuth
  * @version Aug 18, 2003 <br>
- *          BinBaseDatabase
+ * BinBaseDatabase
  * @description erstellt eine formatierte excel tabelle, mit farben und
  * nullwertmarkierung
  */
@@ -288,9 +265,9 @@ public class ColoredSplitToSheets implements Splitter {
 
         boolean lastLine = line.isEmpty();
 
-		/*
+        /*
          * berechnen der ben?tigten ausmasse f?r das excel sheet
-		 */
+         */
         if (firstrun == true) {
             size = line.size();
 
@@ -304,9 +281,9 @@ public class ColoredSplitToSheets implements Splitter {
             logger.info("count of sheets needed: " + (sheets.length + 1));
         }
 
-		/*
-		 * f?llen und formatieren des sheets nach dem gew?nschten vorgaben
-		 */
+        /*
+         * f?llen und formatieren des sheets nach dem gew?nschten vorgaben
+         */
         Iterator<FormatObject<?>> it = line.iterator();
 
         for (short i = 0; i < sheets.length; i++) {
@@ -436,7 +413,7 @@ public class ColoredSplitToSheets implements Splitter {
             if (ref.getHyperlink() != null) {
                 if (ref.getHyperlink().length() > 0) {
                     cell.setCellFormula("HYPERLINK(\"" + ref.getHyperlink()
-                            + "\";\"" + ref.getValue() + "\")");
+                        + "\";\"" + ref.getValue() + "\")");
                 } else {
                     cell.setCellValue(o.getValue().toString());
                 }

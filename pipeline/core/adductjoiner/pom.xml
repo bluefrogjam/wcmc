@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>core</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
+        <version>1.0.16-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
+    <artifactId>adduct-joiner</artifactId>
+    <version>1.0.16-SNAPSHOT</version>
+
+    <description>
+        This module is used to sum the intensity of annotated aducts before final reporting
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
+            <artifactId>casetojson</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
+            <artifactId>logging</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+        <!-- Joinery for data frame manipulation -->
+        <dependency>
+            <groupId>joinery</groupId>
+            <artifactId>joinery-dataframe</artifactId>
+            <version>1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.11</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

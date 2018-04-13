@@ -22,10 +22,10 @@ public class WrongTypeOfValueException extends RuntimeException {
     private static final long serialVersionUID = 2L;
 
     /**
+     * @param string
      * @author wohlgemuth
      * @version Aug 20, 2003
      * <br>
-     * @param string
      */
     public WrongTypeOfValueException(String string) {
         super(string);

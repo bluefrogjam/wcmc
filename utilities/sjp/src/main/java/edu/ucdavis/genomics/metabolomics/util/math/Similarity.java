@@ -3,16 +3,16 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.math;
 
+import edu.ucdavis.genomics.metabolomics.exception.SpectraConversionException;
+
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import edu.ucdavis.genomics.metabolomics.exception.SpectraConversionException;
-
 
 /**
  * <h3>Title: Similarity</h3>
- *
+ * <p>
  * <p>
  * Author: Gert Wohlgemuth <br>
  * Leader: Dr. Oliver Fiehn <br>
@@ -21,7 +21,7 @@ import edu.ucdavis.genomics.metabolomics.exception.SpectraConversionException;
  * Version: <br>
  * Description: Calculates the similarity between 2 spectras <br>
  * the result is between 0 and 1000 for optimal match
- *
+ * <p>
  * </p>
  */
 public class Similarity implements SpectraArrayKey {
@@ -29,7 +29,7 @@ public class Similarity implements SpectraArrayKey {
 
     /**
      * contains spectra data <br>
-     *
+     * <p>
      * <table border = 1>SpectraConversionException.java
      * <tr>
      * <th>id</th>
@@ -57,7 +57,7 @@ public class Similarity implements SpectraArrayKey {
 
     /**
      * contains spectra data with the same ions <br>
-     *
+     * <p>
      * <table border = 1>
      * <tr>
      * <th>id</th>
@@ -86,7 +86,7 @@ public class Similarity implements SpectraArrayKey {
 
     /**
      * contains spectra data <br>
-     *
+     * <p>
      * <table border = 1>
      * <tr>
      * <th>id</th>
@@ -128,7 +128,6 @@ public class Similarity implements SpectraArrayKey {
 
     /**
      * @param librarySpectra
-     *
      * @uml.property name="librarySpectra"
      */
     public void setLibrarySpectra(double[][] librarySpectra) {
@@ -137,40 +136,43 @@ public class Similarity implements SpectraArrayKey {
 
     /**
      * resizes the spectra
+     *
      * @param spectra
      * @return
      */
-    public double[][] sizeSpectra(double[][] spectra){
-    	  if (spectra.length == MAX_ION) {
-              return spectra;
-          } else {
-              double[][] bigSpectra = new double[MAX_ION][ARRAY_WIDTH];
+    public double[][] sizeSpectra(double[][] spectra) {
+        if (spectra.length == MAX_ION) {
+            return spectra;
+        } else {
+            double[][] bigSpectra = new double[MAX_ION][ARRAY_WIDTH];
 
-              for (int i = 0; i < MAX_ION; i++) {
-                  bigSpectra[i][FRAGMENT_ION_POSITION] = i + 1;
-                  bigSpectra[i][FRAGMENT_ABS_POSITION] = 0;
-                  bigSpectra[i][FRAGMENT_REL_POSITION] = 0;
+            for (int i = 0; i < MAX_ION; i++) {
+                bigSpectra[i][FRAGMENT_ION_POSITION] = i + 1;
+                bigSpectra[i][FRAGMENT_ABS_POSITION] = 0;
+                bigSpectra[i][FRAGMENT_REL_POSITION] = 0;
 
-                  for (int y = 0; y < spectra.length; y++) {
-                      if (Math.abs(bigSpectra[i][FRAGMENT_ION_POSITION] -
-                                  spectra[y][FRAGMENT_ION_POSITION]) < 0.0001) {
-                          bigSpectra[i][FRAGMENT_ION_POSITION] = spectra[y][FRAGMENT_ION_POSITION];
-                          bigSpectra[i][FRAGMENT_ABS_POSITION] = spectra[y][FRAGMENT_ABS_POSITION];
-                          bigSpectra[i][FRAGMENT_REL_POSITION] = spectra[y][FRAGMENT_REL_POSITION];
-                          y = spectra.length + 1;
-                      }
-                  }
-              }
+                for (int y = 0; y < spectra.length; y++) {
+                    if (Math.abs(bigSpectra[i][FRAGMENT_ION_POSITION] -
+                        spectra[y][FRAGMENT_ION_POSITION]) < 0.0001) {
+                        bigSpectra[i][FRAGMENT_ION_POSITION] = spectra[y][FRAGMENT_ION_POSITION];
+                        bigSpectra[i][FRAGMENT_ABS_POSITION] = spectra[y][FRAGMENT_ABS_POSITION];
+                        bigSpectra[i][FRAGMENT_REL_POSITION] = spectra[y][FRAGMENT_REL_POSITION];
+                        y = spectra.length + 1;
+                    }
+                }
+            }
 
-              return bigSpectra;
-          }
+            return bigSpectra;
+        }
     }
+
     /**
      * returns the max ion count
+     *
      * @return
      */
-    public int getMaxIons(){
-    	return SpectraArrayKey.MAX_ION;
+    public int getMaxIons() {
+        return SpectraArrayKey.MAX_ION;
     }
 
     /**
@@ -182,7 +184,6 @@ public class Similarity implements SpectraArrayKey {
 
     /**
      * @param unknownSpectra
-     *
      * @uml.property name="unknownSpectra"
      */
     public void setUnknownSpectra(double[][] unknownSpectra) {
@@ -211,7 +212,7 @@ public class Similarity implements SpectraArrayKey {
         for (int i = 0; i < getMaxIons(); i++) {
             if (Math.abs(librarySpectra[i][0] - unknownSpectra[i][0]) < 0.0001) {
                 if ((librarySpectra[i][FRAGMENT_ABS_POSITION] > 0) &&
-                        (unknownSpectra[i][FRAGMENT_ABS_POSITION] > 0)) {
+                    (unknownSpectra[i][FRAGMENT_ABS_POSITION] > 0)) {
                     tempSpectra[sameCount][0] = librarySpectra[i][FRAGMENT_ION_POSITION];
                     tempSpectra[sameCount][1] = unknownSpectra[i][FRAGMENT_REL_POSITION];
                     tempSpectra[sameCount][2] = librarySpectra[i][FRAGMENT_REL_POSITION];
@@ -276,22 +277,22 @@ public class Similarity implements SpectraArrayKey {
         f2 = 1.0 / sameCount * sum;
 
         return (1000.0 / (unknownSpectra.length + sameCount)) * ((unknownSpectra.length * f1) +
-        (sameCount * f2));
+            (sameCount * f2));
     }
-    
+
 
     /**
      * <p>
      * Dies Methode generiert aus einem Pegasus Spectren String ein Array
      * welches die daten enth???hlt Der String muss folgendes Format haben
      * </p>
-     *
+     * <p>
      * 1:23 2:87 3:43 4:43 5:32
-     *
+     * <p>
      * <p>
      * wenn das nicht der Fall ist wird eine NullPointer Exception ausgel???st
      * </p>
-     *
+     * <p>
      * <p>
      * Die R???ckgabe erfolgt als ein mehr dimensionales Array. <br>
      * Auf die Positionen der einzelnen Arrays kann mittels folgender Variablen
@@ -309,7 +310,7 @@ public class Similarity implements SpectraArrayKey {
      * <p>
      * public static final int MAX_ION = 500
      * </p>
-     *
+     * <p>
      * <p>
      * Beispiel f???r einen Zugriff:
      * <p>
@@ -319,10 +320,9 @@ public class Similarity implements SpectraArrayKey {
      * </h4>
      * </p>
      *
-     * @author gert wohlgemuth
-     * @param spectra
-     *                    der spektren string
+     * @param spectra der spektren string
      * @return double Das Array
+     * @author gert wohlgemuth
      */
     protected double[][] convert(String spectra) {
         StringTokenizer tokenizer = new StringTokenizer(spectra, " ");
@@ -333,7 +333,7 @@ public class Similarity implements SpectraArrayKey {
         try {
             while (tokenizer.hasMoreTokens()) {
                 StringTokenizer token = new StringTokenizer(tokenizer.nextToken(),
-                        ":");
+                    ":");
                 Integer ion = new Integer(token.nextToken());
                 Double abundance = new Double(token.nextToken());
 
@@ -378,7 +378,7 @@ public class Similarity implements SpectraArrayKey {
 
                 for (int y = 0; y < array.length; y++) {
                     if (Math.abs(bigSpectra[i][FRAGMENT_ION_POSITION] -
-                                array[y][FRAGMENT_ION_POSITION]) < 0.0001) {
+                        array[y][FRAGMENT_ION_POSITION]) < 0.0001) {
                         bigSpectra[i][FRAGMENT_ION_POSITION] = array[y][FRAGMENT_ION_POSITION];
                         bigSpectra[i][FRAGMENT_ABS_POSITION] = array[y][FRAGMENT_ABS_POSITION];
                         bigSpectra[i][FRAGMENT_REL_POSITION] = array[y][FRAGMENT_REL_POSITION];
@@ -391,11 +391,11 @@ public class Similarity implements SpectraArrayKey {
         }
     }
 
-	public double[][] getLibrarySpectra() {
-		return librarySpectra;
-	}
+    public double[][] getLibrarySpectra() {
+        return librarySpectra;
+    }
 
-	public double[][] getUnknownSpectra() {
-		return unknownSpectra;
-	}
+    public double[][] getUnknownSpectra() {
+        return unknownSpectra;
+    }
 }

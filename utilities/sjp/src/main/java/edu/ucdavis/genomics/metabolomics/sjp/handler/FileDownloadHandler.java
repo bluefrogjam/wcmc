@@ -35,21 +35,20 @@ import java.util.Properties;
 
 /**
  * @author Gert Wohlgemuth
- *
+ * <p>
  * kann verwendet werden um dateien aus dem internet herunterzuladen. Dabei
  * muss in den properties der parameter URL gesetzt sein und diese den Ausdruck
  * (ID) aufweisen. Dieser ausdruck wird dann durch das entsprechende element
  * ersetzt welches geparst wurde und die datei wird dann im angegebenen
  * ordner gespeichert.
- *
- *
+ * <p>
+ * <p>
  * example
  * <p>
  * http://webbook.nist.gov/cgi/cbook.cgi?Name=(ID)&Units=SI&cMS=on
  * </p>
  * des weiteres wird der parameter DIR f?r das verzeichnis und EXTENSION f?r
  * die dateiendung ben?tigt
- *
  */
 public class FileDownloadHandler implements ParserHandler {
     /**
@@ -94,7 +93,6 @@ public class FileDownloadHandler implements ParserHandler {
 
     /**
      * @return Returns the dir.
-     *
      * @uml.property name="dir"
      */
     public File getDir() {
@@ -103,7 +101,6 @@ public class FileDownloadHandler implements ParserHandler {
 
     /**
      * @return Returns the ext.
-     *
      * @uml.property name="ext"
      */
     public String getExt() {
@@ -112,7 +109,6 @@ public class FileDownloadHandler implements ParserHandler {
 
     /**
      * @return Returns the field.
-     *
      * @uml.property name="field"
      */
     public String getField() {
@@ -136,7 +132,6 @@ public class FileDownloadHandler implements ParserHandler {
 
     /**
      * @return Returns the url.
-     *
      * @uml.property name="url"
      */
     public String getUrl() {
@@ -187,7 +182,7 @@ public class FileDownloadHandler implements ParserHandler {
 
     /**
      * @see edu.ucdavis.genomics.metabolomics.binbase.parser.ParserHandler#foundElement(String,
-     *      String)
+     * String)
      */
     public void startElement(String name, String value)
         throws ParserException {
@@ -212,11 +207,11 @@ public class FileDownloadHandler implements ParserHandler {
      */
     protected void handleUrl(URL url) throws Exception {
         File file = new File(dir.getAbsolutePath() + "/" +
-                new Date().getTime() + "." + this.ext);
+            new Date().getTime() + "." + this.ext);
         FileWriter writer = new FileWriter(file);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(
-                    url.openStream()));
+            url.openStream()));
 
         String s;
 

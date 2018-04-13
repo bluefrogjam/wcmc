@@ -10,10 +10,11 @@ import edu.ucdavis.genomics.metabolomics.util.sort.Sortable;
 
 /**
  * <p>
+ *
  * @author wohlgemuth
  * @version Jul 17, 2003
  * </p>
- *
+ * <p>
  * <h4>File: BinarySearch.java </h4>
  * <h4>Project: glibj </h4>
  * <h4>Package: edu.ucdavis.genomics.metabolomics.glibj.alg.search </h4>

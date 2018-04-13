@@ -4,21 +4,12 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.serialize;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 
 /**
  * @author wohlgemuth stellt statische methoden zum serializieren und
- *         convertieren von objekten zur verf?gung
- *
+ * convertieren von objekten zur verf?gung
  */
 public class ClassConverter {
     /**
@@ -26,7 +17,7 @@ public class ClassConverter {
      *
      * @param in
      * @return @throws
-     *         IOException
+     * IOException
      */
     public static String convertStreamToString(InputStream in)
         throws IOException {
@@ -46,7 +37,7 @@ public class ClassConverter {
      *
      * @param in
      * @return @throws
-     *         IOException
+     * IOException
      * @throws ClassNotFoundException
      */
     public static Object desirializeObject(InputStream in)
@@ -61,7 +52,7 @@ public class ClassConverter {
      *
      * @param o
      * @return @throws
-     *         IOException
+     * IOException
      */
     public static int objectSize(Object o) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -75,7 +66,7 @@ public class ClassConverter {
      *
      * @param o
      * @return @throws
-     *         IOException
+     * IOException
      */
     public static InputStream objectToInputStream(Object o)
         throws IOException {
@@ -105,7 +96,7 @@ public class ClassConverter {
      *
      * @param o
      * @return @throws
-     *         IOException
+     * IOException
      */
     public static InputStream stringToInputStream(String o) {
         ByteArrayInputStream stream = new ByteArrayInputStream(o.getBytes());

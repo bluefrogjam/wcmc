@@ -2,7 +2,6 @@ package edu.ucdavis.genomics.metabolomics.util.search.test;
 
 import edu.ucdavis.genomics.metabolomics.util.search.BinarySearch;
 import edu.ucdavis.genomics.metabolomics.util.search.Searchable;
-
 import junit.framework.TestCase;
 
 

@@ -12,66 +12,65 @@ import java.util.Map;
 
 /**
  * provides an easy access to a ressource
- * 
+ *
  * @author wohlgemuth
- * 
  */
 public class ResourceSource implements Source {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-	public ResourceSource(String name) {
-		this.name = name;
-	}
+    public ResourceSource(String name) {
+        this.name = name;
+    }
 
-	private String name;
+    private String name;
 
-	public void configure(Map<?, ?> p) throws ConfigurationException {
-	}
+    public void configure(Map<?, ?> p) throws ConfigurationException {
+    }
 
-	public boolean exist() {
-		try {
-			logger.info("checking for: " + getClass().getResource(name).getFile());
-			getClass().getResource(name).openConnection();
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			return false;
-		}
-		return true;
-	}
+    public boolean exist() {
+        try {
+            logger.info("checking for: " + getClass().getResource(name).getFile());
+            getClass().getResource(name).openConnection();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+        return true;
+    }
 
-	public String getSourceName() {
-		return name.substring(name.lastIndexOf("/")+1);
-	}
+    public String getSourceName() {
+        return name.substring(name.lastIndexOf("/") + 1);
+    }
 
-	public String getSourceAbsoluteName() {
-		return name;
-	}
+    public String getSourceAbsoluteName() {
+        return name;
+    }
 
-	public InputStream getStream() throws IOException {
+    public InputStream getStream() throws IOException {
         assert (exist());
-		return getClass().getResourceAsStream(name);
-	}
+        return getClass().getResourceAsStream(name);
+    }
 
-	public byte[] getBytes() throws IOException {
-	    assert (exist());
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+    public byte[] getBytes() throws IOException {
+        assert (exist());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         InputStream in = getStream();
-		Copy.copy(in,out);
+        Copy.copy(in, out);
 
-		return out.toByteArray();
-	}
+        return out.toByteArray();
+    }
 
-	public long getVersion() {
-		try {
-			return getStream().hashCode();
-		} catch (IOException e) {
-			return name.hashCode();
-		}
-	}
+    public long getVersion() {
+        try {
+            return getStream().hashCode();
+        } catch (IOException e) {
+            return name.hashCode();
+        }
+    }
 
-	public void setIdentifier(Object o) throws ConfigurationException {
-		this.name = o.toString();
-	}
+    public void setIdentifier(Object o) throws ConfigurationException {
+        this.name = o.toString();
+    }
 
 }

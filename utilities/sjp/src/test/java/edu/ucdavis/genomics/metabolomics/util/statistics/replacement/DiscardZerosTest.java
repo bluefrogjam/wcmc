@@ -3,8 +3,6 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.statistics.replacement;
 
-import edu.ucdavis.genomics.metabolomics.util.statistics.replacement.DiscardZeros;
-
 import junit.framework.TestCase;
 
 import java.util.List;
@@ -13,7 +11,6 @@ import java.util.Vector;
 
 /**
  * @author wohlgemuth
- *
  */
 public class DiscardZerosTest extends TestCase {
     /**

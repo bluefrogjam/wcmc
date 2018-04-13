@@ -4,13 +4,13 @@ import java.sql.{Connection, DriverManager, ResultSet}
 import java.util
 import java.util.Properties
 
-import javax.validation.constraints.{NotBlank, NotEmpty}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, ReadonlyLibrary}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.GCMSCorrectionTarget
+import javax.validation.constraints.{NotBlank, NotEmpty}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -177,7 +177,7 @@ case class BinBaseTarget(result: ResultSet) extends Target with PuritySupport wi
     override val ions: Seq[Ion] = result.getString("spectra").trim.split(" ").map { p =>
       val data = p.split(":")
 
-      Ion(data(0).toDouble, data(1).toDouble)
+      Ion(data(0).toDouble, data(1).toFloat)
     }
   })
   override val purity: Double = result.getDouble("purity")

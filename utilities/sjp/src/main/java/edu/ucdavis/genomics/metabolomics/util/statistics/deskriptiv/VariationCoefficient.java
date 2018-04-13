@@ -12,14 +12,12 @@ import java.util.Collection;
  */
 public class VariationCoefficient extends DeskriptiveMethod {
     /**
-     *
      * @uml.property name="mean"
      * @uml.associationEnd multiplicity="(0 1)"
      */
     Mean mean = new Mean();
 
     /**
-     *
      * @uml.property name="stdev"
      * @uml.associationEnd multiplicity="(0 1)"
      */

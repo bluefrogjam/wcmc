@@ -6,7 +6,6 @@ package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv;
 
 /**
  * @author wohlgemuth
- *
  */
 public class NonZeroMedian extends Median {
     /**

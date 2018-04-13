@@ -31,7 +31,7 @@ import java.net.URL;
 
 /**
  * @author Gert Wohlgemuth
- *
+ * <p>
  * diese klasse parst die kegg reaction files
  * (ftp.genome.ad.jp/pub/kegg/ligand). F?r jedes gefundende attribute wird das
  * handler ElementFound event ausgel?st.
@@ -93,7 +93,7 @@ public class ReactionParser extends Parser {
     public void parse(ParserHandler handler) throws ParserException {
         try {
             this.parse(new URL(
-                    "ftp://ftp.genome.ad.jp/pub/kegg/ligand/reaction"), handler);
+                "ftp://ftp.genome.ad.jp/pub/kegg/ligand/reaction"), handler);
         } catch (MalformedURLException e) {
             throw new ParserException(e);
         } catch (IOException e) {

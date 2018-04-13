@@ -30,7 +30,7 @@ import java.net.URL;
 
 /**
  * @author Gert Wohlgemuth
- *
+ * <p>
  * l?dt JCAMP files herunter indem er die ermmitelten urls parst
  * und speichert sie im angeebenen verzeichnes. Dieses gilt allerdings nur f?r die nistms
  * webbook seiten!
@@ -41,7 +41,7 @@ public class JCAMPDownloader extends FileDownloadHandler {
      */
     protected void handleUrl(URL url) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(
-                    url.openStream()));
+            url.openStream()));
 
         String s;
         boolean moreResults = false;
@@ -54,9 +54,9 @@ public class JCAMPDownloader extends FileDownloadHandler {
                 if (s.indexOf("in JCAMP-DX format.") > -1) {
                     System.err.println("download masspec");
                     super.handleUrl(new URL((url.getProtocol() + "://" +
-                            url.getHost() +
-                            s.substring(s.indexOf("\"") + 1, s.lastIndexOf("\""))).replaceAll(
-                                "amp;", "")));
+                        url.getHost() +
+                        s.substring(s.indexOf("\"") + 1, s.lastIndexOf("\""))).replaceAll(
+                        "amp;", "")));
                 }
 
                 moreResults = false;
@@ -67,11 +67,11 @@ public class JCAMPDownloader extends FileDownloadHandler {
                     System.err.println("\tdownloading new url " +
                         new URL((url.getProtocol() + "://" + url.getHost() +
                             s.substring(s.indexOf("\"") + 1, s.lastIndexOf("\""))).replaceAll(
-                                "amp;", "")));
+                            "amp;", "")));
                     this.handleUrl(new URL((url.getProtocol() + "://" +
-                            url.getHost() +
-                            s.substring(s.indexOf("\"") + 1, s.lastIndexOf("\""))).replaceAll(
-                                "amp;", "")));
+                        url.getHost() +
+                        s.substring(s.indexOf("\"") + 1, s.lastIndexOf("\""))).replaceAll(
+                        "amp;", "")));
                 }
             }
         }

@@ -35,7 +35,7 @@ import java.net.URL;
  * vererben
  *
  * @author Gert Wohlgemuth
- *
+ * <p>
  * diese klasse parst die kegg compound files
  * (ftp.genome.ad.jp/pub/kegg/ligand). F?r jedes gefundende attribute wird das
  * handler ElmentFound event ausgel?st. <b>momentant werden die folgenden
@@ -57,7 +57,6 @@ public class CompoundParser extends Parser implements CompoundKeys {
      * DOCUMENT ME!
      *
      * @param args DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public static void main(String[] args) throws Exception {
@@ -69,7 +68,7 @@ public class CompoundParser extends Parser implements CompoundKeys {
     public void parse(ParserHandler handler) throws ParserException {
         try {
             this.parse(new URL(
-                    "ftp://ftp.genome.ad.jp/pub/kegg/ligand/compound"), handler);
+                "ftp://ftp.genome.ad.jp/pub/kegg/ligand/compound"), handler);
         } catch (MalformedURLException e) {
             throw new ParserException(e);
         } catch (IOException e) {

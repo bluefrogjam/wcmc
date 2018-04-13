@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile;
 public class RedisConfiguration {
 
     @Bean
-    public RedissonClient redissonClient(){
+    public RedissonClient redissonClient() {
         return Redisson.create();
     }
 }

@@ -13,15 +13,15 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlgemuth on 6/27/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt-lcms","quantify-by-scan","carrot.processing.peakdetection","carrot.lcms"))
+@ActiveProfiles(Array("backend-txt-lcms", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms"))
 class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired

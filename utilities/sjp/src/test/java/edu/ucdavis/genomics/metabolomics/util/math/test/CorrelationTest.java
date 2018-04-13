@@ -5,7 +5,6 @@
 package edu.ucdavis.genomics.metabolomics.util.math.test;
 
 import edu.ucdavis.genomics.metabolomics.util.math.Correlation;
-
 import junit.framework.TestCase;
 
 
@@ -18,7 +17,6 @@ import junit.framework.TestCase;
  */
 public class CorrelationTest extends TestCase {
     /**
-     *
      * @uml.property name="correlation"
      * @uml.associationEnd multiplicity="(0 1)"
      */
@@ -28,6 +26,7 @@ public class CorrelationTest extends TestCase {
 
     /**
      * Constructor for CorrelationTest.
+     *
      * @param arg0
      */
     public CorrelationTest(String arg0) {

@@ -3,14 +3,13 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv;
 
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-
 import edu.ucdavis.genomics.metabolomics.exception.WrongTypeOfValueException;
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
  */
 public class Min extends DeskriptiveMethod {
     /**
-     *
      * @uml.property name="logger"
      * @uml.associationEnd multiplicity="(1 1)"
      */
@@ -49,10 +47,10 @@ public class Min extends DeskriptiveMethod {
 
         while (it.hasNext() == true) {
             Object v = it.next();
-            
+
             Object o = v;
-            if(o instanceof FormatObject){
-            	o = ((FormatObject)o).getValue();
+            if (o instanceof FormatObject) {
+                o = ((FormatObject) o).getValue();
             }
 
             if (o instanceof String) {
@@ -82,7 +80,7 @@ public class Min extends DeskriptiveMethod {
             } else {
                 throw new WrongTypeOfValueException(
                     "value has not the right class, is a " +
-                    o.getClass().getName());
+                        o.getClass().getName());
             }
 
             count++;

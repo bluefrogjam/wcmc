@@ -32,7 +32,6 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
   override def loadSample(name: String): Option[_ <: Sample] = {
     logger.debug(s"looking for sample: ${name} with ${resourceLoader}")
     val fileOption = resourceLoader.loadAsFile(name)
-
     convertFileToSample(name, fileOption)
   }
 
@@ -43,11 +42,11 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
       if (fileOption.isDefined) {
         logger.debug(s"converting ${fileOption.get.getName} to sample")
         val file = fileOption.get
-        if (file.getName.toLowerCase.matches(".*\\.d.zip")) {
+        if (file.getName.toLowerCase.matches(".*\\.d(\\.zip)?")) {
           Some(new AgilentSample(file.getName, file, dataFormerClient))
         }
-        else if(file.getName.toLowerCase.matches(".*\\.txt")){
-          Some(new LecoSample(new FileInputStream(file),name))
+        else if (file.getName.toLowerCase.matches(".*\\.txt")) {
+          Some(new LecoSample(new FileInputStream(file), name))
         }
         else {
           Some(MSDKSample(name, file))

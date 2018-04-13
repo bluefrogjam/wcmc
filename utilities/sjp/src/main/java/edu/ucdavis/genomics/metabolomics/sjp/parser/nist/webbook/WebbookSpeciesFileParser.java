@@ -35,8 +35,8 @@ import java.util.zip.GZIPInputStream;
 
 /**
  * @author - gert wohlgemuth <br>parst die species datei welche auf <b>
- *         http://webbook.nist.gov/chemistry/download/ <b>verf?gbar ist.
- *
+ * http://webbook.nist.gov/chemistry/download/ <b>verf?gbar ist.
+ * <p>
  * aus dieser datei erh?lt man die namen aller in der nist library vorhandenen
  * substanzen
  */
@@ -47,7 +47,7 @@ public class WebbookSpeciesFileParser extends Parser {
     public void parse(ParserHandler handler) throws ParserException {
         try {
             InputStream stream = new GZIPInputStream(new URL(
-                        "http://webbook.nist.gov/chemistry/download/species.txt.gz").openStream());
+                "http://webbook.nist.gov/chemistry/download/species.txt.gz").openStream());
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             byte[] buffer = new byte[256];

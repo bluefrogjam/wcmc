@@ -13,58 +13,60 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-public class URLSource implements Source{
-	private URL url;
-	
-	private Logger logger = LoggerFactory.getLogger(URLSource.class);
-	public URLSource() {
-		
-	}
-	public URLSource(URL url) {
-		super();
-		this.url = url;
-	}
+public class URLSource implements Source {
+    private URL url;
 
-	public URLSource(String url) throws MalformedURLException {
-		super();
-		this.url = new URL(url);
-	}
+    private Logger logger = LoggerFactory.getLogger(URLSource.class);
 
-	public InputStream getStream() throws IOException {
-		return url.openStream();
-	}
+    public URLSource() {
 
-	public String getSourceName() {
-		return url.toString();
-	}
+    }
 
-	public void setIdentifier(Object o) throws ConfigurationException {
-		if(o instanceof URL){
-			url = (URL) o;
-		}
-		else{
-			try {
-				url = new URL(o.toString());
-			} catch (MalformedURLException e) {
-				throw new ConfigurationException(e);
-			}
-		}
-	}
+    public URLSource(URL url) {
+        super();
+        this.url = url;
+    }
 
-	public void configure(Map<?, ?> p) throws ConfigurationException {
-		
-	}
+    public URLSource(String url) throws MalformedURLException {
+        super();
+        this.url = new URL(url);
+    }
 
-	public boolean exist() {
-		return url != null;
-	}
-	public long getVersion() {
-		try {
-			return url.openConnection().getDate();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-			return -1;
-		}
-	}
+    public InputStream getStream() throws IOException {
+        return url.openStream();
+    }
+
+    public String getSourceName() {
+        return url.toString();
+    }
+
+    public void setIdentifier(Object o) throws ConfigurationException {
+        if (o instanceof URL) {
+            url = (URL) o;
+        } else {
+            try {
+                url = new URL(o.toString());
+            } catch (MalformedURLException e) {
+                throw new ConfigurationException(e);
+            }
+        }
+    }
+
+    public void configure(Map<?, ?> p) throws ConfigurationException {
+
+    }
+
+    public boolean exist() {
+        return url != null;
+    }
+
+    public long getVersion() {
+        try {
+            return url.openConnection().getDate();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            return -1;
+        }
+    }
 
 }

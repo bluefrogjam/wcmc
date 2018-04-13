@@ -11,7 +11,6 @@ import java.util.Collection;
  */
 public class StandardDeviation extends DeskriptiveMethod {
     /**
-     *
      * @uml.property name="v"
      * @uml.associationEnd multiplicity="(0 1)"
      */

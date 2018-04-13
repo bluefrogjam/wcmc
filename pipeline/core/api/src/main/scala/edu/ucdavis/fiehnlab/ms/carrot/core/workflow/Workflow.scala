@@ -192,7 +192,7 @@ class Workflow[T] extends LazyLogging {
       None
     }
     */
-    logger.warn("TODO!!!")
+    logger.warn(s"Correction failed misserably with error: ${exception.getMessage}")
     None
   }
 

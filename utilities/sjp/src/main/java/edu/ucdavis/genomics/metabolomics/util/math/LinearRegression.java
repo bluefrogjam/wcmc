@@ -7,18 +7,18 @@ import edu.ucdavis.genomics.metabolomics.exception.CalculationException;
  * calculates a linear regresion
  *
  * @author wohlgemuth
- *
  */
 public class LinearRegression implements Regression {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-	/**
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    /**
      * x data
      */
     double[] x;
@@ -105,7 +105,7 @@ public class LinearRegression implements Regression {
      * @return DOCUMENT ME!
      */
     public double[] getCoeffizent() {
-        return new double[] { this.r2 };
+        return new double[]{this.r2};
     }
 
     /**
@@ -257,7 +257,6 @@ public class LinearRegression implements Regression {
      * DOCUMENT ME!
      *
      * @param x DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public double getY(double x) {
@@ -271,7 +270,7 @@ public class LinearRegression implements Regression {
      */
     public String toString() {
         StringBuffer buffer = new StringBuffer();
-        buffer.append(getFormula()+"\n");
+        buffer.append(getFormula() + "\n");
 
         buffer.append("y - values calculated\n");
         buffer.append("\n");
@@ -302,22 +301,22 @@ public class LinearRegression implements Regression {
         return buffer.toString();
     }
 
-	public String getFormula() {
-		return "y   = " + betaX + " * x + " + betaY ;
-	}
+    public String getFormula() {
+        return "y   = " + betaX + " * x + " + betaY;
+    }
 
-	@Override
-	public double[] getXData() {
-		return x;
-	}
+    @Override
+    public double[] getXData() {
+        return x;
+    }
 
-	@Override
-	public double[] getYData() {
-		return y;
-	}
+    @Override
+    public double[] getYData() {
+        return y;
+    }
 
-	@Override
-	public String[] getFormulas() {
-		return new String[]{getFormula()};
-	}
+    @Override
+    public String[] getFormulas() {
+        return new String[]{getFormula()};
+    }
 }

@@ -2,7 +2,6 @@ package edu.ucdavis.genomics.metabolomics.util.math.test;
 
 import edu.ucdavis.genomics.metabolomics.util.math.LinearRegression;
 import edu.ucdavis.genomics.metabolomics.util.math.Regression;
-
 import junit.framework.TestCase;
 
 
@@ -44,7 +43,7 @@ public class LinearRegressionTest extends TestCase {
         x[6] = 7;
         x[7] = 8;
         x[8] = 9;
-        
+
         y[0] = 12;
         y[1] = 23;
         y[2] = 43;
@@ -54,12 +53,12 @@ public class LinearRegressionTest extends TestCase {
         y[6] = 68;
         y[7] = 77;
         y[8] = 88;
-        
+
         regression.setData(x, y);
-        
-    	System.out.println(regression.getCoeffizent()[0]);
+
+        System.out.println(regression.getCoeffizent()[0]);
         assertTrue(regression.getCoeffizent() != null);
-    	assertTrue(regression.getCoeffizent()[0] - 0.93214d < 0.0001);
+        assertTrue(regression.getCoeffizent()[0] - 0.93214d < 0.0001);
     }
 
     /*
@@ -78,7 +77,7 @@ public class LinearRegressionTest extends TestCase {
         x[6] = 7;
         x[7] = 8;
         x[8] = 9;
-        
+
         y[0] = 12;
         y[1] = 23;
         y[2] = 43;
@@ -88,9 +87,9 @@ public class LinearRegressionTest extends TestCase {
         y[6] = 68;
         y[7] = 77;
         y[8] = 88;
-        
+
         regression.setData(x, y);
-        
+
         System.err.println(regression);
         assertTrue(Math.abs(regression.getY(1) - 19.9557) < 0.001);
         assertTrue(Math.abs(regression.getY(2) - 28.7724) < 0.001);
@@ -112,21 +111,22 @@ public class LinearRegressionTest extends TestCase {
         x[2] = 5;
         x[3] = 10;
         x[4] = 25;
-        
+
         y[0] = 0;
         y[1] = 0;
         y[2] = 0;
         y[3] = 0;
         y[4] = 15359;
-        
+
         regression.setData(x, y);
         System.err.println(regression);
         assertTrue(Math.abs(regression.getY(1) - -2017.19) < 0.01);
         assertTrue(Math.abs(regression.getY(2.5) - -1025.825) < 0.01);
         assertTrue(Math.abs(regression.getY(5) - 626.4428458) < 0.01);
         assertTrue(Math.abs(regression.getY(10) - 3930.97954065) < 0.01);
-        assertTrue(Math.abs(regression.getY(25) - 13844.58962) < 0.01);        
+        assertTrue(Math.abs(regression.getY(25) - 13844.58962) < 0.01);
     }
+
     /**
      * DOCUMENT ME!
      *
@@ -138,9 +138,9 @@ public class LinearRegressionTest extends TestCase {
 
     }
 
-	protected Regression generateRegression() {
-		return new LinearRegression();
-	}
+    protected Regression generateRegression() {
+        return new LinearRegression();
+    }
 
     /**
      * DOCUMENT ME!

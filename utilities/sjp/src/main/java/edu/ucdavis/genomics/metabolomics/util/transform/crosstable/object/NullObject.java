@@ -3,25 +3,24 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.xml.sax.Attributes;
 
-public class NullObject <Type>extends ContentObject<Type>{
+import java.util.Map;
 
-	private static final long serialVersionUID = 2L;
+public class NullObject<Type> extends ContentObject<Type> {
 
-	public NullObject(Type value) {
-		super(value);
-	}
-	
-	public NullObject(Type value, Attributes a) {
-		super(value,a);
-	}
+    private static final long serialVersionUID = 2L;
 
-	public NullObject(Type m, Map<String,String> attributes) {
-		super(m,attributes);
-	}
+    public NullObject(Type value) {
+        super(value);
+    }
+
+    public NullObject(Type value, Attributes a) {
+        super(value, a);
+    }
+
+    public NullObject(Type m, Map<String, String> attributes) {
+        super(m, attributes);
+    }
 
 }

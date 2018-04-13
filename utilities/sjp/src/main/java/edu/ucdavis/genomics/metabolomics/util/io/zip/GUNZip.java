@@ -11,7 +11,6 @@ package edu.ucdavis.genomics.metabolomics.util.io.zip;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
 import java.util.zip.GZIPInputStream;
 
 
@@ -19,7 +18,7 @@ import java.util.zip.GZIPInputStream;
  * <h3>
  * Title: GUNZip
  * </h3>
- *
+ * <p>
  * <p>
  * Author:      Gert Wohlgemuth <br>
  * Leader:      Dr. Oliver Fiehn <br>
@@ -27,7 +26,7 @@ import java.util.zip.GZIPInputStream;
  * Contact:     wohlgemuth@mpimp-golm.mpg.de <br>
  * Version:     <br>
  * Description:
-
+ * <p>
  * </p>
  */
 public class GUNZip {
@@ -35,7 +34,6 @@ public class GUNZip {
      * DOCUMENT ME!
      *
      * @param args DOCUMENT ME!
-     *
      * @throws Exception DOCUMENT ME!
      */
     public static void main(String[] args) throws Exception {

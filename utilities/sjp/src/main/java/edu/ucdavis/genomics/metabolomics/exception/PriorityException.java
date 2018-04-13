@@ -6,7 +6,6 @@ package edu.ucdavis.genomics.metabolomics.exception;
 
 /**
  * @author wohlgemuth
- *
  */
 public class PriorityException extends BinBaseException {
     /**

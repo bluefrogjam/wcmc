@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext
   */
 class IncludesBasePeakSpectra(val basePeaks: Seq[Double],val phaseToLog:String, val accuracy: Double = 0.00005) extends Filter[MSSpectra] {
 
-  def isNominal:Boolean = accuracy == 0.0
+  def isNominal: Boolean = accuracy == 0.0
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
@@ -21,7 +21,7 @@ class IncludesBasePeakSpectra(val basePeaks: Seq[Double],val phaseToLog:String, 
     basePeaks.exists { peak =>
       logger.debug(s"basePeak of spectra is ${spectra.associatedScan.get.basePeak.mass} compared to ${peak}")
 
-      val result = if(isNominal){
+      val result = if (isNominal) {
         Math.floor(peak + 0.2) == Math.floor(spectra.associatedScan.get.basePeak.mass + 0.2)
       }
       else {

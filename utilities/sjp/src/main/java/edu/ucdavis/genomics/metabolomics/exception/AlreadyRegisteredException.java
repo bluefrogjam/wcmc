@@ -8,17 +8,16 @@ import java.rmi.RemoteException;
 
 /**
  * @author wohlgemuth
- *
  */
 public class AlreadyRegisteredException extends RemoteException {
     /**
-         * Comment for <code>serialVersionUID</code>
-         */
+     * Comment for <code>serialVersionUID</code>
+     */
     private static final long serialVersionUID = 2L;
 
     /**
-    *
-    */
+     *
+     */
     public AlreadyRegisteredException() {
         super();
     }

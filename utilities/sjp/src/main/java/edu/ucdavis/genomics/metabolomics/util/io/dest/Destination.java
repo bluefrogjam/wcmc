@@ -11,37 +11,40 @@ import java.util.Map;
 
 /**
  * defines a destination for writing data to a stream
+ *
  * @author wohlgemuth
  * @version Nov 10, 2005
- *
  */
 public interface Destination {
-    
+
     /**
      * returns the stream belonging to this destination
-     * @author wohlgemuth
-     * @version Nov 10, 2005
+     *
      * @param stream
      * @return
-     * @throws IOException 
+     * @throws IOException
+     * @author wohlgemuth
+     * @version Nov 10, 2005
      */
     public OutputStream getOutputStream() throws IOException;
-    
+
     /**
      * sets the identifier of this destination
+     *
+     * @param o
+     * @throws ConfigurationException
      * @author wohlgemuth
      * @version Nov 10, 2005
-     * @param o
-     * @throws ConfigurationException 
      */
     public void setIdentifier(Object o) throws ConfigurationException;
-    
+
     /**
      * configure the destination
+     *
+     * @param p
+     * @throws ConfigurationException
      * @author wohlgemuth
      * @version Nov 10, 2005
-     * @param p
-     * @throws ConfigurationException 
      */
     public void configure(Map<?, ?> p) throws ConfigurationException;
 }

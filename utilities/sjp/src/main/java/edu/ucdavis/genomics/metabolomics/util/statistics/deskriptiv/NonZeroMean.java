@@ -7,7 +7,6 @@ package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv;
 /**
  * @author wohlgemuth
  * berechnet den mittelwert und ignoriert die nullstellen
- *
  */
 public class NonZeroMean extends Mean {
     /**

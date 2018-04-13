@@ -4,9 +4,7 @@
 package edu.ucdavis.genomics.metabolomics.util.reflection;
 
 import java.io.File;
-
 import java.net.URL;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -14,11 +12,13 @@ import java.util.Vector;
 
 /**
  * ermittelt die class hirachie
+ *
  * @author wohlgemuth
  */
 public class ImplementationFinder {
     /**
      * gibt alle klassen aus dem verzeichnis zur?ck
+     *
      * @param pkg
      * @return
      */
@@ -79,6 +79,7 @@ public class ImplementationFinder {
 
     /**
      * sucht in den angegebenen packages und sub packages nach implementierungen oder ableitungen der ?bergebenen klasses
+     *
      * @param pckgname
      * @param className
      * @return
@@ -89,6 +90,7 @@ public class ImplementationFinder {
 
     /**
      * sucht in den angegebenen packages und sub packages nach implementierungen oder ableitungen der ?bergebenen klasses
+     *
      * @param pckgname
      * @param className
      * @return
@@ -99,6 +101,7 @@ public class ImplementationFinder {
 
     /**
      * ermittelt ob der erste parameter eine instance des zweiten ist
+     *
      * @param classToTest
      * @param classOfInteresst
      * @return
@@ -107,8 +110,8 @@ public class ImplementationFinder {
         List content = getSuper(classToTest, new Vector());
         Iterator it = content.iterator();
 
-        if(classToTest.getName().equals(classOfInteresst.getName())){
-        	return true;
+        if (classToTest.getName().equals(classOfInteresst.getName())) {
+            return true;
         }
         while (it.hasNext()) {
             Class c = (Class) it.next();
@@ -127,16 +130,15 @@ public class ImplementationFinder {
      * @param args DOCUMENT ME!
      */
     public static void main(String[] args) {
-        System.err.println(ImplementationFinder.instanceOf(Double.class,String.class));
+        System.err.println(ImplementationFinder.instanceOf(Double.class, String.class));
     }
 
     /**
      * DOCUMENT ME!
      *
-     * @param pckgname DOCUMENT ME!
+     * @param pckgname  DOCUMENT ME!
      * @param className DOCUMENT ME!
-     * @param cache DOCUMENT ME!
-     *
+     * @param cache     DOCUMENT ME!
      * @return DOCUMENT ME!
      */
     private static List find(String pckgname, String className, List cache) {
@@ -159,15 +161,14 @@ public class ImplementationFinder {
     /**
      * DOCUMENT ME!
      *
-     * @param directory DOCUMENT ME!
-     * @param pckgname DOCUMENT ME!
+     * @param directory     DOCUMENT ME!
+     * @param pckgname      DOCUMENT ME!
      * @param interfaceName DOCUMENT ME!
-     * @param cache DOCUMENT ME!
-     *
+     * @param cache         DOCUMENT ME!
      * @return DOCUMENT ME!
      */
     private static List find(File directory, String pckgname,
-        String interfaceName, List cache) {
+                             String interfaceName, List cache) {
         pckgname = pckgname.replaceAll("/", ".");
 
         if (directory.exists()) {
@@ -178,7 +179,7 @@ public class ImplementationFinder {
                     if (files[i].getName().endsWith(".class")) {
                         try {
                             String classname = files[i].getName().substring(0,
-                                    files[i].getName().length() - 6);
+                                files[i].getName().length() - 6);
 
                             Class o = Class.forName(pckgname + "." + classname);
                             List content = getSuper(o, new Vector());

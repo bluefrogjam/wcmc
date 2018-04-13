@@ -3,13 +3,12 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.statistics.replacement;
 
+import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ContentObject;
+import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
 import junit.framework.TestCase;
 
 import java.util.List;
 import java.util.Vector;
-
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ContentObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
 
 
 /**
@@ -49,6 +48,6 @@ public class ReplaceWithMeanTest extends TestCase {
         assertTrue((Double.parseDouble(data.get(1).toString()) - 1.8) < 0.001);
         assertTrue(data.get(3) instanceof FormatObject);
         assertTrue(data.get(6) instanceof FormatObject);
-        
+
     }
 }

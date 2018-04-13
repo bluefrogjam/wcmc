@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+//@Component
+//@Profile("carrot.processing.peakdetection")
 public class MSDialProcessing {
     private Logger logger = LoggerFactory.getLogger(MSDialProcessing.class);
 

@@ -31,9 +31,9 @@ import java.net.URL;
 
 /**
  * @author Gert Wohlgemuth parst die ec-table datei (ECtable) parst die
- *         ectable, welche von kegg auf ftp.genome.ad.jp/pub/kegg/ligand
- *         bereitgestellt wird die id des enzymes wird als name verwendet die
- *         beschreibung als value. Es kann zu 1:n beziehunkommen.
+ * ectable, welche von kegg auf ftp.genome.ad.jp/pub/kegg/ligand
+ * bereitgestellt wird die id des enzymes wird als name verwendet die
+ * beschreibung als value. Es kann zu 1:n beziehunkommen.
  */
 public class ECtableParser extends Parser {
     /**
@@ -59,7 +59,6 @@ public class ECtableParser extends Parser {
      * DOCUMENT ME!
      *
      * @param line DOCUMENT ME!
-     *
      * @throws ParserException DOCUMENT ME!
      */
     protected void parseLine(String line) throws ParserException {
@@ -73,7 +72,7 @@ public class ECtableParser extends Parser {
 
         if (start == true) {
             if ((line.indexOf("Obsolete  Transferred to") == -1) &&
-                    (line.indexOf("Obsolete  Deleted entry") == -1)) {
+                (line.indexOf("Obsolete  Deleted entry") == -1)) {
                 if (line.length() != 0) {
                     line = line.trim();
 

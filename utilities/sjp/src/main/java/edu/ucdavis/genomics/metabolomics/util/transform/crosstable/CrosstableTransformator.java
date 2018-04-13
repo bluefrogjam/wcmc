@@ -4,41 +4,23 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.transform.crosstable;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import edu.ucdavis.genomics.metabolomics.util.statistics.Statistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import edu.ucdavis.genomics.metabolomics.util.statistics.Statistics;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.Max;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.Mean;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.Median;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.Modus;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.NonZeroMean;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.NonZeroMedian;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.NonZeroMin;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.RandomSamplingVariance;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.StandardDeviation;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.Variance;
-import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.VariationCoefficient;
-import edu.ucdavis.genomics.metabolomics.util.statistics.replacement.ReplaceWithMean;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.format.xls.XMLtoXLSTransformHandler;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
 /**
  * @author wohlgemuth
  * @version Aug 30, 2003 <br>
- *          BinBaseDatabase
+ * BinBaseDatabase
  * @description
  */
 public class CrosstableTransformator implements Runnable, Transformator {
@@ -48,7 +30,6 @@ public class CrosstableTransformator implements Runnable, Transformator {
     private static final long serialVersionUID = 2L;
 
     /**
-     *
      * @uml.property name="transformer"
      * @uml.associationEnd multiplicity="(0 1)"
      */
@@ -57,7 +38,6 @@ public class CrosstableTransformator implements Runnable, Transformator {
     Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     *
      * @uml.property name="normalize"
      * @uml.associationEnd multiplicity="(0 1)"
      */
@@ -65,10 +45,9 @@ public class CrosstableTransformator implements Runnable, Transformator {
     String key = "height";
 
     /**
+     * @param stream
      * @version Sep 1, 2003
      * @author wohlgemuth <br>
-     * @param stream
-     *
      * @uml.property name="in"
      */
     public void setIn(InputStream stream) {
@@ -76,10 +55,9 @@ public class CrosstableTransformator implements Runnable, Transformator {
     }
 
     /**
+     * @param string
      * @version Aug 30, 2003
      * @author wohlgemuth <br>
-     * @param string
-     *
      * @uml.property name="key"
      */
     public void setKey(String string) {
@@ -87,10 +65,9 @@ public class CrosstableTransformator implements Runnable, Transformator {
     }
 
     /**
+     * @return
      * @version Aug 30, 2003
      * @author wohlgemuth <br>
-     * @return
-     *
      * @uml.property name="key"
      */
     public String getKey() {
@@ -98,10 +75,9 @@ public class CrosstableTransformator implements Runnable, Transformator {
     }
 
     /**
+     * @param stream
      * @version Sep 1, 2003
      * @author wohlgemuth <br>
-     * @param stream
-     *
      * @uml.property name="out"
      */
     public void setOut(OutputStream stream) {
@@ -109,10 +85,9 @@ public class CrosstableTransformator implements Runnable, Transformator {
     }
 
     /**
+     * @return
      * @version Sep 1, 2003
      * @author wohlgemuth <br>
-     * @return
-     *
      * @uml.property name="out"
      */
     public OutputStream getOut() {
@@ -133,10 +108,9 @@ public class CrosstableTransformator implements Runnable, Transformator {
     }
 
     /**
+     * @param handler
      * @version Aug 30, 2003
      * @author wohlgemuth <br>
-     * @param handler
-     *
      * @uml.property name="transformer"
      */
     public void setTransformer(AbstractXMLTransformHandler handler) {
@@ -144,10 +118,9 @@ public class CrosstableTransformator implements Runnable, Transformator {
     }
 
     /**
+     * @return
      * @version Aug 30, 2003
      * @author wohlgemuth <br>
-     * @return
-     *
      * @uml.property name="transformer"
      */
     public AbstractXMLTransformHandler getTransformer() {
@@ -155,10 +128,9 @@ public class CrosstableTransformator implements Runnable, Transformator {
     }
 
     /**
+     * @return
      * @version Sep 1, 2003
      * @author wohlgemuth <br>
-     * @return
-     *
      * @uml.property name="in"
      */
     public InputStream getIn() {

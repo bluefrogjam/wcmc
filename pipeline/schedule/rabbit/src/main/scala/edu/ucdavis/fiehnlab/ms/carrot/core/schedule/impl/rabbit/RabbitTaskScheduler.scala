@@ -10,7 +10,6 @@ import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.amqp.support.converter.AbstractMessageConverter
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.{Bean, Configuration}
@@ -37,7 +36,7 @@ class RabbitTaskScheduler extends TaskScheduler {
     */
   override protected def doSubmit(task: Task): String = {
     rabbitTemplate.convertAndSend(queueName, task)
-    "scheduled"
+    s"scheduled ${task.name}"
   }
 }
 
