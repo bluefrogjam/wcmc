@@ -93,10 +93,10 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     * @param standard
     * @return
     */
-  private def gaussianSimilarity(spectrum: Feature, standard: Target): Double = {
+  def gaussianSimilarity(spectrum: Feature, standard: Target): Double = {
     if (spectrum.accurateMass.isDefined && standard.precursorMass.isDefined) {
       val mzSimilarity = math.exp(-0.5 * math.pow((spectrum.accurateMass.get - standard.precursorMass.get) / massAccuracySetting, 2))
-      val rtSimilarity = math.exp(-0.5 * math.pow((spectrum.retentionTimeInMinutes - standard.retentionTimeInMinutes) / rtAccuracySetting, 2))
+      val rtSimilarity = math.exp(-0.5 * math.pow((spectrum.retentionTimeInSeconds - standard.retentionIndex) / rtAccuracySetting, 2))
 
       (mzSimilarity + rtSimilarity) / 2
     } else {
@@ -113,7 +113,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     */
   def findBestHit(standard: Target, spectra: Seq[_ <: Feature]): TargetAnnotation[Target, Feature] = {
     //best hit is defined as the mass with the smallest mass error
-    //if we prefer mass accurracy
+    //if we prefer mass accuracy
     //TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
     //if we we prefer mass intensity
     //TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
@@ -124,7 +124,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   /**
     * runs several optimization algorithms over the Seq of matches and returns the same Seq of a subset
     *
-    * @param matches
+    *`` @param matches
     * @return
     */
   def optimize(matches: Seq[TargetAnnotation[Target, Feature]]): Seq[TargetAnnotation[Target, Feature]] = {

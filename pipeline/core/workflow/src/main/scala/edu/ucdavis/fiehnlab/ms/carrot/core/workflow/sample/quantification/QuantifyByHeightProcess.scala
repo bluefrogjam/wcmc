@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 /**
   * quantifies the data in the given sample by height
   *
-  * @param properties
+  * @param libraryAccess
   */
 @Component
 @Profile(Array("carrot.report.quantify.height"))
