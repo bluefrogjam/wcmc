@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.utilities.logging
 
-import java.util.Date
+import java.util.{Date, UUID}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
@@ -14,9 +14,22 @@ import org.springframework.context.annotation.{Bean, Configuration, Profile}
 object JSONLogging {
 
   val objectMapper = new ObjectMapper()
+
   objectMapper.registerModule(DefaultScalaModule)
 
+  /**
+    * generates a unique process name
+    * across several jbms
+    * @return
+    */
+  val uniqueProcessName:String =UUID.randomUUID().toString
+
+  /**
+    * makes live easier on the log files
+    */
+  Thread.currentThread().setName(uniqueProcessName)
 }
+
 
 /**
   * this trait needs to be extended by other mixins and allows us to easily logout information
@@ -30,7 +43,7 @@ trait JSONLogging extends LazyLogging {
     */
   final def logJSON(map: Map[String, Any] = Map()): String = {
     if (supportsJSONLogging && JSONLoggingAppender.mongoTemplate != null) {
-      val message = JSONLogging.objectMapper.writeValueAsString(buildMessage() ++ map)
+      val message = JSONLogging.objectMapper.writeValueAsString(buildMessage() ++ map ++ Map("process" -> JSONLogging.uniqueProcessName))
       try {
         JSONLoggingAppender.mongoTemplate.insert(message, "carrot_logging")
       }

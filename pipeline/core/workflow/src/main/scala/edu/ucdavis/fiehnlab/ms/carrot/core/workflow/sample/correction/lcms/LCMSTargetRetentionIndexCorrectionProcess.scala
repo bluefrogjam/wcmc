@@ -128,15 +128,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     }
 
 
-    /**
-      * needs to be lazily loaded, since the correction settings need to be set first by spring
-      */
-    val massAccuracy = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction") with JSONSampleLogging{
-      /**
-        * which sample we require to log
-        */
-      override protected val sampleToLog: String = input.fileName
-    }
 
     /**
       * allows us to filter the data by the height of the ion
@@ -150,7 +141,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
 
     //our defined filters to find possible matches are registered in here
-    val filters: SequentialAnnotate = new SequentialAnnotate(massAccuracy :: massIntensity :: List()) with JSONSampleLogging{
+    val filters: SequentialAnnotate = new SequentialAnnotate(massIntensity :: List()) with JSONSampleLogging{
       /**
         * which sample we require to log
         */
