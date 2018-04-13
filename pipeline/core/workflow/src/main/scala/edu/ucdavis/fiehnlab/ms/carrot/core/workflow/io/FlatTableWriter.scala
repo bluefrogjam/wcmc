@@ -113,6 +113,9 @@ class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
           })
           o.print(seperator)
           o.print(if (feature.isDefined) {
+            target.quantifiedValue.get match {
+              case v: Double => if (v < 0.0) logger.warn(s"Negative intensity found for ${feature}")
+            }
             target.quantifiedValue.get
           } else {
             0.0
