@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component
 class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends CorrectionProcess(libraryAccess) with LazyLogging {
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
-  val massAccuracySetting: Double = 5
+  val massAccuracySetting: Double = 0.015
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:6}")
   val rtAccuracySetting: Double = 6
@@ -114,11 +114,11 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   def findBestHit(standard: Target, spectra: Seq[_ <: Feature]): TargetAnnotation[Target, Feature] = {
     //best hit is defined as the mass with the smallest mass error
     //if we prefer mass accurracy
-//    TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
+    //TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
     //if we we prefer mass intensity
-//    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
-    // if we prefer a combination of the two
-    TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(_, standard)))
+    //TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
+    //if we are feeling VERY NERDY... use a gaussian similarity
+    TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(x, standard)))
   }
 
   /**
