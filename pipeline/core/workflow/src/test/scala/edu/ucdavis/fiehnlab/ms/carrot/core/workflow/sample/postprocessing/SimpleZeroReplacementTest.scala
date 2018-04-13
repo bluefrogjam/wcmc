@@ -51,29 +51,23 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   "SimpleZeroReplacementTest" must {
     val method = AcquisitionMethod(None)
 
-    val sample: QuantifiedSample[Double] =
-      quantify.process(annotation.process(
+    val sample: QuantifiedSample[Double] = quantify.process(
+      annotation.process(
         correction.process(
           deco.process(
-            loader.getSample("B5_P20Lipids_Pos_QC000.d.zip"), method
-          ), method
-        ), method
-      ), method)
+            loader.getSample("B5_P20Lipids_Pos_QC000.d.zip"), method),
+          method),
+        method),
+      method)
 
     "replaceValue" should {
 
-      var replaced: QuantifiedSample[Double] = null
       "replace the null values in the file" in {
-        replaced = simpleZeroReplacement.process(sample, method)
+        val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method)
 
-
-        replaced.spectra.foreach { x =>
-          logger.info(s"spectra: ${x}")
-        }
-
-        logger.info("---")
         replaced.quantifiedTargets.foreach { x =>
-          logger.info(s"target: ${x}")
+          logger.info(s"target: ${x.name.get} = ${x.quantifiedValue}")
+          x.quantifiedValue.getOrElse(-1.0) should be >= 0.0
         }
 
         //all spectra should be the same count as the targets
