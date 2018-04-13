@@ -24,7 +24,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna","quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms", "carrot.logging.json.enable"))
+@ActiveProfiles(Array("file.source.luna","quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms"/*, "carrot.logging.json.enable"*/))
 class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
@@ -47,7 +47,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
     logger.debug("massAccuracySetting " +correction.massAccuracySetting.toString)
     logger.debug("minPeakIntensity " + correction.minPeakIntensity.toString)
 
-    "find the right pick (adduct?)" in {
+    "find the closest feature for each target" in {
       val method = AcquisitionMethod(Some(ChromatographicMethod("mytest", None, None, Some(new IonMode("positive")))))
 
       val sample: CorrectedSample = correction.process(
@@ -56,7 +56,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
         ), method
       )
 
-      sample should not be None
+      sample.featuresUsedForCorrection.foreach(x => x.annotation.retentionTimeInSeconds === x.target.retentionIndex +- 10)
     }
 
     "choose the correct TG peak" in {
