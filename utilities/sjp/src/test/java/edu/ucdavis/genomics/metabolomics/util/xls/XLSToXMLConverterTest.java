@@ -21,7 +21,6 @@ import java.util.Iterator;
  * test class for the converter
  *
  * @author wohlgemuth
- *
  */
 public class XLSToXMLConverterTest extends TestCase {
     InputStream stream;

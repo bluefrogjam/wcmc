@@ -11,10 +11,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ActiveProfiles("sjp.locking.local")
-public class SimpleLockingTest extends AbstractLockableTest{
-	@Override
-	protected int getLoad() {
-		return 5;
-	}
+public class SimpleLockingTest extends AbstractLockableTest {
+    @Override
+    protected int getLoad() {
+        return 5;
+    }
 
 }

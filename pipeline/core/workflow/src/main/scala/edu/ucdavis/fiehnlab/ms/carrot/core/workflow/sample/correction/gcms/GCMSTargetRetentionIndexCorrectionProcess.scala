@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, RequiredStandardNotFoundException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SimilaritySupport}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Sample, Target, TargetAnnotation}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target, TargetAnnotation}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.{GCMSCorrectionLibraryProperties, GCMSCorrectionTarget, GCMSLibraryConfiguration}
 import edu.ucdavis.fiehnlab.ms.carrot.math.CombinedRegression

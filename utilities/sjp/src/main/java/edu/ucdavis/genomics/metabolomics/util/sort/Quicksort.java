@@ -11,17 +11,17 @@ import java.util.Arrays;
 
 /**
  * <p>
+ *
  * @author wohlgemuth
  * @version Jul 17, 2003
  * </p>
- *
+ * <p>
  * <h4>File: Quicksort.java </h4>
  * <h4>Project: glibj </h4>
  * <h4>Package: edu.ucdavis.genomics.metabolomics.glibj.alg.sort </h4>
  * <h4>Type: Quicksort </h4>
- *
+ * <p>
  * Quicksortimplementation des Interfaces Sortable aus dem selben packages
- *
  */
 public class Quicksort implements Sortable {
     /**
@@ -43,6 +43,7 @@ public class Quicksort implements Sortable {
 
     /**
      * die rekrusive methode zur Sortierung eines mehrdimensionalen arrays
+     *
      * @param array
      * @param key
      * @param down

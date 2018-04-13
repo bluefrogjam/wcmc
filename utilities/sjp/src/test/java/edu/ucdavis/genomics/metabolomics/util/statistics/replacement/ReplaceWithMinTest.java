@@ -3,20 +3,17 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.statistics.replacement;
 
+import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ContentObject;
+import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
 import junit.framework.TestCase;
 
 import java.util.List;
 import java.util.Vector;
 
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ContentObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
-
 
 /**
- * 
  * @author wohlgemuth
  * @version Nov 18, 2005
- *
  */
 public class ReplaceWithMinTest extends TestCase {
     /**
@@ -44,8 +41,8 @@ public class ReplaceWithMinTest extends TestCase {
 
         ReplaceWithMin discard = new ReplaceWithMin();
         List result = discard.replaceZeros(data);
-        
-        
+
+
         assertTrue((Double.parseDouble(result.get(1).toString()) - 1) < 0.001);
         assertTrue((Double.parseDouble(result.get(1).toString()) - 1) > -0.001);
         assertTrue(result.get(3) instanceof FormatObject);

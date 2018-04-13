@@ -38,7 +38,7 @@ import java.util.Properties;
 public class DownloadWebbook {
     /**
      * das programm l?dt die species datei herunter, parst sie und l?dt die substanzen welche ein massenspektrum aufweisen herunter. diese werde im tempor?ren verzeichnis des system gespeichert
-     *
+     * <p>
      * <b>die dateien enden dann auf *.jdx
      *
      * @param args

@@ -11,16 +11,16 @@ import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlgemuth on 6/17/16.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt-lcms","quantify-by-scan","carrot.processing.peakdetection","carrot.lcms"))
-class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging{
+@ActiveProfiles(Array("backend-txt-lcms", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms"))
+class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null

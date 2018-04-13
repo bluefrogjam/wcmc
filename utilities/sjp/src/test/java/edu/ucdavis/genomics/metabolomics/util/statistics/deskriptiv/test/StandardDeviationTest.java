@@ -5,7 +5,6 @@ package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.test;
 
 import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.StandardDeviation;
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ContentObject;
-
 import junit.framework.TestCase;
 
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.Vector;
 
 /**
  * @author wohlgemuth
- *
  */
 public class StandardDeviationTest extends TestCase {
     /**

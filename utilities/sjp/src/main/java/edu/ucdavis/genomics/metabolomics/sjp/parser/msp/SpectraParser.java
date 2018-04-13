@@ -2,11 +2,11 @@ package edu.ucdavis.genomics.metabolomics.sjp.parser.msp;
 
 /**
  * just some common constants
- * @author nase
  *
+ * @author nase
  */
 public interface SpectraParser {
 
-	public static final String SPECTRA = "spectra";
+    public static final String SPECTRA = "spectra";
 
 }

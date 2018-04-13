@@ -25,163 +25,163 @@ import edu.ucdavis.genomics.metabolomics.sjp.exception.ParserException;
 
 /**
  * DOCUMENT ME!
- * 
+ *
  * @author $author$
  * @version $Revision: 1.2 $
  */
 public class MSPParser extends Parser implements SpectraParser {
 
-	/**
-	 * daran erkenne man ein massspec
-	 */
-	public static final String KEY_MASS_SPEC = "Num Peaks";
+    /**
+     * daran erkenne man ein massspec
+     */
+    public static final String KEY_MASS_SPEC = "Num Peaks";
 
-	/**
-	 * daran erkenne man einen ri marker im name tag
-	 */
-	public static final String KEY_RI_TAG = "RI";
+    /**
+     * daran erkenne man einen ri marker im name tag
+     */
+    public static final String KEY_RI_TAG = "RI";
 
-	/**
-	 * das ende eines datensets
-	 */
-	public static final String KEY_END_OF_DATA_SET = "";
+    /**
+     * das ende eines datensets
+     */
+    public static final String KEY_END_OF_DATA_SET = "";
 
-	/**
-	 * identifier f?r ein attribut
-	 */
-	public static final String KEY_ATTRIBUTE = ":";
-	StringBuffer massSpec = new StringBuffer();
-	boolean dataSetStart = false;
-	boolean specStart = false;
+    /**
+     * identifier f?r ein attribut
+     */
+    public static final String KEY_ATTRIBUTE = ":";
+    StringBuffer massSpec = new StringBuffer();
+    boolean dataSetStart = false;
+    boolean specStart = false;
 
-	/**
-	 * @see edu.ucdavis.genomics.metabolomics.binbase.parser.Parser#parse(java.io.Reader,
-	 *      edu.ucdavis.genomics.metabolomics.binbase.parser.ParserHandler)
-	 */
-	public void parseLine(String line) throws ParserException {
-		if (line.indexOf(KEY_ATTRIBUTE) > -1) {
-			if (dataSetStart == false) {
-				dataSetStart = true;
-				this.getHandler().startDataSet();
-			}
+    /**
+     * @see edu.ucdavis.genomics.metabolomics.binbase.parser.Parser#parse(java.io.Reader,
+     * edu.ucdavis.genomics.metabolomics.binbase.parser.ParserHandler)
+     */
+    public void parseLine(String line) throws ParserException {
+        if (line.indexOf(KEY_ATTRIBUTE) > -1) {
+            if (dataSetStart == false) {
+                dataSetStart = true;
+                this.getHandler().startDataSet();
+            }
 
-			if (line.startsWith(KEY_MASS_SPEC)) {
-				specStart = true;
-				massSpec = new StringBuffer();
-			}
+            if (line.startsWith(KEY_MASS_SPEC)) {
+                specStart = true;
+                massSpec = new StringBuffer();
+            }
 
-			String[] attr = line.split(":");
+            String[] attr = line.split(":");
 
-			if (attr[1].trim().indexOf("##") > -1) {
-				attr[1] = attr[1].trim();
-				attr[1] = attr[1].substring(attr[1].lastIndexOf("##") + 2,
-						attr[1].length());
+            if (attr[1].trim().indexOf("##") > -1) {
+                attr[1] = attr[1].trim();
+                attr[1] = attr[1].substring(attr[1].lastIndexOf("##") + 2,
+                    attr[1].length());
 
-				String[] at = attr[1].split("=");
+                String[] at = attr[1].split("=");
 
-				String name = attr[0].trim().toLowerCase();
-				String value = at[1];
+                String name = attr[0].trim().toLowerCase();
+                String value = at[1];
 
-				this.getHandler().startElement(name, value);
-				this.getHandler().endElement(name);
-			} else if (attr[1].trim().indexOf(KEY_RI_TAG) > -1) {
-				String[] value = attr[1].trim().split(KEY_RI_TAG);
-				if (value.length == 2) {
-					this.getHandler().startElement(
-							attr[0].trim().toLowerCase(), value[0]);
-					this.getHandler().endElement(attr[0].trim().toLowerCase());
+                this.getHandler().startElement(name, value);
+                this.getHandler().endElement(name);
+            } else if (attr[1].trim().indexOf(KEY_RI_TAG) > -1) {
+                String[] value = attr[1].trim().split(KEY_RI_TAG);
+                if (value.length == 2) {
+                    this.getHandler().startElement(
+                        attr[0].trim().toLowerCase(), value[0]);
+                    this.getHandler().endElement(attr[0].trim().toLowerCase());
 
-					try {
-						this.getHandler().startElement("RI", value[1].trim());
-						this.getHandler().endElement("RI");
-					} catch (NumberFormatException e) {
-						e.printStackTrace();
-					}
-				}
-			} else {
-				String name = attr[0].trim().toLowerCase();
-				String value = attr[1].trim().toLowerCase();
+                    try {
+                        this.getHandler().startElement("RI", value[1].trim());
+                        this.getHandler().endElement("RI");
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                String name = attr[0].trim().toLowerCase();
+                String value = attr[1].trim().toLowerCase();
 
-				this.getHandler().startElement(name, value);
-				this.getHandler().endElement(name);
-			}
-		}
+                this.getHandler().startElement(name, value);
+                this.getHandler().endElement(name);
+            }
+        }
 
-		if (specStart == true) {
-			if (line.startsWith(KEY_MASS_SPEC) == false) {
-				massSpec.append(line);
-			}
-		}
+        if (specStart == true) {
+            if (line.startsWith(KEY_MASS_SPEC) == false) {
+                massSpec.append(line);
+            }
+        }
 
-		if (line.equals(KEY_END_OF_DATA_SET)) {
-			parseMassSpec();
-		}
-		// line
-		if (line.matches(".*\\(.*\\).*\\(.*\\).*")) {
-			if (specStart == false) {
-				massSpec.append(line);
-				specStart = true;
-			}
-		}
-		// line
-		if (line.matches(".*\\;.*")) {
-			if (specStart == false) {
-				massSpec.append(line);
-				specStart = true;
-			}
-		}
+        if (line.equals(KEY_END_OF_DATA_SET)) {
+            parseMassSpec();
+        }
+        // line
+        if (line.matches(".*\\(.*\\).*\\(.*\\).*")) {
+            if (specStart == false) {
+                massSpec.append(line);
+                specStart = true;
+            }
+        }
+        // line
+        if (line.matches(".*\\;.*")) {
+            if (specStart == false) {
+                massSpec.append(line);
+                specStart = true;
+            }
+        }
 
-	}
+    }
 
-	private void parseMassSpec() throws ParserException {
-		String spec = massSpec.toString();
+    private void parseMassSpec() throws ParserException {
+        String spec = massSpec.toString();
 
-		massSpec = new StringBuffer();
+        massSpec = new StringBuffer();
 
-		String[] array = null;
+        String[] array = null;
 
-		// seperated by ;
-		if (spec.indexOf(';') > 0) {
-			array = spec.split(";");
-		}
-		// wrapped by ()
-		else if (spec.indexOf(')') > 0) {
-			spec = spec.replace('(', ' ');
-			spec = spec.replace(')', ';');
-			array = spec.split(";");
-		}
+        // seperated by ;
+        if (spec.indexOf(';') > 0) {
+            array = spec.split(";");
+        }
+        // wrapped by ()
+        else if (spec.indexOf(')') > 0) {
+            spec = spec.replace('(', ' ');
+            spec = spec.replace(')', ';');
+            array = spec.split(";");
+        }
 
-		for (int i = 0; i < array.length; i++) {
-			String[] secondary = array[i].split(" ");
+        for (int i = 0; i < array.length; i++) {
+            String[] secondary = array[i].split(" ");
 
-			if (secondary.length > 0) {
-				for (int x = 0; x < (secondary.length - 1); x++) {
-					if (secondary[x].length() > 0) {
-						massSpec.append(secondary[x].trim());
+            if (secondary.length > 0) {
+                for (int x = 0; x < (secondary.length - 1); x++) {
+                    if (secondary[x].length() > 0) {
+                        massSpec.append(secondary[x].trim());
 
-						massSpec.append(":");
-					}
-				}
+                        massSpec.append(":");
+                    }
+                }
 
-				massSpec.append((int) Double
-						.parseDouble((secondary[secondary.length - 1])));
-				massSpec.append(" ");
-			}
-		}
+                massSpec.append((int) Double
+                    .parseDouble((secondary[secondary.length - 1])));
+                massSpec.append(" ");
+            }
+        }
 
-		this.getHandler().startElement(SPECTRA, massSpec.toString().trim());
-		this.getHandler().endElement(SPECTRA);
-		this.getHandler().endDataSet();
-		dataSetStart = false;
-		specStart = false;
-	}
+        this.getHandler().startElement(SPECTRA, massSpec.toString().trim());
+        this.getHandler().endElement(SPECTRA);
+        this.getHandler().endDataSet();
+        dataSetStart = false;
+        specStart = false;
+    }
 
-	@Override
-	protected void finish() throws ParserException {
-		if (specStart) {
-			parseMassSpec();
-		}
-		super.finish();
-	}
+    @Override
+    protected void finish() throws ParserException {
+        if (specStart) {
+            parseMassSpec();
+        }
+        super.finish();
+    }
 
 }

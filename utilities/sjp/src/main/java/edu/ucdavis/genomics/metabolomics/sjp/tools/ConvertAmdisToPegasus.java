@@ -20,14 +20,15 @@ public class ConvertAmdisToPegasus {
 
     /**
      * convertrs from the input source to the output source and allows easy chaining
+     *
      * @param input
      * @return
      */
-    public static Source convert(Source input) throws Exception{
+    public static Source convert(Source input) throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        convert(input.getStream(),out);
+        convert(input.getStream(), out);
 
         out.flush();
 
@@ -36,6 +37,7 @@ public class ConvertAmdisToPegasus {
         result.setIdentifier(input.getSourceName());
         return result;
     }
+
     /**
      * converts the given input stream to a outputstrea,
      */
@@ -44,7 +46,7 @@ public class ConvertAmdisToPegasus {
 
         Parser parser = new AmdisELUParser();
 
-        final BufferedWriter buffered =  new BufferedWriter(new OutputStreamWriter(pegausData));
+        final BufferedWriter buffered = new BufferedWriter(new OutputStreamWriter(pegausData));
 
         parser.parse(amdisData, new ParserHandler() {
 
@@ -86,12 +88,11 @@ public class ConvertAmdisToPegasus {
                     }
 
                     //if the last scan equals the current scan
-                        //skip
-                    if(lastScan.equals(currentScan)){
+                    //skip
+                    if (lastScan.equals(currentScan)) {
                         //skip duplicatedscan
                         buffer = new StringBuffer();
-                    }
-                    else {
+                    } else {
                         buffered.write(buffer.toString().trim());
                         buffered.write("\n");
                         buffer = new StringBuffer();
@@ -126,26 +127,26 @@ public class ConvertAmdisToPegasus {
             @Override
             public void startAttribute(String element, String name, String value) throws ParserException {
 
-                if(firstLine){
+                if (firstLine) {
                     header.append(name);
                     header.append(seperator);
                 }
 
                 //drop the amdis metadata
-                if(name.equals("UniqueMass")){
+                if (name.equals("UniqueMass")) {
                     Pattern pattern = Pattern.compile("([0-9]+)");
                     Matcher matcher = pattern.matcher(value);
 
-                    if(matcher.find()){
+                    if (matcher.find()) {
                         value = matcher.group(1);
                     }
                 }
                 //scale the purity to the pegasus 0-1 range
-                if(name.equals("Purity")){
-                    value = String.valueOf(Double.parseDouble(value)/100);
+                if (name.equals("Purity")) {
+                    value = String.valueOf(Double.parseDouble(value) / 100);
                 }
                 //needed to avoid printing duplicated scans
-                if(name.equals("Amdis Scan")){
+                if (name.equals("Amdis Scan")) {
                     currentScan = value;
                 }
 

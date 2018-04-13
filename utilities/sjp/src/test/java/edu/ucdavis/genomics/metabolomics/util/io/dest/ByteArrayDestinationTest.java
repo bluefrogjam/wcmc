@@ -11,15 +11,15 @@ import junit.framework.TestCase;
 import java.io.*;
 
 public class ByteArrayDestinationTest extends TestCase {
-	public ByteArrayDestinationTest() {
-		super();
-	}
+    public ByteArrayDestinationTest() {
+        super();
+    }
 
     /*
      * Test method for 'edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.data.dest.DatabaseDestination.getOutputStream()'
      */
     public void testGetOutputStream() throws IOException, ConfigurationException {
-    	
+
         ByteArrayDestination destination = new ByteArrayDestination();
         OutputStream stream = destination.getOutputStream();
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream));
@@ -28,7 +28,7 @@ public class ByteArrayDestinationTest extends TestCase {
         writer.write("2\n");
         writer.write("3\n");
         writer.close();
-        
+
         byte[] data = destination.getBytes();
         Source source = new ByteArraySource(data);
         BufferedReader reader = new BufferedReader(new InputStreamReader(source.getStream()));
@@ -37,7 +37,7 @@ public class ByteArrayDestinationTest extends TestCase {
         assertTrue(reader.readLine().trim().equals("2"));
         assertTrue(reader.readLine().trim().equals("3"));
         reader.close();
-        
+
     }
 
 

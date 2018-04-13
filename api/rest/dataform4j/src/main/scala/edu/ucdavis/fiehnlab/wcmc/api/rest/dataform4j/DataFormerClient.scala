@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import org.apache.commons.io.IOUtils
 import org.apache.http.impl.client.HttpClientBuilder
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.ByteArrayResource
@@ -164,7 +164,7 @@ class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
   }
 
   private def download(fileName: String, format: FileType): File = {
-    val endpoint = s"$url/rest/conversion/download/${fileName}/${format.toString.toLowerCase}"
+    val endpoint = s"$url/rest/conversion/download/${fileName.replaceAll(" ", "%20")}/${format.toString.toLowerCase}"
     logger.info(s"downloading ${format} version of ${fileName}")
 
     val downloadName = storage.concat(File.separator).concat(fileName.substring(0, fileName.indexOf(".")))

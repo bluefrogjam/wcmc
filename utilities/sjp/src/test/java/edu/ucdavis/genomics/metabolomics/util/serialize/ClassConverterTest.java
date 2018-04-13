@@ -5,7 +5,6 @@
 package edu.ucdavis.genomics.metabolomics.util.serialize;
 
 import junit.framework.TestCase;
-
 import junit.textui.TestRunner;
 
 import java.io.ByteArrayInputStream;
@@ -16,7 +15,6 @@ import java.io.InputStream;
 
 /**
  * @author wohlgemuth
- *
  */
 public class ClassConverterTest extends TestCase {
     /**
@@ -53,33 +51,33 @@ public class ClassConverterTest extends TestCase {
     /**
      * DOCUMENT ME!
      *
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException            DOCUMENT ME!
      * @throws ClassNotFoundException DOCUMENT ME!
      */
     public void testDesirializeObject()
         throws IOException, ClassNotFoundException {
         Integer integer = new Integer(1);
         assertTrue(ClassConverter.desirializeObject(
-                ClassConverter.objectToInputStream(integer)).equals(integer));
+            ClassConverter.objectToInputStream(integer)).equals(integer));
     }
 
     /**
      * DOCUMENT ME!
      *
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException            DOCUMENT ME!
      * @throws ClassNotFoundException DOCUMENT ME!
      */
     public void testObjectToInputStream()
         throws IOException, ClassNotFoundException {
         Integer integer = new Integer(1);
         assertTrue(ClassConverter.desirializeObject(
-                ClassConverter.objectToInputStream(integer)).equals(integer));
+            ClassConverter.objectToInputStream(integer)).equals(integer));
     }
 
     /**
      * DOCUMENT ME!
      *
-     * @throws IOException DOCUMENT ME!
+     * @throws IOException            DOCUMENT ME!
      * @throws ClassNotFoundException DOCUMENT ME!
      */
     public void testSerializeObject()
@@ -88,7 +86,7 @@ public class ClassConverterTest extends TestCase {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         ClassConverter.serializeObject(integer, stream);
         assertTrue(ClassConverter.desirializeObject(
-                new ByteArrayInputStream(stream.toByteArray())).equals(integer));
+            new ByteArrayInputStream(stream.toByteArray())).equals(integer));
     }
 
     /**

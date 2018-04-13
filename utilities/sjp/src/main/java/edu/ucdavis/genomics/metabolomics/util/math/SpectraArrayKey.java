@@ -9,7 +9,7 @@ package edu.ucdavis.genomics.metabolomics.util.math;
 
 /**
  * @author wohlgemuth
- *
+ * <p>
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
@@ -38,5 +38,5 @@ public interface SpectraArrayKey {
      * Definiert die maximal gr???sse eines spectrums
      */
     int MAX_ION = 1000;
-    
+
 }

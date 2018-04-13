@@ -32,7 +32,7 @@ import java.net.URL;
 
 /**
  * @author Gert Wohlgemuth
- *
+ * <p>
  * diese klasse parst die kegg enzyme files (ftp.genome.ad.jp/pub/kegg/ligand). F?r jedes gefundende attribute wird das handler ElmentFound event ausgel?st.
  */
 public class EnzymeParser extends Parser {

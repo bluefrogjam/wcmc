@@ -65,7 +65,7 @@ public class CSVTableParser extends Parser {
     }
 
     /**
-     * @throws ParserException 
+     * @throws ParserException
      * @see edu.ucdavis.genomics.metabolomics.sjp.Parser#finish()
      */
     protected void finish() throws ParserException {

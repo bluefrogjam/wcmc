@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.{testSpectraWith1Ion, testSpectraWith3Ions, testSpectraWith4Ions}
 import org.scalatest.WordSpec
 
-class IncludeByIonRatioTest extends WordSpec{
+class IncludeByIonRatioTest extends WordSpec {
 
   "IncludeByIonRatioTest" should {
 

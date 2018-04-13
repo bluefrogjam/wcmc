@@ -12,7 +12,6 @@ public class Matrix {
      * DOCUMENT ME!
      *
      * @param object DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public static String[][] transpose(String[][] object) {
@@ -31,7 +30,6 @@ public class Matrix {
      * DOCUMENT ME!
      *
      * @param object DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public static double[][] transpose(double[][] object) {

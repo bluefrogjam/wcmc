@@ -12,7 +12,9 @@
     <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
     <artifactId>config</artifactId>
 
-    <description>this module contains aall the configuration settings and propertes for workflows and exposes them as easy to use profiles</description>
+    <description>this module contains aall the configuration settings and propertes for workflows and exposes them as
+        easy to use profiles
+    </description>
 
     <dependencies>
         <dependency>

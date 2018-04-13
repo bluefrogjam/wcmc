@@ -84,10 +84,11 @@ public class SplitToSheets implements Splitter {
 
     /**
      * f?gt eine neue linie in das workbook ein
+     *
+     * @param line
      * @version Aug 18, 2003
      * @author wohlgemuth
      * <br>
-     * @param line
      */
     public void addLine(List line) {
         if (line == null) {
@@ -117,14 +118,13 @@ public class SplitToSheets implements Splitter {
             while (next == true) {
                 if (x < MAX_COLUMN) {
                     try {
-                    	Object nexto = it.next();
-                    	String data = null;
-                    	if(nexto instanceof FormatObject){
-                    		data = ((FormatObject)nexto).getValue().toString();
-                    	}
-                    	else{
-                    		data = nexto.toString();
-                    	}
+                        Object nexto = it.next();
+                        String data = null;
+                        if (nexto instanceof FormatObject) {
+                            data = ((FormatObject) nexto).getValue().toString();
+                        } else {
+                            data = nexto.toString();
+                        }
 
                         it.remove();
 
@@ -145,12 +145,13 @@ public class SplitToSheets implements Splitter {
 
     /**
      * Speichert die Datei als excel workbook und beendet die m?glichkeit des anf?gen von Linie
-     * @version Aug 18, 2003
-     * @author wohlgemuth
-     * <br>
+     *
      * @param file
      * @throws FileNotFoundException
      * @throws IOException
+     * @version Aug 18, 2003
+     * @author wohlgemuth
+     * <br>
      */
     public void saveBook(File file) throws FileNotFoundException, IOException {
         workbook.write(new FileOutputStream(file));

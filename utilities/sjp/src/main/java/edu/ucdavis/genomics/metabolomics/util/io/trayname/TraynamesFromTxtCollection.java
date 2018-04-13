@@ -6,18 +6,13 @@ package edu.ucdavis.genomics.metabolomics.util.io.trayname;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 
 /**
  * creates from one big txt file in the class format many small ones
- * @author wohlgemuth
  *
+ * @author wohlgemuth
  */
 public class TraynamesFromTxtCollection {
     /**

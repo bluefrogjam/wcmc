@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @Profile("sjp.locking.redis")
-public class RedissonLocking implements Lockable{
+public class RedissonLocking implements Lockable {
 
     @Autowired
     RedissonClient client;
@@ -26,14 +26,14 @@ public class RedissonLocking implements Lockable{
 
     @Override
     public void aquireRessource(String o) throws LockingException {
-        aquireRessource(o,getTimeout());
+        aquireRessource(o, getTimeout());
     }
 
     @Override
     public void aquireRessource(String o, long timeout) throws LockingException {
         RLock lock = client.getLock(o);
         try {
-            if(!lock.tryLock(timeout, TimeUnit.MILLISECONDS)){
+            if (!lock.tryLock(timeout, TimeUnit.MILLISECONDS)) {
                 throw new TimeoutException("locking failed due to timeout");
             }
         } catch (InterruptedException e) {

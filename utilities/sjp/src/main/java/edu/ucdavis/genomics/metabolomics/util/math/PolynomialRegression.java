@@ -11,28 +11,29 @@ import org.jdom2.Element;
  */
 public class PolynomialRegression implements Regression {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	/**
      *
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * @uml.property name="poly"
      * @uml.associationEnd multiplicity="(0 1)"
      */
     private Polynom poly = new Polynom();
-	private double[] y;
-	private double[] x;
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+    private double[] y;
+    private double[] x;
+
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
     public PolynomialRegression(int derivation) {
         this.poly.setDerivation(derivation);
     }
 
-    public void setDerivation(int derivation){
-    	this.poly.setDerivation(derivation);
+    public void setDerivation(int derivation) {
+        this.poly.setDerivation(derivation);
     }
+
     /**
      * @return
      */
@@ -47,9 +48,9 @@ public class PolynomialRegression implements Regression {
     public void setData(double[] x, double[] y) {
         this.x = x;
         this.y = y;
-    	
-    	this.poly.setData(x, y);
-        
+
+        this.poly.setData(x, y);
+
         this.poly.calculate();
     }
 
@@ -78,26 +79,26 @@ public class PolynomialRegression implements Regression {
         return this.poly.toString();
     }
 
-	public void config(Element element) {
-		if(element.getAttribute("order") != null){
-			this.poly.setDerivation(Integer.parseInt(element.getAttributeValue("order")));
-		}
-	}
+    public void config(Element element) {
+        if (element.getAttribute("order") != null) {
+            this.poly.setDerivation(Integer.parseInt(element.getAttributeValue("order")));
+        }
+    }
 
-	@Override
-	public double[] getXData() {
-		// TODO Auto-generated method stub
-		return x;
-	}
+    @Override
+    public double[] getXData() {
+        // TODO Auto-generated method stub
+        return x;
+    }
 
-	@Override
-	public double[] getYData() {
-		// TODO Auto-generated method stub
-		return y;
-	}
+    @Override
+    public double[] getYData() {
+        // TODO Auto-generated method stub
+        return y;
+    }
 
-	@Override
-	public String[] getFormulas() {
-		return poly.getFormulas();
-	}
+    @Override
+    public String[] getFormulas() {
+        return poly.getFormulas();
+    }
 }

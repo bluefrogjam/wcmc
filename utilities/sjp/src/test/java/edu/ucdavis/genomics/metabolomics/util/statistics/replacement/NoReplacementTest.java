@@ -1,7 +1,5 @@
 package edu.ucdavis.genomics.metabolomics.util.statistics.replacement;
 
-import edu.ucdavis.genomics.metabolomics.util.statistics.replacement.NoReplacement;
-
 import junit.framework.TestCase;
 
 import java.util.List;

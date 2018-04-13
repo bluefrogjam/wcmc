@@ -4,8 +4,6 @@
 package edu.ucdavis.genomics.metabolomics.util.crypt;
 
 
-import sun.misc.BASE64Encoder;
-
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
@@ -19,9 +17,9 @@ import java.util.Base64;
 
 /**
  * crypts and decrypts strings
+ *
  * @author wohlgemuth
  * @version Jul 21, 2006
- *
  */
 public final class DesEncrypter {
     Cipher ecipher;
@@ -29,23 +27,22 @@ public final class DesEncrypter {
 
     // 8-byte Salt
     byte[] salt = {
-        (byte)0xA9, (byte)0x9B, (byte)0xC8, (byte)0x32,
-        (byte)0x56, (byte)0x35, (byte)0xE3, (byte)0x03
+        (byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32,
+        (byte) 0x56, (byte) 0x35, (byte) 0xE3, (byte) 0x03
     };
 
     // Iteration count
     int iterationCount = 19;
 
     /**
-     * 
+     * @return
      * @author wohlgemuth
      * @version Jul 21, 2006
-     * @return
      */
-    public final static DesEncrypter getInstance(String password){
-    	return new DesEncrypter(password);
+    public final static DesEncrypter getInstance(String password) {
+        return new DesEncrypter(password);
     }
-    
+
     private DesEncrypter(String passPhrase) {
         try {
             // Create the key
@@ -78,7 +75,7 @@ public final class DesEncrypter {
             byte[] enc = ecipher.doFinal(utf8);
 
             // Encode bytes to base64 to get a string
-           
+
             return Base64.getEncoder().encode(enc);
         } catch (javax.crypto.BadPaddingException e) {
         } catch (IllegalBlockSizeException e) {
@@ -100,16 +97,16 @@ public final class DesEncrypter {
         } catch (javax.crypto.BadPaddingException e) {
         } catch (IllegalBlockSizeException e) {
         } catch (UnsupportedEncodingException e) {
-        } 
+        }
         return null;
     }
-    
+
     public static void main(String[] args) {
-		DesEncrypter cryp = new DesEncrypter("alibaba");
-		
-		byte[] string = cryp.encrypt("tada");
-		String result = cryp.decrypt(string);
-		
-		System.out.println(result + " - " + string);
-	}
+        DesEncrypter cryp = new DesEncrypter("alibaba");
+
+        byte[] string = cryp.encrypt("tada");
+        String result = cryp.decrypt(string);
+
+        System.out.println(result + " - " + string);
+    }
 }

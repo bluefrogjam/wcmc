@@ -10,9 +10,9 @@ import java.util.Collection;
 
 /**
  * @author wohlgemuth dient allgemein zum berechnen von statistischen
- *         informationen welche
+ * informationen welche
  */
-public abstract class DeskriptiveMethod{
+public abstract class DeskriptiveMethod {
     /**
      * Creates a new DeskriptiveMethod object.
      */
@@ -25,8 +25,7 @@ public abstract class DeskriptiveMethod{
     /**
      * f?hrt die berechnung durch
      *
-     * @param list
-     *            eine liste
+     * @param list eine liste
      * @return das ergebniss
      */
     public abstract double calculate(Collection list);

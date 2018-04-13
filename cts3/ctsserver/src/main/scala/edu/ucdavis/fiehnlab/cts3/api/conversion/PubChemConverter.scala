@@ -1,21 +1,19 @@
 package edu.ucdavis.fiehnlab.cts3.api.conversion
 
-import java.net.URLEncoder
-
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.cts3.api.Converter
+import edu.ucdavis.fiehnlab.cts3.model.conversion.pubchem._
 import edu.ucdavis.fiehnlab.cts3.model.{Hit, Stats}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.Caching
-import org.springframework.http.client.{ClientHttpRequest, ClientHttpResponse}
-import org.springframework.http.{HttpMethod, HttpStatus, ResponseEntity}
-import org.springframework.web.client.{HttpClientErrorException, RequestCallback, ResponseExtractor, RestOperations}
+import org.springframework.http.{HttpStatus, ResponseEntity}
+import org.springframework.web.client.{HttpClientErrorException, RestOperations}
 
 /**
   * Created by diego on 1/17/2018
   **/
 class PubChemConverter extends Converter {
+  logger.debug("Creating PubChemConverter")
+
   @Autowired
   val template: RestOperations = null
   @Autowired
@@ -32,10 +30,10 @@ class PubChemConverter extends Converter {
 
 
   //conversion from formula is async; from sdf and inchicode are POST
-  override protected def requires: Map[String, String] = Map("name" -> "name", "inchikey" -> "inchikey",
+  override final def requires: Map[String, String] = Map("name" -> "name", "inchikey" -> "inchikey",
     "smiles" -> "smiles", "cid" -> "cid", "sid" -> "sid")
 
-  override protected def provides: Map[String, String] = Map("cid" -> "cids", "sid" -> "sids", "inchikey" -> "InChIKey", "inchicode" -> "InChI",
+  override final def provides: Map[String, String] = Map("cid" -> "cids", "sid" -> "sids", "inchikey" -> "InChIKey", "inchicode" -> "InChI",
     "smiles" -> "CanonicalSMILES", "molweight" -> "MolecularWeight", "formula" -> "MolecularFormula", "exactmass" -> "ExactMass")
 
 
@@ -125,10 +123,6 @@ class PubChemConverter extends Converter {
 
   }
 }
-
-case class PropertyResponse(PropertyTable: PropertyTable)
-
-case class PropertyTable(Properties: Seq[PubChemProperties])
 
 case class PubChemProperties(
                               CID: Long,

@@ -7,18 +7,18 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.http.MediaType
 import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, CorsRegistry, WebMvcConfigurerAdapter}
 
 /**
   * Created by wohlgemuth on 9/7/17.
   */
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]), scanBasePackages = Array("edu.ucdavis.fiehnlab.wcmc.pipeline"))
 class Carrot {
 
   @Value("${server.port}")
-  val port: Integer = null
+  val port: Integer = 0
 
   /**
     * should be done over a profile TODO
@@ -44,7 +44,6 @@ object Carrot extends App {
 }
 
 @Configuration
-@ComponentScan
 class CarrotCors extends WebMvcConfigurerAdapter {
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {

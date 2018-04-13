@@ -3,14 +3,13 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv;
 
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-
 import edu.ucdavis.genomics.metabolomics.exception.WrongTypeOfValueException;
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -19,14 +18,13 @@ import org.slf4j.LoggerFactory;
  */
 public class Max extends DeskriptiveMethod {
     /**
-     *
      * @uml.property name="logger"
      * @uml.associationEnd multiplicity="(1 1)"
      */
     Logger logger = LoggerFactory.getLogger(getClass());
 
     int index;
-    
+
     /**
      * @see edu.ucdavis.genomics.metabolomics.binbase.utils.statistics.deskriptiv.DeskriptiveMethod#getName()
      */
@@ -52,10 +50,10 @@ public class Max extends DeskriptiveMethod {
 
         while (it.hasNext() == true) {
             Object v = it.next();
-            
+
             Object o = v;
-            if(o instanceof FormatObject){
-            	o = ((FormatObject)o).getValue();
+            if (o instanceof FormatObject) {
+                o = ((FormatObject) o).getValue();
             }
 
             if (o instanceof String) {
@@ -64,7 +62,7 @@ public class Max extends DeskriptiveMethod {
 
                     if (value > max) {
                         max = value;
-                        index =i;
+                        index = i;
                     }
                 } catch (NumberFormatException e) {
                     logger.error(e.getMessage(), e);
@@ -74,29 +72,28 @@ public class Max extends DeskriptiveMethod {
 
                 if (value > max) {
                     max = value;
-                    index =i;
+                    index = i;
                 }
-            } else if( o == null){
-            	double value = 0;
+            } else if (o == null) {
+                double value = 0;
 
                 if (value > max) {
                     max = value;
-                    index =i;
+                    index = i;
                 }
-            }
-            else {
+            } else {
                 throw new WrongTypeOfValueException(
                     "value has not the right class, is a " +
-                    o.getClass().getName());
+                        o.getClass().getName());
             }
-            
+
             i++;
         }
 
         return max;
     }
 
-	public int getIndex() {
-		return index;
-	}
+    public int getIndex() {
+        return index;
+    }
 }

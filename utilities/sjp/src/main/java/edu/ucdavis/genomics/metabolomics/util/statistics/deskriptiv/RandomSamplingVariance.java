@@ -3,14 +3,13 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv;
 
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-
 import edu.ucdavis.genomics.metabolomics.exception.WrongTypeOfValueException;
 import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -20,7 +19,6 @@ public class RandomSamplingVariance extends DeskriptiveMethod {
     Logger logger = LoggerFactory.getLogger(StandardDeviation.class);
 
     /**
-     *
      * @uml.property name="mean"
      * @uml.associationEnd multiplicity="(0 1)"
      */
@@ -51,10 +49,10 @@ public class RandomSamplingVariance extends DeskriptiveMethod {
 
         while (it.hasNext() == true) {
             Object v = it.next();
-            
+
             Object o = v;
-            if(o instanceof FormatObject){
-            	o = ((FormatObject)o).getValue();
+            if (o instanceof FormatObject) {
+                o = ((FormatObject) o).getValue();
             }
 
             double value = 0;
@@ -70,7 +68,7 @@ public class RandomSamplingVariance extends DeskriptiveMethod {
             } else {
                 throw new WrongTypeOfValueException(
                     "value has not the right class, is a " +
-                    o.getClass().getName());
+                        o.getClass().getName());
             }
 
             value = ((value - mean) * (value - mean));

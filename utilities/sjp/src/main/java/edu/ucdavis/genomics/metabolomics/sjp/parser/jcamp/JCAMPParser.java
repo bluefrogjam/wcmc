@@ -64,7 +64,7 @@ public class JCAMPParser extends Parser {
 
     /**
      * @see edu.ucdavis.genomics.metabolomics.binbase.parser.Parser#parse(java.io.Reader,
-     *      edu.ucdavis.genomics.metabolomics.binbase.parser.ParserHandler)
+     * edu.ucdavis.genomics.metabolomics.binbase.parser.ParserHandler)
      */
     public void parseLine(String line) throws ParserException {
         if (line.indexOf(KEY_ATTRIBUTE) > -1) {
@@ -95,7 +95,7 @@ public class JCAMPParser extends Parser {
             }
         } else {
             if ((line.matches("[0-9].*")) &&
-                    (line.indexOf(KEY_END_OF_DATA_SET) == -1)) {
+                (line.indexOf(KEY_END_OF_DATA_SET) == -1)) {
                 this.getHandler().startElement("data point", line.trim());
                 this.getHandler().endElement("data point");
             }

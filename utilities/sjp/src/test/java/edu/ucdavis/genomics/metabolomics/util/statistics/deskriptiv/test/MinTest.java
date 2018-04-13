@@ -4,7 +4,6 @@
 package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.test;
 
 import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.Min;
-
 import junit.framework.TestCase;
 
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.Vector;
 
 /**
  * @author wohlgemuth
- *
  */
 public class MinTest extends TestCase {
     /**

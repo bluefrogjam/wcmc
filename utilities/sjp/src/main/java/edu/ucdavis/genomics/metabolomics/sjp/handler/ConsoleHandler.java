@@ -68,7 +68,7 @@ public class ConsoleHandler implements ParserHandler {
 
     /**
      * @see edu.ucdavis.genomics.metabolomics.sjp.ParserHandler#startAttribute(String,
-     *      String, String)
+     * String, String)
      */
     public void startAttribute(String element, String name, String value) {
         System.out.println("found attribute: " + name + " element: " + element +
@@ -91,7 +91,7 @@ public class ConsoleHandler implements ParserHandler {
 
     /**
      * @see edu.ucdavis.genomics.metabolomics.binbase.parser.ParserHandler#startElement(String,
-     *      String)
+     * String)
      */
     public void startElement(String name, String value) {
         System.out.println("found element: " + name + " - " + value);

@@ -3,20 +3,15 @@
  */
 package edu.ucdavis.genomics.metabolomics.util.xls;
 
-import java.io.ByteArrayInputStream;
+import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ContentObject;
+import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
+import junit.framework.TestCase;
+import org.apache.poi.ss.usermodel.Sheet;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
-
-import junit.framework.TestCase;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
-
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.ContentObject;
-import edu.ucdavis.genomics.metabolomics.util.transform.crosstable.object.FormatObject;
-import org.apache.poi.ss.usermodel.Workbook;
 
 
 /**

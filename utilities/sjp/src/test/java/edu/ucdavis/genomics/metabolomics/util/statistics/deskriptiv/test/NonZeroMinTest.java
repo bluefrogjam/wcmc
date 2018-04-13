@@ -4,7 +4,6 @@
 package edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.test;
 
 import edu.ucdavis.genomics.metabolomics.util.statistics.deskriptiv.NonZeroMin;
-
 import junit.framework.TestCase;
 
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.Vector;
 
 /**
  * @author wohlgemuth
- *
  */
 public class NonZeroMinTest extends TestCase {
     /**
@@ -38,6 +36,6 @@ public class NonZeroMinTest extends TestCase {
         NonZeroMin v = new NonZeroMin();
         assertTrue(Math.abs(v.calculate(data) - 1) < 0.0001);
         assertTrue(Math.abs(v.calculate(data) - 1) > -0.0001);
-        
+
     }
 }

@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.loader
 
 import java.io._
-import java.util.zip.ZipInputStream
-import javax.annotation.PostConstruct
 
 import com.typesafe.scalalogging.LazyLogging
+import javax.annotation.PostConstruct
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Primary
@@ -94,17 +93,19 @@ trait ResourceLoader extends LazyLogging {
 
   /**
     * check if the requested resource is a directory
+    *
     * @param name
     * @return
     */
-  def isDirectory(name:String) : Boolean = ???
+  def isDirectory(name: String): Boolean = ???
 
   /**
     * checks if the requested resource is a file
+    *
     * @param name
     * @return
     */
-  def isFile(name:String) : Boolean = ???
+  def isFile(name: String): Boolean = ???
 }
 
 /**
@@ -123,18 +124,19 @@ class DelegatingResourceLoader extends ResourceLoader {
   /**
     * sorted by priority
     */
-  lazy val sortedLoader: List[ResourceLoader] = loaders.asScala.sortBy(_.priority).reverse.toList
+  lazy val sortedLoader: Seq[ResourceLoader] = loaders.asScala.sortBy(_.priority).reverse
 
   /**
-    * trys to find the resource in any of the defined loaders or null
+    * tries to find the resource in any of the defined loaders or null
     *
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.exists(name) => {
-    logger.debug(s"loading ${name} with ${loader.getClass}")
-    loader.load(name)
-  }
+  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst {
+    case loader if loader.exists(name) => {
+      logger.debug(s"loading ${name} with ${loader.getClass}")
+      loader.load(name)
+    }
   }.getOrElse(None)
 
   override def toString = s"DelegatingResourceLoader($sortedLoader)"

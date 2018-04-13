@@ -63,27 +63,27 @@ public class SpectralCentroiding {
 			List<Ion> centroidedSpectrum = new ArrayList<>();
 
 			// Differential calculation
-			ArrayList<Double> firstDiffPeakList = new ArrayList<>();
-			ArrayList<Double> secondDiffPeakList = new ArrayList<>();
+			ArrayList<Float> firstDiffPeakList = new ArrayList<>();
+			ArrayList<Float> secondDiffPeakList = new ArrayList<>();
 
-			double firstDiff, secondDiff;
-			double maxFirstDiff = Double.MIN_VALUE;
-			double maxSecondDiff = Double.MIN_VALUE;
-			double maxAmplitudeDiff = Double.MIN_VALUE;
+			float firstDiff, secondDiff;
+			float maxFirstDiff = Float.MIN_VALUE;
+			float maxSecondDiff = Float.MIN_VALUE;
+			float maxAmplitudeDiff = Float.MIN_VALUE;
 
 			int halfDatapoint = (firstDiffCoeff.length / 2);
 			int peakID = 0;
 
 			for (int i = 0; i < spectrum.size(); i++) {
 				if (i < halfDatapoint) {
-					firstDiffPeakList.add(0.0);
-					secondDiffPeakList.add(0.0);
+					firstDiffPeakList.add(0.0f);
+					secondDiffPeakList.add(0.0f);
 					continue;
 				}
 
 				if (i >= spectrum.size() - halfDatapoint) {
-					firstDiffPeakList.add(0.0);
-					secondDiffPeakList.add(0.0);
+					firstDiffPeakList.add(0.0f);
+					secondDiffPeakList.add(0.0f);
 					continue;
 				}
 
@@ -111,9 +111,9 @@ public class SpectralCentroiding {
 			}
 
 			// Noise estimate
-			ArrayList<Double> amplitudeNoiseCandidate = new ArrayList<>();
-			ArrayList<Double> slopeNoiseCandidate = new ArrayList<>();
-			ArrayList<Double> peaktopNoiseCandidate = new ArrayList<>();
+			ArrayList<Float> amplitudeNoiseCandidate = new ArrayList<>();
+			ArrayList<Float> slopeNoiseCandidate = new ArrayList<>();
+			ArrayList<Float> peaktopNoiseCandidate = new ArrayList<>();
 
 			double amplitudeNoiseThresh = maxAmplitudeDiff * 0.05;
 			double slopeNoiseThresh = maxFirstDiff * 0.05;
@@ -211,7 +211,7 @@ public class SpectralCentroiding {
 					}
 
 					// 5. Set peakInformation
-					centroidedSpectrum.add(new Ion(datapoints.get(peakTopId)[0], datapoints.get(peakTopId)[0]));
+					centroidedSpectrum.add(new Ion(datapoints.get(peakTopId)[0], (float)datapoints.get(peakTopId)[0]));
 					peakID++;
 				}
 			}
@@ -253,7 +253,7 @@ public class SpectralCentroiding {
 			int startIndex, remaindIndex = 0;
 			int counter = 0;
 			double sumXY = 0;
-			double sumY = 0;
+			float sumY = 0;
 
 			while (focusedMz <= maxMz) {
 				sumXY = 0.0;

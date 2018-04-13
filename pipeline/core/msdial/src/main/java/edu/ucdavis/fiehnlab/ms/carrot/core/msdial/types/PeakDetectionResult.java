@@ -5,7 +5,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types;
  */
 public class PeakDetectionResult {
     public PeakDetectionResult(int peakID, double amplitudeOrderValue, double amplitudeScoreValue, double areaAboveBaseline, double areaAboveZero, double basePeakValue, double gaussianSimilarityValue, double idealSlopeValue,
-                               double intensityAtLeftPeakEdge, double intensityAtPeakTop, double intensityAtRightPeakEdge, double peakPureValue, double rtAtLeftPeakEdge, double rtAtPeakTop, double rtAtRightPeakEdge,
+                               float intensityAtLeftPeakEdge, float intensityAtPeakTop, float intensityAtRightPeakEdge, double peakPureValue, double rtAtLeftPeakEdge, double rtAtPeakTop, double rtAtRightPeakEdge,
                                int scanNumAtLeftPeakEdge, int scanNumAtPeakTop, int scanNumAtRightPeakEdge, double sharpnessValue, double symmetryValue) {
         this.peakID = peakID;
         this.amplitudeOrderValue = amplitudeOrderValue;
@@ -34,7 +34,7 @@ public class PeakDetectionResult {
     public int peakID;
     public int scanNumAtLeftPeakEdge, scanNumAtRightPeakEdge, scanNumAtPeakTop;
 
-    public double intensityAtLeftPeakEdge, intensityAtRightPeakEdge, intensityAtPeakTop;
+    public float intensityAtLeftPeakEdge, intensityAtRightPeakEdge, intensityAtPeakTop;
     public double areaAboveZero, areaAboveBaseline;
     public double rtAtLeftPeakEdge, rtAtRightPeakEdge, rtAtPeakTop;
     public double peakPureValue, sharpnessValue, gaussianSimilarityValue, idealSlopeValue, basePeakValue, symmetryValue, amplitudeScoreValue, amplitudeOrderValue;

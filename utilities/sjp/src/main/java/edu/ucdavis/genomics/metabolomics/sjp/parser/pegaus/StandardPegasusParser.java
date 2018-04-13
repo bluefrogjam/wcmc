@@ -6,18 +6,18 @@ import edu.ucdavis.genomics.metabolomics.sjp.parser.msp.SpectraParser;
 
 /**
  * finds the standard pegasus export string in a set of data
- * @author wohlgemuth
  *
+ * @author wohlgemuth
  */
-public class StandardPegasusParser extends Parser implements SpectraParser{
+public class StandardPegasusParser extends Parser implements SpectraParser {
 
-	@Override
-	protected void parseLine(String line) throws ParserException {
-		
-		if(line.matches("(([0-9]*:[0-9]*).)+?")){
-			this.getHandler().startElement(SPECTRA, line.trim());
-			this.getHandler().endElement(SPECTRA);
-		}
-	}
+    @Override
+    protected void parseLine(String line) throws ParserException {
+
+        if (line.matches("(([0-9]*:[0-9]*).)+?")) {
+            this.getHandler().startElement(SPECTRA, line.trim());
+            this.getHandler().endElement(SPECTRA);
+        }
+    }
 
 }

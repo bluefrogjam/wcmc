@@ -13,7 +13,7 @@ public class ConvertAmdisToPegasusTest extends TestCase {
 
         OutputStream out = System.out;
 
-        ConvertAmdisToPegasus.convert(stream,out);
+        ConvertAmdisToPegasus.convert(stream, out);
 
     }
 
@@ -23,7 +23,7 @@ public class ConvertAmdisToPegasusTest extends TestCase {
 
         OutputStream out = System.out;
 
-        ConvertAmdisToPegasus.convert(stream,out);
+        ConvertAmdisToPegasus.convert(stream, out);
 
     }
 

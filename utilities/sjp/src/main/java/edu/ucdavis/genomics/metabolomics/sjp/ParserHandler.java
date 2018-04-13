@@ -33,11 +33,13 @@ import java.util.Properties;
  * <b>
  * <b>
  * Dieses Interface muss dann von der Klasse implementiert werden welche als Handler dienen sollte
+ *
  * @author gert wohlgemuth
  */
 public interface ParserHandler {
     /**
      * setzt ben?tigte properties
+     *
      * @param p
      * @throws ParserException
      */
@@ -45,6 +47,7 @@ public interface ParserHandler {
 
     /**
      * das parsen eines elementes wurde abgeschlossen
+     *
      * @param element
      * @param name
      * @throws ParserException
@@ -53,18 +56,21 @@ public interface ParserHandler {
 
     /**
      * beendet ein datenset
+     *
      * @throws ParserException
      */
     void endDataSet() throws ParserException;
 
     /**
      * das parsen wurde abgeschlossen
+     *
      * @throws ParserException
      */
     void endDocument() throws ParserException;
 
     /**
      * das parsen eines elementes wurde abgeschlossen
+     *
      * @param name
      * @throws ParserException
      */
@@ -72,6 +78,7 @@ public interface ParserHandler {
 
     /**
      * das parsen eines attributes wurde abgeschlossen
+     *
      * @param element
      * @param name
      * @param value
@@ -82,18 +89,21 @@ public interface ParserHandler {
 
     /**
      * startet ein neues datenset
+     *
      * @throws ParserException
      */
     void startDataSet() throws ParserException;
 
     /**
      * es wird angefangen das dokument zu parsen
+     *
      * @throws ParserException
      */
     void startDocument() throws ParserException;
 
     /**
      * ein element wurde gefunden
+     *
      * @param name
      * @param value
      * @throws ParserException

@@ -30,6 +30,7 @@ import java.io.File;
 
 /**
  * parst die daten eines verzeichnis mittels eines jcamparsers
+ *
  * @author Gert Wohlgemuth
  */
 public class ImportJCAMP {
@@ -37,12 +38,13 @@ public class ImportJCAMP {
      * parst die datei oder die im verzeichnis enthaltenen dateien.
      * es muss arg[0] angegeben sein (datei/dir). des weiteren muss der handler als
      * classname angegeben sein
+     *
      * @param args
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         ParserHandler handler = (ParserHandler) Class.forName(args[1])
-                                                     .newInstance();
+            .newInstance();
         Parser parser = Parser.create(JCAMPParser.class);
         parser.parse(new File(args[0]), handler);
     }

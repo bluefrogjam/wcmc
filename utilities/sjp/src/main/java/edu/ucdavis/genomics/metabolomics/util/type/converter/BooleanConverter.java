@@ -12,7 +12,6 @@ public class BooleanConverter {
      * DOCUMENT ME!
      *
      * @param b DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public static boolean StringtoBoolean(String b) {
@@ -23,7 +22,6 @@ public class BooleanConverter {
      * DOCUMENT ME!
      *
      * @param b DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public static String booleanToString(boolean b) {

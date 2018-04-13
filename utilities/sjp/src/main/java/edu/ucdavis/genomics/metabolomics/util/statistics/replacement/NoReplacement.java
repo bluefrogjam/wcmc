@@ -8,7 +8,6 @@ import java.util.List;
 
 /**
  * @author wohlgemuth
- *
  */
 public class NoReplacement implements ZeroReplaceable {
     /**
@@ -18,8 +17,8 @@ public class NoReplacement implements ZeroReplaceable {
         return list;
     }
 
-	@Override
-	public String getDescription() {
-		return "does not do any form of replacment";
-	}
+    @Override
+    public String getDescription() {
+        return "does not do any form of replacment";
+    }
 }

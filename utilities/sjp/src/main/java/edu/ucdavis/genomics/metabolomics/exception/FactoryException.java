@@ -5,14 +5,14 @@ package edu.ucdavis.genomics.metabolomics.exception;
 
 /**
  * is thrown if we can't obtain a factory
+ *
  * @author wohlgemuth
  * @version Nov 9, 2005
- *
  */
 public class FactoryException extends RuntimeException {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2L;
 

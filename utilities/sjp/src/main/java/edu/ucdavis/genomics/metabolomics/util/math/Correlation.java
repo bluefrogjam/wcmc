@@ -6,6 +6,7 @@ package edu.ucdavis.genomics.metabolomics.util.math;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: Max Planck Institute</p>
+ *
  * @author Gert Wohlgemuth
  * @version 1.0
  */
@@ -24,7 +25,6 @@ public class Correlation {
 
     /**
      * @param x
-     *
      * @uml.property name="x"
      */
     public void setX(double[] x) {
@@ -33,7 +33,6 @@ public class Correlation {
 
     /**
      * @return
-     *
      * @uml.property name="x"
      */
     public double[] getX() {
@@ -42,7 +41,6 @@ public class Correlation {
 
     /**
      * @param y
-     *
      * @uml.property name="y"
      */
     public void setY(double[] y) {
@@ -51,7 +49,6 @@ public class Correlation {
 
     /**
      * @return
-     *
      * @uml.property name="y"
      */
     public double[] getY() {
@@ -59,9 +56,9 @@ public class Correlation {
     }
 
     /**
-           * @return
-           * @throws ArithmeticException
-           */
+     * @return
+     * @throws ArithmeticException
+     */
     public double calculate() throws ArithmeticException {
         //berechnen des mittelwertes
         this.avgX = 0;

@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexTimeWindow}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -160,31 +160,31 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     * based on the provided configuration settings
     *
     * @param needsReplacement
-    * @param sample
+    * @param quantSample
     * @param rawdata
     * @return
     */
-  override def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
+  override def replaceValue(needsReplacement: QuantifiedTarget[Double], quantSample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
     val receivedTarget = needsReplacement
 
     val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracy, "replacement") with JSONSampleLogging {
       /**
         * which sample we require to log
         */
-      override protected val sampleToLog: String = sample.fileName
+      override protected val sampleToLog: String = quantSample.fileName
     }
     val filterByRetentionIndexNoise = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionTimeInSeconds, "replacement", zeroReplacementProperties.noiseWindowInSeconds) with JSONSampleLogging {
       /**
         * which sample we require to log
         */
-      override protected val sampleToLog: String = sample.fileName
+      override protected val sampleToLog: String = quantSample.fileName
     }
 
     val filterByRetentionIndex = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionIndex, "replacement", zeroReplacementProperties.retentionIndexWindowForPeakDetection) with JSONSampleLogging {
       /**
         * which sample we require to log
         */
-      override protected val sampleToLog: String = sample.fileName
+      override protected val sampleToLog: String = quantSample.fileName
     }
 
 
@@ -222,16 +222,55 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 
     }
 
-    logger.debug(s"found ${replacementValueSpectra.size} spectra,after mass filter for target ${receivedTarget}")
+    logger.debug(s"found ${replacementValueSpectra.size} spectra, after mass filter for target ${receivedTarget}")
 
     val filteredByTime: Seq[Feature with CorrectedSpectra] = replacementValueSpectra.filter { spectra =>
       filterByRetentionIndex.include(spectra, applicationContext)
     }
-    logger.debug(s"found ${filteredByTime.size} spectra,after mass filter for target ${receivedTarget}")
+    logger.debug(s"found ${filteredByTime.size} spectra, after retention index filter for target ${receivedTarget}")
 
     //error here, sometime mass is not found for some reason and so things are failing
-    val value: (Feature with CorrectedSpectra) = filteredByTime.maxBy { spectra =>
-      MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
+    //TODO: Gert shuold check if this makes sense. In case mass isn't there, I create a Corrected Feature using the original QuantifiedSample and RT, RI, scan# from target with 0 intensity.
+    val value: (Feature with CorrectedSpectra) = {
+      if (filteredByTime.isEmpty) {
+        logger.warn("Created failsafe feature_wirh_correctedspectra from target data and 0 intensity")
+        new Feature with CorrectedSpectra {
+          /**
+            * specified ion mode for the given feature
+            */
+          override val ionMode: Option[IonMode] = Some(receivedTarget.ionMode)
+          /**
+            * how pure this spectra is
+            */
+          override val purity: Option[Double] = Some(0)
+          /**
+            * the associated sample
+            */
+          override val sample: String = quantSample.fileName
+          /**
+            * the retention time of this spectra. It should be provided in seconds!
+            */
+          override val retentionTimeInSeconds: Double = receivedTarget.retentionTimeInSeconds
+          /**
+            * the local scan number
+            */
+          override val scanNumber: Int = 0
+          /**
+            * the associated complete scan for this feature
+            */
+          override val associatedScan: Option[SpectrumProperties] = None
+          /**
+            * accurate mass of this feature, if applicable
+            */
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, 0))
+
+          override val retentionIndex: Double = receivedTarget.retentionIndex
+        }
+      } else {
+        filteredByTime.maxBy { spectra =>
+          MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
+        }
+      }
     }
 
     val ion = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get).get
@@ -297,7 +336,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
       */
     override val massAccuracy: Option[Double] = None
     /**
-      * accyracy in ppm
+      * accuracy in ppm
       */
     override val massAccuracyPPM: Option[Double] = None
     /**

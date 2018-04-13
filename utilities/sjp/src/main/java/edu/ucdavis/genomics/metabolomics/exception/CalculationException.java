@@ -3,12 +3,12 @@ package edu.ucdavis.genomics.metabolomics.exception;
 
 /**
  * thown in cases of calculation mistakes
- * @author wohlgemuth
  *
+ * @author wohlgemuth
  */
 public class CalculationException extends RuntimeException {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2L;
 
@@ -18,7 +18,7 @@ public class CalculationException extends RuntimeException {
     public CalculationException() {
         super();
 
-        
+
     }
 
     /**
@@ -29,19 +29,19 @@ public class CalculationException extends RuntimeException {
     public CalculationException(String message) {
         super(message);
 
-        
+
     }
 
     /**
      * Creates a new CalculationException object.
      *
      * @param message DOCUMENT ME!
-     * @param cause DOCUMENT ME!
+     * @param cause   DOCUMENT ME!
      */
     public CalculationException(String message, Throwable cause) {
         super(message, cause);
 
-        
+
     }
 
     /**
@@ -52,6 +52,6 @@ public class CalculationException extends RuntimeException {
     public CalculationException(Throwable cause) {
         super(cause);
 
-        
+
     }
 }

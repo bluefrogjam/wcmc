@@ -2,9 +2,7 @@ package edu.ucdavis.genomics.metabolomics.util.math.test;
 
 import edu.ucdavis.genomics.metabolomics.util.math.CombinedRegression;
 import edu.ucdavis.genomics.metabolomics.util.math.Regression;
-
 import junit.framework.TestCase;
-
 import junit.textui.TestRunner;
 
 

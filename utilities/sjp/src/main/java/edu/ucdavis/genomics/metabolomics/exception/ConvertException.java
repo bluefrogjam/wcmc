@@ -6,7 +6,6 @@ package edu.ucdavis.genomics.metabolomics.exception;
 
 /**
  * @author wohlgemuth
- *
  */
 public class ConvertException extends BinBaseException {
     /**
@@ -20,7 +19,7 @@ public class ConvertException extends BinBaseException {
     public ConvertException() {
         super();
 
-        
+
     }
 
     /**
@@ -29,7 +28,7 @@ public class ConvertException extends BinBaseException {
     public ConvertException(String message) {
         super(message);
 
-        
+
     }
 
     /**
@@ -39,7 +38,7 @@ public class ConvertException extends BinBaseException {
     public ConvertException(String message, Throwable cause) {
         super(message, cause);
 
-        
+
     }
 
     /**
@@ -48,6 +47,6 @@ public class ConvertException extends BinBaseException {
     public ConvertException(Throwable cause) {
         super(cause);
 
-        
+
     }
 }

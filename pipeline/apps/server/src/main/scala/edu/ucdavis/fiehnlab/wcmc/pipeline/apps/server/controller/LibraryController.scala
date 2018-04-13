@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.{DeserializationContext, JsonDeserializer}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryTarget
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation._
 
@@ -99,6 +97,31 @@ class LibraryController extends LazyLogging {
   @RequestMapping(value = Array(""), method = Array(RequestMethod.GET))
   def listLibraries(): Seq[AcquisitionMethod] = {
     libraryAccess.libraries
+  }
+
+  @DeleteMapping(value = Array("deleteLibrary/{library}"))
+  def deleteLibrary(@PathVariable("library") library: String): Unit = {
+    logger.debug(s"User requested library: ${library}'s deletion...")
+    var acquisitionMethod = libraryAccess.libraries.collectFirst {
+      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == library => x
+    }
+
+    if (acquisitionMethod.isDefined) {
+      libraryAccess.deleteLibrary(acquisitionMethod.get)
+    }
+  }
+
+  @DeleteMapping(value = Array("deleteTarget/{library}/{target}"))
+  def deleteTarget(@PathVariable("library") library: String, @PathVariable("target") target: String): Unit = {
+    logger.info(s"User requested target: ${target}'s deletion...")
+    var acquisitionMethod = libraryAccess.libraries.collectFirst {
+      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == library => x
+    }
+
+    if (acquisitionMethod.isDefined) {
+      var toBeDeleted = libraryAccess.load(acquisitionMethod.get).filter(_.name == target).head
+      libraryAccess.delete(toBeDeleted, acquisitionMethod.get)
+    }
   }
 }
 
@@ -229,7 +252,7 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
         /**
           * all the defined ions for this spectra
           */
-        override val ions: Seq[Ion] = Seq(Ion(target.precursor, 100.0))
+        override val ions: Seq[Ion] = Seq(Ion(target.precursor, 100.0f))
         /**
           * the msLevel of this spectra
           */

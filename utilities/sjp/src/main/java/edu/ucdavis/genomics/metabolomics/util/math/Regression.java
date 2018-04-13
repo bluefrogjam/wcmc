@@ -11,9 +11,8 @@ import java.io.Serializable;
  * basis klasse f?r regressionen
  *
  * @author wohlgemuth
- *
  */
-public interface Regression extends Serializable,Cloneable{
+public interface Regression extends Serializable, Cloneable {
     /**
      * DOCUMENT ME!
      *
@@ -30,14 +29,13 @@ public interface Regression extends Serializable,Cloneable{
     void setData(double[] x, double[] y);
 
     double[] getXData();
-    
+
     double[] getYData();
-    
+
     /**
      * DOCUMENT ME!
      *
      * @param x DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     double getY(double x);

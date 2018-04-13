@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Description, Profile}
+import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
 
 /**
@@ -31,6 +31,18 @@ class PeakDetection extends PreProcessor with LazyLogging {
     * @return
     */
   override def doProcess(item: Sample, method: AcquisitionMethod): Sample = {
+    if (method.chromatographicMethod.get.ionMode.isDefined) {
+      processingProperties.ionMode = method.chromatographicMethod.get.ionMode.get
+    }
     msdialProcessor.process(item, processingProperties)
   }
+}
+
+@Configuration
+class PeakDetectionConfiguration {
+  @Bean
+  def msdialProcessor: MSDialProcessing = new MSDialProcessing()
+
+  @Bean
+  def processingProperties: MSDialProcessingProperties = new MSDialProcessingProperties()
 }

@@ -2,23 +2,25 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
 import java.io.File
 
-import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
+import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation._
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.{ContextConfiguration, TestContextManager}
+import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager}
 
 /**
   * Created by wohlg on 7/28/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
+@ActiveProfiles(Array("file.source.eclipse"))
 @ContextConfiguration(classes = Array(classOf[ResourceLoaderSampleLoaderTestConfiguration]))
-class ResourceLoaderSampleLoaderTest extends WordSpec {
+class ResourceLoaderSampleLoaderTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
   val loader: ResourceLoaderSampleLoader = null
@@ -28,12 +30,31 @@ class ResourceLoaderSampleLoaderTest extends WordSpec {
   "ResourceLoaderSampleLoaderTest" should {
 
 
-    "able to load sample B5_P20Lipids_Pos_NIST02" in {
+    "able to load sample Prerun_NoInj001.d.zip" in {
 
-      val sample = loader.loadSample("B5_P20Lipids_Pos_NIST02.mzML")
+      val sample = loader.loadSample("Prerun_NoInj001.d.zip")
 
       assert(sample.isDefined)
-      assert(sample.get.fileName == "B5_P20Lipids_Pos_NIST02.mzML")
+      assert(sample.get.fileName == "Prerun_NoInj001.d.zip")
+    }
+
+    "able to read a .d file with spaces" ignore { //TODO: trace the sample loading
+      val name = "Tube A.d"
+      val sample = loader.loadSample(name)
+
+      sample.isDefined shouldBe true
+      sample.get.fileName === name
+      sample.get.spectra.length should be > 10
+    }
+
+    "able to read a .d file without spaces" ignore { //TODO: trace the sample loading
+      val name = "0-up.d"
+      val sample = loader.loadSample(name)
+
+      sample.isDefined shouldBe true
+      sample.get.fileName === name
+      sample.get shouldBe a[MSDKSample]
+      sample.get.spectra.length should be > 10
     }
 
   }
@@ -49,10 +70,4 @@ class ResourceLoaderSampleLoaderTestConfiguration {
 
   @Bean
   def loader(delegatingResourceLoader: DelegatingResourceLoader): ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(delegatingResourceLoader)
-
-  @Bean
-  def client:FServ4jClient = new FServ4jClient(
-    "testfserv.fiehnlab.ucdavis.edu",
-    80
-  )
 }

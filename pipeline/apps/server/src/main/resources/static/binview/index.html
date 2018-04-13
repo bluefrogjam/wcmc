@@ -102,6 +102,17 @@
                                             </div>
                                         </div>
                                     </form>
+                                    <br/>
+                                    <form>
+                                        <div class="form-group">
+                                            <label>
+                                                <input type="button" id="deleteLib" class="btn"
+                                                       ng-show="binSettings.libraries.length"
+                                                       value="Delete library {{binSettings.acquisition}}"
+                                                       ng-click="deleteLibrary(binSettings.acquisition)"/>
+                                            </label>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

@@ -4,16 +4,17 @@
 package edu.ucdavis.genomics.metabolomics.exception;
 
 
-/**<p>
+/**
+ * <p>
+ *
  * @author wohlgemuth
  * @version Jul 17, 2003
  * </p>
- *
+ * <p>
  * <h4>File: ValueNotFoundException.java </h4>
  * <h4>Project: glibj </h4>
  * <h4>Package: edu.ucdavis.genomics.metabolomics.glibj.alg.search </h4>
  * <h4>Type: ValueNotFoundException </h4>
- *
  */
 public class ValueNotFoundException extends RuntimeException {
     /**
