@@ -17,7 +17,7 @@ abstract class AnnotationProcess[T <: Target, I <: Sample, O <: Sample](targets:
     * @param input
     * @return
     */
-  final override def doProcess(input: I, method: AcquisitionMethod): O = {
+  final override def doProcess(input: I, method: AcquisitionMethod, rawSample: Option[Sample]): O = {
     process(input, targets.load(method).filter(_.confirmed), method)
   }
 
@@ -30,38 +30,3 @@ abstract class AnnotationProcess[T <: Target, I <: Sample, O <: Sample](targets:
   def process(input: I, targets: Iterable[T], method: AcquisitionMethod): O
 }
 
-/**
-  * @tparam I
-  * @tparam O
-  */
-abstract class Process[I <: Sample, O <: Sample]() {
-
-  @Autowired
-  protected val applicationContext:ApplicationContext = null
-
-  /**
-    * processes the data
-    *
-    * @param item
-    * @return
-    */
-  final def process(item: I, method: AcquisitionMethod): O = {
-    val result: O = doProcess(item, method)
-    result
-  }
-
-  /**
-    * actually processes the item (implementations in subclasses)
-    *
-    * @param item
-    * @return
-    */
-  def doProcess(item: I, method: AcquisitionMethod): O
-
-  /**
-    * the priority of the process
-    *
-    * @return
-    */
-  def priortiy: Int = 0
-}

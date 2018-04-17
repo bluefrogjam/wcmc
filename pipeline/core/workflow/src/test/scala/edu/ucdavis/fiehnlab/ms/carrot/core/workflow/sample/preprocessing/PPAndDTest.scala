@@ -39,7 +39,7 @@ class PPAndDTest extends WordSpec with Matchers with LazyLogging {
       sample.spectra should not be Seq.empty
       sample.spectra should have size 18
 
-      val result = peakDetection.process(sample, AcquisitionMethod(None))
+      val result = peakDetection.process(sample, AcquisitionMethod(None), None)
       result should not be Seq.empty
       result shouldBe a[MSDialProcessedSample]
 

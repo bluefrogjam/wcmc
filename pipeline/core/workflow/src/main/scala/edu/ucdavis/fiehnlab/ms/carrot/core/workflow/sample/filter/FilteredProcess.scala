@@ -19,7 +19,7 @@ class FilteredProcess @Autowired()(val filters: List[Filter[Feature]]) extends P
     * @param sample
     * @return
     */
-  override def doProcess(sample: Sample, method: AcquisitionMethod): ProcessedSample = {
+  override def doProcess(sample: Sample, method: AcquisitionMethod, rawSample: Option[Sample]): ProcessedSample = {
 
     /**
       * iterate over all the spectra and try to filter the provided spectra

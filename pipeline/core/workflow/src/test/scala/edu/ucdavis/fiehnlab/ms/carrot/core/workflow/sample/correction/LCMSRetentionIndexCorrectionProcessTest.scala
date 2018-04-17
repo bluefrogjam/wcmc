@@ -46,7 +46,7 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
 
         correction.minimumFoundStandards = 20
         val error = intercept[NotEnoughStandardsFoundException] {
-          val result = correction.process(deco.process(sample3,method), method)
+          val result = correction.process(deco.process(sample3, method, None), method, None)
 
           for(x <- result.featuresUsedForCorrection ){
             logger.info(s"used for correction: ${x}")
@@ -58,7 +58,7 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
       s"should pass, because we have enough standards for us to continue ${sample2}" in {
         correction.minimumFoundStandards = 16
 
-        val corrected = correction.process(deco.process(sample2,method),method )
+        val corrected = correction.process(deco.process(sample2, method, None),method, None)
 
         for(x <- corrected.featuresUsedForCorrection ){
           logger.info(s"used for correction: ${x}")
