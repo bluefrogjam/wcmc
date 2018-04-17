@@ -1,18 +1,17 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking;
+package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.lcms;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakDetectionResult;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.LCMSDataAccessUtility;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.lcms.LCMSDataAccessUtility;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SmoothingMethod;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;

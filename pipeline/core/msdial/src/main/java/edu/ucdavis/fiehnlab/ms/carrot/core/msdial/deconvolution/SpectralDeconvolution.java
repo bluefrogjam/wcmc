@@ -7,8 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.isotope.IsotopeEstimator;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MS2DecResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.LCMSDataAccessUtility;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.Smoothing;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.lcms.LCMSDataAccessUtility;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SmoothingMethod;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SpectralCentroiding;
 
