@@ -50,7 +50,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
           override protected val sampleToLog: String = input.name
         }
 
-        val includeByIntensityFilter = new IncludesByPeakHeight(config.allowedBasePeaks.asScala, "correction", config.massAccuracy, config.minimumPeakIntensity) with JSONSampleLogging {
+        val includeByIntensityFilter = new IncludeByTicFilter(config.minimumPeakIntensity,"correction") with JSONSampleLogging {
           /**
             * which sample we require to log
             */

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, RequiredStandardNotFoundException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSTargetRetentionIndexCorrectionProcess
 import org.junit.runner.RunWith
@@ -76,7 +76,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
         }
 
 
-        "180213aJKsa01_1" :: "180213aJKsa02_1" :: "180213aJKsa03_1" :: "180213aJKsa04_1" :: "180213aJKsa05_1" :: "180213aJKsa18_1" :: "180213aJKsa19_1" :: "180213aJKsa20_1" :: List() foreach { sample =>
+        "180213aJKsa01_1" :: "180213aJKsa02_1" :: "180213aJKsa03_1" :: "180213aJKsa04_1" :: "180213aJKsa05_1" :: "180213aJKsa18_1" :: "180213aJKsa20_1" :: List() foreach { sample =>
 
           s"for sample $sample of study 386956" should {
 
@@ -89,6 +89,19 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
 
               assert(result.featuresUsedForCorrection.size >= 12)
+            }
+
+          }
+
+        }
+
+        "180221aJKsa30_1" :: "180221aJKsa10_1" :: "180221aJKsa20_1" :: "180213aJKsa19_1" :: "180220aJKsa41_1" :: List() foreach { sample =>
+          s"for sample $sample of study 386956" should {
+
+            "should fail due to C30 being missing, currently acquisition error." in {
+              intercept[RequiredStandardNotFoundException] {
+                correction.process(sampleLoader.getSample(s"${sample}.txt"), method)
+              }
             }
 
           }
@@ -112,7 +125,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
         }
 
 
-        "180220aJKsa41_1" :: "180220aJKsa42_1" :: "180221aJKsa10_1" :: "180221aJKsa20_1" :: "180221aJKsa27_1" :: "180221aJKsa30_1" :: List() foreach { sample =>
+        "180220aJKsa42_1" :: "180221aJKsa27_1" :: List() foreach { sample =>
 
           s"for sample $sample of study 397074" should {
 

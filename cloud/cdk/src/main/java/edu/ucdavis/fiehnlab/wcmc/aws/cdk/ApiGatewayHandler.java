@@ -6,6 +6,9 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * simple method to expose a lambda as a an API Gateway response
+ */
 public abstract class ApiGatewayHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 
@@ -25,6 +28,11 @@ public abstract class ApiGatewayHandler implements RequestHandler<Map<String, Ob
                 .build();
     }
 
+    /**
+     * xontains the reqeuest as input and returns a map of objects as result
+     * @param request
+     * @return
+     */
     protected abstract Map<String, Object> evaluateRequest(Map<String, Object> request);
 
 }

@@ -76,14 +76,14 @@ trait SpectrumProperties {
   /**
     * base peak for this spectra
     */
-  def basePeak: Ion = ions.maxBy(_.intensity)
+  lazy val basePeak: Ion = ions.maxBy(_.intensity)
 
   /**
     * computes the tic for this spectra
     *
     * @return
     */
-  def tic: Double = ions.map(_.intensity).sum
+  lazy val tic: Double = ions.map(_.intensity).sum
 
   /**
     * a list of model ions used during the deconvolution
