@@ -4,7 +4,7 @@ import java.io.{IOException, InputStream}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample, SampleProperties}
 
 import scala.io.Source
 
@@ -72,19 +72,8 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
     */
   def buildSpectra(scan: Int, map: Map[String, String]): LecoSpectrum = {
 
-    val spec = new LecoSpectrum {
-
-      val sample: String = LecoSample.this.fileName
-      override val purity: Option[Double] = Some(map(purityIdentifier).replaceAll(",", ".").toDouble)
-      override val scanNumber: Int = scan
-
-      override val retentionTimeInSeconds: Double = map(retentionTimeSecondsIdentifier).replaceAll(",", ".").toDouble * 1000 //fix to deal with old BinBase RT time by factor 1000 issues
-      /**
-        * accurate mass of this feature, if applicable
-        */
-      override val massOfDetectedFeature: Option[Ion] = None
-
-      override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
+    LecoSpectrum(
+      spectrum = Some(new SpectrumProperties {
 
         override val modelIons: Option[List[Double]] = Some(map(uniquemassIdentifier).replaceAll(",", ".").toDouble :: List())
 
@@ -100,12 +89,17 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
           * the msLevel of this spectra
           */
         override val msLevel: Short = 1
-      })
-      /**
-        * associated spectrum propties if applicable
-        */
-      override lazy val spectrum: Option[SpectrumProperties] = associatedScan
-    }
-    spec
+      }),
+      sample = LecoSample.this.fileName,
+      purity = Some(map(purityIdentifier).replaceAll(",", ".").toDouble),
+      scanNumber = scan,
+      retentionTimeInSeconds = map(retentionTimeSecondsIdentifier).replaceAll(",", ".").toDouble * 1000, //fix to deal with old BinBase RT time by factor 1000 issues
+      uniqueMass = map(uniquemassIdentifier).toDouble
+    )
   }
+
+  /**
+    * associated properties
+    */
+  override val properties: Option[SampleProperties] = None
 }

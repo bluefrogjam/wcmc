@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ProxySample
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -56,8 +55,6 @@ class ExperimentTXTReaderTest extends WordSpec with LazyLogging {
 
     "load existing samples ignoring missing filess" in {
       val result = reader.read(getClass.getResourceAsStream(experimentFile))
-
-      assert(result.classes.head.samples.head.isInstanceOf[ProxySample])
 
       assert(result.classes.head.samples.size == 1)
     }

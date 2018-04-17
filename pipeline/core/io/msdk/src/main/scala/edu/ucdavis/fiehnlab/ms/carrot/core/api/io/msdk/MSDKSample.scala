@@ -21,6 +21,7 @@ import scala.collection.JavaConverters._
   */
 class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLogging {
 
+  override val properties: Option[SampleProperties] = None
 
   /**
     * a collection of spectra

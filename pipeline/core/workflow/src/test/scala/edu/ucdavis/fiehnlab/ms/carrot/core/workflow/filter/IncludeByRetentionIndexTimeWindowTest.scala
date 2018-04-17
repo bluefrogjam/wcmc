@@ -11,13 +11,13 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
 
   "IncludeByRetentionIndexTimeWindowTest" should {
 
-    val filter = new IncludeByRetentionIndexTimeWindow(100,5)
+    val filter = new IncludeByRetentionIndexTimeWindow(100,"test",5)
     "include" in {
 
       assert(filter.include(new  CorrectedSpectra{
         override val retentionIndex: Double = 96
 
-      }))
+      },null))
     }
 
     "include2" in {
@@ -25,14 +25,14 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
       assert(filter.include(new CorrectedSpectra{
         override val retentionIndex: Double = 104
 
-      }))
+      },null))
     }
 
     "not included" in {
 
       assert(!filter.include(new CorrectedSpectra{
         override val retentionIndex: Double = 106
-      }))
+      },null))
     }
 
   }

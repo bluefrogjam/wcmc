@@ -17,6 +17,8 @@ package object api {
     override val spectra: List[_ <: MSSpectra] = testSpectraWith1Ion :: List()
 
     override val fileName: String = "test"
+
+    override val properties: Option[SampleProperties] = None
   }
 
   /**
