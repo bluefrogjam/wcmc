@@ -12,12 +12,12 @@ custom:
   # custom domain management
   ###
   customDomain:
-    domainName: informatics.metabolomics.international
+    domainName: 'api.metabolomics.international'
     basePath: api
     stage: ${self:provider.stage}
     createRoute53Record: true
     certificateName: "*.metabolomics.international"
-    enabled: false
+    enabled: true
 
 provider:
   #define our stage variable
