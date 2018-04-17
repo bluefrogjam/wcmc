@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties
 @Component
 public class MSDialProcessingProperties {
+
     /**
      * omit masses smaller than this
      */

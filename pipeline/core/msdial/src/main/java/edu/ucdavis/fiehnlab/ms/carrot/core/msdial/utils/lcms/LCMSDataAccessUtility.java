@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils;
+package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.lcms;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
@@ -6,6 +6,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSMSSpectra;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakDetectionResult;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.Smoothing;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SmoothingMethod;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +47,7 @@ public class LCMSDataAccessUtility {
             }
         }
 
-        return new double[]{minMz, maxMz};
+        return new double[] {minMz, maxMz};
     }
 
 

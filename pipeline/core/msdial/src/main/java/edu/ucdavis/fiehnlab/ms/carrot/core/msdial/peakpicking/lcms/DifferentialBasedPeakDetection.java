@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking;
+package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.lcms;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakDetectionResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.BasicMathematics;
