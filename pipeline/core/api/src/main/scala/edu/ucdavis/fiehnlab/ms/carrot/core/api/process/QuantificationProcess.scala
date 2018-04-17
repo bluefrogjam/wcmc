@@ -151,6 +151,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
       override val correctedWith: Sample = input.correctedWith
       override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = input.featuresUsedForCorrection
       override val regressionCurve: Regression = input.regressionCurve
+      override val properties: Option[SampleProperties] = input.properties
     }
 
   }

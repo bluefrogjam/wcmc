@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, Spectru
 import edu.ucdavis.fiehnlab.utilities.logging.{JSONLogging, JSONPhaseLogging}
 import org.scalatest.{FunSuite, ShouldMatchers, WordSpec}
 
-class JSONLoggingTest extends WordSpec with ShouldMatchers{
+class JSONLoggingTest extends WordSpec with ShouldMatchers {
 
   "All logging test " must {
 

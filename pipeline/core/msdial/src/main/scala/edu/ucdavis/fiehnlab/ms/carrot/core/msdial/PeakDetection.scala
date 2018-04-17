@@ -30,7 +30,7 @@ class PeakDetection extends PreProcessor with LazyLogging {
     * @param item
     * @return
     */
-  override def doProcess(item: Sample, method: AcquisitionMethod): Sample = {
+  override def doProcess(item: Sample, method: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
     if (method.chromatographicMethod.get.ionMode.isDefined) {
       processingProperties.ionMode = method.chromatographicMethod.get.ionMode.get
     }

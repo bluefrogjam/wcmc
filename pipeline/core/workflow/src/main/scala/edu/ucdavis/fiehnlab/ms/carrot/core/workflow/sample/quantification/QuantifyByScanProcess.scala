@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 /**
   * reports the scan for each annotated spectra, which can be used to confirm and fine tune the system
   *
-  * @param properties
+  * @param libraryAccess
   */
 @Component
 @Profile(Array("quantify-by-scan"))

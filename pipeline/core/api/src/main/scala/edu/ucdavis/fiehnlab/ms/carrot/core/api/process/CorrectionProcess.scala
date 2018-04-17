@@ -4,10 +4,10 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, StandardAnnotatedTwice, StandardsNotInOrderException}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, RequiredStandardNotFoundException, StandardAnnotatedTwice, StandardsNotInOrderException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Sample, Target, TargetAnnotation}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -27,10 +27,28 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     */
   override final def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod): CorrectedSample = {
 
-    val optimizedMatches = findCorrectionTargets(input, target, method)
+    val retentionIndexMarkers = target.filter(_.isRetentionIndexStandard)
+    var requiredTargets = retentionIndexMarkers.filter(_.requiredForCorrection)
+
+    assert(retentionIndexMarkers.nonEmpty, "please ensure you have some retention index targets defined!")
+
+    val optimizedMatches = findCorrectionTargets(input, retentionIndexMarkers, method)
 
 
+    //verify that we have all our tartes
 
+    requiredTargets.foreach { target =>
+
+      if (!optimizedMatches.exists(_.target == target)) {
+        logger.warn("we only found the following targets")
+        optimizedMatches.foreach { x =>
+          logger.warn(s"target: ${x.target.name}/${x.target.retentionIndex} - ${x.annotation.retentionTimeInSeconds}/${x.annotation.scanNumber}")
+        }
+
+        throw new RequiredStandardNotFoundException(s"this target ${target} was not found during the detection phase, but it's required. Sample was ${input.fileName}")
+      }
+
+    }
     //do the actual correction and return the sample for further processing
     doCorrection(optimizedMatches, input, regression, input)
   }
@@ -46,6 +64,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     if (optimizedMatches.map(_.target).toSet.size != optimizedMatches.size) {
       throw new StandardAnnotatedTwice(s"one of the standards, was annotated twice in sample ${input.fileName}!")
     }
+
   }
 
   /**
@@ -141,6 +160,8 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
       override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = possibleHits
       override val regressionCurve: Regression = regression
       override val fileName: String = sampleToCorrect.fileName
+
+      override val properties: Option[SampleProperties] = sampleToCorrect.properties
     }
 
   }
