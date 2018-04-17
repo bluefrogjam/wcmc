@@ -22,7 +22,7 @@ object JSONLogging {
     * across several jbms
     * @return
     */
-  val uniqueProcessName:String =UUID.randomUUID().toString
+  val uniqueProcessName: String = UUID.randomUUID().toString
 
   /**
     * makes live easier on the log files
@@ -41,20 +41,21 @@ trait JSONLogging extends LazyLogging {
     * based on mixins and other defined methods, this will log a json string to the console for debugging
     * as well as return
     */
-  final def logJSON(map: Map[String, Any] = Map()): String = {
+  final def logJSON(map: Map[String, Any] = Map()) = {
     if (supportsJSONLogging && JSONLoggingAppender.mongoTemplate != null) {
-      val message = JSONLogging.objectMapper.writeValueAsString(buildMessage() ++ map ++ Map("process" -> JSONLogging.uniqueProcessName))
+      val build = buildMessage() ++ map ++ Map("process" -> JSONLogging.uniqueProcessName)
+      logger.info(s"build ${build}")
+      val message = JSONLogging.objectMapper.writeValueAsString(build)
       try {
-        JSONLoggingAppender.mongoTemplate.insert(message, "carrot_logging")
+        if (message != null || message.nonEmpty) {
+          JSONLoggingAppender.mongoTemplate.insert(message, "carrot_logging")
+        }
       }
       catch {
         case x: Exception =>
           logger.warn(s"error: ${x.getMessage}\n ${message}\n", x)
       }
       message
-    }
-    else {
-      ""
     }
   }
 
