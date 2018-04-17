@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.isotope.IsotopeEstimator;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MS2DecResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.lcms.LCMSDataAccessUtility;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.LCMSDataAccessUtility;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SmoothingMethod;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SpectralCentroiding;
 
@@ -44,7 +44,7 @@ public class SpectralDeconvolution {
 
         MS2DecResult ms2DecResult = new MS2DecResult(detectedPeak);
 
-        List<Ion> ms1Spectrum = new ArrayList<>(SpectralCentroiding.getCentroidSpectrum(spectrumList, properties.dataType,
+        List<Ion> ms1Spectrum = new ArrayList<>(SpectralCentroiding.getLCMSCentroidedSpectrum(spectrumList, properties.dataType,
             detectedPeak.ms1LevelDataPointNumber, properties.centroidMS1Tolerance, properties.peakDetectionBasedCentroid));
 
         if (detectedPeak.ms2LevelDataPointNumber == -1) {
@@ -56,7 +56,7 @@ public class SpectralDeconvolution {
             double endRt = detectedPeak.rtAtPeakTop + (detectedPeak.rtAtRightPeakEdge - detectedPeak.rtAtLeftPeakEdge);
             double precursorMz = detectedPeak.accurateMass;
 
-            List<Ion> centroidedSpectrumList = new ArrayList<>(SpectralCentroiding.getCentroidSpectrum(spectrumList, properties.dataType, detectedPeak.ms2LevelDataPointNumber, properties.centroidMS2Tolerance, properties.peakDetectionBasedCentroid));
+            List<Ion> centroidedSpectrumList = new ArrayList<>(SpectralCentroiding.getLCMSCentroidedSpectrum(spectrumList, properties.dataType, detectedPeak.ms2LevelDataPointNumber, properties.centroidMS2Tolerance, properties.peakDetectionBasedCentroid));
             List<Ion> centroidedSpectrum = new ArrayList<>(centroidedSpectrumList);
             centroidedSpectrum.sort(Comparator.comparing(Ion::mass));
 

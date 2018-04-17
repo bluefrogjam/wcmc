@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.isotope.CompoundProperti
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.isotope.ElementProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.isotope.IsotopeElementProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.BasicMathematics;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.lcms.LCMSDataAccessUtility;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.LCMSDataAccessUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

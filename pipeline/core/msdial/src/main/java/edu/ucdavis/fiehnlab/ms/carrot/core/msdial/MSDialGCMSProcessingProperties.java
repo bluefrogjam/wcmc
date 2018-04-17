@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.gcms.AccuracyType;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.AccuracyType;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
