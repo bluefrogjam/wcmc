@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
+import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader, TxtStreamLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{IonMode, QuantifiedSample, Target}
@@ -19,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlg on 7/13/2016.
@@ -50,20 +52,19 @@ class NegativeIntensitiesTest extends WordSpec with LazyLogging with ShouldMatch
 
   "ZeroReplacement" should {
     val method = AcquisitionMethod(Some(ChromatographicMethod("replacement test", None, None, Some(new IonMode("positive")))))
+    val rawSample = loader.getSample("Weiss003_posHILIC_59602960_068.mzml")
     val sample: QuantifiedSample[Double] = quantify.process(
       annotation.process(
         correction.process(
-          deco.process(
-            loader.getSample("Weiss003_posHILIC_59602960_068.mzml"), method),
-          method),
-        method),
-      method)
+          deco.process(rawSample,
+            method, None),
+          method, None),
+        method, None),
+      method, None)
 
     "replace the with 0 intensitiy or leave positive values" in {
 
-      logger.debug("tg intensity: " + sample.quantifiedTargets.filter(_.name.get.startsWith("1_TG d5(17:0/17:0/17:0)")))
-
-      val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method)
+      val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
 
       replaced.quantifiedTargets.foreach { x =>
         logger.info(s"target: ${x.name.get} = ${x.quantifiedValue}")

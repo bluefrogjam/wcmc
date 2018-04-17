@@ -50,15 +50,15 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
     val purityComputed = samples //.map(purity.process)
 
     //correct the data
-    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item,method), method))
+    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method, None), method, None))
 
-    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method))
+    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method, None))
 
     annotated.foreach { sample =>
 
       s"process ${sample}" in {
 
-        val result: QuantifiedSample[Double] = quantification.process(sample, method)
+        val result: QuantifiedSample[Double] = quantification.process(sample, method, None)
 
         var annotationCount = 0
         result.quantifiedTargets.foreach { a =>

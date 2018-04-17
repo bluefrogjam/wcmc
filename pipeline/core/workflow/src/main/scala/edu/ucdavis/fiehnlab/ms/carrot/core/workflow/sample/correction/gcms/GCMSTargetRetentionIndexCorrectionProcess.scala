@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.{JSONSampleLogging, JSONTargetLogging}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{Regression, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, RequiredStandardNotFoundException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SimilaritySupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target, TargetAnnotation}
@@ -70,24 +70,36 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
         //find the target with the highest possible similarity match, to utilize it for distance ratio validation at a later point
         val distanceValidationTargets = targets.collect {
           case target: GCMSCorrectionTarget if target.config.validationTarget =>
-            findMatchToTarget(config, spectraWithCorrectionIntensity, None, target,input)
+            findMatchToTarget(config, spectraWithCorrectionIntensity, None, target, input)
         }.filter(_ != null)
 
-        if(distanceValidationTargets.isEmpty){
+        if (distanceValidationTargets.isEmpty) {
           throw new NotEnoughStandardsFoundException(s"${input.name} has 0 discovered standards!")
         }
 
-        val distanceValidationTarget = distanceValidationTargets.maxBy(x => Similarity.compute(x.annotation.asInstanceOf[SimilaritySupport], x.target))
+        //take the top 3 similarity wise and than the largest peak
+        val distanceValidationTarget = distanceValidationTargets.toSeq.sortBy { x =>
+          val similarity = Similarity.compute(x.annotation.asInstanceOf[SimilaritySupport], x.target)
+          //logger.info(s"similarity for ${x.target.name} is ${similarity}")
+          similarity
+        }.reverse.slice(0, 3).maxBy(x => {
+          val max = x.annotation.associatedScan.get.basePeak.intensity
 
-        logger.info("searching for matches")
+          //logger.info(s"max for ${x.target.name} is ${max}")
+          max
+        })
+
+        logger.debug(s"using ${distanceValidationTarget.target.name} for validation purposes")
+
+
         //find potential targets
         val potentialMatches = targets.collect {
           case target: GCMSCorrectionTarget =>
-            findMatchToTarget(config, spectraWithCorrectionIntensity, Option(distanceValidationTarget), target,input)
+            findMatchToTarget(config, spectraWithCorrectionIntensity, Option(distanceValidationTarget), target, input)
         }.filter(_ != null)
 
 
-        logger.info(s"potential matches: ${potentialMatches.size}")
+        logger.debug(s"potential matches: ${potentialMatches.size}")
 
         potentialMatches
       case None =>
@@ -116,11 +128,15 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
       override protected val sampleToLog: String = input.name
     }
 
-    val ionRatios = new IncludeByIonRatio(target.config.qualifierIon, target.config.minQualifierRatio, target.config.maxQualifierRatio, "correction", config.massAccuracy) with JSONSampleLogging {
+    val ionRatios = new IncludeByIonRatio(target.config.qualifierIon, target.config.minQualifierRatio, target.config.maxQualifierRatio, "correction", config.massAccuracy) with JSONSampleLogging with JSONTargetLogging {
       /**
         * which sample we require to log
         */
       override protected val sampleToLog: String = input.name
+      /**
+        * which target we require to log
+        */
+      override protected val targetToLog: Target = target
     }
 
 
@@ -128,11 +144,18 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
       case x: SimilaritySupport => x
     }.filter(similarity.include(_, applicationContext))
 
+    if (similarityMatches.isEmpty) {
+      logger.warn(s"no matches found for IncludeBySimilarity, reconsider your configuration for target: ${target.name}/${target.retentionIndex}")
+    }
     //check for qualifier
     val ionRatioMatches = similarityMatches.filter(ionRatios.include(_, applicationContext))
 
     logger.info(s"ion ratio matches: ${ionRatioMatches.size}")
     //validate by distance ratio
+
+    if (ionRatioMatches.isEmpty) {
+      logger.warn(s"no matches found for IncludeByIonRatio, reconsider your configuration for target: ${target.name}/${target.retentionIndex}")
+    }
 
     val validated = if (distanceValidationTarget.isDefined) {
       val distanceRatioValidated = target.config.distanceRatios.asScala.map { x =>
@@ -143,15 +166,14 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
           override protected val sampleToLog: String = input.name
         }
           .include(_, applicationContext))
-      }.filter(_.nonEmpty).sortBy(_.size)
+      }.filter(_.nonEmpty).sortBy(_.size).flatten
 
       if (distanceRatioValidated.isEmpty) {
-        logger.warn("no matches found for distance ratio, reconsider your configuration!")
+        logger.warn(s"no matches found for IncludeByDistanceRatio, reconsider your configuration for target: ${target.name}/${target.retentionIndex}")
         Seq.empty
       }
-      else {
-        distanceRatioValidated.head
-      }
+
+      distanceRatioValidated
     }
     else {
       ionRatioMatches
@@ -163,8 +185,15 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
       TargetAnnotation(target.asInstanceOf[Target], validated.head.asInstanceOf[Feature])
     }
     else if (validated.size > 1) {
+      logger.info("more than 1 possible annotation found")
+      validated.foreach { x =>
+        logger.info(s"annotaton: ${x}")
+      }
+
+      val best = validated.minBy(x => Math.abs(x.retentionTimeInSeconds - target.retentionIndex)).asInstanceOf[Feature]
+      logger.info(s"picked: ${best}")
       //pick closest
-      TargetAnnotation(target.asInstanceOf[Target], validated.minBy(x => Math.abs(x.retentionTimeInSeconds - target.retentionIndex)).asInstanceOf[Feature])
+      TargetAnnotation(target.asInstanceOf[Target], best)
     }
     else {
       //nothing found :(
