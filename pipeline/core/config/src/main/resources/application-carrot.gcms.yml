@@ -64,7 +64,7 @@ carrot:
             - 147.0
             - 174.0
             - 130.0
-          minimumPeakIntensity: 1000
+          minimumPeakIntensity: 100
           targets:
             -
               identifier: "z C08 FAME internal standard"

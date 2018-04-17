@@ -37,18 +37,16 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
 
     //verify that we have all our tartes
 
-    requiredTargets.foreach { target =>
+    val missingButRequired = requiredTargets.collect {
 
-      if (!optimizedMatches.exists(_.target == target)) {
-        logger.warn("we only found the following targets")
-        optimizedMatches.foreach { x =>
-          logger.warn(s"target: ${x.target.name}/${x.target.retentionIndex} - ${x.annotation.retentionTimeInSeconds}/${x.annotation.scanNumber}")
-        }
-
-        throw new RequiredStandardNotFoundException(s"this target ${target} was not found during the detection phase, but it's required. Sample was ${input.fileName}")
-      }
-
+      case target:Target if !optimizedMatches.exists(_.target == target) =>
+        target
     }
+
+    if(missingButRequired.nonEmpty){
+      throw new RequiredStandardNotFoundException("we were missing certain targets during the correction and so it failed",missingButRequired)
+    }
+
     //do the actual correction and return the sample for further processing
     doCorrection(optimizedMatches, input, regression, input)
   }

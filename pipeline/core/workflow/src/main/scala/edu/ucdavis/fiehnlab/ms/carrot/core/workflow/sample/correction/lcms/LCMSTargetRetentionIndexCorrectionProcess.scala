@@ -89,6 +89,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   /**
     * Calculates the gaussian similarity of the spectrum accurate mass vs target precursor mass as well as spectrum rt
     * vs target rt and averages the result
+    *
     * @param spectrum
     * @param standard
     * @return
@@ -114,9 +115,9 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   def findBestHit(standard: Target, spectra: Seq[_ <: Feature]): TargetAnnotation[Target, Feature] = {
     //best hit is defined as the mass with the smallest mass error
     //if we prefer mass accurracy
-//    TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
+    //    TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
     //if we we prefer mass intensity
-//    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
+    //    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
     // if we prefer a combination of the two
     TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(x, standard)))
   }
@@ -155,11 +156,10 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     }
 
 
-
     /**
       * allows us to filter the data by the height of the ion
       */
-    val massIntensity = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction", minIntensity = minPeakIntensity) with JSONSampleLogging{
+    val massIntensity = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction", minIntensity = minPeakIntensity) with JSONSampleLogging {
       /**
         * which sample we require to log
         */
@@ -168,7 +168,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
 
     //our defined filters to find possible matches are registered in here
-    val filters: SequentialAnnotate = new SequentialAnnotate(massIntensity :: List()) with JSONSampleLogging{
+    val filters: SequentialAnnotate = new SequentialAnnotate(massIntensity :: List()) with JSONSampleLogging {
       /**
         * which sample we require to log
         */
@@ -187,13 +187,9 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
         //nothing found, return null
         if (result.isEmpty) {
-          if (target.requiredForCorrection) {
-            throw new RequiredStandardNotFoundException(s"this target ${target} was not found during the detection phase, but it's required. Sample was ${input.fileName}")
-          }
-          else {
-            logger.debug("\t=>\tno hits found for this standard")
-            None
-          }
+
+          logger.debug("\t=>\tno hits found for this standard")
+          None
         }
         //1 found, perfect
         else if (result.size == 1) {

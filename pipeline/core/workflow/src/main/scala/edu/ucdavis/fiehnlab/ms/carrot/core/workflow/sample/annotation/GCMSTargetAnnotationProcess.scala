@@ -19,5 +19,21 @@ class GCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
     * @param input
     * @return
     */
-  override def process(input: CorrectedSample, targets: Iterable[Target], method: AcquisitionMethod): AnnotatedSample = ???
+  override def process(input: CorrectedSample, targets: Iterable[Target], method: AcquisitionMethod): AnnotatedSample = {
+
+    //go over each target
+
+      //filter spectra
+
+        //calculate right settings
+
+        //filter by settings
+
+    //evaluate duplicated associations for target to spectra
+
+    //evaluate duplicated associates for spectra to targets
+
+    //create annotated sample
+    null
+  }
 }

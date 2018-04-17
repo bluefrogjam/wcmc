@@ -97,7 +97,7 @@ class BucketLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfi
 class BucketStorageConfigurationProperties {
 
   @BeanProperty
-  var name: String = "carrot-data-bucket"
+  var name: String = "data-carrot"
 
   @BeanProperty
   val timeOfLife: Long = 0

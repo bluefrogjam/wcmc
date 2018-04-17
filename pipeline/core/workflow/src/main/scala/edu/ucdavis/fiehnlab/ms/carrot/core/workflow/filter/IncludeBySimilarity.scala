@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext
   * @param origin
   * @param cutoff needs to be less than 1
   */
-class IncludeBySimilarity(val origin: SimilaritySupport, val cutoff: Double, val phaseToLog: String) extends Filter[SimilaritySupport] {
+class IncludeBySimilarity(val origin: SimilaritySupport, val cutoff: Double, val phaseToLog: String) extends Filter[SimilaritySupport]  {
 
   assert(cutoff <= 1)
 
