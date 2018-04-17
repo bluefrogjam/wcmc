@@ -5,7 +5,6 @@ import java.io.File
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config.CaseClassToJSONSerializationAutoConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -18,7 +17,7 @@ import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, T
   * Created by wohlg on 7/28/2016.
   */
 @RunWith(classOf[SpringRunner])
-@ActiveProfiles(Array("file.source.eclipse"))
+@ActiveProfiles(Array("file.source.eclipse", "file.source.luna"))
 @ContextConfiguration(classes = Array(classOf[ResourceLoaderSampleLoaderTestConfiguration]))
 class ResourceLoaderSampleLoaderTest extends WordSpec with ShouldMatchers with LazyLogging {
 
@@ -30,31 +29,20 @@ class ResourceLoaderSampleLoaderTest extends WordSpec with ShouldMatchers with L
   "ResourceLoaderSampleLoaderTest" should {
 
 
-    "able to load sample Prerun_NoInj001.d.zip" in {
+    "able to load d.zip sample GLA_Ag6_Lipids_QC01" in {
 
-      val sample = loader.loadSample("Prerun_NoInj001.d.zip")
+      val sample = loader.loadSample("GLA_Ag6_Lipids_QC01.d.zip")
 
       assert(sample.isDefined)
-      assert(sample.get.fileName == "Prerun_NoInj001.d.zip")
+      assert(sample.get.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
     }
 
-    "able to read a .d file with spaces" ignore { //TODO: trace the sample loading
-      val name = "Tube A.d"
-      val sample = loader.loadSample(name)
+    "able to load mzml sample X-blank_04" in {
 
-      sample.isDefined shouldBe true
-      sample.get.fileName === name
-      sample.get.spectra.length should be > 10
-    }
+      val sample = loader.loadSample("X-blank_04.mzml")
 
-    "able to read a .d file without spaces" ignore { //TODO: trace the sample loading
-      val name = "0-up.d"
-      val sample = loader.loadSample(name)
-
-      sample.isDefined shouldBe true
-      sample.get.fileName === name
-      sample.get shouldBe a[MSDKSample]
-      sample.get.spectra.length should be > 10
+      assert(sample.isDefined)
+      assert(sample.get.fileName == "X-blank_04.mzml")
     }
 
   }
