@@ -51,9 +51,9 @@ class Workflow[T] extends LazyLogging {
     result
   }
 
-  protected final def postProcessing(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+  protected final def postProcessing(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingBeginEvent(sample)))
-    val result = postProcessSample(sample, acquisitionMethod)
+    val result = postProcessSample(sample, acquisitionMethod, rawSample)
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingFinishedEvent(result)))
     result
@@ -105,20 +105,20 @@ class Workflow[T] extends LazyLogging {
     * @param sample
     * @return
     */
-  final def process(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+  final def process(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample] = None): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(sample)))
 
-    val result = postProcessing(
-      quantify(
-        annotation(
-          correction(
-            preprocessing(
-              sample, acquisitionMethod
-            ), acquisitionMethod
+    val quantified = quantify(
+      annotation(
+        correction(
+          preprocessing(
+            sample, acquisitionMethod
           ), acquisitionMethod
         ), acquisitionMethod
       ), acquisitionMethod
     )
+
+    val result = postProcessing(quantified, acquisitionMethod, rawSample)
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessFinishedEvent(sample)))
     result
@@ -127,12 +127,12 @@ class Workflow[T] extends LazyLogging {
   protected def quantifySample(sample: Sample, acquisitionMethod: AcquisitionMethod): QuantifiedSample[T] = sample match {
     case s: AnnotatedSample =>
       logger.info(s"quantify sample: $s")
-      var temp = quantificationProcess.process(s, acquisitionMethod)
+      var temp = quantificationProcess.process(s, acquisitionMethod, None)
 
       logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen data type: $s")
       quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
         logger.info(s"executing: $x")
-        temp = x.process(temp, acquisitionMethod)
+        temp = x.process(temp, acquisitionMethod, None)
       }
 
       temp
@@ -246,7 +246,7 @@ class Workflow[T] extends LazyLogging {
     * @param sample
     * @return
     */
-  protected def postProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample = sample match {
+  protected def postProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): AnnotatedSample = sample match {
     case s: QuantifiedSample[T] =>
       if (postProcessor.isEmpty) {
         s
@@ -254,10 +254,10 @@ class Workflow[T] extends LazyLogging {
       else {
         //TODO could be done more elegant with a fold, but no time to play with it
         val iterator = postProcessor.asScala.sortBy(_.priortiy).reverseIterator
-        var temp = iterator.next().process(s, acquisitionMethod)
+        var temp = iterator.next().process(s, acquisitionMethod, rawSample)
 
         while (iterator.hasNext) {
-          temp = iterator.next().process(temp, acquisitionMethod)
+          temp = iterator.next().process(temp, acquisitionMethod, rawSample)
         }
 
         temp

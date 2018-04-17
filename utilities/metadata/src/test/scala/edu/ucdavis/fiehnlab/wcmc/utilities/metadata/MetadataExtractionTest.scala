@@ -38,7 +38,7 @@ class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLoggi
   }
 
 
-  "MetadataExtractor" must {
+  "MetadataExtractor" ignore {
     "be defined" in {
       metadataExtraction should not be null
     }
@@ -55,7 +55,7 @@ class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLoggi
 
   }
 
-  "something" must {
+  "something" ignore {
     "store data in mongo" in {
       val f = fixture
       val filename = "Inj006_ExtrCtl_6.mzXML"

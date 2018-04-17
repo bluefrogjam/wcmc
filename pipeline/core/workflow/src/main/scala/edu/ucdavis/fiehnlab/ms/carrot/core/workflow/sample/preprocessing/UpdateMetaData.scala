@@ -19,7 +19,7 @@ class UpdateMetaData extends PreProcessor {
     * @param item
     * @return
     */
-  override def doProcess(item: Sample, method: AcquisitionMethod): Sample = item
+  override def doProcess(item: Sample, method: AcquisitionMethod, rawSample: Option[Sample]): Sample = item
 
   override def priortiy: Int = 99
 }

@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.{JSONSampleLogging, JSONTargetLogging}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression, RetentionIndexDifference}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.{AnnotateSampleProcess, AnnotationProcess}
@@ -44,15 +44,20 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
           */
         override protected val sampleToLog: String = sample.fileName
       } ::
-        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging {
+        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging with JSONTargetLogging {
           /**
             * which sample we require to log
             */
           override protected val sampleToLog: String = sample.fileName
+          /**
+            * which target we require to log
+            */
+          override protected val targetToLog: Target = target
         }
         ::
         List()
     )
+
 
     val result = spectra.collect {
       case spectra: Feature with CorrectedSpectra if filters.isMatch(spectra, target) =>

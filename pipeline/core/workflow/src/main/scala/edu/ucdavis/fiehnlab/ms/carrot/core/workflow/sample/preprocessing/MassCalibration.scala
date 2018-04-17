@@ -20,16 +20,15 @@ import org.springframework.stereotype.Component
 @Profile(Array("carrot.processing.calibration.simple"))
 class SimpleMassCalibration extends PreProcessor with LazyLogging {
 
+  override def priortiy: Int = 100
+
   /**
     * actually processes the item (implementations in subclasses)
     *
     * @param item
     * @return
     */
-
-  override def priortiy: Int = 100
-
-  override def doProcess(item: Sample, method: AcquisitionMethod): Sample = {
+  override def doProcess(item: Sample, method: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
 
 
     //negative mass for calibration

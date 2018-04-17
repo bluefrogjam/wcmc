@@ -52,8 +52,8 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
 
       val sample: CorrectedSample = correction.process(
         deco.process(
-          loader.getSample("Weiss005_posHILIC_40298234_039.mzML"), method
-        ), method
+          loader.getSample("Weiss005_posHILIC_40298234_039.mzML"), method, None
+        ), method, None
       )
 
       sample.featuresUsedForCorrection.foreach(x => x.annotation.retentionTimeInSeconds === x.target.retentionIndex +- 10)
