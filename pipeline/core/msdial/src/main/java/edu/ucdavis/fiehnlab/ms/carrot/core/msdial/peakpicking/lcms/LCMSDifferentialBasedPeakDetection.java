@@ -6,17 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by diego on 7/21/16.
  */
-public class DifferentialBasedPeakDetection {
+public class LCMSDifferentialBasedPeakDetection {
 
-    private static Logger logger = LoggerFactory.getLogger(DifferentialBasedPeakDetection.class);
+    private static Logger logger = LoggerFactory.getLogger(LCMSDifferentialBasedPeakDetection.class);
 
-    private static final double[] firstDiffCoeff = new double[]{-0.2, -0.1, 0, 0.1, 0.2};
-    private static final double[] secondDiffCoeff = new double[]{0.14285714, -0.07142857, -0.1428571, -0.07142857, 0.14285714};
+    private static final double[] firstDiffCoeff = new double[] {-0.2, -0.1, 0, 0.1, 0.2};
+    private static final double[] secondDiffCoeff = new double[] {0.14285714, -0.07142857, -0.1428571, -0.07142857, 0.14285714};
 
 
     public static List<PeakDetectionResult> detectPeaks(List<double[]> peakList, double minimumDatapointCriteria,
@@ -31,7 +33,6 @@ public class DifferentialBasedPeakDetection {
 
         double maxFirstDiff = Double.MIN_VALUE, maxSecondDiff = Double.MIN_VALUE, maxAmplitudeDiff = Double.MIN_VALUE;
         int halfDatapoint = (int) (firstDiffCoeff.length / 2), peakID = 0;
-        ;
 
         for (int i = 0; i < peakList.size(); i++) {
             if (i < halfDatapoint || i >= peakList.size() - halfDatapoint) {
@@ -99,9 +100,8 @@ public class DifferentialBasedPeakDetection {
             gaussianSigma, gaussianNormalize, gaussianArea, gaussinaSimilarityValue, gaussianSimilarityLeftValue, gaussianSimilarityRightValue,
             realAreaAboveZero, realAreaAboveBaseline, leftPeakArea, rightPeakArea, idealSlopeValue, nonIdealSlopeValue, symmetryValue, basePeakValue, peakPureValue;
 
-        int peaktopCheckPoint, peakTopId = -1, peakHalfId = -1, leftPeakFivePercentId = -1, rightPeakFivePercentId = -1, leftPeakHalfId = -1, rightPeakHalfId = -1;
+        int peaktopCheckPoint, peakTopId, peakHalfId, leftPeakFivePercentId = -1, rightPeakFivePercentId = -1, leftPeakHalfId = -1, rightPeakHalfId = -1;
 
-        boolean peaktopCheck = false;
         boolean infinitLoopCheck = false;
         double infinitLoopID = 0.0;
         boolean nextPeakCheck = false;
@@ -124,7 +124,7 @@ public class DifferentialBasedPeakDetection {
                     peakList.get(i)[3] < peakList.get(i + 1)[3] && peakList.get(i + 1)[3] < peakList.get(i + 2)[3])) {
 
                 dataPoints = new ArrayList<>();
-                dataPoints.add(new double[]{peakList.get(i)[0], peakList.get(i)[1], peakList.get(i)[2], peakList.get(i)[3], firstDiffPeakList.get(i), secondDiffPeakList.get(i)});
+                dataPoints.add(new double[] {peakList.get(i)[0], peakList.get(i)[1], peakList.get(i)[2], peakList.get(i)[3], firstDiffPeakList.get(i), secondDiffPeakList.get(i)});
 
                 // Search real left edge within 5 data points
                 for (int j = 0; j <= 5; j++) {
@@ -135,12 +135,12 @@ public class DifferentialBasedPeakDetection {
                         break;
 
                     if (peakList.get(i - j)[3] > peakList.get(i - j - 1)[3])
-                        dataPoints.add(0, new double[]{peakList.get(i - j - 1)[0], peakList.get(i - j - 1)[1], peakList.get(i - j - 1)[2], peakList.get(i - j - 1)[3], firstDiffPeakList.get(i - j - 1), secondDiffPeakList.get(i - j - 1)});
+                        dataPoints.add(0, new double[] {peakList.get(i - j - 1)[0], peakList.get(i - j - 1)[1], peakList.get(i - j - 1)[2], peakList.get(i - j - 1)[3], firstDiffPeakList.get(i - j - 1), secondDiffPeakList.get(i - j - 1)});
                 }
 
 
                 // 2. Right edge criteria
-                peaktopCheck = false;
+                boolean peaktopCheck = false;
                 peaktopCheckPoint = i;
 
                 while (true) {
@@ -148,7 +148,7 @@ public class DifferentialBasedPeakDetection {
                         break;
 
                     i++;
-                    dataPoints.add(new double[]{peakList.get(i)[0], peakList.get(i)[1], peakList.get(i)[2], peakList.get(i)[3], firstDiffPeakList.get(i), secondDiffPeakList.get(i)});
+                    dataPoints.add(new double[] {peakList.get(i)[0], peakList.get(i)[1], peakList.get(i)[2], peakList.get(i)[3], firstDiffPeakList.get(i), secondDiffPeakList.get(i)});
 
                     // TODO: multiplcation by peaktopNoiseFoldCriteria was removed in current MS-DIAL repo version! - it's been added back for now
                     if (!peaktopCheck && (firstDiffPeakList.get(i - 1) > 0 && firstDiffPeakList.get(i) < 0) ||
@@ -208,7 +208,7 @@ public class DifferentialBasedPeakDetection {
                             break;
 
                         if (peakList.get(i + j)[3] > peakList.get(i + j + 1)[3]) {
-                            dataPoints.add(new double[]{peakList.get(i + j + 1)[0], peakList.get(i + j + 1)[1], peakList.get(i + j + 1)[2], peakList.get(i + j + 1)[3], firstDiffPeakList.get(i + j + 1), secondDiffPeakList.get(i + j + 1)});
+                            dataPoints.add(new double[] {peakList.get(i + j + 1)[0], peakList.get(i + j + 1)[1], peakList.get(i + j + 1)[2], peakList.get(i + j + 1)[3], firstDiffPeakList.get(i + j + 1), secondDiffPeakList.get(i + j + 1)});
                             rightCheck = true;
                             trackCounter++;
                         }
@@ -413,9 +413,24 @@ public class DifferentialBasedPeakDetection {
 
                 peakDetectionResults.add(result);
                 peakID++;
+                nextPeakCheck = true;
+                nextPeakCheckReminder = i;
             }
         }
 
-        return peakDetectionResults;
+        // Finalize
+        peakDetectionResults = peakDetectionResults.stream()
+                .sorted(Comparator.comparing(PeakDetectionResult::intensityAtPeakTop))
+                .collect(Collectors.toList());
+        double maxIntensity = peakDetectionResults.get(peakDetectionResults.size() - 1).intensityAtPeakTop;
+
+        for (int i = 0; i < peakDetectionResults.size(); i++) {
+            peakDetectionResults.get(i).amplitudeScoreValue = peakDetectionResults.get(i).intensityAtPeakTop / maxIntensity;
+            peakDetectionResults.get(i).amplitudeOrderValue = i + 1;
+        }
+
+        return peakDetectionResults.stream()
+                .sorted(Comparator.comparing(PeakDetectionResult::peakID))
+                .collect(Collectors.toList());
     }
 }

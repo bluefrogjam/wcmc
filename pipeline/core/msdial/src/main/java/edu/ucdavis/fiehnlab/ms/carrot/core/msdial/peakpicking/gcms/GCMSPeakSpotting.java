@@ -1,15 +1,13 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.lcms;
+package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.gcms;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialGCMSProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.PeakSpotting;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakDetectionResult;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.*;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.DataAccessUtility;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.LCMSDataAccessUtility;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SmoothingMethod;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +16,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DataDependentPeakSpotting extends PeakSpotting {
+public class GCMSPeakSpotting extends PeakSpotting {
 
-    private static Logger logger = LoggerFactory.getLogger(DataDependentPeakSpotting.class);
+    private static Logger logger = LoggerFactory.getLogger(GCMSPeakSpotting.class);
 
     /**
      * @param spectrumList the sample file that holds the list of MSSpectra
@@ -45,7 +43,7 @@ public class DataDependentPeakSpotting extends PeakSpotting {
      *                     amplitudeCutoff       minimum fragment intensity for centroiding
      * @return detected peak areas
      */
-    public List<PeakAreaBean> getPeaks(List<Feature> spectrumList, MSDialProcessingProperties properties) {
+    public List<PeakAreaBean> getPeakSpots(List<Feature> spectrumList, MSDialGCMSProcessingProperties properties) {
         logger.info("Starting peak spotting...");
 
         List<double[]> peakList;
@@ -56,8 +54,17 @@ public class DataDependentPeakSpotting extends PeakSpotting {
         double startMass = mzRange[0];
         double endMass = mzRange[1];
 
-        float focusedMass = (float) startMass, massStep = (float) properties.massSliceWidth;
+        float focusedMass = (float) startMass,
+                massStep = (float) properties.massSliceWidth,
+                sliceWidth = (float) properties.massSliceWidth;
+
         logger.debug(String.format("Scan range: [%.5f, %.5f] === Focused mass: %.5f", startMass, endMass, focusedMass));
+
+        if (properties.accuracyType == AccuracyType.NOMINAL) {
+            focusedMass = (int) focusedMass;
+            massStep = 1.0f;
+            sliceWidth = 0.5f;
+        }
 
         while (focusedMass < endMass) {
             if (focusedMass < properties.massRangeBegin) {
@@ -68,23 +75,20 @@ public class DataDependentPeakSpotting extends PeakSpotting {
             }
 
             // Get EIC chromatogram
-            peakList = DataAccessUtility.getMS1PeakList(spectrumList, focusedMass, properties.massSliceWidth,
-                properties.retentionTimeBegin, properties.retentionTimeEnd, properties.ionMode);
+            peakList = DataAccessUtility.getMS1PeakList(spectrumList, focusedMass, sliceWidth, properties.retentionTimeBegin, properties.retentionTimeEnd, properties.ionMode);
 
             if (peakList.isEmpty()) {
                 focusedMass += massStep;
                 continue;
             }
-//            logger.trace("EIC(" + String.format("%.5f", focusedMass) + "): " + peakList.size());
 
             // Get peak detection result
-            detectedPeaks = getPeakAreaBeanList(spectrumList, peakList, SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties);
+            detectedPeaks = getPeakAreaBeanList(peakList, SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties);
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
                 continue;
             }
-//            logger.trace("PeakDetection(" + String.format("%.5f", focusedMass) + "): " + detectedPeaks.size());
 
             // Filter noise peaks considering smoothing effects
             detectedPeaks = filterPeaksByRawChromatogram(peakList, detectedPeaks);
@@ -93,7 +97,6 @@ public class DataDependentPeakSpotting extends PeakSpotting {
                 focusedMass += massStep;
                 continue;
             }
-//            logger.trace("SmoothingFilter(" + String.format("%.5f", focusedMass) + "): " + detectedPeaks.size());
 
             // Filtering noise peaks considering baseline effects
             detectedPeaks = getBackgroundSubtractPeaks(detectedPeaks, peakList, properties.backgroundSubtraction);
@@ -102,46 +105,46 @@ public class DataDependentPeakSpotting extends PeakSpotting {
                 focusedMass += massStep;
                 continue;
             }
-//            logger.trace("BackgroundSubtract(" + String.format("%.5f", focusedMass) + "): " + detectedPeaks.size());
 
             // Removing peak spot redundancies among slices
-            detectedPeaks = removePeakAreaBeanRedundancy(detectedPeaksList, detectedPeaks, massStep, 0.03);
+            if (properties.accuracyType == AccuracyType.ACCURATE) {
+                detectedPeaks = removePeakAreaBeanRedundancy(detectedPeaksList, detectedPeaks, massStep, 0.025);
 
-            if (!detectedPeaks.isEmpty()) {
-                detectedPeaksList.add(detectedPeaks);
+                if (detectedPeaks.isEmpty()) {
+                    focusedMass += massStep;
+                    continue;
+                }
             }
-//            logger.trace("RemoveRedundancy(" + String.format("%.5f", focusedMass) + "): " + detectedPeaks.size());
 
+            detectedPeaksList.add(detectedPeaks);
             focusedMass += massStep;
         }
 
         logger.debug("pre-Final detected peak count: " + detectedPeaksList.size());
-//        printDoublePeakList(detectedPeaksList);
 
         detectedPeaks = getCombinedPeakAreaBeanList(detectedPeaksList);
         logger.debug("pos-combined detected peak count: " + detectedPeaks.size());
 
         detectedPeaks = getPeakAreaBeanProperties(detectedPeaks, spectrumList, properties);
+
         logger.debug("Final detected peak count: " + detectedPeaks.size());
 
         return detectedPeaks;
     }
 
     /**
-     * @param spectrumList
      * @param peakList
      * @param smoothingMethod
      * @param properties
      * @return
      */
-    private List<PeakAreaBean> getPeakAreaBeanList(List<Feature> spectrumList, List<double[]> peakList,
-                                                   SmoothingMethod smoothingMethod, MSDialProcessingProperties properties) {
+    private List<PeakAreaBean> getPeakAreaBeanList(List<double[]> peakList, SmoothingMethod smoothingMethod, MSDialGCMSProcessingProperties properties) {
 
         List<double[]> smoothedPeakList = DataAccessUtility.getSmoothedPeakArray(peakList, smoothingMethod, properties.smoothingLevel);
 
-        List<PeakDetectionResult> detectedPeaks = LCMSDifferentialBasedPeakDetection.detectPeaks(smoothedPeakList,
+        List<PeakDetectionResult> detectedPeaks = GCMSDifferentialBasedPeakDetection.detectPeaks(smoothedPeakList,
             properties.minimumDataPoints, properties.minimumAmplitude, properties.amplitudeNoiseFactor,
-            properties.slopeNoiseFactor, properties.peaktopNoiseFactor);
+            properties.slopeNoiseFactor, properties.averagePeakWidth, properties.peaktopNoiseFactor);
 
         if (detectedPeaks.isEmpty()) {
             return new ArrayList<>();
@@ -153,18 +156,15 @@ public class DataDependentPeakSpotting extends PeakSpotting {
             if (detectedPeak.intensityAtPeakTop <= 0)
                 continue;
 
-            // TODO: Hiroshi has added an excluded mass list checker, which has not been implemented as it is not essential to the peak peaking
             PeakAreaBean peakAreaBean = DataAccessUtility.getPeakAreaBean(detectedPeak);
             peakAreaBean.accurateMass = peakList.get(detectedPeak.scanNumAtPeakTop)[2];
             peakAreaBean.ms1LevelDataPointNumber = (int) peakList.get(detectedPeak.scanNumAtPeakTop)[0];
-            peakAreaBean.ms2LevelDataPointNumber = LCMSDataAccessUtility.getMS2DatapointNumber(
-                (int) peakList.get(detectedPeak.scanNumAtLeftPeakEdge)[0], (int) peakList.get(detectedPeak.scanNumAtRightPeakEdge)[0],
-                (float) peakList.get(detectedPeak.scanNumAtPeakTop)[2], properties.centroidMS1Tolerance, spectrumList, properties.ionMode);
             peakAreaBeanList.add(peakAreaBean);
         }
 
         return peakAreaBeanList;
     }
+
 
     /**
      * @param peakAreaBeanList
@@ -172,7 +172,7 @@ public class DataDependentPeakSpotting extends PeakSpotting {
      * @param properties
      * @return
      */
-    private List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialProcessingProperties properties) {
+    private List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialGCMSProcessingProperties properties) {
 
         peakAreaBeanList = peakAreaBeanList.stream()
                 .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
@@ -199,13 +199,15 @@ public class DataDependentPeakSpotting extends PeakSpotting {
                 .collect(Collectors.toList());
     }
 
-    private void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialProcessingProperties properties) {
+    private void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialGCMSProcessingProperties properties) {
 
         int specID = peakAreaBean.ms1LevelDataPointNumber;
-        double massTolerance = properties.massAccuracy;
-
-        List<Ion> spectrum = TypeConverter.getJavaIonList(spectrumList.get(specID));
+        double massTolerance = properties.accuracyType == AccuracyType.NOMINAL ? 0.5 : properties.massAccuracy;
         double precursorMz = peakAreaBean.accurateMass;
+
+        List<Ion> spectrum = SpectralCentroiding.getGCMSCentroidedSpectrum(spectrumList, properties.dataType, specID, massTolerance,
+                properties.amplitudeCutoff, properties.massRangeBegin, properties.massRangeEnd);
+
         int startID = DataAccessUtility.getMs1StartIndex(precursorMz, massTolerance, spectrum);
 
         double ms1IsotopicIonM1PeakHeight = 0.0, ms1IsotopicIonM2PeakHeight = 0.0;

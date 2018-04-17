@@ -3,8 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.deconvolution.SpectralDeconvolution;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.isotope.IsotopeEstimator;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.gcms.PeakSpotting;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.gcms.GCMSPeakSpotting;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MS2DecResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
@@ -21,7 +20,7 @@ public class MSDialGCMSProcessing {
         List<Feature> spectra = TypeConverter.getJavaSpectrumList(sample);
 
         // Peak picking
-        List<PeakAreaBean> detectedPeaks = new PeakSpotting().getPeakSpots(spectra, properties);
+        List<PeakAreaBean> detectedPeaks = new GCMSPeakSpotting().getPeakSpots(spectra, properties);
         logger.debug("Peaks after peak detection: " + detectedPeaks.size());
 
         // Calculate peak properties for deconvolution
