@@ -419,18 +419,23 @@ public class LCMSDifferentialBasedPeakDetection {
         }
 
         // Finalize
-        peakDetectionResults = peakDetectionResults.stream()
-                .sorted(Comparator.comparing(PeakDetectionResult::intensityAtPeakTop))
-                .collect(Collectors.toList());
-        double maxIntensity = peakDetectionResults.get(peakDetectionResults.size() - 1).intensityAtPeakTop;
+        if (peakDetectionResults.isEmpty()) {
+            return peakDetectionResults;
+        } else {
+            peakDetectionResults = peakDetectionResults.stream()
+                    .sorted(Comparator.comparing(PeakDetectionResult::intensityAtPeakTop))
+                    .collect(Collectors.toList());
 
-        for (int i = 0; i < peakDetectionResults.size(); i++) {
-            peakDetectionResults.get(i).amplitudeScoreValue = peakDetectionResults.get(i).intensityAtPeakTop / maxIntensity;
-            peakDetectionResults.get(i).amplitudeOrderValue = i + 1;
+            double maxIntensity = peakDetectionResults.get(peakDetectionResults.size() - 1).intensityAtPeakTop;
+
+            for (int i = 0; i < peakDetectionResults.size(); i++) {
+                peakDetectionResults.get(i).amplitudeScoreValue = peakDetectionResults.get(i).intensityAtPeakTop / maxIntensity;
+                peakDetectionResults.get(i).amplitudeOrderValue = i + 1;
+            }
+
+            return peakDetectionResults.stream()
+                    .sorted(Comparator.comparing(PeakDetectionResult::peakID))
+                    .collect(Collectors.toList());
         }
-
-        return peakDetectionResults.stream()
-                .sorted(Comparator.comparing(PeakDetectionResult::peakID))
-                .collect(Collectors.toList());
     }
 }
