@@ -31,7 +31,7 @@ class FilteredProcessTest extends WordSpec {
         })
       )
 
-      val result = filteredProcess.process(testSampleWith1Spectra, method)
+      val result = filteredProcess.process(testSampleWith1Spectra, method, None)
 
       assert(result.spectra.size == 1)
     }
@@ -52,7 +52,7 @@ class FilteredProcessTest extends WordSpec {
         })
       )
 
-      val result = filteredProcess.process(testSampleWith1Spectra, method)
+      val result = filteredProcess.process(testSampleWith1Spectra, method, None)
 
       assert(result.spectra.isEmpty)
     }
@@ -88,7 +88,7 @@ class FilteredProcessTest extends WordSpec {
         )
       )
 
-      val result = filteredProcess.process(testSampleWith1Spectra, method)
+      val result = filteredProcess.process(testSampleWith1Spectra, method, None)
 
       assert(result.spectra.isEmpty)
     }

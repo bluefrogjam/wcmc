@@ -47,28 +47,31 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
     * @param sample
     * @return
     */
-  final override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod): QuantifiedSample[Double] = {
+  final override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
 
-    //contains a bug doing unnessescary search against the server. A collect first would be more appropriate
-    //to check if a file exist
-    val rawdata: Option[Sample] = zeroReplacementProperties.fileExtension.collect {
+    val rawdata: Option[Sample] =
+    if(rawSample.isDefined) {
+      rawSample
+    } else {
+      zeroReplacementProperties.fileExtension.collect {
 
-      case extension: String =>
-        val fileNameToLoad = sample.name + "." + extension
-        logger.debug(s"attempting to load file: ${fileNameToLoad}")
+        case extension: String =>
+          val fileNameToLoad = sample.name + "." + extension
+          logger.debug(s"attempting to load file: ${fileNameToLoad}")
 
-        try {
-          val result = sampleLoader.loadSample(fileNameToLoad)
+          try {
+            val result = sampleLoader.loadSample(fileNameToLoad)
 
-          if (result.isDefined) {
-            logger.info(s"loaded rawdata file: ${result.get}")
-            result.get
+            if (result.isDefined) {
+              logger.info(s"loaded rawdata file: ${result.get}")
+              result.get
+            }
+          } catch {
+            case e: Throwable =>
+              logger.warn(s"observed error: ${e.getMessage} => skip", e)
           }
-        } catch {
-          case e: Throwable =>
-            logger.warn(s"observed error: ${e.getMessage} => skip", e)
-        }
-    }.collectFirst { case p: Sample => p }
+      }.collectFirst { case p: Sample => p }
+    }
 
     if (rawdata.isDefined) {
       logger.info(s"replacing data with: ${rawdata.get}")
@@ -144,7 +147,7 @@ class ZeroReplacementProperties {
   /**
     * extension of our rawdata files, to be used for replacement
     */
-  var fileExtension: List[String] = "mzXML" :: List()
+  var fileExtension: List[String] = "mzml" :: "d.zip" :: List()
 }
 
 /**
@@ -207,7 +210,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 
     val noise = if (noiseIons.isEmpty) {
       logger.warn("no ions found for noise calculations")
-      0.0
+      0.0f
     }
     else {
       noiseIons.min
@@ -245,7 +248,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           /**
             * how pure this spectra is
             */
-          override val purity: Option[Double] = Some(0)
+          override val purity: Option[Double] = Some(0.0)
           /**
             * the associated sample
             */
@@ -265,7 +268,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           /**
             * accurate mass of this feature, if applicable
             */
-          override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, 0))
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, 0.0f))
 
           override val retentionIndex: Double = receivedTarget.retentionIndex
         }
@@ -279,7 +282,12 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     val ion = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get).get
 
     logger.debug(s"found best spectra for replacement: $value")
-    val noiseCorrectedValue: Double = ion.intensity - noise
+    val noiseCorrectedValue: Float = if(noise <= ion.intensity) {
+      ion.intensity - noise
+    } else {
+      logger.warn(s"selected ion's intensity is lower than noise, replaceing with 0")
+      0.0f
+    }
 
     /**
       * build target object

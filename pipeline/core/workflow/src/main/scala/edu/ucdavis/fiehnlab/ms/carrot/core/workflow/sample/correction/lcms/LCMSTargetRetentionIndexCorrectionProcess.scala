@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component
 class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends CorrectionProcess(libraryAccess) with LazyLogging {
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
-  val massAccuracySetting: Double = 5
+  val massAccuracySetting: Double = 0.015
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:6}")
   val rtAccuracySetting: Double = 6
@@ -89,15 +89,14 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   /**
     * Calculates the gaussian similarity of the spectrum accurate mass vs target precursor mass as well as spectrum rt
     * vs target rt and averages the result
-    *
     * @param spectrum
     * @param standard
     * @return
     */
-  private def gaussianSimilarity(spectrum: Feature, standard: Target): Double = {
+  def gaussianSimilarity(spectrum: Feature, standard: Target): Double = {
     if (spectrum.accurateMass.isDefined && standard.precursorMass.isDefined) {
       val mzSimilarity = math.exp(-0.5 * math.pow((spectrum.accurateMass.get - standard.precursorMass.get) / massAccuracySetting, 2))
-      val rtSimilarity = math.exp(-0.5 * math.pow((spectrum.retentionTimeInMinutes - standard.retentionTimeInMinutes) / rtAccuracySetting, 2))
+      val rtSimilarity = math.exp(-0.5 * math.pow((spectrum.retentionTimeInSeconds - standard.retentionIndex) / rtAccuracySetting, 2))
 
       (mzSimilarity + rtSimilarity) / 2
     } else {
@@ -115,9 +114,9 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   def findBestHit(standard: Target, spectra: Seq[_ <: Feature]): TargetAnnotation[Target, Feature] = {
     //best hit is defined as the mass with the smallest mass error
     //if we prefer mass accurracy
-    //    TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
+//    TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
     //if we we prefer mass intensity
-    //    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
+//    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
     // if we prefer a combination of the two
     TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(x, standard)))
   }
@@ -156,10 +155,11 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     }
 
 
+
     /**
       * allows us to filter the data by the height of the ion
       */
-    val massIntensity = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction", minIntensity = minPeakIntensity) with JSONSampleLogging {
+    val massIntensity = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction", minIntensity = minPeakIntensity) with JSONSampleLogging{
       /**
         * which sample we require to log
         */
@@ -168,7 +168,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
 
     //our defined filters to find possible matches are registered in here
-    val filters: SequentialAnnotate = new SequentialAnnotate(massIntensity :: List()) with JSONSampleLogging {
+    val filters: SequentialAnnotate = new SequentialAnnotate(massIntensity :: List()) with JSONSampleLogging{
       /**
         * which sample we require to log
         */
