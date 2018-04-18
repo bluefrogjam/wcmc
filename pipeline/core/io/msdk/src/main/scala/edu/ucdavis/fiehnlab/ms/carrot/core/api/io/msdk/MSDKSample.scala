@@ -33,43 +33,40 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
       //test all ms scans
       spectra: MsScan =>
 
-        if (spectra.getMsLevel() == 0) {
+        if (spectra.getMsLevel == 0) {
           throw new RuntimeException("Invalid MS Level!")
-        }
-        else if (spectra.getMsLevel == 1 || spectra.getIsolations.isEmpty) {
+        } else if (spectra.getMsLevel == 1 || spectra.getIsolations.isEmpty) {
 
           //discover which mixins we need
           spectra.getPolarity match {
             case PolarityType.NEGATIVE =>
               spectra.getSpectrumType match {
-                case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(NegativeMode()),this.fileName) with Centroided
-                case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(NegativeMode()),this.fileName) with Profiled
+                case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(NegativeMode()), this.fileName) with Centroided
+                case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(NegativeMode()), this.fileName) with Profiled
                 case _ => {
                   logger.warn("Unrecognized spectrum type, setting to profiled")
-                  new MSDKMSSpectra(spectra, Some(NegativeMode()),this.fileName) with Profiled
+                  new MSDKMSSpectra(spectra, Some(NegativeMode()), this.fileName) with Profiled
                 }
               }
             case PolarityType.POSITIVE =>
-              new MSDKMSSpectra(spectra, Some(PositiveMode()),this.fileName)
+              new MSDKMSSpectra(spectra, Some(PositiveMode()), this.fileName)
             case _ =>
-              new MSDKMSSpectra(spectra, None,this.fileName)
+              new MSDKMSSpectra(spectra, Some(UnknownMode()), this.fileName)
           }
-        }
-        else {
+        } else {
           //discover which mixins we need
           spectra.getPolarity match {
             case PolarityType.NEGATIVE =>
-              new MSDKMSMSSpectra(spectra, Some(NegativeMode()),this.fileName)
+              new MSDKMSMSSpectra(spectra, Some(NegativeMode()), this.fileName)
             case PolarityType.POSITIVE =>
-              new MSDKMSMSSpectra(spectra, Some(PositiveMode()),this.fileName)
+              new MSDKMSMSSpectra(spectra, Some(PositiveMode()), this.fileName)
             case _ =>
-              new MSDKMSMSSpectra(spectra, None,this.fileName)
+              new MSDKMSMSSpectra(spectra, Some(UnknownMode()), this.fileName)
           }
         }
 
     }
-  }
-  finally {
+  } finally {
     delegate.dispose()
   }
 
