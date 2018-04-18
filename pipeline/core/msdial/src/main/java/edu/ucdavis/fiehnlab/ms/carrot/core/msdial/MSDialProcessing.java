@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.deconvolution.lcms.SpectralDec
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.isotope.IsotopeEstimator;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.lcms.DataDependentPeakSpotting;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.MS2DeconvolutionResult;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import java.util.List;
 public class MSDialProcessing {
     private Logger logger = LoggerFactory.getLogger(MSDialProcessing.class);
 
-    public Sample process(Sample sample, MSDialProcessingProperties properties) {
+    public Sample process(Sample sample, MSDialLCMSProcessingProperties properties) {
         List<Feature> spectra = TypeConverter.getJavaSpectrumList(sample);
 
         // Peak picking
@@ -37,6 +37,6 @@ public class MSDialProcessing {
 
         logger.info("Found " + deconvolutionResults.size() + " deconvoluted features");
 
-        return new MSDialProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
+        return new MSDialLCMSProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
     }
 }

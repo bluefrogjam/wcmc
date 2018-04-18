@@ -25,7 +25,7 @@ class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult]
       /**
         * how pure this spectra is
         */
-      override val purity: Option[Double] = None
+      override val purity: Option[Double] = Option(x.modelPeakPurity)
 
       /**
         * the associated sample
@@ -45,15 +45,15 @@ class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult]
       /**
         * accurate mass of this feature, if applicable
         */
-      override val massOfDetectedFeature: Option[Ion] = Option(Ion(x.accurateMass, x.peak.intensityAtPeakTop))
+      override val massOfDetectedFeature: Option[Ion] = Option(Ion(x.basepeakMz, x.basepeakHeight.toFloat))
 
       override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
 
         override val msLevel: Short = 1
 
-        override val modelIons: Option[List[Double]] = None
+        override val modelIons: Option[List[Double]] = Option(x.modelMasses.asScala.map(_.toDouble).toList)
 
-        override val ions: Seq[Ion] = x.spectrum.asScala
+        override val ions: Seq[Ion] = x.spectrum.asScala.map(p => Ion(p.mz, p.intensity))
       })
     }
   }

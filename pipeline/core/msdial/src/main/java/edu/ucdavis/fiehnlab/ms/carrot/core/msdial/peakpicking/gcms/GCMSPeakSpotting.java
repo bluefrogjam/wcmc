@@ -2,13 +2,13 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.gcms;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialGCMSProcessingProperties;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.PeakSpotting;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.PeakDetectionResult;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.*;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.DataAccessUtility;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SpectralCentroiding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ public class GCMSPeakSpotting extends PeakSpotting {
      *                     amplitudeCutoff       minimum fragment intensity for centroiding
      * @return detected peak areas
      */
-    public List<PeakAreaBean> getPeakSpots(List<Feature> spectrumList, MSDialGCMSProcessingProperties properties) {
+    public List<PeakAreaBean> getPeakSpots(List<Feature> spectrumList, MSDialProcessingProperties properties) {
         logger.info("Starting peak spotting...");
 
         List<double[]> peakList;
@@ -138,7 +138,7 @@ public class GCMSPeakSpotting extends PeakSpotting {
      * @param properties
      * @return
      */
-    private List<PeakAreaBean> getPeakAreaBeanList(List<double[]> peakList,  MSDialGCMSProcessingProperties properties) {
+    private List<PeakAreaBean> getPeakAreaBeanList(List<double[]> peakList,  MSDialProcessingProperties properties) {
 
         List<double[]> smoothedPeakList = DataAccessUtility.getSmoothedPeakArray(peakList, properties.smoothingMethod, properties.smoothingLevel);
 
@@ -172,7 +172,7 @@ public class GCMSPeakSpotting extends PeakSpotting {
      * @param properties
      * @return
      */
-    private List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialGCMSProcessingProperties properties) {
+    private List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialProcessingProperties properties) {
 
         peakAreaBeanList = peakAreaBeanList.stream()
                 .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
@@ -199,7 +199,7 @@ public class GCMSPeakSpotting extends PeakSpotting {
                 .collect(Collectors.toList());
     }
 
-    private void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialGCMSProcessingProperties properties) {
+    private void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialProcessingProperties properties) {
 
         int specID = peakAreaBean.ms1LevelDataPointNumber;
         double massTolerance = properties.accuracyType == AccuracyType.NOMINAL ? 0.5 : properties.massAccuracy;

@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.deconvolution.gcms.GCMSDeconvolution;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.isotope.IsotopeEstimator;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.gcms.GCMSPeakSpotting;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialGCMSProcessedSample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.gcms.MS1DeconvolutionResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
@@ -18,7 +18,7 @@ public class MSDialGCMSProcessing {
 
     private Logger logger = LoggerFactory.getLogger(MSDialGCMSProcessing.class);
 
-    public Sample process(Sample sample, MSDialGCMSProcessingProperties properties) {
+    public Sample process(Sample sample, MSDialProcessingProperties properties) {
         List<Feature> spectra = TypeConverter.getJavaSpectrumList(sample);
 
         // Peak picking
@@ -36,6 +36,6 @@ public class MSDialGCMSProcessing {
 
         logger.info("Found " + deconvolutionResults.size() + " deconvoluted features");
 
-        return new MSDialProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
+        return new MSDialGCMSProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
     }
 }

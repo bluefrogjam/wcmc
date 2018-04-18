@@ -7,7 +7,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{ProcessedSample, Sample}
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +27,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
   @Autowired
   val msdProcessing: MSDialProcessing = null
   @Autowired
-  val properties: MSDialProcessingProperties = null
+  val properties: MSDialLCMSProcessingProperties = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -45,7 +45,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra should not be null
       outSample.spectra.size should be > 0
 
-      outSample shouldBe a[MSDialProcessedSample]
+      outSample shouldBe a[MSDialLCMSProcessedSample]
     }
 
     "check peakpicking in RT range (1.45 - 1.60)" in {
@@ -54,9 +54,9 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[MSDialProcessedSample]
+      outSample shouldBe a[MSDialLCMSProcessedSample]
 
-      saveFile("testSmall0.carrot", outSample.asInstanceOf[MSDialProcessedSample])
+      saveFile("testSmall0.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
     "check peakpicking in RT range (10.00 - 10.44)" in {
@@ -65,9 +65,9 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[MSDialProcessedSample]
+      outSample shouldBe a[MSDialLCMSProcessedSample]
 
-      saveFile("testSmall1.carrot", outSample.asInstanceOf[MSDialProcessedSample])
+      saveFile("testSmall1.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
     "check peakpicking in RT range (4.74 - 5.50)" in {
@@ -76,12 +76,12 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[MSDialProcessedSample]
+      outSample shouldBe a[MSDialLCMSProcessedSample]
 
-      saveFile("testSmall2.carrot", outSample.asInstanceOf[MSDialProcessedSample])
+      saveFile("testSmall2.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
-    def saveFile(filename: String, sample: MSDialProcessedSample): Unit = {
+    def saveFile(filename: String, sample: MSDialLCMSProcessedSample): Unit = {
       val file = new File(getClass.getResource("/").getPath + s"/$filename")
       logger.info(s"Saving ${file.getName} ...")
       if(file.exists()) file.delete()
@@ -122,6 +122,6 @@ class Config {
   def msdProcessing: MSDialProcessing = new MSDialProcessing()
 
   @Bean
-  def properties: MSDialProcessingProperties = new MSDialProcessingProperties()
+  def properties: MSDialLCMSProcessingProperties = new MSDialLCMSProcessingProperties()
 
 }
