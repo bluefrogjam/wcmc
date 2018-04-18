@@ -93,9 +93,20 @@
                             <executable>node</executable>
                             <commandlineArgs>test.js</commandlineArgs>
                             <workingDirectory>src/test/loadmill</workingDirectory>
-
                         </configuration>
+                    </execution>
 
+                    <!-- this is our integration test -->
+                    <execution>
+                        <id>serverless-test-install-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <commandlineArgs>install loadmill request serverless-domain-manager</commandlineArgs>
+                        </configuration>
                     </execution>
 
 
