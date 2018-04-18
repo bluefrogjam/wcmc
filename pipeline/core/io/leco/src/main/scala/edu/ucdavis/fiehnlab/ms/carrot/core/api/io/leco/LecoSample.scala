@@ -17,6 +17,8 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
 
   def uniquemassIdentifier: String = "uniquemass"
 
+  def signalNoiseIdentifier: String = "s/n"
+
   def purityIdentifier: String = "purity"
 
   def spectraIdentifier: String = "spectra"
@@ -54,6 +56,7 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
             case x: Throwable =>
               logger.warn(x.getMessage, x)
               logger.warn(s"line was: \n${line}\n")
+              logger.warn(s"hearders are: \n${headers.mkString("\n")}\t")
               return null
           }
       }.filter(_ != null).toList
@@ -94,7 +97,10 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
       purity = Some(map(purityIdentifier).replaceAll(",", ".").toDouble),
       scanNumber = scan,
       retentionTimeInSeconds = map(retentionTimeSecondsIdentifier).replaceAll(",", ".").toDouble * 1000, //fix to deal with old BinBase RT time by factor 1000 issues
-      uniqueMass = map(uniquemassIdentifier).toDouble
+      uniqueMass = Some(map(uniquemassIdentifier).toDouble),
+      signalNoise = Some(map(signalNoiseIdentifier).toDouble)
+
+
     )
   }
 

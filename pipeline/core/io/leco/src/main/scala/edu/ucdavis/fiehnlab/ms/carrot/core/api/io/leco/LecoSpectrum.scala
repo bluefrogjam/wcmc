@@ -8,13 +8,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, Simil
   */
 case class LecoSpectrum(
                          override val spectrum: Option[SpectrumProperties],
-                         override val uniqueMass: Double,
+                         override val uniqueMass:Option[Double],
+                         override val signalNoise:Option[Double],
                          override val sample: String,
                          override val purity: Option[Double],
                          override val scanNumber: Int,
                          override val retentionTimeInSeconds: Double
                        )
-  extends MSSpectra with SimilaritySupport with UniqueMassSupport {
+  extends MSSpectra with SimilaritySupport {
 
 
   lazy override val associatedScan: Option[SpectrumProperties] = spectrum

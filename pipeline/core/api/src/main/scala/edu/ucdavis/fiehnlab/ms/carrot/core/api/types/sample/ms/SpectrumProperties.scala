@@ -15,6 +15,17 @@ trait Feature extends AccurateMassSupport {
     * how pure this spectra is
     */
   val purity: Option[Double]
+
+  /**
+    * the signal noise of this spectra
+    */
+  val signalNoise:Option[Double]
+
+  /**
+    * the unique mass of this spectra
+    */
+  val uniqueMass:Option[Double]
+
   /**
     * the local scan number
     */

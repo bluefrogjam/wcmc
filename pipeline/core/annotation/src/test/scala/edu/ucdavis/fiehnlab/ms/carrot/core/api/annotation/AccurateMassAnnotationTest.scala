@@ -41,6 +41,9 @@ object Test {
                                  override val purity: Option[Double] = None,
                                  override val massOfDetectedFeature: Option[Ion]
                                 ) extends MSSpectra {
+    override val uniqueMass: Option[Double] = None
+    override val signalNoise: Option[Double] = None
+
 
     val sample:String = null
     /**
