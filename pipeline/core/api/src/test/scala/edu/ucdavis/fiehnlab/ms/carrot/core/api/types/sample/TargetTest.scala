@@ -16,6 +16,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
 
         "by retention time" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -50,6 +52,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -89,6 +93,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
 
         "not by retention time" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -123,6 +129,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -162,6 +170,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
 
         "by precursor mass" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -196,6 +206,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -236,6 +248,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
 
         "not by precursor mass" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -270,6 +284,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -310,6 +326,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
 
         "not by precursor mass, if one is none" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -344,6 +362,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -383,6 +403,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
 
         "by inchi key, if one is none" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -417,6 +439,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -457,6 +481,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
 
         "by inchi key" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -491,6 +517,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -530,6 +558,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
 
         "by name if both have defined names" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -564,6 +594,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -602,6 +634,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
         }
         "by name if one is None" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -636,6 +670,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -675,6 +711,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
 
         "not by name if one is different" in {
           val a = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */
@@ -709,6 +747,8 @@ class TargetTest extends WordSpec with ShouldMatchers {
             override val spectrum: Option[SpectrumProperties] = None
           }
           val b = new Target {
+            override val uniqueMass: Option[Double] = None
+
             /**
               * the unique inchi key for this spectra
               */

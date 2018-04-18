@@ -34,10 +34,9 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     */
   override protected def findCorrectionTargets(input: Sample, targets: Iterable[Target], method: AcquisitionMethod): Iterable[TargetAnnotation[Target, Feature]] = {
 
-    assert(method.chromatographicMethod.isDefined)
     logger.info(s"defined targets: ${targets.size}")
 
-    val configuration = config.config.asScala.find(_.name == method.chromatographicMethod.get.name)
+    val configuration = config.config.asScala.find(_.name == method.chromatographicMethod.name)
 
     configuration match {
 

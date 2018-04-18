@@ -12,10 +12,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMST
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -48,7 +46,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
     logger.debug("minPeakIntensity " + correction.minPeakIntensity.toString)
 
     "find the closest feature for each target" in {
-      val method = AcquisitionMethod(Some(ChromatographicMethod("mytest", None, None, Some(new IonMode("positive")))))
+      val method = AcquisitionMethod(ChromatographicMethod("targets_20180315", None, None, Some(new IonMode("positive"))))
 
       val sample: CorrectedSample = correction.process(
         deco.process(
@@ -63,6 +61,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
       // Weiss003_posHILIC_59602960_068.mzML
       // 1_TG d5(17:0/17:1/17:0) iSTD [M+Na]+_OWYYELCHNALRQZ-ADIIQMQPSA-N
       val wrongFeature = new Feature {
+
         override val ionMode: Option[IonMode] = None
         override val purity: Option[Double] = None
         override val sample: String = null
@@ -70,6 +69,14 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
         override val scanNumber: Int = -1
         override val associatedScan: Option[SpectrumProperties] = None
         override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.79089510745, 100))
+        /**
+          * the signal noise of this spectra
+          */
+        override val signalNoise: Option[Double] = None
+        /**
+          * the unique mass of this spectra
+          */
+        override val uniqueMass: Option[Double] = None
       }
 
       val correctFeature = new Feature {
@@ -80,6 +87,15 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
         override val scanNumber: Int = -1
         override val associatedScan: Option[SpectrumProperties] = None
         override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.792541148294, 100))
+        /**
+          * the signal noise of this spectra
+          */
+        override val signalNoise: Option[Double] = None
+        /**
+          * the unique mass of this spectra
+          */
+        override val uniqueMass: Option[Double] = None
+
       }
 
       val target = new Target {
@@ -91,6 +107,11 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
         override var requiredForCorrection: Boolean = false
         override var isRetentionIndexStandard: Boolean = true
         override val spectrum: Option[SpectrumProperties] = None
+        /**
+          * the unique mass of this spectra
+          */
+        override val uniqueMass: Option[Double] = None
+
       }
 
       correction.gaussianSimilarity(wrongFeature, target) should be < 0.5
@@ -100,7 +121,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
   }
 }
 
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@Configuration
 class CorrectionTestConfig {
   @Autowired
   val resourceLoader: ResourceLoader = null

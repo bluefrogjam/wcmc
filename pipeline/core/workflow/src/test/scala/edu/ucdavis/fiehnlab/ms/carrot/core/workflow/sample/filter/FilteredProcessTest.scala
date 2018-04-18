@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext
 class FilteredProcessTest extends WordSpec {
 
   "FilteredProcessTest" should {
-    val method = AcquisitionMethod(None)
+    val method = AcquisitionMethod()
     "process - which should include everything" in {
 
       val filteredProcess = new FilteredProcess(

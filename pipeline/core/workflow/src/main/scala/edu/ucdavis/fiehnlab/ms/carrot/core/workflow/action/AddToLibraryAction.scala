@@ -80,6 +80,9 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
           logger.info(s"creating new target from feature: ${t}")
 
           val newTarget = new Target {
+
+            override val uniqueMass: Option[Double] = t.uniqueMass
+
             /**
               * by default we report the retention time the same as the retention index
               * unless overwritten

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{AccurateMassSupport, MSSpectra, SimilaritySupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.MassFilter
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SimilaritySupport}
 import org.springframework.context.ApplicationContext
 
 /**
@@ -12,11 +12,10 @@ import org.springframework.context.ApplicationContext
   * @param maxRatio
   * @param massAccuracy
   */
-class IncludeByIonRatio(val ion: Double, val minRatio: Double, val maxRatio: Double, val phaseToLog: String, val massAccuracy: Double = 0.0) extends Filter[MSSpectra] {
+class IncludeByIonRatio(val ion: Double, val minRatio: Double, val maxRatio: Double, val phaseToLog: String, val massAccuracy: Double = 0.0) extends MassFilter[MSSpectra] (massAccuracy){
 
   logger.info(s"searching for ratio against ion ${ion}")
 
-  def isNominal: Boolean = massAccuracy == 0.0
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
@@ -28,19 +27,11 @@ class IncludeByIonRatio(val ion: Double, val minRatio: Double, val maxRatio: Dou
       case _ => (spectra.associatedScan.get.ions, spectra.associatedScan.get.basePeak)
     }
 
-    val filteredIons = ions.filter { peak =>
-      if (isNominal) {
-        Math.floor(peak.mass + 0.2) == Math.floor(ion + 0.2)
-      }
-      else {
-        peak.mass > (ion - massAccuracy) && peak.mass < (ion + massAccuracy)
-      }
-    }
+    val filteredIons = ions.filter { peak =>sameMass(peak.mass,ion)}
 
     val exists = filteredIons.map { peak =>
       val ratio = peak.intensity / basePeak.intensity
       //logger.info(f"ratio between ${basePeak} and ${peak} is ${ratio}%1.4f, must be in range of ${minRatio} and ${maxRatio}")
-      ratio >= minRatio && ratio <= maxRatio
 
       (ratio >= minRatio && ratio <= maxRatio,ratio)
     }

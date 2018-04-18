@@ -101,54 +101,51 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
     val buffer: mutable.Buffer[MetaData] = data.toBuffer
 
-    acquistionMethod.chromatographicMethod match {
-      case None =>
-      case Some(method) =>
-        method.column match {
-          case Some(column) =>
-            buffer +=
-              MetaData(
-                category = "none",
-                computed = false,
-                hidden = false,
-                name = "column",
-                score = null,
-                unit = null,
-                url = null,
-                value = column
-              )
-          case None => None
-
-        }
-        method.instrument match {
-          case Some(instrument) =>
-            buffer +=
-              MetaData(
-                category = "none",
-                computed = false,
-                hidden = false,
-                name = "instrument",
-                score = null,
-                unit = null,
-                url = null,
-                value = instrument
-              )
-          case None => None
-
-        }
-
+    acquistionMethod.chromatographicMethod.column match {
+      case Some(column) =>
         buffer +=
           MetaData(
             category = "none",
             computed = false,
             hidden = false,
-            name = "method",
+            name = "column",
             score = null,
             unit = null,
             url = null,
-            value = method.name
+            value = column
           )
+      case None => None
+
     }
+    acquistionMethod.chromatographicMethod.instrument match {
+      case Some(instrument) =>
+        buffer +=
+          MetaData(
+            category = "none",
+            computed = false,
+            hidden = false,
+            name = "instrument",
+            score = null,
+            unit = null,
+            url = null,
+            value = instrument
+          )
+      case None => None
+
+    }
+
+    buffer +=
+      MetaData(
+        category = "none",
+        computed = false,
+        hidden = false,
+        name = "method",
+        score = null,
+        unit = null,
+        url = null,
+        value = acquistionMethod.chromatographicMethod.name
+      )
+
 
     buffer.toArray
   }
@@ -366,33 +363,32 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param acquisitionMethod
     * @return
     */
-  private def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = acquisitionMethod.chromatographicMethod match {
+  private def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = {
 
-    case Some(method) =>
-      val instrument = method.instrument match {
-        case Some(x) =>
-          x
-        case _ => noneSpecifiedValue
-      }
+    val method = acquisitionMethod.chromatographicMethod
+    val instrument = method.instrument match {
+      case Some(x) =>
+        x
+      case _ => noneSpecifiedValue
+    }
 
-      val column = method.column match {
-        case Some(x) =>
-          x
-        case _ => noneSpecifiedValue
-      }
+    val column = method.column match {
+      case Some(x) =>
+        x
+      case _ => noneSpecifiedValue
+    }
 
-      val mode = method.ionMode match {
-        case Some(x) if x.isInstanceOf[PositiveMode] =>
-          "positive"
-        case Some(x) if x.isInstanceOf[NegativeMode] =>
-          "negative"
-        case _ =>
-          noneSpecifiedValue
-      }
+    val mode = method.ionMode match {
+      case Some(x) if x.isInstanceOf[PositiveMode] =>
+        "positive"
+      case Some(x) if x.isInstanceOf[NegativeMode] =>
+        "negative"
+      case _ =>
+        noneSpecifiedValue
+    }
 
-      s"${method.name} - ${instrument} - ${column} - ${mode}"
+    s"${method.name} - ${instrument} - ${column} - ${mode}"
 
-    case _ => s"default - $noneSpecifiedValue - $noneSpecifiedValue - $noneSpecifiedValue"
   }
 
 
@@ -411,25 +407,21 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       val values: Array[String] = tag.text.split(" - ")
 
 
+      val instrument = if (values(1) == noneSpecifiedValue) None else Option(values(1))
+      val column = if (values(2) == noneSpecifiedValue) None else Option(values(2))
+      val mode = if (values(3).toLowerCase == "positive") {
+        Some(PositiveMode())
+      }
+      else if (values(3).toLowerCase == "negative") {
+        Some(NegativeMode())
+      }
+      else {
+        None
+      }
+
       AcquisitionMethod(
-        values(0) match {
-          case "default" => None
-          case _ =>
-            val instrument = if (values(1) == noneSpecifiedValue) None else Option(values(1))
-            val column = if (values(2) == noneSpecifiedValue) None else Option(values(2))
-            val mode = if (values(3).toLowerCase == "positive") {
-              Some(PositiveMode())
-            }
-            else if (values(3).toLowerCase == "negative") {
-              Some(NegativeMode())
-            }
-            else {
-              None
-            }
 
-
-            Some(ChromatographicMethod(values(0), instrument, column, mode))
-        }
+        ChromatographicMethod(values(0), instrument, column, mode)
       )
     }.toSeq
 
@@ -451,6 +443,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     val retentionTime: Option[MetaData] = x.metaData.find(p => p.name == "retention time" && p.category == "none")
     val retentionIndex: Option[MetaData] = x.metaData.find(p => p.name == "retention index" && p.category == "none")
 
+    val uniqueMass: Option[MetaData] = x.metaData.find(p => p.name == "unique mass" && p.category == "none")
     val precursorIon: Option[MetaData] = x.metaData.find(p => p.name == "precursor m/z" && p.category == "none")
     val isRetentionIndexStandard: Option[MetaData] = x.metaData.find(p => p.name == "riStandard" && p.category == "carrot")
     val requiredForCorrection: Option[MetaData] = x.metaData.find(p => p.name == "requiredForCorrection" && p.category == "carrot")
@@ -520,7 +513,9 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       }
       else {
         Unknown()
-      }
+      },
+      uniqueMass = if (uniqueMass.isDefined) Option(precursorIon.get.value.toString.toDouble) else None
+
     )
   }
 
@@ -601,7 +596,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
   @CacheEvict(value = Array("monacache"), allEntries = true)
   override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
-    logger.info(s"about to delete ${acquisitionMethod.chromatographicMethod.get.name}")
+    logger.info(s"about to delete ${acquisitionMethod.chromatographicMethod.name}")
 
     load(acquisitionMethod).foreach(t => delete(t, acquisitionMethod))
   }
@@ -680,7 +675,10 @@ case class MonaLibraryTarget(
                               /**
                                 * the specified ionmode for this target. By default we should always assume that it's positive
                                 */
-                              override val ionMode: IonMode
+                              override val ionMode: IonMode,
+
+                              override val uniqueMass: Option[Double]
+
                             )
   extends Target with Idable[String] {
 
