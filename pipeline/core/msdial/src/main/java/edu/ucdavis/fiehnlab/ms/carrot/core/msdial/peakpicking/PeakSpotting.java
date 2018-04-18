@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking;
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.lcms.DataDependentPeakSpotting;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,7 @@ import java.util.List;
 
 public abstract class PeakSpotting {
 
-    private static Logger logger = LoggerFactory.getLogger(DataDependentPeakSpotting.class);
+    private static Logger logger = LoggerFactory.getLogger(PeakSpotting.class);
 
 
 
@@ -24,7 +23,7 @@ public abstract class PeakSpotting {
 
     private void printPeakList(List<PeakAreaBean> p, int idx) {
         for (PeakAreaBean pp : p) {
-            logger.debug(String.format("%d, %d, %.5f, %.5f, %.5f, %.5f, %.5f", idx++, pp.scanNumberAtPeakTop, pp.rtAtPeakTop, pp.accurateMass, pp.intensityAtPeakTop, pp.sharpenessValue, pp.symmetryValue));
+            logger.debug(String.format("%d, %d, %.5f, %.5f, %.5f, %.5f, %.5f", idx++, pp.scanNumberAtPeakTop, pp.rtAtPeakTop, pp.accurateMass, pp.intensityAtPeakTop, pp.shapenessValue, pp.symmetryValue));
         }
     }
 

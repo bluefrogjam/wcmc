@@ -3,10 +3,9 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakDetectionResult;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.Smoothing;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SmoothingMethod;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.PeakDetectionResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 
 import java.util.ArrayList;
@@ -162,8 +161,19 @@ public class DataAccessUtility {
      * @param smoothingLevel
      * @return
      */
-    public static List<double[]> getSmoothedPeakArray(List<double[]> peaklist, SmoothingMethod smoothingMethod, int smoothingLevel) {
-        return Smoothing.smooth(peaklist, smoothingMethod, smoothingLevel);
+    public static List<double[]> getSmoothedPeakArray(List<double[]> peaklist, String smoothingMethod, int smoothingLevel) {
+        return Smoothing.smooth(peaklist, SmoothingMethod.valueOf(smoothingMethod.toUpperCase()), smoothingLevel);
+    }
+
+    /**
+     *
+     * @param peaklist
+     * @param smoothingMethod
+     * @param smoothingLevel
+     * @return
+     */
+    public static List<Peak> getSmoothedPeaks(List<Peak> peaklist, String smoothingMethod, int smoothingLevel) {
+        return Smoothing.smoothPeaks(peaklist, SmoothingMethod.valueOf(smoothingMethod.toUpperCase()), smoothingLevel);
     }
 
 
@@ -192,7 +202,7 @@ public class DataAccessUtility {
         peak.scanNumberAtLeftPeakEdge = peakResult.scanNumAtLeftPeakEdge;
         peak.scanNumberAtPeakTop = peakResult.scanNumAtPeakTop;
         peak.scanNumberAtRightPeakEdge = peakResult.scanNumAtRightPeakEdge;
-        peak.sharpenessValue = peakResult.sharpnessValue;
+        peak.shapenessValue = peakResult.sharpnessValue;
         peak.symmetryValue = peakResult.symmetryValue;
         peak.normalizedValue = -1;
         peak.accurateMass = -1;
