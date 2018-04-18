@@ -5,6 +5,7 @@ import java.io.{IOException, InputStream}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample, SampleProperties}
+import org.apache.commons.io.IOUtils
 
 import scala.io.Source
 
@@ -32,7 +33,14 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
     * @return
     */
   def readFile(inputStream: InputStream): List[LecoSpectrum] = {
-    val lines: Iterator[String] = Source.fromInputStream(inputStream, "ISO-8859-1").getLines().map(_.toLowerCase)
+    try {
+
+      val lines: Iterator[String] = Source.fromInputStream(inputStream, "ISO-8859-1").getLines().map(_.toLowerCase)
+    }
+    finally {
+      IOUtils.closeQuietly(inputStream)
+    }
+
 
     if (lines.hasNext) {
 
