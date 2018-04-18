@@ -286,7 +286,7 @@ public class GCMSDifferentialBasedPeakDetection {
 
                     double currSlope = dataPoints.get(j + 1)[3] - dataPoints.get(j)[3];
 
-                    if (currSlope > 0)
+                    if (currSlope >= 0)
                         idealSlopeValue += Math.abs(currSlope);
                     else
                         nonIdealSlopeValue += Math.abs(currSlope);
@@ -319,7 +319,7 @@ public class GCMSDifferentialBasedPeakDetection {
                     if (rightShapenessValue < currSharpness)
                         rightShapenessValue = currSharpness;
 
-                    double currSlope = dataPoints.get(j)[4];
+                    double currSlope = dataPoints.get(j - 1)[3] - dataPoints.get(j)[3];
 
                     if (currSlope > 0)
                         idealSlopeValue += Math.abs(currSlope);
