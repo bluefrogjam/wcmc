@@ -13,9 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GCMSPeakSpotting extends PeakSpotting {
 
@@ -165,41 +163,13 @@ public class GCMSPeakSpotting extends PeakSpotting {
         return peakAreaBeanList;
     }
 
-
     /**
-     * @param peakAreaBeanList
+     *
+     * @param peakAreaBean
      * @param spectrumList
      * @param properties
-     * @return
      */
-    private List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialProcessingProperties properties) {
-
-        peakAreaBeanList = peakAreaBeanList.stream()
-                .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
-                        .thenComparing(PeakAreaBean::accurateMass))
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < peakAreaBeanList.size(); i++) {
-            peakAreaBeanList.get(i).peakID = i;
-            setIsotopicIonInformation(peakAreaBeanList.get(i), spectrumList, properties);
-        }
-
-        peakAreaBeanList = peakAreaBeanList.stream()
-                .sorted(Comparator.comparing(PeakAreaBean::intensityAtPeakTop))
-                .collect(Collectors.toList());
-
-        if (peakAreaBeanList.size() - 1 > 0) {
-            for (int i = 0; i < peakAreaBeanList.size(); i++) {
-                peakAreaBeanList.get(i).amplitudeScoreValue = ((double) i / (peakAreaBeanList.size() - 1));
-            }
-        }
-
-        return peakAreaBeanList.stream()
-                .sorted(Comparator.comparing(PeakAreaBean::peakID))
-                .collect(Collectors.toList());
-    }
-
-    private void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialProcessingProperties properties) {
+    public void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialProcessingProperties properties) {
 
         int specID = peakAreaBean.ms1LevelDataPointNumber;
         double massTolerance = properties.accuracyType == AccuracyType.NOMINAL ? 0.5 : properties.massAccuracy;
