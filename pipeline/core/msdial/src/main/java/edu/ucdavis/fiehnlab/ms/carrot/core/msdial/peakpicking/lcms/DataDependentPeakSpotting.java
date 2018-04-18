@@ -5,10 +5,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.PeakSpotting;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakDetectionResult;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.PeakDetectionResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.DataAccessUtility;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.LCMSDataAccessUtility;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SmoothingMethod;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +77,7 @@ public class DataDependentPeakSpotting extends PeakSpotting {
 //            logger.trace("EIC(" + String.format("%.5f", focusedMass) + "): " + peakList.size());
 
             // Get peak detection result
-            detectedPeaks = getPeakAreaBeanList(spectrumList, peakList, SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties);
+            detectedPeaks = getPeakAreaBeanList(spectrumList, peakList, properties);
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
@@ -130,14 +129,12 @@ public class DataDependentPeakSpotting extends PeakSpotting {
     /**
      * @param spectrumList
      * @param peakList
-     * @param smoothingMethod
      * @param properties
      * @return
      */
-    private List<PeakAreaBean> getPeakAreaBeanList(List<Feature> spectrumList, List<double[]> peakList,
-                                                   SmoothingMethod smoothingMethod, MSDialProcessingProperties properties) {
+    private List<PeakAreaBean> getPeakAreaBeanList(List<Feature> spectrumList, List<double[]> peakList, MSDialProcessingProperties properties) {
 
-        List<double[]> smoothedPeakList = DataAccessUtility.getSmoothedPeakArray(peakList, smoothingMethod, properties.smoothingLevel);
+        List<double[]> smoothedPeakList = DataAccessUtility.getSmoothedPeakArray(peakList, properties.smoothingMethod, properties.smoothingLevel);
 
         List<PeakDetectionResult> detectedPeaks = LCMSDifferentialBasedPeakDetection.detectPeaks(smoothedPeakList,
             properties.minimumDataPoints, properties.minimumAmplitude, properties.amplitudeNoiseFactor,

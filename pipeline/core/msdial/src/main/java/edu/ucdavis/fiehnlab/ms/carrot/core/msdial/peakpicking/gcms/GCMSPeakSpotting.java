@@ -4,8 +4,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialGCMSProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.PeakSpotting;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakDetectionResult;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.PeakDetectionResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.*;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.DataAccessUtility;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class GCMSPeakSpotting extends PeakSpotting {
             }
 
             // Get peak detection result
-            detectedPeaks = getPeakAreaBeanList(peakList, SmoothingMethod.valueOf(properties.smoothingMethod.toUpperCase()), properties);
+            detectedPeaks = getPeakAreaBeanList(peakList, properties);
 
             if (detectedPeaks.isEmpty()) {
                 focusedMass += massStep;
@@ -134,13 +135,12 @@ public class GCMSPeakSpotting extends PeakSpotting {
 
     /**
      * @param peakList
-     * @param smoothingMethod
      * @param properties
      * @return
      */
-    private List<PeakAreaBean> getPeakAreaBeanList(List<double[]> peakList, SmoothingMethod smoothingMethod, MSDialGCMSProcessingProperties properties) {
+    private List<PeakAreaBean> getPeakAreaBeanList(List<double[]> peakList,  MSDialGCMSProcessingProperties properties) {
 
-        List<double[]> smoothedPeakList = DataAccessUtility.getSmoothedPeakArray(peakList, smoothingMethod, properties.smoothingLevel);
+        List<double[]> smoothedPeakList = DataAccessUtility.getSmoothedPeakArray(peakList, properties.smoothingMethod, properties.smoothingLevel);
 
         List<PeakDetectionResult> detectedPeaks = GCMSDifferentialBasedPeakDetection.detectPeaks(smoothedPeakList,
             properties.minimumDataPoints, properties.minimumAmplitude, properties.amplitudeNoiseFactor,

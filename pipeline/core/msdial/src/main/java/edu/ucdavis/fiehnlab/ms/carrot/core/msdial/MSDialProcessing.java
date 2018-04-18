@@ -2,10 +2,10 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.deconvolution.SpectralDeconvolution;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.deconvolution.lcms.SpectralDeconvolution;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.isotope.IsotopeEstimator;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.lcms.DataDependentPeakSpotting;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MS2DecResult;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.MS2DeconvolutionResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
@@ -32,7 +32,7 @@ public class MSDialProcessing {
 
         // Calculate peak properties for deconvolution
         // DataSummary bean does not appear to be used, so skipping that translation
-        List<MS2DecResult> deconvolutionResults = new SpectralDeconvolution().getMS2Deconvolution(spectra, detectedPeaks, properties);
+        List<MS2DeconvolutionResult> deconvolutionResults = new SpectralDeconvolution().getMS2Deconvolution(spectra, detectedPeaks, properties);
         logger.debug("Peaks after deconvolution: " + deconvolutionResults.size());
 
         logger.info("Found " + deconvolutionResults.size() + " deconvoluted features");

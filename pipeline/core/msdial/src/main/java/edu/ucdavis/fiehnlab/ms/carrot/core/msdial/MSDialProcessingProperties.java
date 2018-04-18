@@ -3,8 +3,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -64,10 +64,9 @@ public class MSDialProcessingProperties {
     public double minimumAmplitude = 2500;
 
     /**
-     * Accurate or Nominal mass
-     * possible values: "accurate" or "nominal"
+     * accuracy type, accurate or nominal mass
      */
-    public String massResolution = "accurate";
+    public AccuracyType accuracyType = AccuracyType.ACCURATE;
 
     /**
      * size of the step when analyzing the mass scale

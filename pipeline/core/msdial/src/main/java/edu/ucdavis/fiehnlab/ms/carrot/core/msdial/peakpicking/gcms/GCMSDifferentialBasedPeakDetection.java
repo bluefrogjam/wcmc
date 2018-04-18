@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.gcms;
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakDetectionResult;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.BasicMathematics;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.PeakDetectionResult;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.math.BasicMathematics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
