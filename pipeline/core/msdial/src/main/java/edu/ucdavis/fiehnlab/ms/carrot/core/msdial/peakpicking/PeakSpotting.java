@@ -1,11 +1,15 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking;
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class PeakSpotting {
 
@@ -207,4 +211,45 @@ public abstract class PeakSpotting {
 
         return combinedPeakAreaBeanList;
     }
+
+    /**
+     * @param peakAreaBeanList
+     * @param spectrumList
+     * @param properties
+     * @return
+     */
+    public List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialProcessingProperties properties) {
+
+        peakAreaBeanList = peakAreaBeanList.stream()
+                .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
+                        .thenComparing(PeakAreaBean::accurateMass))
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < peakAreaBeanList.size(); i++) {
+            peakAreaBeanList.get(i).peakID = i;
+            setIsotopicIonInformation(peakAreaBeanList.get(i), spectrumList, properties);
+        }
+
+        peakAreaBeanList = peakAreaBeanList.stream()
+                .sorted(Comparator.comparing(PeakAreaBean::intensityAtPeakTop))
+                .collect(Collectors.toList());
+
+        if (peakAreaBeanList.size() - 1 > 0) {
+            for (int i = 0; i < peakAreaBeanList.size(); i++) {
+                peakAreaBeanList.get(i).amplitudeScoreValue = ((double) i / (peakAreaBeanList.size() - 1));
+            }
+        }
+
+        return peakAreaBeanList.stream()
+                .sorted(Comparator.comparing(PeakAreaBean::peakID))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     *
+     * @param peakAreaBean
+     * @param spectrumList
+     * @param properties
+     */
+    public abstract void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialProcessingProperties properties);
 }
