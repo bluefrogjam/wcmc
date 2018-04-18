@@ -67,17 +67,17 @@ public abstract class MSDialProcessingProperties {
     /**
      * size of the step when analyzing the mass scale
      */
-    public double massSliceWidth = 0.1;
+    public double massSliceWidth;
 
     /**
      * difference between 2 masses to be considered the same
      */
-    public double massAccuracy = 0.05;
+    public double massAccuracy;
 
     /**
      * minimum scans to consider a peak as such
      */
-    public double minimumDataPoints = 5;
+    public double minimumDataPoints;
 
     /**
      * multiplier for calculation of noise at base line
@@ -106,12 +106,53 @@ public abstract class MSDialProcessingProperties {
     /**
      * Centroided or Profiled data
      */
-    public MSDataType dataType = MSDataType.CENTROID;
+    public MSDataType dataType;
 
     /**
      * ionMode
      */
-    public IonMode ionMode = new PositiveMode();
+    public IonMode ionMode;
+
+    /**
+     * Tolerance for MS1 centroiding
+     */
+    public double centroidMS1Tolerance;
+
+    /**
+     * Tolerance for MS2 centroiding
+     */
+    public double centroidMS2Tolerance;
+
+    /**
+     * Maximum charge number to search for in isotopic detection
+     */
+    public int maxChargeNumber;
+
+    /**
+     * Maximum isotope to trace (i.e., M + 8)
+     */
+    public int maxTraceNumber;
+
+    /**
+     * Sets the type of centroiding performed during deconvolution, true indicating
+     * peak detection based and false sweep bin based
+     */
+    public boolean peakDetectionBasedCentroid;
+
+    /**
+     *
+     */
+    public boolean removeAfterPrecursor;
+
+    /**
+     *
+     */
+    public double keptIsotopeRange;
+
+    /**
+     * minimum fragment intensity for deconvolution
+     */
+    public double amplitudeCutoff;
 
     /**
      * constant to calculate the optimal shape of a gaussian peak
@@ -119,47 +160,6 @@ public abstract class MSDialProcessingProperties {
      * @return
      */
     public double sigma = 0.1;
-
-    /**
-     * Tolerance for MS1 centroiding
-     */
-    public double centroidMS1Tolerance = 0.01;
-
-    /**
-     * Tolerance for MS2 centroiding
-     */
-    public double centroidMS2Tolerance = 0.1;
-
-    /**
-     * Maximum charge number to search for in isotopic detection
-     */
-    public int maxChargeNumber = 2;
-
-    /**
-     * Maximum isotope to trace (i.e., M + 8)
-     */
-    public int maxTraceNumber = 8;
-
-    /**
-     * Sets the type of centroiding performed during deconvolution, true indicating
-     * peak detection based and false sweep bin based
-     */
-    public boolean peakDetectionBasedCentroid = true;
-
-    /**
-     *
-     */
-    public boolean removeAfterPrecursor = true;
-
-    /**
-     *
-     */
-    public double keptIsotopeRange = 0.5;
-
-    /**
-     * minimum fragment intensity for deconvolution
-     */
-    public double amplitudeCutoff = 10;
 
 
     public String toString() {
@@ -173,8 +173,6 @@ public abstract class MSDialProcessingProperties {
                 "\naveragePeakWidth: " + averagePeakWidth +
                 "\nminimumAmplitude: " + minimumAmplitude +
                 "\nmassSliceWith: " + massSliceWidth +
-                "\nmassAccuracy: " + massAccuracy +
-                "\ndataType: " + dataType +
                 "\nionMode: " + ionMode +
                 "\namplitudeCutoff: " + amplitudeCutoff +
                 "\nminimumDataPoints: " + minimumDataPoints

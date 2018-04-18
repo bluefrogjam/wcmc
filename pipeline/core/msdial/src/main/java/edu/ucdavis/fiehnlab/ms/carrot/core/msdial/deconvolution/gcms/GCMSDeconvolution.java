@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.deconvolution.gcms;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialGCMSProcessingProperties;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
@@ -26,7 +26,7 @@ public class GCMSDeconvolution {
 
     private static Logger logger = LoggerFactory.getLogger(GCMSDeconvolution.class);
 
-    public List<MS1DeconvolutionResult> gcmsMS1Deconvolution(List<Feature> spectrumList, List<PeakAreaBean> peakAreaList, MSDialGCMSProcessingProperties properties) {
+    public List<MS1DeconvolutionResult> gcmsMS1Deconvolution(List<Feature> spectrumList, List<PeakAreaBean> peakAreaList, MSDialProcessingProperties properties) {
         peakAreaList = peakAreaList.stream()
                 .sorted(Comparator.comparing(PeakAreaBean::scanNumberAtPeakTop)
                         .thenComparing(PeakAreaBean::accurateMass))
@@ -214,9 +214,9 @@ public class GCMSDeconvolution {
      * @return
      */
     private List<ModelChromatogram> getModelChromatograms(List<Feature> spectra, List<PeakAreaBean> detectedPeaks,
-                                                                 DeconvolutionBin[] gcmsDecBins, double[] matchedFilterArray,
-                                                                 Map<Integer, Integer> scanNumberMap,
-                                                                 MSDialGCMSProcessingProperties properties) {
+                                                          DeconvolutionBin[] gcmsDecBins, double[] matchedFilterArray,
+                                                          Map<Integer, Integer> scanNumberMap,
+                                                          MSDialProcessingProperties properties) {
 
         List<RegionMarker> regionMarkers = getRegionMarkers(matchedFilterArray);
         List<ModelChromatogram> modelChromatograms = new ArrayList<>();
@@ -287,8 +287,8 @@ public class GCMSDeconvolution {
      * @return
      */
     private ModelChromatogram getModelChromatogram(List<Feature> spectra, List<PeakAreaBean> detectedPeaks,
-                                                          DeconvolutionBin[] deconvolutionBins, Map<Integer, Integer> scanNumberMap,
-                                                          MSDialGCMSProcessingProperties properties) {
+                                                   DeconvolutionBin[] deconvolutionBins, Map<Integer, Integer> scanNumberMap,
+                                                   MSDialProcessingProperties properties) {
         if (detectedPeaks.isEmpty())
             return null;
 
@@ -423,8 +423,8 @@ public class GCMSDeconvolution {
      * @return
      */
     private List<Peak> getTrimedAndSmoothedPeaklist(List<Feature> spectrumList, int chromScanOfPeakLeft, int chromScanOfPeakRight,
-                                                           DeconvolutionBin[] deconvolutionBins, double focusedMass,
-                                                           MSDialGCMSProcessingProperties properties) {
+                                                    DeconvolutionBin[] deconvolutionBins, double focusedMass,
+                                                    MSDialProcessingProperties properties) {
         List<Peak> peakList = new ArrayList<>();
 
         int leftRemainder = 0, rightRemainder = 0;
@@ -681,7 +681,7 @@ public class GCMSDeconvolution {
      */
     private List<List<Peak>> getMS1Chromatograms(List<Feature> spectrumList, ModelChromatogramVector modelChromVector,
                                                  DeconvolutionBin[] deconvolutionBins, int chromScanOfPeakTop,
-                                                 MSDialGCMSProcessingProperties properties) {
+                                                 MSDialProcessingProperties properties) {
 
         int rawScan = deconvolutionBins[chromScanOfPeakTop].rawScanNumber;
         double massBin = properties.accuracyType == AccuracyType.NOMINAL ? properties.massAccuracy : properties.massAccuracy;

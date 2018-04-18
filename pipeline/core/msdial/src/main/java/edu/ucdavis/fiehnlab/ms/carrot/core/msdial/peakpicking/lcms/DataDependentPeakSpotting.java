@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.lcms;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialLCMSProcessingProperties;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.PeakSpotting;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.PeakDetectionResult;
@@ -44,7 +44,7 @@ public class DataDependentPeakSpotting extends PeakSpotting {
      *                     amplitudeCutoff       minimum fragment intensity for centroiding
      * @return detected peak areas
      */
-    public List<PeakAreaBean> getPeaks(List<Feature> spectrumList, MSDialLCMSProcessingProperties properties) {
+    public List<PeakAreaBean> getPeaks(List<Feature> spectrumList, MSDialProcessingProperties properties) {
         logger.info("Starting peak spotting...");
 
         List<double[]> peakList;
@@ -132,7 +132,7 @@ public class DataDependentPeakSpotting extends PeakSpotting {
      * @param properties
      * @return
      */
-    private List<PeakAreaBean> getPeakAreaBeanList(List<Feature> spectrumList, List<double[]> peakList, MSDialLCMSProcessingProperties properties) {
+    private List<PeakAreaBean> getPeakAreaBeanList(List<Feature> spectrumList, List<double[]> peakList, MSDialProcessingProperties properties) {
 
         List<double[]> smoothedPeakList = DataAccessUtility.getSmoothedPeakArray(peakList, properties.smoothingMethod, properties.smoothingLevel);
 
@@ -169,7 +169,7 @@ public class DataDependentPeakSpotting extends PeakSpotting {
      * @param properties
      * @return
      */
-    private List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialLCMSProcessingProperties properties) {
+    private List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialProcessingProperties properties) {
 
         peakAreaBeanList = peakAreaBeanList.stream()
                 .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
@@ -196,7 +196,7 @@ public class DataDependentPeakSpotting extends PeakSpotting {
                 .collect(Collectors.toList());
     }
 
-    private void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialLCMSProcessingProperties properties) {
+    private void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialProcessingProperties properties) {
 
         int specID = peakAreaBean.ms1LevelDataPointNumber;
         double massTolerance = properties.centroidMS1Tolerance;

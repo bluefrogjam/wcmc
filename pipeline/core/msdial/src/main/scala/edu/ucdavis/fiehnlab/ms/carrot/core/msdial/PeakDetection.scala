@@ -20,7 +20,7 @@ class PeakDetection extends PreProcessor with LazyLogging {
   private val msdialProcessor: MSDialProcessing = null
 
   @Autowired
-  private val processingProperties: MSDialProcessingProperties = null
+  private val processingProperties: MSDialLCMSProcessingProperties = null
 
   override def priortiy: Int = 50
 
@@ -44,5 +44,5 @@ class PeakDetectionConfiguration {
   def msdialProcessor: MSDialProcessing = new MSDialProcessing()
 
   @Bean
-  def processingProperties: MSDialProcessingProperties = new MSDialProcessingProperties()
+  def processingProperties: MSDialLCMSProcessingProperties = new MSDialLCMSProcessingProperties()
 }

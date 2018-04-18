@@ -587,9 +587,9 @@ class MS1DeconvolutionUtilities {
 		int peakTopOfDeconvolutedChrom = ModelChromatogramVector.targetScanTopInModelChromatogramVector - ModelChromatogramVector.targetScanLeftInModelChromatogramVector;
 		int peakTopOfOriginalChrom = ModelChromatogramVector.targetScanTopInModelChromatogramVector;
 
-		MS1DeconvolutionResult MS1DeconvolutionResult = new MS1DeconvolutionResult();
-		MS1DeconvolutionResult.scanNumber = ModelChromatogramVector.rawScanList.get(ModelChromatogramVector.targetScanTopInModelChromatogramVector);
-		MS1DeconvolutionResult.retentionTime = ModelChromatogramVector.retentionTimeList.get(ModelChromatogramVector.targetScanTopInModelChromatogramVector);
+		MS1DeconvolutionResult ms1DeconvolutionResult = new MS1DeconvolutionResult();
+		ms1DeconvolutionResult.scanNumber = ModelChromatogramVector.rawScanList.get(ModelChromatogramVector.targetScanTopInModelChromatogramVector);
+		ms1DeconvolutionResult.retentionTime = ModelChromatogramVector.retentionTimeList.get(ModelChromatogramVector.targetScanTopInModelChromatogramVector);
 
 		double sumArea = 0;
 		double sumHeight = 0;
@@ -606,11 +606,11 @@ class MS1DeconvolutionUtilities {
 
 			for (int j = 0; j < chromatogram.size(); j++) {
 				if (j == peakTopOfDeconvolutedChrom) {
-					MS1DeconvolutionResult.spectrum.add(chromatogram.get(j));
+					ms1DeconvolutionResult.spectrum.add(chromatogram.get(j));
 					sumHeight += chromatogram.get(j).intensity;
 
 					if (chromatogram.get(j).intensity > ms1Chromatograms.get(i).get(peakTopOfOriginalChrom).intensity) {
-						MS1DeconvolutionResult.spectrum.get(MS1DeconvolutionResult.spectrum.size() - 1).peakQuality = PeakQuality.SATURATED;
+						ms1DeconvolutionResult.spectrum.get(ms1DeconvolutionResult.spectrum.size() - 1).peakQuality = PeakQuality.SATURATED;
 					}
 				}
 
@@ -620,14 +620,14 @@ class MS1DeconvolutionUtilities {
 			}
 		}
 
-		MS1DeconvolutionResult.integratedArea = sumArea * 60;
-		MS1DeconvolutionResult.integratedHeight = sumHeight;
+		ms1DeconvolutionResult.integratedArea = sumArea * 60;
+		ms1DeconvolutionResult.integratedHeight = sumHeight;
 
 		List<Peak> quantChromatogram = deconvolutedPeaklistList.get(modelMzID);
 
-		MS1DeconvolutionResult.basepeakMz = quantChromatogram.get(peakTopOfDeconvolutedChrom).mz;
-		MS1DeconvolutionResult.basepeakHeight = quantChromatogram.get(peakTopOfDeconvolutedChrom).intensity;
-		MS1DeconvolutionResult.baseChromatogram = quantChromatogram;
+		ms1DeconvolutionResult.basepeakMz = quantChromatogram.get(peakTopOfDeconvolutedChrom).mz;
+		ms1DeconvolutionResult.basepeakHeight = quantChromatogram.get(peakTopOfDeconvolutedChrom).intensity;
+		ms1DeconvolutionResult.baseChromatogram = quantChromatogram;
 
 		sumArea = 0;
 
@@ -636,10 +636,10 @@ class MS1DeconvolutionUtilities {
 					* (quantChromatogram.get(i + 1).retentionTime - quantChromatogram.get(i).retentionTime) * 0.5;
 		}
 
-		MS1DeconvolutionResult.basepeakArea = sumArea * 60;
-		MS1DeconvolutionResult.spectrum = MS1DeconvolutionResult.spectrum.stream().sorted(Comparator.comparing(Peak::mz)).collect(Collectors.toList());
-		MS1DeconvolutionResult.modelMasses = ModelChromatogramVector.modelMasses;
+		ms1DeconvolutionResult.basepeakArea = sumArea * 60;
+		ms1DeconvolutionResult.spectrum = ms1DeconvolutionResult.spectrum.stream().sorted(Comparator.comparing(Peak::mz)).collect(Collectors.toList());
+		ms1DeconvolutionResult.modelMasses = ModelChromatogramVector.modelMasses;
 
-		return MS1DeconvolutionResult;
+		return ms1DeconvolutionResult;
 	}
 }

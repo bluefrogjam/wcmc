@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.MS2DeconvolutionRes
 import scala.collection.JavaConverters._
 
 
-class MSDialProcessedSample(ms2DecResults: util.List[MS2DeconvolutionResult], mode: IonMode, override val fileName: String) extends ProcessedSample with LazyLogging {
+class MSDialLCMSProcessedSample(ms2DecResults: util.List[MS2DeconvolutionResult], mode: IonMode, override val fileName: String) extends ProcessedSample with LazyLogging {
 
   override val properties: Option[SampleProperties] = None
 
@@ -31,7 +31,7 @@ class MSDialProcessedSample(ms2DecResults: util.List[MS2DeconvolutionResult], mo
         /**
           * the associated sample
           */
-        override val sample: String = MSDialProcessedSample.this.fileName
+        override val sample: String = MSDialLCMSProcessedSample.this.fileName
 
         /**
           * the retention time of this spectra. It should be provided in seconds!
@@ -78,7 +78,7 @@ class MSDialProcessedSample(ms2DecResults: util.List[MS2DeconvolutionResult], mo
         /**
           * the associated sample
           */
-        override val sample: String = MSDialProcessedSample.this.fileName
+        override val sample: String = MSDialLCMSProcessedSample.this.fileName
 
         /**
           * the retention time of this spectra. It should be provided in seconds!
