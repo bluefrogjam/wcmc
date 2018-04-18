@@ -16,8 +16,8 @@ import java.util.List;
 
 //@Component
 //@Profile("carrot.processing.peakdetection")
-public class MSDialProcessing {
-    private Logger logger = LoggerFactory.getLogger(MSDialProcessing.class);
+public class MSDialLCMSProcessing {
+    private Logger logger = LoggerFactory.getLogger(MSDialLCMSProcessing.class);
 
     public Sample process(Sample sample, MSDialLCMSProcessingProperties properties) {
         List<Feature> spectra = TypeConverter.getJavaSpectrumList(sample);
