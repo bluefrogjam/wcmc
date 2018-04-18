@@ -16,7 +16,7 @@ class ConversionAwareSampleLoader @Autowired()(dataForm: DataFormerClient, resou
   /**
     * this are the extensions the dataformer client supports natively
     */
-  val supportedInputExtensionForDataForm: Array[String] = Array("d.zip", "raw", "wiff", ".d")
+  val supportedInputExtensionForDataForm: Array[String] = Array("d.zip", "raw", "wiff", "d")
 
   /**
     * these are the extensions the data form client can convert too

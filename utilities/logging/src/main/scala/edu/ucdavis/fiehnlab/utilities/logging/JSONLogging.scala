@@ -44,7 +44,6 @@ trait JSONLogging extends LazyLogging {
   final def logJSON(map: Map[String, Any] = Map()) = {
     if (supportsJSONLogging && JSONLoggingAppender.mongoTemplate != null) {
       val build = buildMessage() ++ map ++ Map("process" -> JSONLogging.uniqueProcessName)
-      logger.info(s"build ${build}")
       val message = JSONLogging.objectMapper.writeValueAsString(build)
       try {
         if (message != null || message.nonEmpty) {

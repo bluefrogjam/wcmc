@@ -13,8 +13,6 @@
         <module>api</module>
 	    <module>pipeline</module>
         <module>cloud</module>
-        <module>cts3</module>
-
         <!--
         <module>binbase</module>
         -->
