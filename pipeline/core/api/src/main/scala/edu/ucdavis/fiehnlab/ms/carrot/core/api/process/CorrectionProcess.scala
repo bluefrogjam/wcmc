@@ -47,7 +47,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
       throw new RequiredStandardNotFoundException("we were missing certain targets during the correction and so it failed",missingButRequired)
     }
 
-    //do the actual correction and return the sample for further processing
+    //do the actual correction and return the sample for further processingse
     doCorrection(optimizedMatches, input, regression, input)
   }
 

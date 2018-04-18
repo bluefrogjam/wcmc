@@ -54,20 +54,4 @@ public class FileUtilTest {
 
     }
 
-    @Test
-    public void testGetFilesForDate() throws IOException {
-        Date date = new Date();
-        date.setTime(date.getTime() + 180000000);
-        logger.info(date.toString());
-        for (int i = 0; i < 10; i++) {
-            File file = File.createTempFile("test", "yaday");
-            file.setLastModified(date.getTime());
-            file.deleteOnExit();
-        }
-
-        File[] files = FileUtil.getFilesForDate(date, new File(System.getProperty("java.io.tmpdir")));
-        logger.info("" + files.length);
-        assertTrue(files.length == 10);
-    }
-
 }
