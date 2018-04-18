@@ -15,6 +15,17 @@ trait Feature extends AccurateMassSupport {
     * how pure this spectra is
     */
   val purity: Option[Double]
+
+  /**
+    * the signal noise of this spectra
+    */
+  val signalNoise:Option[Double]
+
+  /**
+    * the unique mass of this spectra
+    */
+  val uniqueMass:Option[Double]
+
   /**
     * the local scan number
     */
@@ -76,14 +87,14 @@ trait SpectrumProperties {
   /**
     * base peak for this spectra
     */
-  def basePeak: Ion = ions.maxBy(_.intensity)
+  lazy val basePeak: Ion = ions.maxBy(_.intensity)
 
   /**
     * computes the tic for this spectra
     *
     * @return
     */
-  def tic: Double = ions.map(_.intensity).sum
+  lazy val tic: Double = ions.map(_.intensity).sum
 
   /**
     * a list of model ions used during the deconvolution

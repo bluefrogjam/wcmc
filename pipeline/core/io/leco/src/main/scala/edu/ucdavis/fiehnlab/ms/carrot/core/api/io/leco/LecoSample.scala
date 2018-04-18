@@ -5,6 +5,7 @@ import java.io.{IOException, InputStream}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample, SampleProperties}
+import org.apache.commons.io.IOUtils
 
 import scala.io.Source
 
@@ -16,6 +17,8 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
   override val spectra: List[LecoSpectrum] = readFile(inputStream)
 
   def uniquemassIdentifier: String = "uniquemass"
+
+  def signalNoiseIdentifier: String = "s/n"
 
   def purityIdentifier: String = "purity"
 
@@ -30,7 +33,14 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
     * @return
     */
   def readFile(inputStream: InputStream): List[LecoSpectrum] = {
-    val lines: Iterator[String] = Source.fromInputStream(inputStream, "ISO-8859-1").getLines().map(_.toLowerCase)
+    try {
+
+      val lines: Iterator[String] = Source.fromInputStream(inputStream, "ISO-8859-1").getLines().map(_.toLowerCase)
+    }
+    finally {
+      IOUtils.closeQuietly(inputStream)
+    }
+
 
     if (lines.hasNext) {
 
@@ -54,6 +64,7 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
             case x: Throwable =>
               logger.warn(x.getMessage, x)
               logger.warn(s"line was: \n${line}\n")
+              logger.warn(s"hearders are: \n${headers.mkString("\n")}\t")
               return null
           }
       }.filter(_ != null).toList
@@ -94,7 +105,10 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
       purity = Some(map(purityIdentifier).replaceAll(",", ".").toDouble),
       scanNumber = scan,
       retentionTimeInSeconds = map(retentionTimeSecondsIdentifier).replaceAll(",", ".").toDouble * 1000, //fix to deal with old BinBase RT time by factor 1000 issues
-      uniqueMass = map(uniquemassIdentifier).toDouble
+      uniqueMass = Some(map(uniquemassIdentifier).toDouble),
+      signalNoise = Some(map(signalNoiseIdentifier).toDouble)
+
+
     )
   }
 

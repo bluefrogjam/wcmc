@@ -19,6 +19,8 @@ class MassAccuracyTest extends WordSpec {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
             override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
@@ -63,6 +65,8 @@ class MassAccuracyTest extends WordSpec {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
             override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
@@ -107,6 +111,8 @@ class MassAccuracyTest extends WordSpec {
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
 
             override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
@@ -146,6 +152,8 @@ class MassAccuracyTest extends WordSpec {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
             override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
@@ -187,6 +195,8 @@ class MassAccuracyTest extends WordSpec {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
             override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
@@ -230,6 +240,8 @@ class MassAccuracyTest extends WordSpec {
 
           new MSSpectra {override val purity: Option[Double] = None
             override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0

@@ -48,6 +48,14 @@ object SpectraHelper {
           override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
 
           override val associatedScan: Option[SpectrumProperties] = Some(spectrumProperties)
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
         }
       case feat: MSSpectra =>
         new MSSpectra {
@@ -74,7 +82,14 @@ object SpectraHelper {
             * the retention time of this spectra. It should be provided in seconds!
             */
           override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
-
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
         }
       case feat: Feature =>
 
@@ -103,7 +118,14 @@ object SpectraHelper {
           override val massOfDetectedFeature: Option[Ion] = Some(correctedMassOfDetectedFeature)
 
           override val associatedScan: Option[SpectrumProperties] = Some(spectrumProperties)
-
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
         }
 
     }
@@ -157,6 +179,14 @@ object SpectraHelper {
           override val retentionIndex: Double = _retentionIndex
 
           override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
         }
       case feat: MSSpectra =>
         new MSSpectra with CorrectedSpectra {
@@ -185,6 +215,14 @@ object SpectraHelper {
           override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
 
           override val retentionIndex: Double = _retentionIndex
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
         }
       case feat: Feature =>
 
@@ -214,7 +252,14 @@ object SpectraHelper {
           override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
           override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
-
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
         }
 
     }
@@ -234,6 +279,14 @@ object SpectraHelper {
     feature match {
       case feat: MSMSSpectra with CorrectedSpectra =>
         new MSMSSpectra with AnnotatedSpectra {
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
           override val sample: String = feature.sample
           /**
             * the observed pre cursor ion
@@ -289,6 +342,14 @@ object SpectraHelper {
         }
       case feat: MSSpectra with CorrectedSpectra =>
         new MSSpectra with AnnotatedSpectra {
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
           override val sample: String = feature.sample
 
           override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
@@ -335,6 +396,14 @@ object SpectraHelper {
       case feat: Feature with CorrectedSpectra =>
 
         new Feature with AnnotatedSpectra {
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
           override val sample: String = feature.sample
           /**
             * the retention time of this spectra. It should be provided in seconds!
@@ -386,6 +455,14 @@ object SpectraHelper {
     feature match {
       case feat: MSMSSpectra with AnnotatedSpectra =>
         new MSMSSpectra with QuantifiedSpectra[T] {
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
           override val sample: String = feature.sample
           /**
             * the observed pre cursor ion
@@ -441,6 +518,14 @@ object SpectraHelper {
         }
       case feat: MSSpectra with AnnotatedSpectra =>
         new MSSpectra with QuantifiedSpectra[T] {
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
           override val sample: String = feature.sample
           /**
             * how pure this spectra is
@@ -492,6 +577,14 @@ object SpectraHelper {
       case feat: Feature with AnnotatedSpectra =>
 
         new Feature with QuantifiedSpectra[T] {
+          /**
+            * the unique mass of this spectra
+            */
+          override val uniqueMass: Option[Double] = feature.uniqueMass
+          /**
+            * the signal noise of this spectra
+            */
+          override val signalNoise: Option[Double] = feature.signalNoise
           override val sample: String = feature.sample
           /**
             * how pure this spectra is

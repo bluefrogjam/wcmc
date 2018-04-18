@@ -16,6 +16,8 @@ class MSDialProcessedSample(ms2DecResults: util.List[MS2DecResult], mode: IonMod
   override val spectra: Seq[_ <: Feature] = ms2DecResults.asScala.map { x: MS2DecResult =>
     if (x.peak.ms2LevelDataPointNumber == -1) {
       new Feature {
+        override val uniqueMass: Option[Double] = None
+        override val signalNoise: Option[Double] = None
 
         /**
           * specified ion mode for the given feature
@@ -58,6 +60,8 @@ class MSDialProcessedSample(ms2DecResults: util.List[MS2DecResult], mode: IonMod
       }
     } else {
       new MSMSSpectra {
+        override val uniqueMass: Option[Double] = None
+        override val signalNoise: Option[Double] = None
 
         /**
           * the observed pre cursor ion

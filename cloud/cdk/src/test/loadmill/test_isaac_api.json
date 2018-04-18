@@ -1,0 +1,41 @@
+{
+    "duration": 120000,
+    "concurrency": 100,
+    "requests": [
+        {
+            "url": "https://test-api.metabolomics.international/cdk/smiles2logp",
+            "method": "POST",
+            "headers": [],
+            "assert": [],
+            "extract": [],
+            "timeout": 25000,
+            "description": "convert smiles to logp",
+            "postData": {
+                "text": "C(C1C(C(C(C(O1)O)O)O)O)O",
+                "mimeType": ""
+            }
+        },
+        {
+            "url": "https://test-api.metabolomics.international/cdk/smiles2fp",
+            "method": "POST",
+            "headers": [],
+            "assert": [],
+            "extract": [],
+            "timeout": 25000,
+            "description": "convert smiles to fingerprint",
+            "postData": {
+                "text": "C(C1C(C(C(C(O1)O)O)O)O)O",
+                "mimeType": ""
+            }
+        }
+    ],
+    "meta": {
+        "description": "CDK Helper tests"
+    },
+    "parameters": [],
+    "parameterPools": [],
+    "targetedCountries": [],
+    "iterationDelay": 1000,
+    "cachePenetration": {},
+    "rampUp": 60000
+}

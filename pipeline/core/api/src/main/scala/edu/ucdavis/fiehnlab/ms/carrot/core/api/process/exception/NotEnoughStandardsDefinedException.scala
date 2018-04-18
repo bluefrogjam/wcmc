@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+
 /**
   * is thrown when there were not enough standards defined for this correction model
   *
@@ -23,7 +25,7 @@ class StandardsNotInOrderException(override val message: String) extends Retenti
   * a required standard was not found
   * @param message
   */
-class RequiredStandardNotFoundException(override val message: String) extends RetentionIndexCorrectionException(message)
+class RequiredStandardNotFoundException(override val message: String, iterable: Iterable[Target]) extends RetentionIndexCorrectionException(message)
 
 /**
   * is thrown, when a standard is annotated twice

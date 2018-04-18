@@ -222,8 +222,6 @@
                             <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                             <junitxml>.</junitxml>
                             <filereports>scalatest.txt</filereports>
-                            <parallel>false</parallel>
-                            <forkMode>once</forkMode>
                         </configuration>
                         <executions>
                             <execution>
