@@ -23,17 +23,17 @@ import org.springframework.test.context.junit4.SpringRunner
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[Config]))
-class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
+class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
 
   @Autowired
-  val msdProcessing: MSDialProcessing = null
+  val msdProcessing: MSDialLCMSProcessing = null
 
   @Autowired
   val properties: MSDialLCMSProcessingProperties = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "MSDialProcessingTest" should {
+  "MSDialLCMSProcessingTest" should {
     // Setting required processing properties
     properties.ionMode = PositiveMode()
 
@@ -123,7 +123,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class Config {
   @Bean
-  def msdProcessing: MSDialProcessing = new MSDialProcessing()
+  def msdProcessing: MSDialLCMSProcessing = new MSDialLCMSProcessing()
 
   @Bean
   def properties: MSDialLCMSProcessingProperties = new MSDialLCMSProcessingProperties()

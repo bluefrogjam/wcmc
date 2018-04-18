@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 class PeakDetection extends PreProcessor with LazyLogging {
 
   @Autowired
-  private val msdialProcessor: MSDialProcessing = null
+  private val msdialProcessor: MSDialLCMSProcessing = null
 
   @Autowired
   private val processingProperties: MSDialLCMSProcessingProperties = null
@@ -41,7 +41,7 @@ class PeakDetection extends PreProcessor with LazyLogging {
 @Configuration
 class PeakDetectionConfiguration {
   @Bean
-  def msdialProcessor: MSDialProcessing = new MSDialProcessing()
+  def msdialProcessor: MSDialLCMSProcessing = new MSDialLCMSProcessing()
 
   @Bean
   def processingProperties: MSDialLCMSProcessingProperties = new MSDialLCMSProcessingProperties()
