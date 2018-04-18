@@ -1,12 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
 import java.io.{File, FileWriter}
-import java.nio.file.Files
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, ProcessedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -22,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by diego on 1/30/2018
   **/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[Config]))
+@SpringBootTest(classes = Array(classOf[LCMSProcessingConfig]))
 class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
 
   @Autowired
@@ -121,11 +120,10 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
 
 @Configuration
 @EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class Config {
+class LCMSProcessingConfig {
   @Bean
   def msdProcessing: MSDialLCMSProcessing = new MSDialLCMSProcessing()
 
   @Bean
   def properties: MSDialLCMSProcessingProperties = new MSDialLCMSProcessingProperties()
-
 }
