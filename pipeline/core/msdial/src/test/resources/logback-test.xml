@@ -2,7 +2,7 @@
 <configuration>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>g:\\msdial-2.80 translation files\\test\\carrotOut.log</file>
+        <file>carrotOut.log</file>
         <append>false</append>
         <encoder>
             <pattern>%msg%n%ex</pattern>
