@@ -6,7 +6,7 @@ import java.nio.file.Files
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{ProcessedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, ProcessedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -24,14 +24,18 @@ import org.springframework.test.context.junit4.SpringRunner
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[Config]))
 class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
+
   @Autowired
   val msdProcessing: MSDialProcessing = null
+
   @Autowired
   val properties: MSDialLCMSProcessingProperties = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "MSDialProcessingTest" should {
+    // Setting required processing properties
+    properties.ionMode = PositiveMode()
 
     "check peakpicking" in {
       val sample: MSDKSample = MSDKSample("testA.mzml", new File(getClass.getResource("/testA.mzml").getFile))
