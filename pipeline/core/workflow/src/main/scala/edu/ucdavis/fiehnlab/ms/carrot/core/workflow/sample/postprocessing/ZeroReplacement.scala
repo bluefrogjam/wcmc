@@ -235,6 +235,9 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
       if (filteredByTime.isEmpty) {
         logger.warn("Created failsafe feature_wirh_correctedspectra from target data and 0 intensity")
         new Feature with CorrectedSpectra {
+          override val uniqueMass: Option[Double] = None
+          override val signalNoise: Option[Double] = None
+
           /**
             * specified ion mode for the given feature
             */
@@ -317,6 +320,8 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * which actual spectra has been used for the replacement
     */
   override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
+    override val uniqueMass: Option[Double] = None
+    override val signalNoise: Option[Double] = None
 
     override val sample: String = value.sample
     /**

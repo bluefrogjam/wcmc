@@ -152,6 +152,10 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers{
           * which feature we require to log
           */
         override val featureToLog = new Feature(){
+          override val uniqueMass: Option[Double] = None
+
+          override val signalNoise: Option[Double] = None
+
           /**
             * the associated sample
             */

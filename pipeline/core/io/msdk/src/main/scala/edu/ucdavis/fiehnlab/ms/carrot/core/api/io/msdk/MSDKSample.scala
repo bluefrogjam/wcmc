@@ -177,6 +177,8 @@ object MSDKSample extends LazyLogging {
   */
 class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: String) extends MSSpectra {
   override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
+  override val uniqueMass: Option[Double] = None
+  override val signalNoise: Option[Double] = None
 
   override val scanNumber: Int = spectra.getScanNumber
   override val purity: Option[Double] = None
@@ -212,6 +214,8 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String
   } else {
     spectra.getIsolations.get(0).getPrecursorMz
   }
+  override val uniqueMass: Option[Double] = None
+  override val signalNoise: Option[Double] = None
 
   override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
   override val scanNumber: Int = spectra.getScanNumber
