@@ -37,7 +37,7 @@ public class GCMSDeconvolution {
 
         // Maps the values of peak shape, symmetry, and quality of detected peaks into the array
         // where the length is equal to the scan number
-        DeconvolutionBin[] deconvolutionBins = getGcmsBinArray(spectrumList, peakAreaList, scanNumberMap, properties.ionMode);
+        DeconvolutionBin[] deconvolutionBins = getDeconvolutionBinArray(spectrumList, peakAreaList, scanNumberMap, properties.ionMode);
         logger.debug("Found "+ deconvolutionBins.length +" deconvolution bins");
 
         // Apply matched filter to extract 'metabolite components'
@@ -124,7 +124,7 @@ public class GCMSDeconvolution {
      * @param ionMode
      * @return
      */
-    private DeconvolutionBin[] getGcmsBinArray(List<Feature> spectrumList, List<PeakAreaBean> peakAreaList, Map<Integer, Integer> scanNumberMap, IonMode ionMode) {
+    private DeconvolutionBin[] getDeconvolutionBinArray(List<Feature> spectrumList, List<PeakAreaBean> peakAreaList, Map<Integer, Integer> scanNumberMap, IonMode ionMode) {
         List<Feature> ms1SpectrumList = getMS1SpectrumList(spectrumList, ionMode);
         DeconvolutionBin[] gcmsDecBins = new DeconvolutionBin[ms1SpectrumList.size()];
 
@@ -180,9 +180,9 @@ public class GCMSDeconvolution {
      * @return
      */
     private double[] getMatchedFilterArray(DeconvolutionBin[] gcmsDecBinArray, double sigma) {
-        double halfPoint = 10.0; // currently this value should be enough for GC
+        int halfPoint = 10; // currently this value should be enough for GC
         double[] matchedFilterArray = new double[gcmsDecBinArray.length];
-        double[] matchedFilterCoefficient = new double[2 * (int) halfPoint + 1];
+        double[] matchedFilterCoefficient = new double[2 * halfPoint + 1];
 
         for (int i = 0; i < matchedFilterCoefficient.length; i++) {
             matchedFilterCoefficient[i] = (1 - Math.pow((-halfPoint + i) / sigma, 2)) * Math.exp(-0.5 * Math.pow((-halfPoint + i) / sigma, 2));
@@ -191,13 +191,13 @@ public class GCMSDeconvolution {
         for (int i = 0; i < gcmsDecBinArray.length; i++) {
             double sum = 0.0;
 
-            for (int j = -1 * (int) halfPoint; j <= (int) halfPoint; j++) {
+            for (int j = -1 * halfPoint; j <= halfPoint; j++) {
                 if (i + j < 0) {
                     sum += 0;
                 } else if (i + j > gcmsDecBinArray.length - 1) {
                     sum += 0;
                 } else {
-                    sum += gcmsDecBinArray[i + j].totalSharpnessValue * matchedFilterCoefficient[(int) (j + halfPoint)];
+                    sum += gcmsDecBinArray[i + j].totalSharpnessValue * matchedFilterCoefficient[j + halfPoint];
                 }
             }
 
