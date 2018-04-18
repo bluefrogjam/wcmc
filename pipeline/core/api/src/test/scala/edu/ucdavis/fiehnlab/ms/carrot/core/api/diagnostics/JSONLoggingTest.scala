@@ -50,6 +50,8 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers {
           * which target we require to log
           */
         override val targetToLog = new Target(){
+          override val uniqueMass: Option[Double] = None
+
           /**
             * a name for this spectra
             */
@@ -115,6 +117,8 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers {
           * which target we require to log
           */
         override val targetToLog = new Target(){
+          override val uniqueMass: Option[Double] = None
+
           /**
             * a name for this spectra
             */

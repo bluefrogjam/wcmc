@@ -42,6 +42,8 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
         if (result.isEmpty) {
           logger.debug(s"\t=> annotation not found for ${myTarget}")
           new QuantifiedTarget[T] {
+            override val uniqueMass: Option[Double] = myTarget.uniqueMass
+
             /**
               * value for this target
               */
@@ -88,6 +90,8 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
         else {
           logger.debug(s"\t=> annotation found for ${myTarget}")
           new QuantifiedTarget[T] {
+            override val uniqueMass: Option[Double] = myTarget.uniqueMass
+
             /**
               * value for this target
               */

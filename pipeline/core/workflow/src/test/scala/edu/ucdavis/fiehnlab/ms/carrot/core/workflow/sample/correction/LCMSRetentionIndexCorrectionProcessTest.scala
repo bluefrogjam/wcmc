@@ -38,7 +38,7 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
 
     val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.d.zip")
     val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.d.zip")
-    val method = AcquisitionMethod(None)
+    val method = AcquisitionMethod()
     assert(correction != null)
 
 

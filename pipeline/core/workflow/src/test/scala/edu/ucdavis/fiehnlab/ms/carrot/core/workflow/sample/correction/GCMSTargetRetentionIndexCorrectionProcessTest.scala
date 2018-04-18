@@ -14,12 +14,12 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase"))
+@ActiveProfiles(Array("file.source.eclipse","carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase"))
 class GCMSTargetRetentionIndexCorrectionProcessWithBinBaseTest extends GCMSTargetRetentionIndexCorrectionProcessTest
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.gcms", "carrot.gcms.correction", "carrot.logging.json.enable"))
+@ActiveProfiles(Array("file.source.eclipse","carrot.gcms", "carrot.gcms.correction", "carrot.logging.json.enable"))
 class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers {
 
   @Autowired
@@ -43,7 +43,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
       "allow to process data while loading a configuration from the Gerstel default Method" must {
 
-        val method = AcquisitionMethod(Option(ChromatographicMethod(name = "Gerstel", instrument = Some("LECO-GC-TOF"), column = Some("rtx5recal"), None)))
+        val method = AcquisitionMethod(ChromatographicMethod(name = "Gerstel", instrument = Some("LECO-GC-TOF"), column = Some("rtx5recal"), None))
         "for sample 060712afisa86_1" should {
 
           val result = correction.process(sampleLoader.getSample("060712afisa86_1.txt"), method)

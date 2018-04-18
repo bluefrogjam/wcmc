@@ -424,4 +424,8 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * associated spectrum propties if applicable
     */
   override val spectrum: Option[SpectrumProperties] = needsReplacement.spectrum
+  /**
+    * unique mass for a given target
+    */
+  override val uniqueMass: Option[Double] = needsReplacement.uniqueMass
 }

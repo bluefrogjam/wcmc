@@ -69,8 +69,13 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         */
       override val msLevel: Short = 2
     })
+    /**
+      * unique mass for a given target
+      */
+    override val uniqueMass: Option[Double] = None
   }
   val testTarget2 = new Target {
+    override val uniqueMass: Option[Double] = None
     /**
       * a name for this spectra
       */
@@ -146,7 +151,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "be possible to add and load targets" in {
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(None)
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod()
       library.add(testTarget, acquisitionMethod, None)
 
       eventually(timeout(5 seconds)) {
@@ -164,7 +169,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "be possible to add and load targets from a different library" in {
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
       library.add(testTarget, acquisitionMethod, None)
       eventually(timeout(5 seconds)) {
         library.load(acquisitionMethod).size shouldBe 1
@@ -177,7 +182,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       }
 
       eventually(timeout(5 seconds)) {
-        library.load(AcquisitionMethod(None)).size shouldBe 2
+        library.load(AcquisitionMethod()).size shouldBe 2
         Thread.sleep(1000)
       }
       eventually(timeout(5 seconds)) {
@@ -205,7 +210,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       library.deleteAll
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
 
       eventually(timeout(15 seconds)) {
         library.libraries.size shouldBe 0
@@ -242,7 +247,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
 
 
       library.add(testTarget, acquisitionMethod, None)
@@ -277,7 +282,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
 
       library.add(testTarget, acquisitionMethod, None)
 
@@ -311,7 +316,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
       library.add(testTarget, acquisitionMethod, None)
 
       eventually(timeout(15 seconds)) {
@@ -344,7 +349,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
       library.add(testTarget, acquisitionMethod, None)
 
       eventually(timeout(15 seconds)) {
@@ -377,7 +382,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
       library.add(testTarget, acquisitionMethod, None)
 
       eventually(timeout(15 seconds)) {
@@ -409,7 +414,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
       library.add(testTarget, acquisitionMethod, None)
 
       eventually(timeout(15 seconds)) {
@@ -440,7 +445,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(Option(ChromatographicMethod("test", None, None, None)))
+      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
       library.add(testTarget, acquisitionMethod, None)
 
       eventually(timeout(15 seconds)) {
