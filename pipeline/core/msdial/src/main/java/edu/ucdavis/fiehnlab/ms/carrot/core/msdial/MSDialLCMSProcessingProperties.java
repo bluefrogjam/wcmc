@@ -2,33 +2,37 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by diego on 10/13/2016.
  */
-public abstract class MSDialProcessingProperties {
+@ConfigurationProperties
+@Component
+public class MSDialProcessingProperties {
 
     /**
      * omit masses smaller than this
      */
-    public double massRangeBegin;
+    public double massRangeBegin = 100;
 
     /**
      * skipp masses bigger than this
      */
-    public double massRangeEnd;
+    public double massRangeEnd = 1700;
 
     /**
      * start of the run in minutes
      */
-    public double retentionTimeBegin;
+    public double retentionTimeBegin = 0.5;
 
     /**
      * end of the run in minutes
      */
-    public double retentionTimeEnd;
+    public double retentionTimeEnd = 12.5;
 
     /**
      * smoothing algorithm
@@ -47,22 +51,22 @@ public abstract class MSDialProcessingProperties {
     /**
      * number of smoothing iterations
      */
-    public int smoothingLevel;
+    public int smoothingLevel = 1;
 
     /**
      * # of scans in average a peak has
      */
-    public int averagePeakWidth;
+    public int averagePeakWidth = 5;
 
     /**
      * minimum intensity to consider a peak as such
      */
-    public double minimumAmplitude;
+    public double minimumAmplitude = 2500;
 
     /**
      * accuracy type, accurate or nominal mass
      */
-    public AccuracyType accuracyType;
+    public AccuracyType accuracyType = AccuracyType.ACCURATE;
 
     /**
      * size of the step when analyzing the mass scale
