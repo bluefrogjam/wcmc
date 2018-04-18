@@ -7,6 +7,7 @@ plugins:
   - serverless-domain-manager
 
 custom:
+  stage: ${opt:stage, self:provider.stage}
 
   domains:
     prod: api.metabolomics.international
@@ -17,11 +18,10 @@ custom:
   # custom domain management
   ###
   customDomain:
-    domainName: 'api.metabolomics.international'
-    basePath: 'cdk'
-    stage: ${self:provider.stage}
+    basePath: "cdk"
+    domainName: ${self:custom.domains.${self:custom.stage}}
+    stage: "${self:custom.stage}"
     createRoute53Record: true
-    certificateName: "api.metabolomics.international"
 
 provider:
   #define our stage variable
