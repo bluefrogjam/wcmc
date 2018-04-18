@@ -38,16 +38,19 @@ public class GCMSDeconvolution {
         // Maps the values of peak shape, symmetry, and quality of detected peaks into the array
         // where the length is equal to the scan number
         DeconvolutionBin[] deconvolutionBins = getGcmsBinArray(spectrumList, peakAreaList, scanNumberMap, properties.ionMode);
+        logger.debug("Found "+ deconvolutionBins.length +" deconvolution bins");
 
         // Apply matched filter to extract 'metabolite components'
         // where EIC peaks having slightly (1-2 scan point diff) different retention times are merged.
-        double[] matchedFilterArray = getMatchedFilterArray(deconvolutionBins, properties.sigma);
+        double[] matchedFilterArray = getMatchedFilterArray(deconvolutionBins, properties.sigmaWindowValue);
 
         // Making model chromatograms by considering their peak qualities
         List<ModelChromatogram> modelChromatograms = getModelChromatograms(spectrumList, peakAreaList, deconvolutionBins, matchedFilterArray, scanNumberMap, properties);
+        logger.debug("Found "+ modelChromatograms.size() +" model chromatograms");
 
         // Exclude duplicate model chromatograms which have the complete same retention time's peak tops
         modelChromatograms = getRefinedModelChromatograms(modelChromatograms);
+        logger.debug("Reduced to "+ modelChromatograms.size() +" model chromatograms after refinement");
 
 
         // Perform deconvolution at each model chromatogram area
@@ -122,7 +125,7 @@ public class GCMSDeconvolution {
      * @return
      */
     private DeconvolutionBin[] getGcmsBinArray(List<Feature> spectrumList, List<PeakAreaBean> peakAreaList, Map<Integer, Integer> scanNumberMap, IonMode ionMode) {
-        List<Feature> ms1SpectrumList = getMs1SpectrumList(spectrumList, ionMode);
+        List<Feature> ms1SpectrumList = getMS1SpectrumList(spectrumList, ionMode);
         DeconvolutionBin[] gcmsDecBins = new DeconvolutionBin[ms1SpectrumList.size()];
 
         for (int i = 0; i < gcmsDecBins.length; i++) {
@@ -162,7 +165,7 @@ public class GCMSDeconvolution {
      * @param ionMode desired scan polarity
      * @return a list of filtered raw ms1 scans
      */
-    private List<Feature> getMs1SpectrumList(List<Feature> spectrumList, IonMode ionMode) {
+    private List<Feature> getMS1SpectrumList(List<Feature> spectrumList, IonMode ionMode) {
         return spectrumList.stream()
                 .filter(s -> s.associatedScan().get().msLevel() == 1)
                 .filter(s -> s.ionMode().get().mode().equals(ionMode.mode()))
@@ -221,8 +224,11 @@ public class GCMSDeconvolution {
         List<RegionMarker> regionMarkers = getRegionMarkers(matchedFilterArray);
         List<ModelChromatogram> modelChromatograms = new ArrayList<>();
 
+        logger.debug("Found "+ regionMarkers.size() +" regions from which to identify model chromatograms");
+
         for (RegionMarker region : regionMarkers) {
             List<PeakAreaBean> peakAreas = new ArrayList<>();
+
             for (int i = region.scanStart; i <= region.scanEnd; i++) {
                 for (PeakSpot peakSpot : gcmsDecBins[i].peakSpots.stream().filter(n -> n.quality == ModelQuality.HIGH).collect(Collectors.toList())) {
                     peakAreas.add(detectedPeaks.get(peakSpot.peakSpotID));
@@ -238,6 +244,7 @@ public class GCMSDeconvolution {
             }
 
             ModelChromatogram modelChrom = getModelChromatogram(spectra, peakAreas, gcmsDecBins, scanNumberMap, properties);
+
             if (modelChrom != null) {
                 modelChromatograms.add(modelChrom);
             }

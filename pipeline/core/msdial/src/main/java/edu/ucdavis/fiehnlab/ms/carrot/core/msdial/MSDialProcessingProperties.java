@@ -159,7 +159,7 @@ public abstract class MSDialProcessingProperties {
      *
      * @return
      */
-    public double sigma = 0.1;
+    public double sigmaWindowValue = 0.5;
 
 
     public String toString() {
