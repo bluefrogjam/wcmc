@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONTargetLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
@@ -43,7 +44,7 @@ class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double, val pha
   * @param target
   * @param window
   */
-class IncludeByMassRange(val target: Target, val window: Double, val phaseToLog: String) extends Filter[AccurateMassSupport] with LazyLogging {
+class IncludeByMassRange(val target: Target, val window: Double, val phaseToLog: String) extends Filter[AccurateMassSupport] with LazyLogging with JSONTargetLogging{
   logger.debug(s"mass window is ${window} for ${target}")
 
   /**
@@ -67,5 +68,9 @@ class IncludeByMassRange(val target: Target, val window: Double, val phaseToLog:
   /**
     * references to all used settings
     */
-  override protected val usedSettings: Map[String, Any] = Map("target" -> target, "massAccuracyWindowInDalton" -> window)
+  override protected val usedSettings: Map[String, Any] = Map("massAccuracyWindowInDalton" -> window)
+  /**
+    * which target we require to log
+    */
+  override protected val targetToLog: Target =target
 }

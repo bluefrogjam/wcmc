@@ -18,6 +18,8 @@ class RetentionIndexAnnotationTest extends WordSpec {
 
         new MSSpectra with CorrectedSpectra {
           val sample:String = null
+          override val uniqueMass: Option[Double] = None
+          override val signalNoise: Option[Double] = None
 
           override val purity: Option[Double] = None
           override val ionMode: Option[IonMode] = None
@@ -76,6 +78,8 @@ class RetentionIndexAnnotationTest extends WordSpec {
 
         new MSSpectra with CorrectedSpectra {
           val sample:String = null
+          override val uniqueMass: Option[Double] = None
+          override val signalNoise: Option[Double] = None
 
           override val purity: Option[Double] = None
           override val ionMode: Option[IonMode] = None

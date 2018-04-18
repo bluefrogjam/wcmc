@@ -113,18 +113,18 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     */
   def findBestHit(standard: Target, spectra: Seq[_ <: Feature]): TargetAnnotation[Target, Feature] = {
     //best hit is defined as the mass with the smallest mass error
-    //if we prefer mass accuracy
-    //TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
+    //if we prefer mass accurracy
+//    TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
     //if we we prefer mass intensity
-    //TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
-    //if we are feeling VERY NERDY... use a gaussian similarity
+//    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
+    // if we prefer a combination of the two
     TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(x, standard)))
   }
 
   /**
     * runs several optimization algorithms over the Seq of matches and returns the same Seq of a subset
     *
-    *`` @param matches
+    * @param matches
     * @return
     */
   def optimize(matches: Seq[TargetAnnotation[Target, Feature]]): Seq[TargetAnnotation[Target, Feature]] = {
@@ -187,13 +187,9 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
         //nothing found, return null
         if (result.isEmpty) {
-          if (target.requiredForCorrection) {
-            throw new RequiredStandardNotFoundException(s"this target ${target} was not found during the detection phase, but it's required. Sample was ${input.fileName}")
-          }
-          else {
-            logger.debug("\t=>\tno hits found for this standard")
-            None
-          }
+
+          logger.debug("\t=>\tno hits found for this standard")
+          None
         }
         //1 found, perfect
         else if (result.size == 1) {

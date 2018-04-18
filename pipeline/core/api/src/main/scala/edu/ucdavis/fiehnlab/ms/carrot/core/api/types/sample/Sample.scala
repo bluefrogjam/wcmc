@@ -147,6 +147,7 @@ trait GapFilledSample[T] extends QuantifiedSample[T] {
   * an annotated spectra
   */
 trait AnnotatedSpectra extends CorrectedSpectra {
+
   /**
     * associated target
     */

@@ -7,17 +7,21 @@ plugins:
   - serverless-domain-manager
 
 custom:
+  stage: ${opt:stage, self:provider.stage}
+
+  domains:
+    prod: api.metabolomics.international
+    test: test-api.metabolomics.international
+    dev:  dev-api.metabolomics.international
 
   ###
   # custom domain management
   ###
   customDomain:
-    domainName: 'api.metabolomics.international'
-    basePath: api
-    stage: ${self:provider.stage}
+    basePath: "cdk"
+    domainName: ${self:custom.domains.${self:custom.stage}}
+    stage: "${self:custom.stage}"
     createRoute53Record: true
-    certificateName: "*.metabolomics.international"
-    enabled: true
 
 provider:
   #define our stage variable
@@ -27,7 +31,7 @@ provider:
   runtime: java8
 
   #would be nice if we can lower this somewhat
-  memorySize: 1512
+  memorySize: 512
   timeout: 90
   versionFunctions: false
 
@@ -35,16 +39,9 @@ provider:
   region: us-west-2
 
   deploymentBucket:
-    name: lambdas-cdk-${self:provider.stage}
+    name: lambdas-cdk
 
   logRetentionInDays: 3
-
-  #additional permission for the lambdas
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "sqs:*"
-      Resource: "arn:aws:sqs:us-west-2:*:*"
 
 ###
 # this section defines our lambda endpoint and services
@@ -54,25 +51,24 @@ package:
   artifact: target/cdk-1.0-SNAPSHOT.jar
 
 functions:
-
   smilesToLogP:
     name: ${self:provider.stage}-smilesToLogP
-    description: "converts smiles to LOGP values"
+    description: "converts smiles to LOGP values. Please only provide a smile in the post request!"
     handler: edu.ucdavis.fiehnlab.wcmc.aws.cdk.SmilesToXLOGP
 
     events:
       - http:
-          path: cdk/smiles2logp
+          path: smiles2logp
           method: post
           cors: true
 
   smilesToFingerprint:
     name: ${self:provider.stage}-smilesToFingerprint
-    description: "converts smiles to fingerprint values"
+    description: "converts smiles to fingerprint values. Please only provide a smile in the post request!"
     handler: edu.ucdavis.fiehnlab.wcmc.aws.cdk.SmilesToFingerPrint
 
     events:
       - http:
-          path: cdk/smiles2fp
+          path: smiles2fp
           method: post
           cors: true
