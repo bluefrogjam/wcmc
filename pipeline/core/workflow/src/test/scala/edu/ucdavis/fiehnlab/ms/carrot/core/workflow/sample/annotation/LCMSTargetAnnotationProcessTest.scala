@@ -61,7 +61,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
     val method = AcquisitionMethod(None)
 
     //correct the data
-    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item,method), method))
+    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method, None), method, None))
 
     correctedSample.foreach { sample =>
       s"process ${sample} without recursive annotation and with preferring mass accuracy over retention index distance" in {
@@ -69,7 +69,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
         annotation.lcmsProperties.recursiveAnnotationMode = false
         annotation.lcmsProperties.preferMassAccuracyOverRetentionIndexDistance = true
 
-        val result = annotation.process(sample, method)
+        val result = annotation.process(sample, method, None)
 
         assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)
@@ -92,7 +92,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
           logger.debug("")
         }
-        val quantified = quantify.process(result, method)
+        val quantified = quantify.process(result, method, None)
 
 
         //these are our ISD
@@ -118,7 +118,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
         annotation.lcmsProperties.recursiveAnnotationMode = true
         annotation.lcmsProperties.preferMassAccuracyOverRetentionIndexDistance = true
 
-        val result = annotation.process(sample, method)
+        val result = annotation.process(sample, method, None)
 
         assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)
@@ -143,7 +143,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
           logger.debug("")
         }
-        val quantified = quantify.process(result,method )
+        val quantified = quantify.process(result, method, None)
 
 
         //these are our ISD

@@ -6,7 +6,10 @@
 	        <Pattern>%date{ISO8601} %t %level --- %logger{5} - %msg%n%ex</Pattern>
         </layout>
     </appender>
+
 	<logger name="edu.ucdavis" level="info"/>
+	<logger name="edu.ucdavis.fiehnlab.loader" level="debug"/>
+	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.io" level="debug"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

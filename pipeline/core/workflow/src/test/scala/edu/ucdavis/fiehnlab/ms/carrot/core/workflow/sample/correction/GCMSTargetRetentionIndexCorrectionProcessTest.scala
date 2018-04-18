@@ -114,7 +114,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
             "are no standards in these samples" in {
               intercept[NotEnoughStandardsFoundException] {
-                correction.process(sampleLoader.getSample(s"${sample}.txt"), method)
+                correction.process(sampleLoader.getSample(s"${sample}.txt"), method, None)
               }
 
 
@@ -131,7 +131,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
             logger.info(s"sample to nvestigate: ${sample}")
             "old BinBase cannot handle this sample, due to a new injector, which is based on Agilent, but carrot algorithm should be able to find it" in {
-              val result = correction.process(sampleLoader.getSample(s"${sample}.txt"), method)
+              val result = correction.process(sampleLoader.getSample(s"${sample}.txt"), method, None)
 
               result.featuresUsedForCorrection.foreach { x =>
                 logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
