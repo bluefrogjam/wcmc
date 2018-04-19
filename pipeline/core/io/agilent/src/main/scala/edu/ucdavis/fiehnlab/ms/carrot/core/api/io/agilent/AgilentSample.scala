@@ -15,7 +15,6 @@ import org.springframework.cache.annotation.Cacheable
   */
 class AgilentSample(override val fileName: String, file: File, dataFormerClient: DataFormerClient) extends Sample with LazyLogging {
 
-  @Cacheable
   def deconvolute: Seq[_ <: Feature] = {
     logger.debug(s"converting ${file} to mzML representation")
     val start = System.nanoTime()

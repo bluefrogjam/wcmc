@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.Cacheable
   * Created by diego on 1/12/2018
   **/
 trait Converter extends LazyLogging {
-  @Cacheable
+
   final def convert(keyword: String, from: String, to: String): Seq[Hit] = {
     logger.debug(s"Called trait convert ($keyword, $from, $to)")
     if (canConvert(from, to)) {

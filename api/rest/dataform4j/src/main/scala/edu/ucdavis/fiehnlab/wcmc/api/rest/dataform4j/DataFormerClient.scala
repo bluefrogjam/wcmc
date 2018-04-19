@@ -79,7 +79,6 @@ class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
     }
   }
 
-  @CacheEvict(value = Array[String]("dataform"), key = "#filename")
   def evictCachedValue(filename: String) = {
     logger.warn(s"cache is no longer valid, evicted ${filename}")
   }
@@ -91,7 +90,6 @@ class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
     * @param extension
     * @return
     */
-  @Cacheable(value = Array[String]("dataform"), key = "#filename")
   def doConvert(filename: String, extension: String = "mzml"): Option[File] = {
 
     if (fserv4j.exists(filename)) {
