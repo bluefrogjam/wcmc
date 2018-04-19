@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils;
+package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.math;
 
 import java.util.ArrayList;
 import java.util.List;

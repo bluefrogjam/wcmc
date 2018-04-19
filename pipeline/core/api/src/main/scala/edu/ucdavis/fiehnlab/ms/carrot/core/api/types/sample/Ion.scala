@@ -38,7 +38,7 @@ case class PositiveMode() extends IonMode("positive")
 
 case class NegativeMode() extends IonMode("negative")
 
-case class Unknown() extends IonMode("unknown")
+case class UnknownMode() extends IonMode("unknown")
 
 
 class IonModeDeserializer extends JsonDeserializer[IonMode] {
@@ -47,20 +47,17 @@ class IonModeDeserializer extends JsonDeserializer[IonMode] {
     val node: JsonNode = oc.readTree(jsonParser)
 
     val value = node.get("mode").textValue().toLowerCase
+
     if (value.startsWith("p")) {
       PositiveMode()
-    }
-    else if (value.startsWith("+")) {
+    } else if (value.startsWith("+")) {
       PositiveMode()
-    }
-    else if (value.startsWith("n")) {
+    } else if (value.startsWith("n")) {
       NegativeMode()
-    }
-    else if (value.startsWith("-")) {
-      NegativeMode()
-    }
+    } else if (value.startsWith("-")) {
+      NegativeMode()}
     else {
-      Unknown()
+      UnknownMode()
     }
   }
 }

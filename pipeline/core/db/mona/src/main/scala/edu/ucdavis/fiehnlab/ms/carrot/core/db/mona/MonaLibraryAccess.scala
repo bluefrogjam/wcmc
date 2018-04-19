@@ -507,14 +507,13 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
           PositiveMode()
         }
         else {
-          Unknown()
+          UnknownMode()
         }
       }
       else {
-        Unknown()
+        UnknownMode()
       },
       uniqueMass = if (uniqueMass.isDefined) Option(precursorIon.get.value.toString.toDouble) else None
-
     )
   }
 
