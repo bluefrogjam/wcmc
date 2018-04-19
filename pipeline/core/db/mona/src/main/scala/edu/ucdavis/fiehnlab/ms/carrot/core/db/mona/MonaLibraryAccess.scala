@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{GenericRestClient, MonaSpectrumRestClient}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.TargetGenerationNotSupportedException
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.{InvalidIonModeDefinedException, IonModeNotDefinedException, TargetGenerationNotSupportedException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
@@ -508,12 +508,14 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
           PositiveMode()
         }
         else {
-          UnknownMode()
+          throw new InvalidIonModeDefinedException("the provided ion mode is not valid!")
         }
+
+      } else {
+        throw new IonModeNotDefinedException("we require you to define an ion mode!")
       }
-      else {
-        UnknownMode()
-      },
+
+      ,
       uniqueMass = if (uniqueMass.isDefined) Option(precursorIon.get.value.toString.toDouble) else None
     )
   }
