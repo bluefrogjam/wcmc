@@ -42,10 +42,12 @@ trait JSONLogging extends LazyLogging {
     * as well as return
     */
   final def logJSON(map: Map[String, Any] = Map()): String = {
-    if (supportsJSONLogging && JSONLoggingAppender.mongoTemplate != null) {
+    if (supportsJSONLogging ) {
       val message = JSONLogging.objectMapper.writeValueAsString(buildMessage() ++ map ++ Map("process" -> JSONLogging.uniqueProcessName))
       try {
-        JSONLoggingAppender.mongoTemplate.insert(message, "carrot_logging")
+        if(JSONLoggingAppender.mongoTemplate != null) {
+          JSONLoggingAppender.mongoTemplate.insert(message, "carrot_logging")
+        }
       }
       catch {
         case x: Exception =>
