@@ -22,7 +22,7 @@ object JSONLogging {
     * across several jbms
     * @return
     */
-  val uniqueProcessName:String =UUID.randomUUID().toString
+  val uniqueProcessName: String = UUID.randomUUID().toString
 
   /**
     * makes live easier on the log files

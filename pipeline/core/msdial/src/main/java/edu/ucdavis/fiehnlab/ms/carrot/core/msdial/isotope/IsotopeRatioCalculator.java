@@ -5,13 +5,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.iupac.IUPACReference;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.isotope.CompoundProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.isotope.ElementProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.isotope.IsotopeElementProperties;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.BasicMathematics;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.math.BasicMathematics;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.LCMSDataAccessUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;

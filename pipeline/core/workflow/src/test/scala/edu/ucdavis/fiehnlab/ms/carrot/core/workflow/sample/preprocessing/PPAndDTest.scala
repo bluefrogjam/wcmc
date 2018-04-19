@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,9 +41,9 @@ class PPAndDTest extends WordSpec with Matchers with LazyLogging {
 
       val result = peakDetection.process(sample, AcquisitionMethod(), None)
       result should not be Seq.empty
-      result shouldBe a[MSDialProcessedSample]
+      result shouldBe a[MSDialLCMSProcessedSample]
 
-      val deconv = result.asInstanceOf[MSDialProcessedSample]
+      val deconv = result.asInstanceOf[MSDialLCMSProcessedSample]
       deconv.spectra should not be Seq.empty
       deconv.spectra should have size 125
 

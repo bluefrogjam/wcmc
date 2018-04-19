@@ -28,7 +28,6 @@ import scala.collection.mutable
   * Created by wohlgemuth on 8/14/17.
   */
 @Component
-@Profile(Array("carrot.targets.mona"))
 class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
   private val executionService: ExecutorService = Executors.newFixedThreadPool(1)
@@ -508,14 +507,13 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
           PositiveMode()
         }
         else {
-          Unknown()
+          UnknownMode()
         }
       }
       else {
-        Unknown()
+        UnknownMode()
       },
       uniqueMass = if (uniqueMass.isDefined) Option(precursorIon.get.value.toString.toDouble) else None
-
     )
   }
 
