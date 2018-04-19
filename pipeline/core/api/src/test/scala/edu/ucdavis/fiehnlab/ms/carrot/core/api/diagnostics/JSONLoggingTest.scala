@@ -106,7 +106,7 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers {
         System.out.println(data)
         data.get("date").isDefined shouldBe true
         data.get("target") should not be null
-        data.get("target").get.asInstanceOf[Map[String,Any]].get("ri").isDefined shouldBe true
+        data.get("target").get.asInstanceOf[Map[String,Any]].get("retentionIndex").isDefined shouldBe true
 
       }
     }
@@ -206,7 +206,7 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers {
         val data = JSONLogging.objectMapper.readValue(result, classOf[Map[String, Any]])
 
         data.get("target") should not be null
-        data.get("target").get.asInstanceOf[Map[String,Any]].get("ri").isDefined shouldBe true
+        data.get("target").get.asInstanceOf[Map[String,Any]].get("retentionIndex").isDefined shouldBe true
 
       }
       "log additional feature specific data" in {
