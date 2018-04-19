@@ -43,6 +43,11 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
   val precursorMass: Option[Double]
 
   /**
+    * unique mass for a given target
+    */
+  val uniqueMass:Option[Double]
+  
+  /**
     * is this a confirmed target
     */
   var confirmed: Boolean
@@ -115,11 +120,3 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
   * this defines an annotation for a target
   */
 case class TargetAnnotation[T <: Target, A <: Feature](target: T, annotation: A)
-
-trait UniqueMassSupport {
-  val uniqueMass: Double
-}
-
-trait PuritySupport {
-  val purity: Double
-}

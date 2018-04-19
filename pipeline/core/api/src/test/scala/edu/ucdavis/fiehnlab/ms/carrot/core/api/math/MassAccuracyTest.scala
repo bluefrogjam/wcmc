@@ -37,6 +37,8 @@ class MassAccuracyTest extends WordSpec {
               */
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(100.3241, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(100.3242)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -80,6 +82,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(100.3241, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(100.3242)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -125,6 +129,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(100.3241, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(100.3242)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -168,6 +174,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(1567.6401, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(1567.59330)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -212,6 +220,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(1567.5459, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(1567.59330)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -257,6 +267,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(1567.5459, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(1567.59330)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None

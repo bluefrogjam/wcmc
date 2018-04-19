@@ -56,4 +56,8 @@ case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) e
       */
     override val msLevel: Short = 1
   })
+  /**
+    * unique mass for a given target
+    */
+  override val uniqueMass: Option[Double] = Option(target.uniqueMass)
 }

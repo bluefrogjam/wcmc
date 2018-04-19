@@ -41,12 +41,11 @@ trait JSONLogging extends LazyLogging {
     * based on mixins and other defined methods, this will log a json string to the console for debugging
     * as well as return
     */
-  final def logJSON(map: Map[String, Any] = Map()) = {
-    if (supportsJSONLogging && JSONLoggingAppender.mongoTemplate != null) {
-      val build = buildMessage() ++ map ++ Map("process" -> JSONLogging.uniqueProcessName)
-      val message = JSONLogging.objectMapper.writeValueAsString(build)
+  final def logJSON(map: Map[String, Any] = Map()): String = {
+    if (supportsJSONLogging ) {
+      val message = JSONLogging.objectMapper.writeValueAsString(buildMessage() ++ map ++ Map("process" -> JSONLogging.uniqueProcessName))
       try {
-        if (message != null || message.nonEmpty) {
+        if(JSONLoggingAppender.mongoTemplate != null) {
           JSONLoggingAppender.mongoTemplate.insert(message, "carrot_logging")
         }
       }
@@ -55,6 +54,9 @@ trait JSONLogging extends LazyLogging {
           logger.warn(s"error: ${x.getMessage}\n ${message}\n", x)
       }
       message
+    }
+    else {
+      ""
     }
   }
 

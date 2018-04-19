@@ -58,7 +58,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
     //compute purity values
     val purityComputed = samples //.map(purity.process)
 
-    val method = AcquisitionMethod(None)
+    val method = AcquisitionMethod()
 
     //correct the data
     val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method, None), method, None))

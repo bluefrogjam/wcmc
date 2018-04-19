@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
 import scala.io.Source
-
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlg_000 on 4/22/2016.
@@ -215,10 +215,12 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     * @return
     */
   override def load(acquisitionMethod: AcquisitionMethod): Iterable[T] = {
-    val result = Source.fromFile(file).getLines().collect {
+    logger.info(s"loading method file: ${file.getName}")
+    if(file.getName.split("\\.").head.equals(acquisitionMethod.chromatographicMethod.name)) {
+      logger.info(s"loading targets for method: ${acquisitionMethod.chromatographicMethod.name}")
+      val result = Source.fromFile(file).getLines().collect {
 
-      case x: String =>
-        if (!x.startsWith("#")) {
+        case x: String if !x.startsWith("#") =>
 
           val temp = x.split(seperator)
 
@@ -238,6 +240,10 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
                 * associated spectrum propties if applicable
                 */
               override val spectrum: Option[SpectrumProperties] = None
+              /**
+                * unique mass for a given target
+                */
+              override val uniqueMass: Option[Double] = None
             }
           }
           else if (temp.length == 2) {
@@ -250,6 +256,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override var isRetentionIndexStandard: Boolean = false
               override var confirmed: Boolean = true
               override val spectrum: Option[SpectrumProperties] = None
+              override val uniqueMass: Option[Double] = None
 
             }
           }
@@ -263,6 +270,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override var isRetentionIndexStandard: Boolean = temp(3).toBoolean
               override var confirmed: Boolean = true
               override val spectrum: Option[SpectrumProperties] = None
+              override val uniqueMass: Option[Double] = None
 
             }
           }
@@ -276,6 +284,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override var isRetentionIndexStandard: Boolean = temp(4).toBoolean
               override var confirmed: Boolean = true
               override val spectrum: Option[SpectrumProperties] = None
+              override val uniqueMass: Option[Double] = None
 
             }
           }
@@ -284,12 +293,16 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
             logger.info(s"target line is: ${temp.mkString(" ")}")
             throw new IOException("unsupported file format discovered!")
           }
-        }
-    }.collect {
-      case x: T => x
-    }.toList
+      }.collect {
+        case x: T => x
+      }.toList
 
-    result
+      result
+    }
+    else{
+      logger.info(s"defined acquisition method of name ${acquisitionMethod.chromatographicMethod.name} was not found in this library implementation!")
+      Seq.empty
+    }
   }
 
   /**

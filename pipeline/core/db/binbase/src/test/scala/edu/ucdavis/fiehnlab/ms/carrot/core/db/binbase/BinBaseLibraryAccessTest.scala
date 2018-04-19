@@ -26,7 +26,7 @@ class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
   "BinBaseLibraryAccessTest" should {
 
     "load" in {
-      val method = AcquisitionMethod(Option(ChromatographicMethod("binbase", None, Option("rtx5recal"), None)))
+      val method = AcquisitionMethod(ChromatographicMethod("binbase", None, Option("rtx5recal"), None))
       val spectra = binBaseLibraryAccess.load(method)
 
 
@@ -35,7 +35,7 @@ class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
     }
 
     "load must also merge the correction standards into the library" in {
-      val method = AcquisitionMethod(Option(ChromatographicMethod("binbase", None, Option("rtx5recal"), None)))
+      val method = AcquisitionMethod(ChromatographicMethod("binbase", None, Option("rtx5recal"), None))
       val spectra = binBaseLibraryAccess.load(method)
       val markers = correction.load(method)
 

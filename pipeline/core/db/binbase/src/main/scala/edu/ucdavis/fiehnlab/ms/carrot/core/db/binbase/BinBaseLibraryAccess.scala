@@ -34,29 +34,25 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, cor
     * @return
     */
   override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = {
-    acquisitionMethod.chromatographicMethod match {
-      case Some(method) =>
-        method.column match {
-          case Some(column) =>
+    acquisitionMethod.chromatographicMethod.column match {
+      case Some(column) =>
 
-            val connection = generateConnection(column)
-            try {
-              val res = connection.createStatement().executeQuery("select * from bin where bin_id not in (select bin_id from standard)")
+        val connection = generateConnection(column)
+        try {
+          val res = connection.createStatement().executeQuery("select * from bin where bin_id not in (select bin_id from standard)")
 
-              val annotations = new Iterator[Target] {
-                def hasNext = res.next()
+          val annotations = new Iterator[Target] {
+            def hasNext = res.next()
 
-                def next() = BinBaseTarget(res).asInstanceOf[Target]
-              }.toSeq
+            def next() = BinBaseTarget(res).asInstanceOf[Target]
+          }.toSeq
 
-              val correctionMarkers = correction.load(acquisitionMethod)
+          val correctionMarkers = correction.load(acquisitionMethod)
 
-              annotations ++ correctionMarkers
-            }
-            finally {
-              connection.close()
-            }
-          case _ => Seq.empty
+          annotations ++ correctionMarkers
+        }
+        finally {
+          connection.close()
         }
       case _ => Seq.empty
     }
@@ -80,14 +76,13 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, cor
     * @return
     */
   override def libraries: Seq[AcquisitionMethod] = config.columns.asScala.map { column =>
-    AcquisitionMethod(Option(
+    AcquisitionMethod(
       ChromatographicMethod(
         config.name,
         Option(config.instrument),
         Option(column),
         Option(PositiveMode())
       )
-    )
     )
   }
 }
@@ -124,7 +119,7 @@ class BinBaseConnectionProperties {
 }
 
 
-case class BinBaseTarget(result: ResultSet) extends Target with PuritySupport with UniqueMassSupport with LazyLogging {
+case class BinBaseTarget(result: ResultSet) extends Target with LazyLogging {
   /**
     * a name for this spectra
     */
@@ -180,7 +175,8 @@ case class BinBaseTarget(result: ResultSet) extends Target with PuritySupport wi
       Ion(data(0).toDouble, data(1).toFloat)
     }
   })
-  override val purity: Double = result.getDouble("purity")
-
-  override val uniqueMass: Double = result.getDouble("uniquemass")
+  /**
+    * unique mass for a given target
+    */
+  override val uniqueMass: Option[Double] = Some(result.getDouble("uniquemass"))
 }

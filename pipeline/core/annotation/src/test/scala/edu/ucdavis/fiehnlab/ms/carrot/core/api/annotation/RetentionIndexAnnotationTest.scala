@@ -40,6 +40,8 @@ class RetentionIndexAnnotationTest extends WordSpec {
         },
 
         new Target {
+          override val uniqueMass: Option[Double] = None
+
           override val precursorMass: Option[Double] = None
           override var name: Option[String] = None
           override var inchiKey: Option[String] = None
@@ -100,6 +102,8 @@ class RetentionIndexAnnotationTest extends WordSpec {
         },
 
         new Target {
+          override val uniqueMass: Option[Double] = None
+
           override val precursorMass: Option[Double] = None
           override var name: Option[String] = None
           override var inchiKey: Option[String] = None

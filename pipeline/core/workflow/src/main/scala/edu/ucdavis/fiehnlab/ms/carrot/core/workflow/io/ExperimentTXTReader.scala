@@ -55,7 +55,7 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
       .filter(_ != null) // leave nulls out
       .groupBy(k => k._1) // group by class index (from experiment file)
       .mapValues(v => v.map(_._2)) // for each group extract the filename from the tuple (created in groupBy)
-      .map(tuple => ExperimentClass(tuple._2, Some(new Matrix(tuple._1, "None", "None", Seq.empty)))).toSeq, acquisitionMethod = AcquisitionMethod(None)) // for each value create an ExperimentClass from the tuple data
+      .map(tuple => ExperimentClass(tuple._2, Some(new Matrix(tuple._1, "None", "None", Seq.empty)))).toSeq, acquisitionMethod = AcquisitionMethod()) // for each value create an ExperimentClass from the tuple data
 
     if (result.classes.isEmpty) throw new RuntimeException("no classes for the experiment are defined!")
 
