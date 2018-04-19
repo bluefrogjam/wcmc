@@ -11,17 +11,7 @@ import org.springframework.context.ApplicationContext
   * @param accuracy
   */
 class ExcludeBasePeakSpectra(override val basePeaks: Seq[Double], override val phaseToLog: String, override val accuracy: Double = 0.00005) extends IncludesBasePeakSpectra(basePeaks = basePeaks, accuracy = accuracy, phaseToLog = phaseToLog) with JSONPhaseLogging with JSONSettingsLogging {
-  protected override def doInclude(spectra: MSSpectra, applicationContext: ApplicationContext): Boolean= {
-    basePeaks.exists { peak =>
-
-      val min = spectra.associatedScan.get.basePeak.mass - accuracy
-      val max = spectra.associatedScan.get.basePeak.mass + accuracy
-
-      val result = !(peak > min && peak < max)
-
-      result
-    }
-  }
+  protected override def doInclude(spectra: MSSpectra, applicationContext: ApplicationContext): Boolean = !super.doInclude(spectra, applicationContext)
 
   /**
     * references to all used settings

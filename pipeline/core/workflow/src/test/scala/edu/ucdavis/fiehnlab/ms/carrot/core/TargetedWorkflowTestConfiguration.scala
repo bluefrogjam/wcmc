@@ -49,7 +49,4 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
     80
   )
 
-
-  @Bean
-  def everything4JEclipse: Everything4J = new Everything4J("eclipse.fiehnlab.ucdavis.edu")
 }

@@ -51,7 +51,7 @@ class NegativeIntensitiesTest extends WordSpec with LazyLogging with ShouldMatch
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "ZeroReplacement" should {
-    val method = AcquisitionMethod(Some(ChromatographicMethod("replacement test", None, None, Some(new IonMode("positive")))))
+    val method = AcquisitionMethod(ChromatographicMethod("replacement test", None, None, Some(new IonMode("positive"))))
     val rawSample = loader.getSample("Weiss003_posHILIC_59602960_068.mzml")
     val sample: QuantifiedSample[Double] = quantify.process(
       annotation.process(

@@ -148,9 +148,14 @@ case class TargetExtended(override var confirmed: Boolean,
                           override var requiredForCorrection: Boolean,
                           override val retentionIndex: Double,
                           override val retentionTimeInSeconds: Double,
-                          override val spectrum: Option[SpectrumExtended]
+                          override val spectrum: Option[SpectrumExtended],
+                          override val uniqueMass: Option[Double]
                          ) extends Target with Idable[String] {
   override def toString = f"Target(id=${id}, name=${name.getOrElse("None")}, retentionTime=$retentionTimeInMinutes (min), retentionTime=$retentionIndex (s), inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${precursorMass.getOrElse("None")})"
+
+  /**
+    * unique mass for a given target
+    */
 
 }
 
@@ -213,6 +218,9 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
     val target: AddTarget = this
 
     new Target {
+
+      override val uniqueMass: Option[Double] = None
+
       /**
         * the unique inchi key for this spectra
         */
@@ -257,7 +265,13 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
           * the msLevel of this spectra
           */
         override val msLevel: Short = 1
-      })
+      }
+
+      )
+      /**
+        * unique mass for a given target
+        */
+
     }
   }
 }

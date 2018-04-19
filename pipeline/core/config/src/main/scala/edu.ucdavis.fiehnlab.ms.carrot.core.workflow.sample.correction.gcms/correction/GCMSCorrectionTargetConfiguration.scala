@@ -29,23 +29,20 @@ class GCMSCorrectionTargetConfiguration {
       new ReadonlyLibrary[GCMSCorrectionTarget] {
         override def load(acquisitionMethod: AcquisitionMethod): Iterable[GCMSCorrectionTarget] = {
 
-          acquisitionMethod.chromatographicMethod match {
-            case Some(method) =>
-              method.column match {
-                case Some(column) if column.equals(x.column) =>
-                  method.instrument match {
-                    case Some(instrument) if instrument.equals(x.instrument) =>
-                      x.targets.asScala.map(GCMSCorrectionTarget)
-                    case _ =>
-                      Seq.empty
-                  }
+          val method = acquisitionMethod.chromatographicMethod
 
-                case _ => Seq.empty
+
+          method.column match {
+            case Some(column) if column.equals(x.column) =>
+              method.instrument match {
+                case Some(instrument) if instrument.equals(x.instrument) =>
+                  x.targets.asScala.map(GCMSCorrectionTarget)
+                case _ =>
+                  Seq.empty
               }
 
             case _ => Seq.empty
           }
-
         }
 
         override def libraries: Seq[AcquisitionMethod] = Seq.empty

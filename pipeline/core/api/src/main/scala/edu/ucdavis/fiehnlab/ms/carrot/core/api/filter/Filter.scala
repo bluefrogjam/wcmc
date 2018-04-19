@@ -25,6 +25,7 @@ trait Filter[T] extends JSONLogging with JSONPhaseLogging with JSONSettingsLoggi
 
   /**
     * a method which should be overwritten, if the filter can provide details why it failed
+    *
     * @param spectra
     * @param applicationContext
     * @return
@@ -35,6 +36,7 @@ trait Filter[T] extends JSONLogging with JSONPhaseLogging with JSONSettingsLoggi
 
   /**
     * this implementation should be overwritten if the filter cannot provide information why it failed
+    *
     * @param spectra
     * @param applicationContext
     * @return
@@ -56,7 +58,33 @@ trait Filter[T] extends JSONLogging with JSONPhaseLogging with JSONSettingsLoggi
   override protected val classUnderInvestigation: Any = this
 }
 
+/**
+  * abstract filter which provides some help with accurate masses
+  *
+  * @param massAccuracy
+  * @tparam T
+  */
+abstract class MassFilter[T](massAccuracy: Double) extends Filter[T] {
 
+  final def isNominal: Boolean = massAccuracy == 0.0
+
+  /**
+    * evaluates if these two masses are the same
+    *
+    * @param targetMass
+    * @param featureMass
+    * @return
+    */
+  def sameMass(targetMass: Double, featureMass: Double): Boolean = {
+    if (!isNominal) {
+      Math.abs(targetMass - featureMass) <= massAccuracy
+    }
+    else {
+      Math.floor(featureMass + 0.2) == Math.floor(targetMass + 0.2)
+    }
+
+  }
+}
 
 
 

@@ -107,6 +107,10 @@ object Test {
         */
       override val msLevel: Short = 1
     })
+    /**
+      * unique mass for a given target
+      */
+    override val uniqueMass: Option[Double] = None
   }
 
 }

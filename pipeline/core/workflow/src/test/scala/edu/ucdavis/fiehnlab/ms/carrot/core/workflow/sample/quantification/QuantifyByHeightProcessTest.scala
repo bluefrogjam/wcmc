@@ -42,7 +42,7 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
 
   "QuantifyByHeightProcessTest" should {
 
-    val method = AcquisitionMethod(None)
+    val method = AcquisitionMethod()
 
     val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.d.zip", "B5_SA0002_P20Lipids_Pos_1FL_1006.d.zip"))
 
