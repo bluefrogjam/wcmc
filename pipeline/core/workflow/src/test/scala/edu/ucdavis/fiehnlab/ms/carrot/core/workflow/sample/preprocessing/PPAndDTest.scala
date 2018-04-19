@@ -7,7 +7,8 @@ import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
 import org.junit.runner.RunWith
@@ -23,10 +24,12 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt-lcms", "carrot.processing.peakdetection", "quantify-by-scan"))
+@ActiveProfiles(Array("carrot.processing.peakdetection", "quantify-by-scan", "carrot.lcms"))
 class PPAndDTest extends WordSpec with Matchers with LazyLogging {
   @Autowired
   val peakDetection: PeakDetection = null
+
+  val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Option(PositiveMode())))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -39,7 +42,7 @@ class PPAndDTest extends WordSpec with Matchers with LazyLogging {
       sample.spectra should not be Seq.empty
       sample.spectra should have size 18
 
-      val result = peakDetection.process(sample, AcquisitionMethod(), None)
+      val result = peakDetection.process(sample, method, None)
       result should not be Seq.empty
       result shouldBe a[MSDialLCMSProcessedSample]
 

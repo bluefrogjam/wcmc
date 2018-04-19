@@ -25,7 +25,7 @@ case class Matrix(
                    treatments: Seq[Treatment]
                  )
 
-case class AcquisitionMethod(chromatographicMethod: ChromatographicMethod = ChromatographicMethod("default", None, None, None))
+case class AcquisitionMethod(chromatographicMethod: ChromatographicMethod = ChromatographicMethod("default", None, None))
 
 /**
   * associated treatment
