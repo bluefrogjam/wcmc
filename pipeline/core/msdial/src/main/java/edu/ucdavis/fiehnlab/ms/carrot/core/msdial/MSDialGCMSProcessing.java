@@ -11,10 +11,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.gcms.MS1DeconvolutionRes
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public class MSDialGCMSProcessing {
+@Component
+@Profile("carrot.gcms")
+public class MSDialGCMSProcessing implements MSDialProcessing {
 
     private Logger logger = LoggerFactory.getLogger(MSDialGCMSProcessing.class);
 

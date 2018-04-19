@@ -4,6 +4,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.UnknownMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @ConfigurationProperties
 @Component
+@Profile("carrot.gcms")
 public class MSDialGCMSProcessingProperties extends MSDialProcessingProperties {
 
     public MSDialGCMSProcessingProperties() {
@@ -32,24 +34,5 @@ public class MSDialGCMSProcessingProperties extends MSDialProcessingProperties {
         this.accuracyType = AccuracyType.NOMINAL;
         this.massAccuracy = 0.025;
         this.dataType = MSDataType.CENTROID;
-    }
-
-    public String toString() {
-        return (
-            "massRangeBegin: " + massRangeBegin +
-                "\nmassRangeEnd: " + massRangeEnd +
-                "\nretentionTimeBegin: " + retentionTimeBegin +
-                "\nretentionTimeEnd: " + retentionTimeEnd +
-                "\nsmoothingMethod: " + smoothingMethod +
-                "\nsmoothingLevel: " + smoothingLevel +
-                "\naveragePeakWidth: " + averagePeakWidth +
-                "\nminimumAmplitude: " + minimumAmplitude +
-                "\nmassSliceWith: " + massSliceWidth +
-                "\nmassAccuracy: " + massAccuracy +
-                "\ndataType: " + dataType +
-                "\nionMode: " + ionMode +
-                "\namplitudeCutoff: " + amplitudeCutoff +
-                "\nminimumDataPoints: " + minimumDataPoints
-        );
     }
 }

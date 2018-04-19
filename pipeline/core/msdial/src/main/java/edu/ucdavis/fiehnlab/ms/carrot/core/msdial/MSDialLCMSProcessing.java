@@ -11,15 +11,18 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-//@Component
-//@Profile("carrot.processing.peakdetection")
-public class MSDialLCMSProcessing {
+@Component
+@Profile("carrot.lcms")
+public class MSDialLCMSProcessing implements MSDialProcessing {
+
     private Logger logger = LoggerFactory.getLogger(MSDialLCMSProcessing.class);
 
-    public Sample process(Sample sample, MSDialLCMSProcessingProperties properties) {
+    public Sample process(Sample sample, MSDialProcessingProperties properties) {
         List<Feature> spectra = TypeConverter.getJavaSpectrumList(sample);
 
         // Peak picking

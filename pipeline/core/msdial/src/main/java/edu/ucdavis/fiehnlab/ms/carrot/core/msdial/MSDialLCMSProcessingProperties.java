@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
  */
 @ConfigurationProperties
 @Component
+@Profile("carrot.lcms")
 public class MSDialLCMSProcessingProperties extends MSDialProcessingProperties {
 
     public MSDialLCMSProcessingProperties() {
