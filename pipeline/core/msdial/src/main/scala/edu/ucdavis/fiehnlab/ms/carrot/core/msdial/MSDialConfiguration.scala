@@ -5,6 +5,4 @@ import org.springframework.context.annotation.{ComponentScan, Configuration, Pro
 @Configuration
 @ComponentScan
 @Profile(Array("carrot.processing.peakdetection"))
-class MSDialConfiguration {
-
-}
+class MSDialConfiguration
