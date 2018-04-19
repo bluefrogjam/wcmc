@@ -70,6 +70,14 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
         override val scanNumber: Int = -1
         override val associatedScan: Option[SpectrumProperties] = None
         override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.79089510745, 100))
+        /**
+          * the signal noise of this spectra
+          */
+        override val signalNoise: Option[Double] = None
+        /**
+          * the unique mass of this spectra
+          */
+        override val uniqueMass: Option[Double] = None
       }
 
       val correctFeature = new Feature {
@@ -80,6 +88,14 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
         override val scanNumber: Int = -1
         override val associatedScan: Option[SpectrumProperties] = None
         override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.792541148294, 100))
+        /**
+          * the signal noise of this spectra
+          */
+        override val signalNoise: Option[Double] = None
+        /**
+          * the unique mass of this spectra
+          */
+        override val uniqueMass: Option[Double] = None
       }
 
       val target = new Target {
