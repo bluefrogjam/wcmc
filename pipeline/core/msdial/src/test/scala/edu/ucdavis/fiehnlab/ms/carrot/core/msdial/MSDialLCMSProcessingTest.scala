@@ -10,18 +10,16 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSampl
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by diego on 1/30/2018
   **/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[LCMSProcessingConfig]))
+@SpringBootTest(classes = Array(classOf[TestConfig]))
+@ActiveProfiles(Array("carrot.lcms"))
 class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
 
   @Autowired
@@ -116,14 +114,4 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
       logger.info(s"... finished.")
     }
   }
-}
-
-@Configuration
-@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class LCMSProcessingConfig {
-  @Bean
-  def msdProcessing: MSDialLCMSProcessing = new MSDialLCMSProcessing()
-
-  @Bean
-  def properties: MSDialLCMSProcessingProperties = new MSDialLCMSProcessingProperties()
 }
