@@ -1,6 +1,8 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types;
+package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.List;
 /**
  * Created by diego on 7/22/2016.
  */
-public class MS2DecResult {
+public class MS2DeconvolutionResult {
 
     public int peakTopScan;
     public double peakTopRetentionTime = -1.0;
@@ -29,7 +31,7 @@ public class MS2DecResult {
 
     public PeakAreaBean peak;
 
-    public MS2DecResult(PeakAreaBean peak) {
+    public MS2DeconvolutionResult(PeakAreaBean peak) {
         this.peak = peak;
         this.ms1IsotopicIonM1PeakHeight = peak.ms1IsotopicIonM1PeakHeight;
         this.ms1IsotopicIonM2PeakHeight = peak.ms1IsotopicIonM2PeakHeight;

@@ -1,37 +1,38 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
 import java.io.{File, FileWriter}
-import java.nio.file.Files
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{ProcessedSample, Sample}
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by diego on 1/30/2018
   **/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[Config]))
-class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
+@SpringBootTest(classes = Array(classOf[TestConfig]))
+@ActiveProfiles(Array("carrot.lcms"))
+class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
+
   @Autowired
-  val msdProcessing: MSDialProcessing = null
+  val msdProcessing: MSDialLCMSProcessing = null
+
   @Autowired
-  val properties: MSDialProcessingProperties = null
+  val properties: MSDialLCMSProcessingProperties = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "MSDialProcessingTest" should {
+  "MSDialLCMSProcessingTest" should {
+    // Setting required processing properties
+    properties.ionMode = PositiveMode()
 
     "check peakpicking" in {
       val sample: MSDKSample = MSDKSample("testA.mzml", new File(getClass.getResource("/testA.mzml").getFile))
@@ -45,7 +46,7 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra should not be null
       outSample.spectra.size should be > 0
 
-      outSample shouldBe a[MSDialProcessedSample]
+      outSample shouldBe a[MSDialLCMSProcessedSample]
     }
 
     "check peakpicking in RT range (1.45 - 1.60)" in {
@@ -54,9 +55,9 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[MSDialProcessedSample]
+      outSample shouldBe a[MSDialLCMSProcessedSample]
 
-      saveFile("testSmall0.carrot", outSample.asInstanceOf[MSDialProcessedSample])
+      saveFile("testSmall0.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
     "check peakpicking in RT range (10.00 - 10.44)" in {
@@ -65,9 +66,9 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[MSDialProcessedSample]
+      outSample shouldBe a[MSDialLCMSProcessedSample]
 
-      saveFile("testSmall1.carrot", outSample.asInstanceOf[MSDialProcessedSample])
+      saveFile("testSmall1.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
     "check peakpicking in RT range (4.74 - 5.50)" in {
@@ -76,12 +77,12 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[MSDialProcessedSample]
+      outSample shouldBe a[MSDialLCMSProcessedSample]
 
-      saveFile("testSmall2.carrot", outSample.asInstanceOf[MSDialProcessedSample])
+      saveFile("testSmall2.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
-    def saveFile(filename: String, sample: MSDialProcessedSample): Unit = {
+    def saveFile(filename: String, sample: MSDialLCMSProcessedSample): Unit = {
       val file = new File(getClass.getResource("/").getPath + s"/$filename")
       logger.info(s"Saving ${file.getName} ...")
       if(file.exists()) file.delete()
@@ -113,15 +114,4 @@ class MSDialProcessingTest extends WordSpec with Matchers with LazyLogging {
       logger.info(s"... finished.")
     }
   }
-}
-
-@Configuration
-@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class Config {
-  @Bean
-  def msdProcessing: MSDialProcessing = new MSDialProcessing()
-
-  @Bean
-  def properties: MSDialProcessingProperties = new MSDialProcessingProperties()
-
 }

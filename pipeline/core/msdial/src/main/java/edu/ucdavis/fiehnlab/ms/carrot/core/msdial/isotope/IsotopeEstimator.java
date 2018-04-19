@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.isotope;
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
@@ -10,13 +9,17 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.MolecularFormulaUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by diego on 8/26/2016.
  */
 public class IsotopeEstimator {
+
     private static Logger logger = LoggerFactory.getLogger(IsotopeEstimator.class);
+
     private static int MAX_ISOTOPE_NUMBER = 8;
 
 
