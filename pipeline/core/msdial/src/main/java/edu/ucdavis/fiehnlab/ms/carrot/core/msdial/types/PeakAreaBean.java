@@ -53,12 +53,13 @@ public class PeakAreaBean {
 	public int scanNumberAtLeftPeakEdge;
 	public int scanNumberAtPeakTop;
 	public int scanNumberAtRightPeakEdge;
-	public double sharpenessValue;
+	public double shapenessValue;
 	public double symmetryValue;
 //	public double totalScore;
 
 	public double rtAtPeakTop() { return rtAtPeakTop; }
 	public double accurateMass() { return accurateMass; }
+	public double scanNumberAtPeakTop() { return scanNumberAtPeakTop; }
 	public double intensityAtPeakTop() { return intensityAtPeakTop; }
 	public double peakID() { return peakID; }
 
