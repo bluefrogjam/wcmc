@@ -36,12 +36,12 @@ class TaskRunnerTest extends WordSpec {
     "run - should fail since no samples are provided" in {
 
       intercept[AssertionError] {
-        taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu", acquisitionMethod = AcquisitionMethod(None), samples = Seq.empty))
+        taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu", acquisitionMethod = AcquisitionMethod(), samples = Seq.empty))
       }
     }
 
     "run - should pass" in {
-      taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu", acquisitionMethod = AcquisitionMethod(None), samples = SampleToProcess("B5_P20Lipids_Pos_QC000.d.zip") :: List()))
+      taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu", acquisitionMethod = AcquisitionMethod(), samples = SampleToProcess("B5_P20Lipids_Pos_QC000.d.zip") :: List()))
     }
 
 

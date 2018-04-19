@@ -61,17 +61,17 @@ class LibraryController extends LazyLogging {
   def updateTarget(@PathVariable("library") id: String, @RequestBody target: TargetExtended): Iterable[Target] = {
     logger.info(s"Update requested: $target")
     val result = libraryAccess.libraries.collectFirst {
-      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == id =>
+      case x: AcquisitionMethod if x.chromatographicMethod.name == id =>
         x
     }
 
-    if(result.isDefined){
+    if (result.isDefined) {
       logger.info(s"Result: $result")
-      libraryAccess.update(target,result.get)
+      libraryAccess.update(target, result.get)
 
       Array(target)
     }
-    else{
+    else {
       throw new ResourceNotFoundException
     }
 
@@ -82,7 +82,7 @@ class LibraryController extends LazyLogging {
   def listTargets(@PathVariable("library") id: String): Iterable[Target] = {
 
     val result = libraryAccess.libraries.collectFirst {
-      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == id =>
+      case x: AcquisitionMethod if x.chromatographicMethod.name == id =>
         libraryAccess.load(x)
     }
 
@@ -103,7 +103,7 @@ class LibraryController extends LazyLogging {
   def deleteLibrary(@PathVariable("library") library: String): Unit = {
     logger.debug(s"User requested library: ${library}'s deletion...")
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
-      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == library => x
+      case x: AcquisitionMethod if x.chromatographicMethod.name == library => x
     }
 
     if (acquisitionMethod.isDefined) {
@@ -115,7 +115,7 @@ class LibraryController extends LazyLogging {
   def deleteTarget(@PathVariable("library") library: String, @PathVariable("target") target: String): Unit = {
     logger.info(s"User requested target: ${target}'s deletion...")
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
-      case x: AcquisitionMethod if x.chromatographicMethod.isDefined && x.chromatographicMethod.get.name == library => x
+      case x: AcquisitionMethod if x.chromatographicMethod.name == library => x
     }
 
     if (acquisitionMethod.isDefined) {
@@ -130,6 +130,7 @@ class ResourceNotFoundException extends RuntimeException
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
 class ResourceAlreadyExistException extends RuntimeException
+
 /**
   * utilized to update fields of the given target
   *
@@ -162,16 +163,17 @@ case class TargetExtended(override var confirmed: Boolean,
 case class SpectrumExtended(override val ions: Seq[Ion],
                             override val modelIons: Option[Seq[Double]],
                             override val msLevel: Short
-                           ) extends SpectrumProperties{
+                           ) extends SpectrumProperties {
 
 }
 
 
-class JsonBooleanDeserializer extends JsonDeserializer[Boolean]{
-  override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext) : Boolean= {
+class JsonBooleanDeserializer extends JsonDeserializer[Boolean] {
+  override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): Boolean = {
     jsonParser.getText.toBoolean
   }
 }
+
 /**
   * specific class to add a target
   *
@@ -182,7 +184,7 @@ class JsonBooleanDeserializer extends JsonDeserializer[Boolean]{
   * @param riMarker
   * @param mode
   */
-case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String, @(JsonDeserialize@field)riMarker: Boolean, mode: String) {
+case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String, @(JsonDeserialize@field) riMarker: Boolean, mode: String) {
 
   /**
     * builds the associated acquition method
@@ -200,11 +202,9 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
     }
 
     AcquisitionMethod(
-      Some(
-        ChromatographicMethod(
-          //TODO possibile bug later down the line, due to explicietly set to none for instrument and column
-          name = target.library, None, None, ionMode = Some(ionMode)
-        )
+      ChromatographicMethod(
+        //TODO possibile bug later down the line, due to explicietly set to none for instrument and column
+        name = target.library, None, None, ionMode = Some(ionMode)
       )
     )
   }
