@@ -38,8 +38,6 @@ case class PositiveMode() extends IonMode("positive")
 
 case class NegativeMode() extends IonMode("negative")
 
-case class UnknownMode() extends IonMode("unknown")
-
 
 class IonModeDeserializer extends JsonDeserializer[IonMode] {
   override def deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext) = {
@@ -55,9 +53,10 @@ class IonModeDeserializer extends JsonDeserializer[IonMode] {
     } else if (value.startsWith("n")) {
       NegativeMode()
     } else if (value.startsWith("-")) {
-      NegativeMode()}
-    else {
-      UnknownMode()
+      NegativeMode()
+    }
+    else{
+      PositiveMode()
     }
   }
 }

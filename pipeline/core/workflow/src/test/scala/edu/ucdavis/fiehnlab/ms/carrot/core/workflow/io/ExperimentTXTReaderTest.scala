@@ -14,7 +14,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt-lcms", "carrot.report.quantify.height"))
+@ActiveProfiles(Array("carrot.report.quantify.height"))
 class ExperimentTXTReaderTest extends WordSpec with LazyLogging {
 
   @Autowired

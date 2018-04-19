@@ -31,10 +31,17 @@ class PeakDetection extends PreProcessor with LazyLogging {
     * @return
     */
   override def doProcess(item: Sample, method: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
+
+
     if (method.chromatographicMethod.ionMode.isDefined) {
       processingProperties.ionMode = method.chromatographicMethod.ionMode.get
+    }
+    else{
+      throw new IonModeRequiredException("please ensure you provide an ion mode!")
     }
 
     msdialProcessor.process(item, processingProperties)
   }
 }
+
+class IonModeRequiredException(str: String) extends Exception(str)

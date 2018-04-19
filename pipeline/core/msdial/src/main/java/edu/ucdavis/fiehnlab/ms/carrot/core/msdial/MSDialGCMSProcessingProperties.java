@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial;
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.UnknownMode;
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -29,7 +29,7 @@ public class MSDialGCMSProcessingProperties extends MSDialProcessingProperties {
         this.minimumDataPoints = 10;
         this.amplitudeCutoff = 10;
 
-        this.ionMode = new UnknownMode();
+        this.ionMode = new PositiveMode();
 
         this.accuracyType = AccuracyType.NOMINAL;
         this.massAccuracy = 0.025;

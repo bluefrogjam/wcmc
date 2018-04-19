@@ -50,8 +50,10 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
               }
             case PolarityType.POSITIVE =>
               new MSDKMSSpectra(spectra, Some(PositiveMode()), this.fileName)
-            case _ =>
-              new MSDKMSSpectra(spectra, Some(UnknownMode()), this.fileName)
+            case PolarityType.UNKNOWN =>
+              logger.warn("polarity time is not defined, we are assuming positive!")
+              new MSDKMSSpectra(spectra, Some(PositiveMode()), this.fileName)
+
           }
         } else {
           //discover which mixins we need
@@ -60,8 +62,6 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
               new MSDKMSMSSpectra(spectra, Some(NegativeMode()), this.fileName)
             case PolarityType.POSITIVE =>
               new MSDKMSMSSpectra(spectra, Some(PositiveMode()), this.fileName)
-            case _ =>
-              new MSDKMSMSSpectra(spectra, Some(UnknownMode()), this.fileName)
           }
         }
 

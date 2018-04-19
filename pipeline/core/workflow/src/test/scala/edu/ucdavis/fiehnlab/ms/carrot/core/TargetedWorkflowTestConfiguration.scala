@@ -38,7 +38,6 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
     *
     * @return
     */
-  @Profile(Array("backend-txt-lcms"))
   @Bean
   def targetLibraryLCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
 
