@@ -16,6 +16,8 @@ class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult]
 
   override val spectra: Seq[_ <: Feature] = ms1DecResults.asScala.map { x: MS1DeconvolutionResult =>
     new Feature {
+      override val uniqueMass: Option[Double] = None
+      override val signalNoise: Option[Double] = None
 
       /**
         * specified ion mode for the given feature
