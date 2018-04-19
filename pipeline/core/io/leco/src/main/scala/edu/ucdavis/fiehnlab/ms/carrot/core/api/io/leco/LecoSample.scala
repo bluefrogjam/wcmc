@@ -36,8 +36,6 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
     try {
 
       val lines: Iterator[String] = Source.fromInputStream(inputStream, "ISO-8859-1").getLines().map(_.toLowerCase)
-
-
       if (lines.hasNext) {
 
 

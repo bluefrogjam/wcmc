@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types;
+package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms;
 
 /**
  * Created by diego on 9/13/2016.
