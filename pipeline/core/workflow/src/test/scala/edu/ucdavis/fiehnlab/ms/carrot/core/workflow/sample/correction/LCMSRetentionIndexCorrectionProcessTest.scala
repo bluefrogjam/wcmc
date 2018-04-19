@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.junit.runner.RunWith
@@ -19,7 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt-lcms", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms"))
+@ActiveProfiles(Array( "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms"))
 class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -38,7 +38,7 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
 
     val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.d.zip")
     val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.d.zip")
-    val method = AcquisitionMethod()
+    val method = AcquisitionMethod(ChromatographicMethod("targets"))
     assert(correction != null)
 
 

@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt-lcms", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms"))
+@ActiveProfiles(Array("quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms"))
 class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -58,7 +58,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
     //compute purity values
     val purityComputed = samples //.map(purity.process)
 
-    val method = AcquisitionMethod()
+    val method = AcquisitionMethod(ChromatographicMethod("targets"))
 
     //correct the data
     val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method, None), method, None))
