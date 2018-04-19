@@ -7,9 +7,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode
   */
 case class ChromatographicMethod(
                                   name: String,
-                                  instrument: Option[String],
-                                  column: Option[String],
-                                  ionMode: Option[IonMode]
+                                  instrument: Option[String] = None,
+                                  column: Option[String] = None,
+                                  ionMode: Option[IonMode] = None
                                 )
 
 /**

@@ -27,6 +27,7 @@ import scala.collection.mutable
   * provides easy access to the MoNA database to query for targets and add new targets
   * Created by wohlgemuth on 8/14/17.
   */
+@Profile(Array("carrot.targets.mona"))
 @Component
 class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 

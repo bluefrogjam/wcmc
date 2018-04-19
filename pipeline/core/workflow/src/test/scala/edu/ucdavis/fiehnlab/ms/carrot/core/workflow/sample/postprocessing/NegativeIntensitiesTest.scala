@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -78,7 +78,7 @@ class NegativeIntensitiesTest extends WordSpec with LazyLogging with ShouldMatch
 
 }
 
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@Configuration
 class ZeroReplConfig {
   @Autowired
   val resourceLoader: ResourceLoader = null

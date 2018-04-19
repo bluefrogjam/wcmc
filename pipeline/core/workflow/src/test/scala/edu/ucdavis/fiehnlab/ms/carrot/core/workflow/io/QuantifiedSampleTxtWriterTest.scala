@@ -5,7 +5,7 @@ import java.io.{FileInputStream, FileOutputStream}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
@@ -49,7 +49,7 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
   "QuantifiedSampleTxtWriterTest" should {
 
 
-    val method = AcquisitionMethod()
+    val method = AcquisitionMethod(ChromatographicMethod("backend-txt-lcms"))
 
     val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.d.zip", "B5_P20Lipids_Pos_QC000.d.zip"))
 
