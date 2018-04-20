@@ -4,8 +4,8 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader, TxtStreamLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Ion, IonMode, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
@@ -32,7 +32,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
   val deco: PeakDetection = null
 
   @Autowired
-  val targetLibraryLCMS: LibraryAccess[Target] = null
+  val libraryAccess: LibraryAccess[Target] = null
 
   @Autowired
   val loader: SampleLoader = null
@@ -40,21 +40,21 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "Retention Index Correction Process" should {
-    logger.debug("minimumDefinedStandard " + correction.minimumDefinedStandard.toString)
-    logger.debug("minimumFoundStandards " + correction.minimumFoundStandards.toString)
-    logger.debug("massAccuracySetting " +correction.massAccuracySetting.toString)
-    logger.debug("minPeakIntensity " + correction.minPeakIntensity.toString)
+    val method = AcquisitionMethod(ChromatographicMethod("targets_20180315", None, None, Some(PositiveMode())))
+    val sample: CorrectedSample = correction.process(
+      deco.process(
+        loader.getSample("Weiss005_posHILIC_40298234_039.mzML"), method, None
+      ), method, None
+    )
 
     "find the closest feature for each target" in {
-      val method = AcquisitionMethod(ChromatographicMethod("targets_20180315", None, None, Some(new IonMode("positive"))))
-
-      val sample: CorrectedSample = correction.process(
-        deco.process(
-          loader.getSample("Weiss005_posHILIC_40298234_039.mzML"), method, None
-        ), method, None
-      )
-
       sample.featuresUsedForCorrection.foreach(x => x.annotation.retentionTimeInSeconds === x.target.retentionIndex +- 10)
+    }
+
+    "check that TG[M+NH4]+ comes at the same RT that [M+Na]+" in {
+      val tgAdducts = sample.featuresUsedForCorrection.filter(x => x.target.name.get.startsWith("1_TG"))
+      tgAdducts shouldBe 2
+      tgAdducts.head.annotation.retentionTimeInMinutes shouldBe tgAdducts
     }
 
     "choose the correct TG peak" in {
@@ -127,6 +127,6 @@ class CorrectionTestConfig {
   val resourceLoader: ResourceLoader = null
 
   @Bean
-  def targetLibraryLCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets_20180315.txt").get, "\t")
+  def libraryAccess: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets_20180315.txt").get, "\t")
 
 }
