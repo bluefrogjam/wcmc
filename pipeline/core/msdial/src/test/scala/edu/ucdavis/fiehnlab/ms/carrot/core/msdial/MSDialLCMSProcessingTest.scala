@@ -11,14 +11,15 @@ import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.context.annotation.{ComponentScan, Configuration}
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by diego on 1/30/2018
   **/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[TestConfig]))
+@SpringBootTest(classes = Array(classOf[LCTestConfig]))
 @ActiveProfiles(Array("carrot.lcms"))
 class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
 
@@ -115,3 +116,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
     }
   }
 }
+
+@Configuration
+@ComponentScan
+class LCTestConfig {}
