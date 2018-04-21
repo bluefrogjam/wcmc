@@ -51,7 +51,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
             case PolarityType.POSITIVE =>
               new MSDKMSSpectra(spectra, Some(PositiveMode()), this.fileName)
             case PolarityType.UNKNOWN =>
-              logger.warn("polarity time is not defined, we are assuming positive!")
+              logger.debug("polarity is not defined, we are assuming positive!")
               new MSDKMSSpectra(spectra, Some(PositiveMode()), this.fileName)
 
           }
