@@ -4,7 +4,7 @@ import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SimilaritySupport, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.gcms.MS1DeconvolutionResult
 
 import scala.collection.JavaConverters._
@@ -15,7 +15,7 @@ class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult]
   override val properties: Option[SampleProperties] = None
 
   override val spectra: Seq[_ <: Feature] = ms1DecResults.asScala.map { x: MS1DeconvolutionResult =>
-    new Feature {
+    new MSSpectra with SimilaritySupport{
       override val uniqueMass: Option[Double] = None
       override val signalNoise: Option[Double] = None
 
@@ -37,7 +37,7 @@ class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult]
       /**
         * the retention time of this spectra. It should be provided in seconds!
         */
-      override val retentionTimeInSeconds: Double = x.retentionTime * 60
+      override val retentionTimeInSeconds: Double = x.retentionTime * 60 *1000
 
       /**
         * the local scan number
@@ -57,6 +57,10 @@ class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult]
 
         override val ions: Seq[Ion] = x.spectrum.asScala.map(p => Ion(p.mz, p.intensity))
       })
+      /**
+        * associated spectrum propties if applicable
+        */
+      override val spectrum: Option[SpectrumProperties] = associatedScan
     }
   }
 }

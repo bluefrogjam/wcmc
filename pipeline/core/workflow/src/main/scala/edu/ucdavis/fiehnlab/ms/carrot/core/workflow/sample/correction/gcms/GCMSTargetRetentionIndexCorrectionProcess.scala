@@ -73,7 +73,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
         }.filter(_ != null)
 
         if (distanceValidationTargets.isEmpty) {
-          throw new NotEnoughStandardsFoundException(s"${input.name} has 0 discovered standards!")
+          throw new NotEnoughStandardsFoundException(s"${input.name} was not able to find a validation target!")
         }
 
         //take the top 3 similarity wise and than the largest peak
@@ -88,7 +88,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
           max
         })
 
-        logger.debug(s"using ${distanceValidationTarget.target.name} for validation purposes")
+        logger.info(s"using ${distanceValidationTarget.target.name} for validation purposes")
 
 
         //find potential targets

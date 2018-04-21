@@ -2,9 +2,11 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, RequiredStandardNotFoundException}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSTargetRetentionIndexCorrectionProcess
+import edu.ucdavis.fiehnlab.utilities.logging.JSONLoggingAppender
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.slf4j.{Logger, LoggerFactory}
@@ -21,8 +23,21 @@ class GCMSTargetRetentionIndexCorrectionProcessWithBinBaseTest extends GCMSTarge
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.logging.json.enable"))
-class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers {
+@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction","carrot.processing.peakdetection", "carrot.logging.json.enable"))
+class GCMSTargetRetentionIndexCorrectionProcessWithDeconvoulutionTest extends GCMSTargetRetentionIndexCorrectionProcessTest with ShouldMatchers {
+
+  @Autowired
+  val peakPicking: PeakDetection = null
+
+  override def filexExtension: String = "cdf"
+  new TestContextManager(this.getClass()).prepareTestInstance(this)
+
+  override protected def prepareSample(sample: Sample) = {
+    peakPicking.process(sample, method)
+  }
+
+}
+
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
@@ -36,6 +51,8 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
   val sampleLoader: SampleLoader = null
 
   val logger: Logger = LoggerFactory.getLogger(getClass)
+
+  val method = AcquisitionMethod(ChromatographicMethod(name = "Gerstel", instrument = Some("LECO-GC-TOF"), column = Some("rtx5recal"), ionMode = Option(PositiveMode())))
 
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
@@ -57,17 +74,16 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
       "allow to process data while loading a configuration from the Gerstel default Method" must {
 
-        val method = AcquisitionMethod(ChromatographicMethod(name = "Gerstel", instrument = Some("LECO-GC-TOF"), column = Some("rtx5recal"), None))
         "for sample 060712afisa86_1" should {
 
-          val result = correction.process(prepareSample(sampleLoader.getSample("060712afisa86_1." + filexExtension)), method)
 
-          result.featuresUsedForCorrection.foreach { x =>
-            logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
-          }
-
-          logger.info("")
           "be at least as good as past calculation in BinBase" in {
+
+            val result = correction.process(prepareSample(sampleLoader.getSample("060712afisa86_1." + filexExtension)), method)
+
+            result.featuresUsedForCorrection.foreach { x =>
+              logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
+            }
             //old correction only has 7 results
             assert(result.featuresUsedForCorrection.size >= 7)
 
@@ -77,13 +93,14 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
 
         "for sample 180321bZKsa26_1" should {
 
-          val result = correction.process(prepareSample(sampleLoader.getSample("180321bZKsa26_1." + filexExtension)), method)
-
-          result.featuresUsedForCorrection.foreach { x =>
-            logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
-          }
 
           "be at least as good as past calculation in BinBase" in {
+
+            val result = correction.process(prepareSample(sampleLoader.getSample("180321bZKsa26_1." + filexExtension)), method)
+
+            result.featuresUsedForCorrection.foreach { x =>
+              logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
+            }
             assert(result.featuresUsedForCorrection.size >= 13)
           }
 

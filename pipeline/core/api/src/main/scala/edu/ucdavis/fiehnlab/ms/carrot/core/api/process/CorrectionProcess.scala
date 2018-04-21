@@ -44,6 +44,11 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     }
 
     if(missingButRequired.nonEmpty){
+      logger.warn("Missing annotations for:")
+
+      missingButRequired.foreach{ x =>
+        logger.warn(s"\t${x}")
+      }
       throw new RequiredStandardNotFoundException("we were missing certain targets during the correction and so it failed",missingButRequired)
     }
 

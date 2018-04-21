@@ -31,7 +31,7 @@ provider:
   runtime: java8
 
   #would be nice if we can lower this somewhat
-  memorySize: 512
+  memorySize: 1024
   timeout: 90
   versionFunctions: false
 
