@@ -3,9 +3,9 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.boot.{SpringApplication, WebApplicationType}
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.http.MediaType
@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
 /**
   * Created by wohlgemuth on 9/7/17.
   */
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]), scanBasePackages = Array("edu.ucdavis.fiehnlab.wcmc.pipeline"))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class Carrot {
 
   @Value("${server.port}")
@@ -38,9 +38,8 @@ class Carrot {
 
 object Carrot extends App {
   val app = new SpringApplication(classOf[Carrot])
-  app.setWebEnvironment(true)
+    app.setWebApplicationType(WebApplicationType.SERVLET)
   val context = app.run(args: _*)
-
 }
 
 @Configuration

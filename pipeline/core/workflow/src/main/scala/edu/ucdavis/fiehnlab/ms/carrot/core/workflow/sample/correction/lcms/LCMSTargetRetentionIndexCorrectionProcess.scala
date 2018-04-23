@@ -4,9 +4,9 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsDefinedException, RequiredStandardNotFoundException}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsDefinedException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
@@ -23,17 +23,17 @@ import org.springframework.stereotype.Component
 class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends CorrectionProcess(libraryAccess) with LazyLogging {
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
-  val massAccuracySetting: Double = 0.015
+  val massAccuracySetting: Double = 0.0
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:6}")
-  val rtAccuracySetting: Double = 6
+  val rtAccuracySetting: Double = 0
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
     * and will depend on inject volume for thes e reasons
     */
   @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:1000}")
-  val minPeakIntensity: Float = 10000
+  val minPeakIntensity: Float = 0
 
   /**
     * minimum amount of standards, which have to be defined for this method to work
@@ -45,19 +45,19 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     * this defines how many standards we need to find on minimum
     * for a retention index correction method to be successful
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
-  var minimumFoundStandards: Int = 16
+  @Value("${wcmc.pipeline.workflow.config.correction.minimumFoundStandards:14}")
+  var minimumFoundStandards: Int = 0
   /**
     * how many data points are required for the linear regression at the beginning and the end of the curve
     */
   @Value("${wcmc.pipeline.workflow.config.correction.regression.linear:2}")
-  val linearSamples: Int = 2
+  val linearSamples: Int = 0
 
   /**
     * what order is the polynomial regression
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
-  val polynomialOrder: Int = 5
+  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:3}")
+  val polynomialOrder: Int = 0
   /**
     * we are utilizing the setting to group close by retention targets. This is mostly required, since we can't guarantee the order
     * if markers, if they come at the same time, but have different ionization and so we rather drop them
