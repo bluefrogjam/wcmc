@@ -121,7 +121,7 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
   * @param massAccuracyInmDa
   * @param phase
   */
-class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, phase: String, minIntensity:Double = 0.0) extends Annotate with LazyLogging {
+class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, phase: String, minIntensity: Double = 0.0) extends Annotate with LazyLogging {
   override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
