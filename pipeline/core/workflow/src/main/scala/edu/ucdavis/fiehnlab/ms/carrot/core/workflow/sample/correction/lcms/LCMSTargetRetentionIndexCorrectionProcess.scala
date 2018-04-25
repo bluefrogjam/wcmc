@@ -1,5 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
+import java.io.File
+import java.nio.file.{Files, Path}
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
@@ -26,7 +29,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   val massAccuracySetting: Double = 0.0
 
   @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:6}")
-  val rtAccuracySetting: Double = 0
+  val rtAccuracySetting: Double = 0.0
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
@@ -56,7 +59,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   /**
     * what order is the polynomial regression
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:3}")
+  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
   val polynomialOrder: Int = 0
   /**
     * we are utilizing the setting to group close by retention targets. This is mostly required, since we can't guarantee the order
@@ -68,7 +71,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     * This setting needs to be provided in seconds
     */
   @Value("${wcmc.pipeline.workflow.config.correction.groupStandard:25}")
-  var groupCloseByRetentionIndexStandardDifference: Int = 10
+  var groupCloseByRetentionIndexStandardDifference: Int = 0
 
   /**
     * this defines our regression curve, which is supposed to be utilized during the correction. Lazy loading is required to avoid null pointer exception of the configuration settings
@@ -117,8 +120,12 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 //    TargetAnnotation(standard, spectra.minBy(spectra => MassAccuracy.calculateMassError(spectra, standard)))
     //if we we prefer mass intensity
 //    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
-    // if we prefer a combination of the two
-    TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(x, standard)))
+    //if we we prefer mass difference
+//     if we prefer a combination of the two
+    val best = TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(x, standard)))
+    logger.debug(s"matches: ${spectra.sortBy(x => (Math.abs(x.accurateMass.get - standard.accurateMass.get), Math.abs(standard.retentionIndex - x.retentionTimeInSeconds)))}")
+    logger.debug(s"best match with gaussian: T(${best.target.accurateMass}:${best.target.retentionIndex}) -> A(${best.annotation.accurateMass}:${best.annotation.retentionTimeInSeconds})")
+    best
   }
 
   /**
@@ -138,7 +145,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
         x._2.maxBy(_.annotation.massOfDetectedFeature.get.intensity)
     }.toSeq.sortBy(_.target.retentionIndex)
 
-    logger.info(s"after optimization, we kepts ${result.size} ri standards out of ${matches.size}")
+    logger.info(s"after optimization, we kept ${result.size} ri standards out of ${matches.size}")
 
     result
   }
@@ -178,35 +185,57 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     /**
       * find possible matches for our specified standards
       */
-    val matches: Seq[TargetAnnotation[Target, Feature]] = targets.toSeq.sortBy(_.retentionTimeInMinutes).collect {
+    val matches: Seq[TargetAnnotation[Target, Feature]] = {
 
-      //find a possible match
-      case target: Target =>
-        logger.debug(s"looking for matches for ${target}")
-        val result = findMatch(target, input.spectra, filters)
+//      val targetOutput = Files.newBufferedWriter(new File(s"./${input.name}_target_options.csv").toPath)
+//      targetOutput.write("tgt name,mz tgt,ri tgt(s),opt scan#,opt mz,opt rt (s),opt intensity")
+//      targetOutput.newLine()
 
-        //nothing found, return null
-        if (result.isEmpty) {
+      val matches = targets.toSeq.sortBy(_.retentionTimeInMinutes).collect {
 
-          logger.debug("\t=>\tno hits found for this standard")
-          None
-        }
-        //1 found, perfect
-        else if (result.size == 1) {
-          logger.debug(s"\t=>\t${result.head} found for this target")
-          TargetAnnotation[Target, Feature](target, result.head)
-        }
-        //otherwise let's find the best hit
-        else {
-          logger.debug(s"\t=>\t${result.size} hits found for this standard")
-          findBestHit(target, result)
-        }
-    }.collect {
-      //just a quick filter so we only return objects of type hit
-      case hit: TargetAnnotation[Target, Feature] =>
-        logger.info(s"annotated: ${hit.target.name.getOrElse("Unknown")}/${hit.target.retentionIndex}/${hit.target.precursorMass.getOrElse(0)} with ${hit.annotation.retentionTimeInSeconds}s ${hit.annotation.massOfDetectedFeature.get.mass}Da")
-        hit
-    }.seq
+        //find a possible match
+        case target: Target =>
+
+          logger.debug(s"looking for matches for ${target}")
+          val result = findMatch(target, input.spectra, filters)
+
+          //nothing found, return null
+          if (result.isEmpty) {
+            logger.debug("\t=>\tno hits found for this standard")
+//            targetOutput.write(s"${target.name},${target.accurateMass},${target.retentionIndex},,,,")
+//            targetOutput.newLine()
+            None
+          }
+          //1 found, perfect
+          else if (result.size == 1) {
+            logger.debug(s"\t=>\t${result.head} found for this target")
+//            result.foreach(r => {
+//              targetOutput.write(s"${target.name},${target.accurateMass},${target.retentionIndex},${r.scanNumber},${r.accurateMass},${r.retentionTimeInSeconds},${r.massOfDetectedFeature.get.intensity}")
+//              targetOutput.newLine()
+//            })
+            TargetAnnotation[Target, Feature](target, result.head)
+          }
+          //otherwise let's find the best hit
+          else {
+            logger.debug(s"\t=>\t${result.size} hits found for this standard")
+//            result.foreach(r => {
+//              targetOutput.write(s"${target.name},${target.accurateMass},${target.retentionIndex},${r.scanNumber},${r.accurateMass},${r.retentionTimeInSeconds},${r.massOfDetectedFeature.get.intensity}")
+//              targetOutput.newLine()
+//            })
+            findBestHit(target, result)
+          }
+      }.collect {
+        //just a quick filter so we only return objects of type hit
+        case hit: TargetAnnotation[Target, Feature] =>
+          logger.info(s"annotated: ${hit.target.name.getOrElse("Unknown")} => ${hit.target.retentionIndex}s ${hit.target.precursorMass.getOrElse(0)}Da with ${hit.annotation.retentionTimeInSeconds}s ${hit.annotation.massOfDetectedFeature.get.mass}Da")
+          hit
+      }.seq
+
+//      targetOutput.flush()
+//      targetOutput.close()
+
+      matches
+    }
 
     logger.info(s"${matches.size} possible matches for RI markers were found")
     //do some optimization for us
