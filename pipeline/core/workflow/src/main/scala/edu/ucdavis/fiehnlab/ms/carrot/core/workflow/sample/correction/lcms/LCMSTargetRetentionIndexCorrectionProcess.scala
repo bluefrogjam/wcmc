@@ -1,8 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
-import java.io.File
-import java.nio.file.{Files, Path}
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
@@ -13,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStanda
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
-import edu.ucdavis.fiehnlab.ms.carrot.math.CombinedRegression
+import edu.ucdavis.fiehnlab.ms.carrot.math.{CombinedRegression, SimilarityMethods}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -25,11 +22,24 @@ import org.springframework.stereotype.Component
 @Profile(Array("carrot.lcms"))
 class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends CorrectionProcess(libraryAccess) with LazyLogging {
 
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
+  /**
+    * Mass accuracy (in Dalton) used in target filtering and similarity calculation
+    */
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.01}")
   val massAccuracySetting: Double = 0.0
 
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:6}")
+  /**
+    * Retention time accuracy (in seconds) used in target filtering and similarity calculation
+    */
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.rt.accuracy:12}")
   val rtAccuracySetting: Double = 0.0
+
+  /**
+    * Intensity used for penalty calculation - the peak similarity score for targets below this
+    * intensity will be scaled down by the ratio of the intensity to this threshold
+    */
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensityPenaltyThreshold:10000}")
+  val intensityPenaltyThreshold: Float = 0
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
@@ -98,10 +108,11 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     */
   def gaussianSimilarity(spectrum: Feature, standard: Target): Double = {
     if (spectrum.accurateMass.isDefined && standard.precursorMass.isDefined) {
-      val mzSimilarity = math.exp(-0.5 * math.pow((spectrum.accurateMass.get - standard.precursorMass.get) / massAccuracySetting, 2))
-      val rtSimilarity = math.exp(-0.5 * math.pow((spectrum.retentionTimeInSeconds - standard.retentionIndex) / rtAccuracySetting, 2))
+      val mzSimilarity = SimilarityMethods.gaussianSimilarity(spectrum.accurateMass.get, standard.precursorMass.get, massAccuracySetting)
+      val rtSimilarity = SimilarityMethods.gaussianSimilarity(spectrum.retentionTimeInSeconds, standard.retentionIndex, rtAccuracySetting)
+      val intensityPenalty = SimilarityMethods.penaltyFactor(spectrum.massOfDetectedFeature.get.intensity, intensityPenaltyThreshold)
 
-      (mzSimilarity + rtSimilarity) / 2
+      intensityPenalty * (mzSimilarity + rtSimilarity) / 2
     } else {
       0.0
     }

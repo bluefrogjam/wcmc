@@ -85,32 +85,26 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
 
     "choose the correct 1_TG d5(17:0/17:1/17:0) M+Na peak in Weiss003_posHILIC_59602960_068.mzML" in {
       // 1_TG d5(17:0/17:1/17:0) iSTD [M+Na]+_OWYYELCHNALRQZ-ADIIQMQPSA-N
-      val wrongFeature = buildFeature(874.792541148294, 666.015014648438, 1000000)
-      val correctFeature = buildFeature(874.79089510745, 634.632019042969, 10000)
+      val wrongFeature = buildFeature(874.79089510745, 634.632019042969, 1000000)
+      val correctFeature = buildFeature(874.792541148294, 666.015014648438, 10000)
       val target = buildTarget(874.7882, 659.622)
 
-      correction.gaussianSimilarity(wrongFeature, target)
-      correction.gaussianSimilarity(correctFeature, target)
-
-      correction.gaussianSimilarity(wrongFeature, target) should be < 0.5
-      correction.gaussianSimilarity(correctFeature, target) should be > 0.5
+      correction.gaussianSimilarity(wrongFeature, target) should be < 0.54
+      correction.gaussianSimilarity(correctFeature, target) should be > 0.88
       correction.findBestHit(target, Seq(wrongFeature, correctFeature)).annotation shouldBe correctFeature
     }
 
     "choose the correct 1_TG d5(17:0/17:1/17:0) M+NH4 peak in Weiss005_posHILIC_40298234_039.mzML" in {
       // 1_TG d5(17:0/17:1/17:0) iSTD [M+Na]+_OWYYELCHNALRQZ-ADIIQMQPSA-N
-      val veryWrongFeature = buildFeature(869.842010008935, 653.929016113281, 10000)
-      val wrongFeature = buildFeature(869.825428194475, 658.910034179688, 10000)
-      val correctFeature = buildFeature(869.831824427935, 666.880004882812, 150000)
+      val veryWrongFeature = buildFeature(869.842010008935, 653.929016113281, 8900)
+      val wrongFeature = buildFeature(869.825428194475, 658.910034179688, 8300)
+      val correctFeature = buildFeature(869.831824427935, 666.880004882812, 25000)
       val target = buildTarget(869.8329, 659.622)
 
-      correction.gaussianSimilarity(veryWrongFeature, target)
-      correction.gaussianSimilarity(wrongFeature, target)
-      correction.gaussianSimilarity(correctFeature, target)
-
-//      correction.gaussianSimilarity(wrongFeature, target) should be < 0.5
-//      correction.gaussianSimilarity(correctFeature, target) should be > 0.5
-//      correction.findBestHit(target, Seq(wrongFeature, correctFeature)).annotation shouldBe wrongFeature
+      correction.gaussianSimilarity(veryWrongFeature, target) should be < 0.7
+      correction.gaussianSimilarity(wrongFeature, target) should be < 0.75
+      correction.gaussianSimilarity(correctFeature, target) should be > 0.9
+      correction.findBestHit(target, Seq(wrongFeature, correctFeature)).annotation shouldBe correctFeature
     }
   }
 }
