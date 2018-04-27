@@ -8,7 +8,7 @@
     </appender>
 
 	<logger name="edu.ucdavis" level="info"/>
-	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction" level="debug"/>
+	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation" level="debug"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

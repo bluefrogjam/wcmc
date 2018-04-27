@@ -8,9 +8,11 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.lcms.DataDependent
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.MS2DeconvolutionResult;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SampleSerializer;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,9 @@ import java.util.List;
 @Component
 @Profile("carrot.lcms")
 public class MSDialLCMSProcessing implements MSDialProcessing {
+
+    @Autowired
+    SampleSerializer serializer;
 
     private Logger logger = LoggerFactory.getLogger(MSDialLCMSProcessing.class);
 
@@ -40,6 +45,9 @@ public class MSDialLCMSProcessing implements MSDialProcessing {
 
         logger.info("Found " + deconvolutionResults.size() + " deconvoluted features");
 
-        return new MSDialLCMSProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
+        MSDialLCMSProcessedSample processed = new MSDialLCMSProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
+        serializer.saveFile(processed);
+
+        return processed;
     }
 }
