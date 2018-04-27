@@ -100,25 +100,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   }
 
   /**
-    * Calculates the gaussian similarity of the spectrum accurate mass vs target precursor mass as well as spectrum rt
-    * vs target rt and averages the result
-    * @param spectrum
-    * @param standard
-    * @return
-    */
-  def gaussianSimilarity(spectrum: Feature, standard: Target): Double = {
-    if (spectrum.accurateMass.isDefined && standard.precursorMass.isDefined) {
-      val mzSimilarity = SimilarityMethods.gaussianSimilarity(spectrum.accurateMass.get, standard.precursorMass.get, massAccuracySetting)
-      val rtSimilarity = SimilarityMethods.gaussianSimilarity(spectrum.retentionTimeInSeconds, standard.retentionIndex, rtAccuracySetting)
-      val intensityPenalty = SimilarityMethods.penaltyFactor(spectrum.massOfDetectedFeature.get.intensity, intensityPenaltyThreshold)
-
-      intensityPenalty * (mzSimilarity + rtSimilarity) / 2
-    } else {
-      0.0
-    }
-  }
-
-  /**
     * attempts to find the best hit. In case we have multiple annotations
     *
     * @param standard
@@ -133,7 +114,11 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 //    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
     //if we we prefer mass difference
 //     if we prefer a combination of the two
-    val best = TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(x, standard)))
+
+    val best = TargetAnnotation(standard, spectra.maxBy(x =>
+      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracySetting, rtAccuracySetting, intensityPenaltyThreshold))
+    )
+
     logger.debug(s"matches: ${spectra.sortBy(x => (Math.abs(x.accurateMass.get - standard.accurateMass.get), Math.abs(standard.retentionIndex - x.retentionTimeInSeconds)))}")
     logger.debug(s"best match with gaussian: T(${best.target.accurateMass}:${best.target.retentionIndex}) -> A(${best.annotation.accurateMass}:${best.annotation.retentionTimeInSeconds})")
     best
