@@ -75,12 +75,6 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
       "find the closest feature for each target" in {
         sample.featuresUsedForCorrection.foreach(x => x.annotation.retentionTimeInSeconds === x.target.retentionIndex +- 10)
       }
-
-      "check that TG[M+NH4]+ comes at the same RT that [M+Na]+" in {
-        val tgAdducts = sample.featuresUsedForCorrection.filter(x => x.target.name.get.startsWith("1_TG"))
-        tgAdducts shouldBe 2
-        tgAdducts.head.annotation.retentionTimeInMinutes shouldBe tgAdducts
-      }
     }
 
     "choose the correct 1_TG d5(17:0/17:1/17:0) M+Na peak in Weiss003_posHILIC_59602960_068.mzML" in {

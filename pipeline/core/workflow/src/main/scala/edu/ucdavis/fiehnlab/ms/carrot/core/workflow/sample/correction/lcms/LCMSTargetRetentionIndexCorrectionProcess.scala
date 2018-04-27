@@ -134,7 +134,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     //if we we prefer mass difference
 //     if we prefer a combination of the two
     val best = TargetAnnotation(standard, spectra.maxBy(x => gaussianSimilarity(x, standard)))
-    logger.debug(s"matches: ${spectra.sortBy(x => (Math.abs(x.accurateMass.get - standard.accurateMass.get), Math.abs(standard.retentionIndex - x.retentionTimeInSeconds)))}")
     logger.debug(s"best match with gaussian: T(${best.target.accurateMass}:${best.target.retentionIndex}) -> A(${best.annotation.accurateMass}:${best.annotation.retentionTimeInSeconds})")
     best
   }
