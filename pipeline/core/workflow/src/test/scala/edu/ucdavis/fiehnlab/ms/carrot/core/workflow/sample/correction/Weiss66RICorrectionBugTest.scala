@@ -5,7 +5,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.junit.runner.RunWith
@@ -38,29 +37,12 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "RI Correction on weiss005" should {
-    val method = AcquisitionMethod(ChromatographicMethod("targets_20180315", None, None, Some(PositiveMode())))
-    val sample: CorrectedSample = correction.process(
-      deco.process(
-        loader.getSample("Weiss066_posHILIC_99762359_193.mzML"), method, None
-      ), method, None
-    )
-    val sample2: CorrectedSample = correction.process(
-      deco.process(
-        loader.getSample("Biorec012_posHILIC_postWeiss110.mzml"), method, None
-      ), method, None
-    )
-    val sample3: CorrectedSample = correction.process(
-      deco.process(
-        loader.getSample("Weiss163_posHILIC_12874802_078.mzml"), method, None
-      ), method, None
-    )
-
-    "find the closest feature for each target" in {
-      sample.featuresUsedForCorrection.foreach(x => {
-        logger.debug(x.target.name.get)
-        x.annotation.retentionTimeInSeconds === x.target.retentionIndex +- 10
-      })
-    }
+    //    val method = AcquisitionMethod(ChromatographicMethod("targets_20180315", None, None, Some(PositiveMode())))
+    //    val sample: CorrectedSample = correction.process(
+    //      deco.process(
+    //        loader.getSample("Weiss066_posHILIC_99762359_193.mzML"), method, None
+    //      ), method, None
+    //    )
 
     "choose the correct ammoniated TG peak at 666.88s (11.11m)" in {
         val wrongFeature1 = new Feature {
