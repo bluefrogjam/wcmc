@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
@@ -53,12 +53,12 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
       assert(annotation.targets != null)
     }
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST01.d.zip", "B5_P20Lipids_Pos_NIST02.d.zip"))
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST01.mzML", "B5_P20Lipids_Pos_NIST02.mzML"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)
 
-    val method = AcquisitionMethod(ChromatographicMethod("targets"))
+    val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Some(PositiveMode())))
 
     //correct the data
     val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method, None), method, None))
