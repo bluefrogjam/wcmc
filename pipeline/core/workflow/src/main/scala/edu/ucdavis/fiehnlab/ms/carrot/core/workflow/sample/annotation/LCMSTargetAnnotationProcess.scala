@@ -44,18 +44,17 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
           */
         override protected val sampleToLog: String = sample.fileName
       } ::
-        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging with JSONTargetLogging {
-          /**
-            * which sample we require to log
-            */
-          override protected val sampleToLog: String = sample.fileName
-          /**
-            * which target we require to log
-            */
-          override protected val targetToLog: Target = target
-        }
-        ::
-        List()
+      new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging with JSONTargetLogging {
+        /**
+          * which sample we require to log
+          */
+        override protected val sampleToLog: String = sample.fileName
+        /**
+          * which target we require to log
+          */
+        override protected val targetToLog: Target = target
+      } ::
+      List()
     )
 
 
@@ -141,7 +140,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
   /**
     * finds the best possible annotation of the sequence of targets and spectra. Basically we can have the same spectra
-    * associated with several targets and want to ensure we only has 1 annotation for each target
+    * associated with several targets and want to ensure we only have 1 annotation for each target
     *
     * @param possibleHits
     */

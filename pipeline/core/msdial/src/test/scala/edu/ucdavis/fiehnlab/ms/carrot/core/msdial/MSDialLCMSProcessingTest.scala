@@ -7,11 +7,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SampleSerializer
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{ComponentScan, Configuration}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -19,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   * Created by diego on 1/30/2018
   **/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[LCTestConfig]))
+@SpringBootTest()
 @ActiveProfiles(Array("carrot.lcms"))
 class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
 
@@ -28,6 +31,9 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
 
   @Autowired
   val properties: MSDialLCMSProcessingProperties = null
+
+  @Autowired
+  val serializer: SampleSerializer = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -48,6 +54,8 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra.size should be > 0
 
       outSample shouldBe a[MSDialLCMSProcessedSample]
+
+//      serializer.saveFile(outSample)
     }
 
     "check peakpicking in RT range (1.45 - 1.60)" in {
@@ -58,7 +66,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra.size should be > 0
       outSample shouldBe a[MSDialLCMSProcessedSample]
 
-      saveFile("testSmall0.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
+//      saveFile("testSmall0.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
     "check peakpicking in RT range (10.00 - 10.44)" in {
@@ -69,7 +77,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra.size should be > 0
       outSample shouldBe a[MSDialLCMSProcessedSample]
 
-      saveFile("testSmall1.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
+//      saveFile("testSmall1.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
     "check peakpicking in RT range (4.74 - 5.50)" in {
@@ -80,43 +88,14 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra.size should be > 0
       outSample shouldBe a[MSDialLCMSProcessedSample]
 
-      saveFile("testSmall2.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
+//      saveFile("testSmall2.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
-    def saveFile(filename: String, sample: MSDialLCMSProcessedSample): Unit = {
-      val file = new File(getClass.getResource("/").getPath + s"/$filename")
-      logger.info(s"Saving ${file.getName} ...")
-      if(file.exists()) file.delete()
-
-      val writer: FileWriter = new FileWriter(file)
-
-      writer.append("Scan#\trt(min)\taccurate Mass\tIntensity\tMS1 spectrum\tMS2spectrum\n")
-
-      sample.spectra.foreach {
-        case spec@(t: MSMSSpectra) =>
-          val s = spec.asInstanceOf[MSMSSpectra]
-          writer.append(s"${s.scanNumber}\t")
-            .append(s"${s.retentionTimeInMinutes.toFloat}\t")
-            .append(s"${s.massOfDetectedFeature.get.mass.toFloat}\t")
-            .append(s"${s.massOfDetectedFeature.get.intensity.toInt}\t")
-            .append(s"${s.associatedScan.get.ions.map(ion => s"${ion.mass.toFloat}:${ion.intensity.toInt}").mkString(" ")}\t")
-            .append(s"${s.spectrum.get.relativeSpectra.map(ion => s"${ion.mass.toFloat}:${ion.intensity.toInt}").mkString(" ")}\n")
-        case spec@(t: Feature) =>
-          writer.append(s"${spec.scanNumber}\t")
-            .append(s"${spec.retentionTimeInMinutes.toFloat}\t")
-            .append(s"${spec.massOfDetectedFeature.get.mass.toFloat}\t")
-            .append(s"${spec.massOfDetectedFeature.get.intensity.toInt}\t")
-            .append(s"${spec.associatedScan.get.ions.map(ion => s"${ion.mass.toFloat}:${ion.intensity.toInt}").mkString(" ")}\t")
-            .append(s"\n")
-      }
-
-      writer.flush()
-      writer.close()
-      logger.info(s"... finished.")
-    }
   }
 }
 
-@Configuration
-@ComponentScan
-class LCTestConfig {}
+
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+class LCTestConfig {
+
+}
