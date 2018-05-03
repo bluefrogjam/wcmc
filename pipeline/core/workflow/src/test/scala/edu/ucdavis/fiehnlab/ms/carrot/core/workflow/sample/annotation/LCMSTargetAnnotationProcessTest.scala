@@ -1,11 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader, TxtStreamLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
@@ -14,7 +13,6 @@ import org.scalatest.Matchers._
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Bean
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -40,13 +38,6 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
   val deco: PeakDetection = null
-
-  @Autowired
-  val resourceLoader: ResourceLoader = null
-
-  @Bean
-  def targetLibraryLCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets_20180315.txt").get, "\t")
-
 
   /**
     * used to verify picked scans are correct
