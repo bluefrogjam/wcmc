@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, Spectru
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
+import edu.ucdavis.fiehnlab.ms.carrot.math.SimilarityMethods
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -60,6 +61,10 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
     override val uniqueMass: Option[Double] = None
   }
 
+  def gaussianSimilarity(feature: Feature, target: Target): Double = {
+    SimilarityMethods.featureTargetSimilarity(feature, target, correction.massAccuracySetting, correction.rtAccuracySetting, correction.intensityPenaltyThreshold)
+  }
+
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -83,8 +88,8 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
       val correctFeature = buildFeature(874.792541148294, 666.015014648438, 10000)
       val target = buildTarget(874.7882, 659.622)
 
-      correction.gaussianSimilarity(wrongFeature, target) should be < 0.54
-      correction.gaussianSimilarity(correctFeature, target) should be > 0.88
+      gaussianSimilarity(wrongFeature, target) should be < 0.54
+      gaussianSimilarity(correctFeature, target) should be > 0.88
       correction.findBestHit(target, Seq(wrongFeature, correctFeature)).annotation shouldBe correctFeature
     }
 
@@ -95,9 +100,9 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
       val correctFeature = buildFeature(869.831824427935, 666.880004882812, 25000)
       val target = buildTarget(869.8329, 659.622)
 
-      correction.gaussianSimilarity(veryWrongFeature, target) should be < 0.7
-      correction.gaussianSimilarity(wrongFeature, target) should be < 0.75
-      correction.gaussianSimilarity(correctFeature, target) should be > 0.9
+      gaussianSimilarity(veryWrongFeature, target) should be < 0.7
+      gaussianSimilarity(wrongFeature, target) should be < 0.75
+      gaussianSimilarity(correctFeature, target) should be > 0.9
       correction.findBestHit(target, Seq(wrongFeature, correctFeature)).annotation shouldBe correctFeature
     }
   }
