@@ -99,6 +99,7 @@ class RabbitTaskAutoconfiguration {
   def container(connectionFactory: ConnectionFactory): SimpleMessageListenerContainer = {
     val container = new SimpleMessageListenerContainer
     container.setConnectionFactory(connectionFactory)
+    container.setPrefetchCount(1)
     container.setQueues(queue)
     container.setMessageListener(rabbitTaskRunner)
     container.setMessageConverter(messageConverter)
