@@ -25,7 +25,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   /**
     * Mass accuracy (in Dalton) used in target filtering and similarity calculation
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.01}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
   val massAccuracySetting: Double = 0.0
 
   /**
@@ -119,8 +119,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
       SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracySetting, rtAccuracySetting, intensityPenaltyThreshold))
     )
 
-    logger.debug(s"matches: ${spectra.sortBy(x => (Math.abs(x.accurateMass.get - standard.accurateMass.get), Math.abs(standard.retentionIndex - x.retentionTimeInSeconds)))}")
-    logger.debug(s"best match with gaussian: T(${best.target.accurateMass}:${best.target.retentionIndex}) -> A(${best.annotation.accurateMass}:${best.annotation.retentionTimeInSeconds})")
     best
   }
 
