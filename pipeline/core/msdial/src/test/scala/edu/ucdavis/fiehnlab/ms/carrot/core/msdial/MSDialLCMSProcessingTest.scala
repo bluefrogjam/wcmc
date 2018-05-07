@@ -88,6 +88,9 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra.size should be > 0
       outSample shouldBe a[MSDialLCMSProcessedSample]
 
+      val ions = outSample.spectra.head.associatedScan.get.ions
+      ions(0).mass should not be ions(0).intensity
+
 //      saveFile("testSmall2.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
     }
 
