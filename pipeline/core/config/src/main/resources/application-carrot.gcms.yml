@@ -11,44 +11,50 @@ carrot:
             -
               matching:
                 -
+                  minPurity: 0
                   maxPurity: 0.05
                   minSimilarity: 0.8
                   minSignalNoise: 500
                 -
+                  minPurity: 0
                   maxPurity: 0.05
                   minSimilarity: 0.7
                   minSignalNoise: 50
                 -
+                  minPurity: 0
                   maxPurity: 0.05
                   minSimilarity: 0.6
                   minSignalNoise: 5
             -
               matching:
                 -
-                  maxPurity: 0.05
-                  minSimilarity: 0.8
+                  minPurity: 0.05
+                  maxPurity: 0.3
+                  minSimilarity: 0.7
                   minSignalNoise: 500
                 -
-                  maxPurity: 0.05
-                  minSimilarity: 0.7
+                  minPurity: 0.05
+                  maxPurity: 0.3
+                  minSimilarity: 0.6
                   minSignalNoise: 50
                 -
-                  maxPurity: 0.05
-                  minSimilarity: 0.6
+                  minPurity: 0.05
+                  maxPurity: 0.3
+                  minSimilarity: 0.5
                   minSignalNoise: 5
             -
               matching:
                 -
-                  maxPurity: 0.05
+                  minPurity: 0.6
                   minSimilarity: 0.8
                   minSignalNoise: 500
                 -
-                  maxPurity: 0.05
-                  minSimilarity: 0.7
+                  minPurity: 0.3
+                  minSimilarity: 0.5
                   minSignalNoise: 50
                 -
-                  maxPurity: 0.05
-                  minSimilarity: 0.6
+                  minPurity: 0.3
+                  minSimilarity: 0.45
                   minSignalNoise: 5
 
     correction:

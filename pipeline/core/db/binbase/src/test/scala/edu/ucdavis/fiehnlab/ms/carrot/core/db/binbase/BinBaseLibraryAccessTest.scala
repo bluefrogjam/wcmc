@@ -45,7 +45,7 @@ class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
       }.size should be (markers.size)
 
       spectra.collect{
-        case x:BinBaseTarget =>
+        case x:BinBaseLibraryTarget =>
       }.size should be >= 1000
 
 
