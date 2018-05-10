@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.corr
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
 
-case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) extends Target {
+case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) extends Target{
 
   val config: GCMSRetentionIndexTargetConfiguration = target
   /**

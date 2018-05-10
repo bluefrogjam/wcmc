@@ -33,7 +33,7 @@ class GCMSAnnotationProperties {
 /**
   * configuration for a specific gcms annotation library
   */
-class GCMSAnnotationLibraryProperties {
+case class GCMSAnnotationLibraryProperties() {
 
   @BeanProperty
   @NotBlank
@@ -98,9 +98,10 @@ class SifterFilterProperties {
   @DecimalMin("0.0")
   var maxSignalNoise: Double = Double.MaxValue
 
+  override def toString = s"SifterFilterProperties(minPurity: $minPurity, maxPurity: $maxPurity, minSimilarity: $minSimilarity, maxSimilarity: $maxSimilarity, minSignalNoise: $minSignalNoise, maxSignalNoise: $maxSignalNoise)"
 }
 
-class SifterFilterConfigurations{
+case class SifterFilterConfigurations(){
 
   @Valid
   @Size(min = 1)
