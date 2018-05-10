@@ -105,11 +105,15 @@ public class GCMSDeconvolution {
         Map<Integer, Integer> scanNumberMap = new HashMap<>();
         int counter = 0;
 
+        // Use first scan number as an offset for the raw scan number - only needed in cases in which
+        // the raw data file uses a scan number index of 1.
+        int scanNumberOffset = spectrumList.get(0).scanNumber();
+
         for (Feature spectrum : spectrumList) {
             if (spectrum.associatedScan().get().msLevel() > 1 || !spectrum.ionMode().get().mode().equals(ionMode.mode()))
                 continue;
 
-            scanNumberMap.put(spectrum.scanNumber(), counter);
+            scanNumberMap.put(spectrum.scanNumber() - scanNumberOffset, counter);
             counter++;
         }
 
@@ -128,9 +132,13 @@ public class GCMSDeconvolution {
         List<Feature> ms1SpectrumList = getMS1SpectrumList(spectrumList, ionMode);
         DeconvolutionBin[] gcmsDecBins = new DeconvolutionBin[ms1SpectrumList.size()];
 
+        // Use first scan number as an offset for the raw scan number - only needed in cases in which
+        // the raw data file uses a scan number index of 1.
+        int scanNumberOffset = ms1SpectrumList.get(0).scanNumber();
+
         for (int i = 0; i < gcmsDecBins.length; i++) {
             gcmsDecBins[i] = new DeconvolutionBin();
-            gcmsDecBins[i].rawScanNumber = ms1SpectrumList.get(i).scanNumber();
+            gcmsDecBins[i].rawScanNumber = ms1SpectrumList.get(i).scanNumber() - scanNumberOffset;
             gcmsDecBins[i].retentionTime = ms1SpectrumList.get(i).retentionTimeInMinutes();
         }
 
