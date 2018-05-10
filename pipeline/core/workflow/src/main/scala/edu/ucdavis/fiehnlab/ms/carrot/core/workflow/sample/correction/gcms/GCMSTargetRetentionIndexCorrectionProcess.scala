@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.{JSONSampleLogging, J
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{Regression, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, RequiredStandardNotFoundException}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SimilaritySupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target, TargetAnnotation}
@@ -67,7 +67,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
         logger.info("searching for validation target")
         //find the target with the highest possible similarity match, to utilize it for distance ratio validation at a later point
-        val distanceValidationTargets = targets.collect {
+        val distanceValidationTargets = targets.par.collect {
           case target: GCMSCorrectionTarget if target.config.validationTarget =>
             findMatchToTarget(config, spectraWithCorrectionIntensity, None, target, input)
         }.filter(_ != null)
@@ -77,7 +77,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
         }
 
         //take the top 3 similarity wise and than the largest peak
-        val distanceValidationTarget = distanceValidationTargets.toSeq.sortBy { x =>
+        val distanceValidationTarget = distanceValidationTargets.toSeq.seq.sortBy { x =>
           val similarity = Similarity.compute(x.annotation.asInstanceOf[SimilaritySupport], x.target)
           //logger.info(s"similarity for ${x.target.name} is ${similarity}")
           similarity
@@ -92,7 +92,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
 
         //find potential targets
-        val potentialMatches = targets.collect {
+        val potentialMatches = targets.par.collect {
           case target: GCMSCorrectionTarget =>
             findMatchToTarget(config, spectraWithCorrectionIntensity, Option(distanceValidationTarget), target, input)
         }.filter(_ != null)
@@ -100,7 +100,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
 
         logger.debug(s"potential matches: ${potentialMatches.size}")
 
-        potentialMatches
+        potentialMatches.seq
       case None =>
         Seq.empty
     }
