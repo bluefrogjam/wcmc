@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.binbase
 
-import java.sql.{Connection, DriverManager, ResultSet}
+import java.sql.{Connection, DriverManager}
 import java.util
 import java.util.Properties
 
@@ -8,7 +8,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.GCMSCorrectionTarget
 import javax.validation.constraints.{NotBlank, NotEmpty}
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,12 +39,23 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, cor
 
         val connection = generateConnection(column)
         try {
-          val res = connection.createStatement().executeQuery("select * from bin where bin_id not in (select bin_id from standard)")
+          val result = connection.createStatement().executeQuery("select * from bin where bin_id not in (select bin_id from standard)")
 
           val annotations = new Iterator[Target] {
-            def hasNext = res.next()
+            def hasNext = result.next()
 
-            def next() = BinBaseTarget(res).asInstanceOf[Target]
+            def next() = BinBaseLibraryTarget(
+              binId = result.getInt("bin_id").toString,
+              binName = result.getString("name"),
+              ri = result.getDouble("retention_index"),
+              apexMasses = result.getString("apex").trim.split("\\++").map(_.toDouble),
+              masses = result.getString("spectra").trim.split(" ").map { p =>
+                val data = p.split(":")
+
+                Ion(data(0).toDouble, data(1).toFloat)
+              },
+              unique = result.getDouble("uniquemass")
+            ).asInstanceOf[Target]
           }.toSeq
 
           val correctionMarkers = correction.load(acquisitionMethod)
@@ -118,3 +129,70 @@ class BinBaseConnectionProperties {
   var instrument: String = ""
 }
 
+
+case class BinBaseLibraryTarget(
+                                 binId: String,
+                                 binName: String,
+                                 ri: Double,
+                                 apexMasses: Seq[Double],
+                                 masses: Seq[Ion],
+                                 unique: Double
+                               )
+  extends Target with Idable[String] {
+  /**
+    * a name for this spectra
+    */
+  override var name: Option[String] = Option(binName)
+  /**
+    * retention time in seconds of this target
+    */
+  override val retentionIndex: Double = ri
+  /**
+    * the unique inchi key for this spectra
+    */
+  override var inchiKey: Option[String] = None
+  /**
+    * the mono isotopic mass of this spectra
+    */
+  override val precursorMass: Option[Double] = None
+  /**
+    * unique mass for a given target
+    */
+  override val uniqueMass: Option[Double] = Option(unique)
+  /**
+    * is this a confirmed target
+    */
+  override var confirmed: Boolean = true
+  /**
+    * is this target required for a successful retention index correction
+    */
+  override var requiredForCorrection: Boolean = false
+  /**
+    * is this a retention index correction standard
+    */
+  override var isRetentionIndexStandard: Boolean = false
+  /**
+    * associated spectrum propties if applicable
+    */
+  override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+    /**
+      * the msLevel of this spectra
+      */
+    override val msLevel: Short = 1
+    /**
+      * a list of model ions used during the deconvolution
+      */
+    override val modelIons: Option[Seq[Double]] = modelIons
+    /**
+      * all the defined ions for this spectra
+      */
+    override val ions: Seq[Ion] = masses
+  })
+
+  /**
+    * internal id
+    *
+    * @return
+    */
+  override def id: String = binId
+}

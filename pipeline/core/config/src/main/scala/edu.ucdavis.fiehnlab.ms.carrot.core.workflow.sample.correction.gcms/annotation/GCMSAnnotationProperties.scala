@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.annotation
 
 import java.util
+
 import javax.validation.Valid
 import javax.validation.constraints._
-
 import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties, NestedConfigurationProperty}
 import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}
 import org.springframework.stereotype.Component
@@ -62,6 +62,9 @@ case class GCMSAnnotationLibraryProperties() {
   @BeanProperty
   @NestedConfigurationProperty
   var filter: java.util.List[SifterFilterConfigurations] = new util.ArrayList[SifterFilterConfigurations]()
+
+  @BeanProperty
+  var retentionIndexWindow:Double = 3000
 }
 
 /**

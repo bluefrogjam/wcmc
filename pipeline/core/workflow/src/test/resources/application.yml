@@ -3,7 +3,7 @@ carrot:
     library:
       binbase:
         password: c258083
-        host: 127.0.0.1
+        host: venus.fiehnlab.ucdavis.edu
 workflow:
   correction:
     massAccuracy: 150
