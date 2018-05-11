@@ -1,55 +1,37 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.entropy.client
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.entropy.api.StasisService
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.entropy.model._
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.http.{HttpEntity, HttpHeaders, MediaType}
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 
 @Component
-class StasisClient extends StasisService {
+class StasisClient extends StasisService with LazyLogging {
   @Autowired
   val restTemplate: RestTemplate = null
 
-  @Value("${stasis.evironment:dev-}")
-  val env: String = ""
+  @Value("${stasis.baseurl:https://dev-api.metabolomics.us/stasis}")
+  val baseUrl = ""
 
-  private val baseUrl = s"http://${env}api.metabolomics.us/stasis"
-  private val trackingPath = "/tracking"
-  private val resultPath = "/result"
-  private val acquisitionPath = "/acquisition"
+  private val trackingPath = "tracking"
+  private val resultPath = "result"
+  private val acquisitionPath = "acquisition"
 
-  override def getTracking(sample: String): TrackingData = restTemplate.getForEntity(s"${baseUrl}/${resultPath}/${sample}", classOf[TrackingData]).getBody
+  override def getTracking(sample: String): TrackingResponse = restTemplate.getForObject(s"${baseUrl}/${trackingPath}/${sample}", classOf[TrackingResponse])
 
-  override def addTracking(sample: String, status: String): TrackingResponse = restTemplate.postForObject(s"${baseUrl}/${acquisitionPath}", createRequestEntity[TrackingData](TrackingData(sample, status)), classOf[TrackingResponse])
+  override def addTracking(sample: String, status: String): ResponseEntity[TrackingData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", TrackingData(sample, status), classOf[TrackingData])
 
-  override def getResults(sample: String): ResultData = restTemplate.getForObject(s"${baseUrl}/${resultPath}/${sample}", classOf[ResultData])
+  override def getResults(sample: String): ResultResponse = restTemplate.getForObject(s"${baseUrl}/${resultPath}/${sample}", classOf[ResultResponse])
 
-  override def addResult(data: ResultData): ResultResponse = restTemplate.postForObject(s"${baseUrl}/${acquisitionPath}", createRequestEntity[ResultData](data), classOf[ResultResponse])
+  override def addResult(data: ResultData): ResponseEntity[ResultData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", data, classOf[ResultData])
 
-  override def getAcquisition(sample: String): AcquisitionData = restTemplate.getForObject(s"${baseUrl}/${acquisitionPath}/${sample}", classOf[AcquisitionData])
+  override def getAcquisition(sample: String): SampleResponse = restTemplate.getForObject(s"${baseUrl}/${acquisitionPath}/${sample}", classOf[SampleResponse])
 
-  override def createAcquisition(data: AcquisitionData): AcquisitionResponse = restTemplate.postForObject(s"${baseUrl}/${acquisitionPath}", createRequestEntity[AcquisitionData](data), classOf[AcquisitionResponse])
+  override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", data, classOf[SampleData])
 
-  override def createAquisitionFromMinix(minixid: AcquisitionData): AcquisitionResponse = ???
+  override def createAquisitionFromMinix(url: String): ResponseEntity[SampleData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", SampleMinix(url), classOf[SampleData])
 
-
-  /**
-    * Builds the HttpEntity with data to be used in restTemplate request
-    *
-    * @param data
-    * @tparam T
-    * @return
-    */
-  private def createRequestEntity[T](data: T): HttpEntity[LinkedMultiValueMap[String, T]] = {
-    val headers: HttpHeaders = new HttpHeaders()
-    headers.setContentType(MediaType.APPLICATION_JSON)
-
-    val params: LinkedMultiValueMap[String, T] = new LinkedMultiValueMap[String, T]()
-    params.add("body", data)
-
-    new HttpEntity(params, headers)
-  }
 }

@@ -2,9 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.entropy.model
 
 case class ResultData(
                          sample: String,
-                         time: Double,
                          correction: Correction,
-                         results: List[Result]
+                         injections: java.util.Map[String, Seq[Result]]
                      )
 
 case class Curve(
@@ -15,7 +14,7 @@ case class Curve(
 case class Correction(
                          polynomial: Double,
                          sampleUsed: String,
-                         curve: List[Curve]
+                         curve: Array[Curve]
                      )
 
 case class Target(
