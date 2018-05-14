@@ -22,7 +22,7 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "StasisClientTest" should {
+  "StasisClient Integration Tests" should {
     val filename = s"test${new Date().getTime}"
     val delay = 1000
 
@@ -42,16 +42,6 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
       res2.id should equal(metadata.sample)
       res2.metadata should equal(metadata.metadata)
       res2.acquisition should equal(metadata.acquisition)
-    }
-
-    "create/get AquisitionFromMinix" in {
-      // MX = 297319
-      val res = client.createAquisitionFromMinix("http://minix.fiehnlab.ucdavis.edu/rest/export/297319")
-      res.getStatusCode === 200
-
-      val res2 = client.getResults("180510edpsa02_1")
-      res2.sample should equal("180510edpsa02_1")
-
     }
 
     "add/get Tracking" in {

@@ -36,4 +36,8 @@ case class SampleResponse(
                              time: Date
                          )
 
-case class SampleMinix(url: String, minix: Boolean = true)
+case class SampleMinix(
+                          id: String,
+                          url: String = "http://minix.fiehnlab.ucdavis.edu/rest/export",
+                          minix: Boolean = true
+                      )
