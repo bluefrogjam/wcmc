@@ -17,3 +17,10 @@ mona:
       password: admin
       host: localhost
       port: 9090
+
+wcmc:
+  pipeline:
+    workflow:
+      config:
+        correction:
+          minimumFoundStandards: 5

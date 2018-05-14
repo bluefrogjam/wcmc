@@ -6,7 +6,7 @@ import org.springframework.http.HttpEntity
 trait StasisService {
   def getTracking(sample: String): TrackingResponse
 
-  def addTracking(sample: String, status: String): HttpEntity[TrackingData]
+  def addTracking(sample: String, status: String): HttpEntity[TrackingResponse]
 
   def getResults(sample: String): ResultResponse
 

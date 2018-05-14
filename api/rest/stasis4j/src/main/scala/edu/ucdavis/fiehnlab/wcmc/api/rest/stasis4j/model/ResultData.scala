@@ -1,10 +1,17 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model
 
+import java.util.Date
+
 case class ResultData(
                          sample: String,
-                         correction: Correction,
-                         injections: java.util.Map[String, Seq[Result]]
+                         injections: java.util.Map[String, Injection]
                      )
+
+case class Injection(
+                        logid: String,
+                        correction: Correction,
+                        results: Array[Result]
+                    )
 
 case class Curve(
                     x: Double,
@@ -37,6 +44,9 @@ case class Result(
                  )
 
 case class ResultResponse(
-                             statusCode: Int,
-                             body: ResultData
+                             id: String,
+                             sample: String,
+                             time: Date,
+                             correction: Correction,
+                             injections: java.util.Map[String, Array[Result]]
                          )
