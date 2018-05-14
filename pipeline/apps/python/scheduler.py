@@ -72,7 +72,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     data = open(args.files, 'r')
-    list = [x.strip() for x in data.readlines()]
+    list = [l for l in (line.strip() for line in data) if l]
     data.close()
 
     tasks = create_tasks(list, args)

@@ -36,7 +36,7 @@ if __name__ == '__main__':
         args.output = args.input + '/' + args.submitter + '_' + args.task.replace('*', '') + '_merged.csv'
     else:
         filename, ext = os.path.splitext(args.output)
-        args.output = filename + '_merged' + ext
+        args.output = filename + '_merged.csv'
 
     print(f'input: {args.input}\noutput: {args.output}\ntask: {args.task}\nsubmitter: {args.submitter}')
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     df_list = []
     wrong = []
     for idx, file in zip(range(0, len(files)), sorted(files)):
-        # print(f'Merging {file}')
+        print(f'Merging {file}')
         single = pd.read_csv(file, encoding='utf-8', index_col=0)
         single.index.name = 'target'
         df_list.append(single)

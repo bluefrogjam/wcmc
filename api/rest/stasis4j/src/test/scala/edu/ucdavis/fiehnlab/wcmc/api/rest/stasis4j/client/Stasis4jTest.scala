@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 
+import java.util.Date
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.junit.runner.RunWith
@@ -21,67 +23,66 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "StasisClientTest" should {
+    val filename = s"test${new Date().getTime}"
+    val delay = 1000
 
-    "createAcquisition" in {
-      val metadata = SampleData("my_test",
+    "create/get Acquisition" in {
+      val metadata = SampleData(filename,
         Acquisition("instrument A", "GCTOF", "positive", "gcms"),
         Metadata("123456", "rat", "tissue"),
         Userdata("file123", ""))
 
       val res = client.createAcquisition(metadata)
       res.getStatusCode === 200
-      logger.info(s"Created metadata '${metadata.sample}")
-      logger.info(s"acq response: ${res.getBody.toString}")
+
+      Thread.sleep(delay)
+      val res2 = client.getAcquisition(metadata.sample)
+
+      res2 should not be null
+      res2.id should equal(metadata.sample)
+      res2.metadata should equal(metadata.metadata)
+      res2.acquisition should equal(metadata.acquisition)
     }
 
-    "getAcquisition" in {
-      val res = client.getAcquisition("my_test")
-
-      res should not be null
-      res.sample should equal("my_test")
-      res.acquisition.instrument should equal("instrument A")
-      res.metadata.`class` should equal("123456")
-      res.userdata.label should equal("file123")
-    }
-
-    "createAquisitionFromMinix" in {
+    "create/get AquisitionFromMinix" in {
       // MX = 297319
       val res = client.createAquisitionFromMinix("http://minix.fiehnlab.ucdavis.edu/rest/export/297319")
       res.getStatusCode === 200
 
-      logger.debug(s"acqMX response: ${res.getBody.toString}")
+      val res2 = client.getResults("180510edpsa02_1")
+      res2.sample should equal("180510edpsa02_1")
+
     }
 
-    "addTracking" in {
-      val res = client.addTracking("test", "entered")
+    "add/get Tracking" in {
+      val res = client.addTracking(filename, "entered")
       res.getStatusCode === 200
-
       logger.debug(s"track response: ${res.getBody.toString}")
+
+      Thread.sleep(delay)
+
+      val res2 = client.getTracking(filename)
+      res2.id should equal(filename)
+      res2.status.head.value should equal("entered")
     }
 
-    "getTracking" in {
-      val res = client.getTracking("test")
-
-      res should not be null
-      res.id should equal("test")
-      res.status should not be empty
-      res.status.head.value should equal("ENTERED")
-    }
-
-    "addResult" in {
-      val data = ResultData("testResult",
-        Correction(5, "test",
-          Array(Curve(121.12, 121.2),
-            Curve(123.12, 123.2))),
-        Map[String, Seq[Result]](
-          "test_1" -> Array(
-            Result(
-              Target(121.12, "test", "test_id", 12.2),
-              Annotation(121.2, 10.0, replaced = false, 12.2)
+    "add/get Result" in {
+      val data = ResultData(filename,
+        Map[String, Injection](
+          "test_1" -> Injection("R2D2",
+            Correction(5, "test",
+              Array(Curve(121.12, 121.2),
+                Curve(123.12, 123.2))
             ),
-            Result(
-              Target(123.12, "test2", "test_id2", 132.12),
-              Annotation(123.2, 103.0, replaced = true, 132.12)
+            Array(
+              Result(
+                Target(121.12, "test", "test_id", 12.2),
+                Annotation(121.2, 10.0, replaced = false, 12.2)
+              ),
+              Result(
+                Target(123.12, "test2", "test_id2", 132.12),
+                Annotation(123.2, 103.0, replaced = true, 132.12)
+              )
             )
           )
         ).asJava
@@ -91,16 +92,14 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
       res.getStatusCode === 200
 
       logger.debug(s"result response: ${res.getBody.toString}")
+
+      Thread.sleep(delay)
+
+      val res2 = client.getResults(filename)
+      logger.info(s"result response: ${res2}")
+
+      res2.sample should equal(filename)
+      res2.injections.size() should be >= 1
     }
-
-    "getResult" in {
-      val res = client.getResults("testResult").body
-      logger.info(s"Result response: ${res}")
-
-      res.sample should equal("testResult")
-      res.correction should not be null
-      res.injections should have size 1
-    }
-
   }
 }
