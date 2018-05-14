@@ -14,7 +14,6 @@
     <modules>
         <module>mona</module>
         <module>binbase</module>
-        <module>entropy</module>
     </modules>
 
 </project>
