@@ -15,6 +15,4 @@ trait StasisService {
   def getAcquisition(sample: String): SampleResponse
 
   def createAcquisition(data: SampleData): HttpEntity[SampleData]
-
-  def createAquisitionFromMinix(url: String): HttpEntity[SampleData]
 }

@@ -31,7 +31,4 @@ class StasisClient extends StasisService with LazyLogging {
   override def getAcquisition(sample: String): SampleResponse = restTemplate.getForObject(s"${baseUrl}/${acquisitionPath}/${sample}", classOf[SampleResponse])
 
   override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", data, classOf[SampleData])
-
-  override def createAquisitionFromMinix(url: String): ResponseEntity[SampleData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", SampleMinix(url), classOf[SampleData])
-
 }
