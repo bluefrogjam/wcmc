@@ -23,14 +23,14 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "StasisClient Integration Tests" should {
-    val filename = s"test${new Date().getTime}"
+    val filename = s"test_${new Date().getTime}"
     val delay = 1000
 
     "create/get Acquisition" in {
       val metadata = SampleData(filename,
         Acquisition("instrument A", "GCTOF", "positive", "gcms"),
         Metadata("123456", "rat", "tissue"),
-        Userdata("file123", ""))
+        Userdata("file123", ""), Array.empty)
 
       val res = client.createAcquisition(metadata)
       res.getStatusCode === 200
@@ -42,6 +42,26 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
       res2.id should equal(metadata.sample)
       res2.metadata should equal(metadata.metadata)
       res2.acquisition should equal(metadata.acquisition)
+    }
+
+    "create/get Acquisition with reference data" in {
+      val metadata = SampleData(s"test_${new Date().getTime}",
+        Acquisition("instrument B", "QTOF", "positive", "lcms"),
+        Metadata("123456", "rat", "tissue"),
+        Userdata("file123", ""),
+        Array(Reference("ref1", "value1"), Reference("ref2", "value2")))
+
+      val res = client.createAcquisition(metadata)
+      res.getStatusCode === 200
+
+      Thread.sleep(delay)
+      val res2 = client.getAcquisition(metadata.sample)
+
+      res2 should not be null
+      res2.id should equal(metadata.sample)
+      res2.acquisition.instrument should equal("instrument B")
+      res2.references.length should be > 0
+      res2.references(0) should equal(Reference("ref1", "value1"))
     }
 
     "add/get Tracking" in {

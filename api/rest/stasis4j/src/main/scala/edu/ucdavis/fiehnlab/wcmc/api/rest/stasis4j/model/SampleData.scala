@@ -6,7 +6,8 @@ case class SampleData(
                          sample: String,
                          acquisition: Acquisition,
                          metadata: Metadata,
-                         userdata: Userdata
+                         userdata: Userdata,
+                         references: Array[Reference]
                      )
 
 case class Acquisition(
@@ -28,13 +29,19 @@ case class Userdata(
                    )
 
 case class SampleResponse(
+                             id: String,
+                             time: Date,
                              sample: String,
                              acquisition: Acquisition,
                              metadata: Metadata,
                              userdata: Userdata,
-                             id: String,
-                             time: Date
+                             references: Array[Reference]
                          )
+
+case class Reference(
+                        name: String,
+                        value: String
+                    )
 
 case class SampleMinix(
                           id: String,
