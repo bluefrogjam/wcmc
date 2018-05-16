@@ -69,7 +69,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
   /**
     * what order is the polynomial regression
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:5}")
+  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:3}")
   val polynomialOrder: Int = 0
   /**
     * we are utilizing the setting to group close by retention targets. This is mostly required, since we can't guarantee the order
