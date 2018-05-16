@@ -6,7 +6,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.PeakDetectionResult;
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +76,11 @@ public class DataAccessUtility {
     public static double[] getMS1ScanRange(List<Feature> spectrumList, IonMode ionMode) {
         double minMz = Double.MAX_VALUE;
         double maxMz = Double.MIN_VALUE;
+
+        System.out.println("(getMS1ScanRange) Spectrum count: " + spectrumList.size());
+        if (spectrumList.size() <= 0) {
+            return new double[]{0, 0};
+        }
 
         for (Feature spectrum : spectrumList) {
             // Filter by msLevel and ion mode
