@@ -28,7 +28,7 @@ class BugWCMC7Test extends WordSpec with ShouldMatchers with LazyLogging {
 
     logger.warn("FOR THESE TO RUN YOU NEED THE REQUIRED FILES UNDER ~/.carrot_storage")
 
-    "load small mzml" in {
+    "load small mzml" ignore {
       val file = resourceLoader.loadAsFile("B1_P20Lipids_Pos_Blank000_pp_zs.mzML")
       assert(file.isDefined)
 
