@@ -32,37 +32,23 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
 
       //test all ms scans
       spectra: MsScan =>
+        val polarity = if (spectra.getPolarity == PolarityType.NEGATIVE) NegativeMode() else PositiveMode()
 
         if (spectra.getMsLevel == 0) {
           throw new RuntimeException("Invalid MS Level!")
         } else if (spectra.getMsLevel == 1 || spectra.getIsolations.isEmpty) {
 
           //discover which mixins we need
-          spectra.getPolarity match {
-            case PolarityType.NEGATIVE =>
-              spectra.getSpectrumType match {
-                case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(NegativeMode()), this.fileName) with Centroided
-                case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(NegativeMode()), this.fileName) with Profiled
-                case _ => {
-                  logger.warn("Unrecognized spectrum type, setting to profiled")
-                  new MSDKMSSpectra(spectra, Some(NegativeMode()), this.fileName) with Profiled
-                }
-              }
-            case PolarityType.POSITIVE =>
-              new MSDKMSSpectra(spectra, Some(PositiveMode()), this.fileName)
-            case PolarityType.UNKNOWN =>
-              logger.warn("polarity time is not defined, we are assuming positive!")
-              new MSDKMSSpectra(spectra, Some(PositiveMode()), this.fileName)
-
+          spectra.getSpectrumType match {
+            case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Centroided
+            case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Profiled
+            case _ => {
+              logger.warn("Unrecognized spectrum type, setting to profiled")
+              new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Profiled
+            }
           }
         } else {
-          //discover which mixins we need
-          spectra.getPolarity match {
-            case PolarityType.NEGATIVE =>
-              new MSDKMSMSSpectra(spectra, Some(NegativeMode()), this.fileName)
-            case PolarityType.POSITIVE =>
-              new MSDKMSMSSpectra(spectra, Some(PositiveMode()), this.fileName)
-          }
+          new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName)
         }
 
     }
@@ -98,11 +84,11 @@ object MSDKSample extends LazyLogging {
     */
   def apply(originalName: String, file: File): MSDKSample = {
 
-    logger.debug(s"checking if ${originalName}, which is located at ${file.getAbsolutePath} needs to be uncompressed")
 
     var output = file
 
     if (file.getName.endsWith(".gz")) {
+      logger.debug(s"${originalName}, located at ${file.getAbsolutePath} needs to be uncompressed")
       val name = file.getName.replaceFirst(".gz", "")
       val dir = new File(System.getProperty("java.io.tmpdir"))
 
@@ -120,7 +106,7 @@ object MSDKSample extends LazyLogging {
 
     }
 
-    logger.debug(s"attempting to load ${originalName} which is located at ${output.getAbsolutePath}")
+    logger.debug(s"attempting to load ${originalName} from ${output.getAbsolutePath}")
     val name = output.getName.toLowerCase.substring(file.getName.indexOf(".") + 1)
 
     new MSDKSample(
@@ -172,7 +158,7 @@ object MSDKSample extends LazyLogging {
   *
   * @param spectra
   */
-class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: String) extends MSSpectra {
+class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) extends MSSpectra {
   override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
   override val uniqueMass: Option[Double] = None
   override val signalNoise: Option[Double] = None
@@ -193,7 +179,7 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode],val sample: String) e
     /**
       * all the defined ions for this spectra
       */
-    override val ions: Seq[Ion] = MSDKSample.build(spectra)
+    override lazy val ions: Seq[Ion] = MSDKSample.build(spectra)
 
     override val msLevel: Short = 1
   })
@@ -237,7 +223,7 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String
     /**
       * all the defined ions for this spectra
       */
-    override val ions: Seq[Ion] = MSDKSample.build(spectra)
+    override lazy val ions: Seq[Ion] = MSDKSample.build(spectra)
 
     override val msLevel: Short = 2
   })
@@ -250,7 +236,7 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String
     /**
       * all the defined ions for this spectra
       */
-    override val ions: Seq[Ion] = MSDKSample.build(spectra)
+    override lazy val ions: Seq[Ion] = MSDKSample.build(spectra)
 
     override val msLevel: Short = 2
   })
