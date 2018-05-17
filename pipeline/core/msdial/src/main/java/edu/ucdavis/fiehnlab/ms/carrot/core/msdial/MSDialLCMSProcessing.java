@@ -22,10 +22,14 @@ import java.util.List;
 @Profile("carrot.lcms")
 public class MSDialLCMSProcessing implements MSDialProcessing {
 
-    @Autowired
-    SampleSerializer serializer;
+    private final SampleSerializer serializer;
 
     private Logger logger = LoggerFactory.getLogger(MSDialLCMSProcessing.class);
+
+    @Autowired(required = false)
+    public MSDialLCMSProcessing(SampleSerializer serializer) {
+        this.serializer = serializer;
+    }
 
     public Sample process(Sample sample, MSDialProcessingProperties properties) {
         List<Feature> spectra = TypeConverter.getJavaSpectrumList(sample);
@@ -46,7 +50,10 @@ public class MSDialLCMSProcessing implements MSDialProcessing {
         logger.info("Found " + deconvolutionResults.size() + " deconvoluted features");
 
         MSDialLCMSProcessedSample processed = new MSDialLCMSProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
-//        serializer.saveFile(processed);
+
+        if (serializer != null) {
+            serializer.saveFile(processed);
+        }
 
         return processed;
     }

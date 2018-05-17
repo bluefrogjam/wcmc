@@ -9,6 +9,7 @@
 
 	<logger name="edu.ucdavis" level="info"/>
     <logger name="edu.ucdavis.fiehnlab.ms.carrot.core" level="debug"/>
+    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing" level="info"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

@@ -69,8 +69,8 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "Retention Index Correction Process" should {
-    "test Weiss005_posHILIC_40298234_039,mzML" must {
-      val method = AcquisitionMethod(ChromatographicMethod("targets_20180315", None, None, Some(PositiveMode())))
+    "test Weiss005_posHILIC_40298234_039.mzML" must {
+      val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Some(PositiveMode())))
       val sample: CorrectedSample = correction.process(
         deco.process(
           loader.getSample("Weiss005_posHILIC_40298234_039.mzML"), method, None
