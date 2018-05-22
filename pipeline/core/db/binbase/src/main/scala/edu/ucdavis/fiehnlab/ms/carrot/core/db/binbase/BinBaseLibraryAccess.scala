@@ -27,6 +27,12 @@ import scala.collection.JavaConverters._
 @Component
 @Profile(Array("carrot.gcms.library.binbase"))
 class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, correction: LibraryAccess[GCMSCorrectionTarget]) extends ReadonlyLibrary[Target] with LazyLogging {
+
+  /**
+    * internal query to be executed
+    */
+  var binQuery:String = "select * from bin where bin_id not in (select bin_id from standard)"
+
   /**
     * loads all the spectra from the library
     * applicable for the given acquistion method
@@ -39,7 +45,7 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, cor
 
         val connection = generateConnection(column)
         try {
-          val result = connection.createStatement().executeQuery("select * from bin where bin_id not in (select bin_id from standard)")
+          val result = connection.createStatement().executeQuery(binQuery)
 
           val annotations = new Iterator[Target] {
             def hasNext = result.next()
@@ -127,6 +133,7 @@ class BinBaseConnectionProperties {
   @BeanProperty
   @NotEmpty
   var instrument: String = ""
+
 }
 
 

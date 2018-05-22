@@ -199,6 +199,26 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
         */
       }
 
+
+      "QC6 (2013)_1" :: "QC6 (2014)_1" :: "QC6 (2015)_1" :: "QC6 (2016)_2" :: List() foreach { sample =>
+
+        s"find markers in QC's from several years: $sample of study 403441" should {
+
+          logger.info(s"sample to nvestigate: ${sample}")
+          "old BinBase cannot handle this sample, due to a new injector, which is based on Agilent, but carrot algorithm should be able to find it" in {
+            val result = correction.process(prepareSample(sampleLoader.getSample(s"${sample}.$filexExtension")), method, None)
+
+            result.featuresUsedForCorrection.foreach { x =>
+              logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
+            }
+
+
+            assert(result.featuresUsedForCorrection.size >= 12)
+          }
+
+        }
+
+      }
     }
   }
 }

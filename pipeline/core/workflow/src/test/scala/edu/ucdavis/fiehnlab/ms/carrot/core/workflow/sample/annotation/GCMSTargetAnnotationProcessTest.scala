@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.db.binbase.BinBaseLibraryTarget
+import edu.ucdavis.fiehnlab.ms.carrot.core.db.binbase.{BinBaseLibraryAccess, BinBaseLibraryTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSTargetRetentionIndexCorrectionProcess
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -15,7 +15,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase"))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase", "carrot.logging.json.enable"))
 class GCMSTargetAnnotationProcessTest extends WordSpec {
 
 
@@ -32,6 +32,8 @@ class GCMSTargetAnnotationProcessTest extends WordSpec {
 
   val method = AcquisitionMethod(ChromatographicMethod(name = "Gerstel", instrument = Some("LECO-GC-TOF"), column = Some("rtx5recal"), ionMode = Option(PositiveMode())))
 
+  @Autowired
+  val library: BinBaseLibraryAccess = null
 
   new TestContextManager(this.getClass()).prepareTestInstance(this)
 
@@ -48,9 +50,19 @@ class GCMSTargetAnnotationProcessTest extends WordSpec {
       "for sample 180501dngsa32_1" should {
 
 
-        "be at least as good as past calculation in BinBase, sample id is: 1073331" in {
+        "be at least as good as past calculation in BinBase, sample id is: 1073384" in {
 
-          val result = correction.process(prepareSample(sampleLoader.getSample("180501dngsa32_1." + filexExtension)), method)
+          library.binQuery =
+            """
+              |select b.* from spectra a, bin b where a.bin_id is not null and a.sample_id = 1073384 and a.bin_id not in (
+              |	select bin_id from standard
+              |)
+              |and CAST(a.bin_id as text) != b."name" and a.bin_id = b.bin_id
+              |and b.export = 'TRUE'
+              |and b.group_id is null
+            """.stripMargin
+
+          val result = correction.process(prepareSample(sampleLoader.getSample("180507dZKsa09_1." + filexExtension)), method)
 
           result.featuresUsedForCorrection.foreach { x =>
             logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
@@ -69,202 +81,62 @@ class GCMSTargetAnnotationProcessTest extends WordSpec {
 
           val binIdsInBinBaseCarrot = annotationResult.spectra.filter(_.target.isInstanceOf[BinBaseLibraryTarget]).map(_.target.asInstanceOf[BinBaseLibraryTarget].binId.toInt).sorted.toSet
           val binIdsInBinBaseLegacy = Array(
-            117191,
-            4937,
-            6408,
-            17446,
-            84161,
-            2475,
-            84087,
-            2472,
-            2469,
-            1686,
-            17982,
-            125790,
-            17069,
-            1373,
-            46315,
-            16661,
-            161497,
-            110602,
-            168,
-            21622,
+            6432,
+            171211,
             291,
-            1912,
-            20961,
-            4384,
-            199021,
-            127444,
-            4716,
-            341677,
+            94,
+            4903,
             13,
-            43,
-            240058,
+            14,
+            724,
+            727,
+            17533,
+            34065,
+            3274,
+            31356,
+            16713,
             16545,
             1680,
-            46173,
-            21664,
-            17883,
-            88048,
-            1815,
-            16668,
-            240078,
-            3356,
+            171823,
+            18490,
+            70,
+            20287,
             127,
-            127676,
-            1725,
-            117195,
-            329430,
-            126305,
-            3029,
-            102605,
-            239311,
-            1064,
-            121002,
-            210327,
-            1875,
-            209178,
-            42205,
-            62253,
-            1878,
-            17001,
-            241374,
-            17105,
-            344489,
-            49,
-            169,
-            17651,
-            120765,
-            1704,
-            13922,
-            1169,
-            5346,
-            1909,
-            62821,
-            10,
-            241360,
-            1700,
-            29923,
-            889,
-            191801,
-            340673,
-            18157,
-            204741,
-            31359,
-            239634,
-            236816,
-            50422,
-            329442,
-            209685,
-            239300,
-            241312,
-            148,
-            334150,
-            4949,
-            327162,
-            31408,
-            209177,
-            125664,
-            5483,
-            228,
-            239310,
-            17101,
-            215929,
-            209686,
+            126321,
+            1689,
+            53724,
+            104147,
+            488,
+            146,
+            33,
+            41895,
+            4792,
+            4594,
+            113643,
+            2038,
+            65,
+            4527,
+            79,
+            125,
+            413,
+            1208,
+            299,
+            1692,
+            16643,
             1965,
             50,
-            239325,
-            239314,
-            236822,
-            14755,
-            92321,
-            241399,
-            130478,
-            2936,
-            26868,
-            24,
-            103102,
-            133179,
-            3268,
-            6,
-            209175,
-            161878,
-            237709,
-            160961,
-            43702,
-            47,
-            239316,
-            4,
-            30,
-            6866,
-            209176,
-            490,
-            10962,
-            1079,
-            183433,
-            3256,
-            85123,
-            32,
-            3,
-            1905,
-            23635,
-            1913,
-            7,
-            2862,
-            240042,
-            3228,
-            340667,
-            341265,
-            122191,
-            160842,
-            318795,
-            341113,
-            42224,
-            145501,
-            44175,
-            239302,
-            128,
-            328907,
-            4531,
-            217691,
-            1,
-            238073,
-            117141,
-            17068,
-            4976,
-            318776,
-            322524,
-            4211,
-            18082,
-            249053,
-            62,
-            137,
-            210223,
-            106936,
-            3179,
-            22423,
-            1971,
-            325221,
-            315573,
-            12133,
-            42167,
-            282,
-            210269,
-            1694,
-            1671,
-            253919,
-            125154,
-            19163,
-            189361,
-            47170,
-            127661,
-            1741,
-            11,
-            170728,
-            96,
-            43734,
-            160,
-            3301
+            483,
+            25,
+            101725,
+            18043,
+            285,
+            106285,
+            97,
+            100955,
+            453,
+            4923,
+            1871,
+            585
           ).sorted.toSet
 
 
@@ -273,12 +145,132 @@ class GCMSTargetAnnotationProcessTest extends WordSpec {
 
           logger.info(s"found in binbase but not carrot: ${foundInBinBaseButNotCarrot.size}")
           logger.info(s"found in carrot but not binbase: ${foundInCarrotBytNotBinBase.size}")
-          foundInBinBaseButNotCarrot.foreach{ x => logger.info(s"in binbase: ${x}")}
-          foundInCarrotBytNotBinBase.foreach{ x => logger.info(s"in carrot: ${x}")}
+          foundInBinBaseButNotCarrot.foreach { x => logger.info(s"in binbase: ${x}") }
+          foundInCarrotBytNotBinBase.foreach { x => logger.info(s"in carrot: ${x}") }
+        }
+
+      }
+
+      "for sample 180419bCSsa12_1" should {
+
+
+        "be at least as good as past calculation in BinBase, sample id is: 1073361" in {
+
+          library.binQuery =
+            """
+              |select b.* from spectra a, bin b where a.bin_id is not null and a.sample_id = 1073361 and a.bin_id not in (
+              |	select bin_id from standard
+              |)
+              |and CAST(a.bin_id as text) != b."name" and a.bin_id = b.bin_id
+              |and b.export = 'TRUE'
+              |and b.group_id is null
+            """.stripMargin
+
+          val result = correction.process(prepareSample(sampleLoader.getSample("180419bCSsa12_1." + filexExtension)), method)
+
+          result.featuresUsedForCorrection.foreach { x =>
+            logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
+          }
+
+          assert(result.featuresUsedForCorrection.size >= 13)
+
+          var annotationResult = annotation.process(result, method)
+
+          logger.info(s"annotated: ${annotationResult.spectra.size}")
+          logger.info(s"missing: ${annotationResult.noneAnnotated.size}")
+
+          annotationResult.spectra.foreach { x =>
+            logger.info(s"${x.target.name} - ${x.retentionIndex} - ${x.target.getClass.getName}")
+          }
+
+          val binIdsInBinBaseCarrot = annotationResult.spectra.filter(_.target.isInstanceOf[BinBaseLibraryTarget]).map(_.target.asInstanceOf[BinBaseLibraryTarget].binId.toInt).sorted.toSet
+          val binIdsInBinBaseLegacy = Array(
+            170271,
+            110304,
+            42937,
+            102121,
+            3272,
+            16601,
+            6432,
+            290,
+            20961,
+            724,
+            1674,
+            3244,
+            16829,
+            2787,
+            34065,
+            11214,
+            4931,
+            4706,
+            16545,
+            71,
+            17883,
+            131590,
+            107906,
+            20287,
+            3356,
+            127,
+            1667,
+            1689,
+            1683,
+            84543,
+            34153,
+            17400,
+            18492,
+            233,
+            488,
+            3169,
+            3469,
+            3252,
+            17886,
+            85112,
+            33,
+            1685,
+            65,
+            16637,
+            4527,
+            1679,
+            97,
+            79,
+            4944,
+            16903,
+            413,
+            4953,
+            1208,
+            299,
+            50,
+            25,
+            31743,
+            4939,
+            91421,
+            4923,
+            403,
+            1871,
+            3524,
+            94,
+            13,
+            14,
+            165,
+            106285,
+            208,
+            10827,
+            135
+          ).sorted.toSet
+
+
+          val foundInBinBaseButNotCarrot = binIdsInBinBaseLegacy.diff(binIdsInBinBaseCarrot)
+          val foundInCarrotBytNotBinBase = binIdsInBinBaseCarrot.diff(binIdsInBinBaseLegacy)
+
+          logger.info(s"found in binbase but not carrot: ${foundInBinBaseButNotCarrot.size}")
+          logger.info(s"found in carrot but not binbase: ${foundInCarrotBytNotBinBase.size}")
+          foundInBinBaseButNotCarrot.foreach { x => logger.info(s"in binbase: ${x}") }
+          foundInCarrotBytNotBinBase.foreach { x => logger.info(s"in carrot: ${x}") }
         }
 
       }
 
     }
+
   }
 }
