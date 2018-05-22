@@ -135,14 +135,11 @@ public class SpectralCentroiding {
 
 			double focusedMz = minMz;
 			int startIndex, remaindIndex = 0;
-			int counter = 0;
-			double sumXY = 0;
-			float sumY = 0;
 
 			while (focusedMz <= maxMz) {
-				sumXY = 0.0;
-				sumY = 0;
-				counter = 0;
+				double sumXY = 0.0;
+				float sumY = 0;
+				int counter = 0;
 				startIndex = getStartIndex(focusedMz, massBin, spectraList);
 
 				for (int i = startIndex; i < spectraList.size(); i++) {
@@ -364,7 +361,7 @@ public class SpectralCentroiding {
                 }
 
                 // 5. Set peakInformation
-                centroidedSpectrum.add(new Ion(datapoints.get(peakTopId)[0], (float)datapoints.get(peakTopId)[0]));
+                centroidedSpectrum.add(new Ion(datapoints.get(peakTopId)[0], (float)datapoints.get(peakTopId)[1]));
                 peakID++;
             }
         }

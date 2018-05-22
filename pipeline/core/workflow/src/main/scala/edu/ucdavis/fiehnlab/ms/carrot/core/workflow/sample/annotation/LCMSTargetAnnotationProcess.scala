@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotateSampleProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
+import edu.ucdavis.fiehnlab.ms.carrot.math.SimilarityMethods
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -39,18 +40,17 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
           */
         override protected val sampleToLog: String = sample.fileName
       } ::
-        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging with JSONTargetLogging {
-          /**
-            * which sample we require to log
-            */
-          override protected val sampleToLog: String = sample.fileName
-          /**
-            * which target we require to log
-            */
-          override protected val targetToLog: Target = target
-        }
-        ::
-        List()
+      new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging with JSONTargetLogging {
+        /**
+          * which sample we require to log
+          */
+        override protected val sampleToLog: String = sample.fileName
+        /**
+          * which target we require to log
+          */
+        override protected val targetToLog: Target = target
+      } ::
+      List()
     )
 
 
@@ -80,11 +80,13 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
       logger.debug(s"find best match for target $target, ${matches.size} possible annotations")
 
       val resultList =
-        if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
+        if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
+          logger.info("preferring gaussian similarity over mass accuracy and rt distance")
+          matches.sortBy { r => SimilarityMethods.featureTargetSimilarity(r, target, massAccuracySetting, rtAccuracySetting, intensityPenaltyThreshold) }
+        } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
           logger.info("preferring accuracy over retention time distance")
           matches.sortBy { r => (MassAccuracy.calculateMassErrorPPM(r, target).get, RetentionIndexDifference.diff(target, r)) }
-        }
-        else {
+        } else {
           logger.info("preferring retention time over mass accuracy")
           matches.sortBy { r => (RetentionIndexDifference.diff(target, r), MassAccuracy.calculateMassErrorPPM(r, target).get) }
         }
@@ -136,7 +138,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
   /**
     * finds the best possible annotation of the sequence of targets and spectra. Basically we can have the same spectra
-    * associated with several targets and want to ensure we only has 1 annotation for each target
+    * associated with several targets and want to ensure we only have 1 annotation for each target
     *
     * @param possibleHits
     */
@@ -162,7 +164,10 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 
           //find the target, which has the closest mass accuracy, followed by the closes retention time
           val optimizedTargetList =
-            if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
+            if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
+              logger.info("preferring gaussian similarity over mass accuracy and rt distance")
+              x._2.sortBy { r => SimilarityMethods.featureTargetSimilarity(x._1, r, massAccuracySetting, rtAccuracySetting, intensityPenaltyThreshold) }
+            } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
               logger.debug("preferring accuracy over retention time distance")
               x._2.sortBy(r => (MassAccuracy.calculateMassErrorPPM(x._1, r).get, RetentionIndexDifference.diff(r, x._1)))
             } else {
@@ -279,6 +284,14 @@ class LCMSTargetAnnotationProperties {
     */
   @Value("${workflow.lcms.annotation.detection.massOverRI:false}")
   var preferMassAccuracyOverRetentionIndexDistance: Boolean = false
+
+  /**
+    * to decided the best peak, do we prefer mass accuracy or retention time distance difference
+    *
+    * by default we define the retention index to be more important due to isomeres.
+    */
+  @Value("${workflow.lcms.annotation.detection.massOverRI:true}")
+  var preferGaussianSimilarityForAnnotation: Boolean = true
 
   /**
     * this enables the close peak detection system, if two possible targets are closer than n seconds, than the larger peak will be accepted as default annotation. Set to 0 to disable this feature

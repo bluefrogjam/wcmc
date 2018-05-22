@@ -1,6 +1,8 @@
 package edu.ucdavis.fiehnlab.wcmc.utilities.casetojson.config
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility
 import com.fasterxml.jackson.annotation.JsonInclude.Include
+import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper, SerializationFeature}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
@@ -16,7 +18,7 @@ import org.springframework.web.client.RestTemplate
   */
 @Configuration
 @AutoConfigureOrder(SpringOrdered.HIGHEST_PRECEDENCE)
-class CaseClassToJSONSerializationAutoConfiguration extends LazyLogging{
+class CaseClassToJSONSerializationAutoConfiguration extends LazyLogging {
 
   @Bean
   def objectMapper: ObjectMapper = {
