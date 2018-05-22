@@ -11,7 +11,7 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
 
   "IncludeByRetentionIndexTimeWindowTest" should {
 
-    val filter = new IncludeByRetentionIndexTimeWindow(100,"test",5)
+    val filter = new IncludeByRetentionIndexWindow(100,"test",5)
     "include" in {
 
       assert(filter.include(new  CorrectedSpectra{

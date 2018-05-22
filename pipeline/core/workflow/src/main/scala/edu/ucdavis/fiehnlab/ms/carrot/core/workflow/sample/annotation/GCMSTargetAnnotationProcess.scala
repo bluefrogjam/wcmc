@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotateSampleProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByRetentionIndexTimeWindow, SifterFilter}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByRetentionIndexWindow, SifterFilter}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.annotation.GCMSAnnotationProperties
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
@@ -49,7 +49,7 @@ class GCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
       override protected val targetToLog: Target = target
     }
 
-    val retentionIndexFiler = new IncludeByRetentionIndexTimeWindow(target.retentionIndex, "annotation", configuration.get.retentionIndexWindow) with TargetToLog
+    val retentionIndexFiler = new IncludeByRetentionIndexWindow(target.retentionIndex, "annotation", configuration.get.retentionIndexWindow) with TargetToLog
     val sifterFilter = new SifterFilter("annotation", configuration.get, target)
 
     //filter spectra

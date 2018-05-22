@@ -32,7 +32,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     * @return
     */
   override def load(name: String): Option[InputStream] = {
-    val url = s"http://${host}:${port}?s=${name.replaceAll("\\s", "+")}&j=1&path_column=1"
+    val url = s"http://${host}:${port}?s=${URLEncoder.encode(name, "UTF8")}&j=1&path_column=1"
     logger.info(s"load is checking url: ${url}")
 
     val data = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")

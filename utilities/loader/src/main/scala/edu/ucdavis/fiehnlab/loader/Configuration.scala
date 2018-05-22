@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.loader
 
-import org.springframework.context.annotation.{ComponentScan, Configuration}
+import org.springframework.context.annotation.{ComponentScan}
 
 @ComponentScan
-@Configuration
+@org.springframework.context.annotation.Configuration
 class Configuration {
 
 }
