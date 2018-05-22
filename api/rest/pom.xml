@@ -20,6 +20,7 @@
         <module>ossa4j</module>
         <module>ontology4j</module>
         <module>everything4j</module>
+        <module>stasis4j</module>
     </modules>
 
 

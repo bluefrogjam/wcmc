@@ -196,3 +196,9 @@ trait SimilaritySupport {
 
 }
 
+trait MetadataSupport {
+  /**
+    * Contains random metadata associated to the object we mix this into
+    */
+  val metadata: Map[String,AnyRef]
+}

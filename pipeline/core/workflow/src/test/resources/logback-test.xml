@@ -8,6 +8,7 @@
     </appender>
 
 	<logger name="edu.ucdavis" level="info"/>
+    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core" level="debug"/>
 	<logger name="edu.ucdavis.fiehnlab.loader" level="debug"/>
 	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.io" level="warn"/>
 
