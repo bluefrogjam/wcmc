@@ -37,7 +37,7 @@ wcmc:
   api:
     rest:
       msdialrest4j:
-        host: phobos.fiehnlab.ucdavis.edu
-        port: 8080
+        host: luna.fiehnlab.ucdavis.edu
+        port: 9090
 
 #which redis server to use for
