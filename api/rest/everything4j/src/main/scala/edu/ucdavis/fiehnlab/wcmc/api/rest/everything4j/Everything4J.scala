@@ -51,7 +51,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
         Option(content)
       }
     } else {
-      val encoded = s"${data.head.path.replaceAll("\\\\", "/").replaceAll("\\s", "%20").replaceAll(":", "%3A")}/${data.head.name}"
+      val encoded = s"${data.head.path.replaceAll("\\\\", "/").replaceAll("\\s", "%20").replaceAll(":", "%3A")}/${URLEncoder.encode(data.head.name, "UTF8").replaceAll("\\+", "%20")}"
       val uri = s"http://${host}:${port}/${encoded}"
 
       logger.info(s"loading file from URI: ${uri}")
@@ -137,7 +137,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
       }
     }
 
-    val content = new URI(s"http://${host}:${port}/${source}").toURL
+    val content = new URI(s"http://${host}:${port}/${URLEncoder.encode(source, "UTF8")}").toURL
     logger.info(s"Downloading file: ${content.getFile}")
 
     val outstr = new FileOutputStream(dest)
