@@ -4,7 +4,8 @@ import java.util.Date
 
 case class TrackingData(
                            sample: String,
-                           status: String
+                           status: String,
+                           fileHandle: String
                        )
 
 case class TrackingResponse(
@@ -14,6 +15,8 @@ case class TrackingResponse(
                            )
 
 case class StatusItem(
-                         value: String,
-                         time: Date
+                         time: Date,
+                         priority: Int,
+                         fileHandle: String,
+                         value: String
                      )
