@@ -14,17 +14,17 @@ import scala.io.Source
   */
 class LecoSample(inputStream: InputStream, override val fileName: String) extends Sample with LazyLogging {
 
+  val uniquemassIdentifier: String = "uniquemass"
+
+  val signalNoiseIdentifier: String = "s/n"
+
+  val purityIdentifier: String = "purity"
+
+  val spectraIdentifier: String = "spectra"
+
+  val retentionTimeSecondsIdentifier: String = "r.t. (s)"
+
   override val spectra: List[LecoSpectrum] = readFile(inputStream)
-
-  def uniquemassIdentifier: String = "uniquemass"
-
-  def signalNoiseIdentifier: String = "s/n"
-
-  def purityIdentifier: String = "purity"
-
-  def spectraIdentifier: String = "spectra"
-
-  def retentionTimeSecondsIdentifier: String = "r.t. (s)"
 
   /**
     * parse the given input stream and returns a list of spectra object
@@ -36,13 +36,14 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
     try {
 
       val lines: Iterator[String] = Source.fromInputStream(inputStream, "ISO-8859-1").getLines().map(_.toLowerCase)
+      logger.debug(s"we are having ${lines.size} spectra")
       if (lines.hasNext) {
 
 
         val first = lines.next()
 
         //extract the header
-        val headers = if (first.isEmpty) lines.next().toLowerCase().split("\t") else first.toLowerCase.split("\t")
+        val headers = if (first.isEmpty) lines.next().toLowerCase().trim.split("\t") else first.toLowerCase.trim.split("\t")
         var scan: Int = 0
 
         lines.collect {
