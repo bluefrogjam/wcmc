@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSMSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow, IncludeBySimilarity}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexWindow, IncludeBySimilarity}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -153,7 +153,7 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     * @return
     */
   def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, sample: Sample): Boolean = {
-    val riFilter = new IncludeByRetentionIndexTimeWindow(newTarget.retentionIndex, "targetGeneration", retentionIndexWindow) with JSONSampleLogging {
+    val riFilter = new IncludeByRetentionIndexWindow(newTarget.retentionIndex, "targetGeneration", retentionIndexWindow) with JSONSampleLogging {
       /**
         * which sample we require to log
         */

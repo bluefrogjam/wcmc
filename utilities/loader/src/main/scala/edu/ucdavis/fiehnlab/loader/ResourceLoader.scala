@@ -1,9 +1,12 @@
 package edu.ucdavis.fiehnlab.loader
 
 import java.io._
+import java.nio.channels.{Channels, ReadableByteChannel}
+import java.nio.file.{FileAlreadyExistsException, Files, Paths, StandardCopyOption}
 
 import com.typesafe.scalalogging.LazyLogging
 import javax.annotation.PostConstruct
+
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Primary
@@ -54,21 +57,17 @@ trait ResourceLoader extends LazyLogging {
         name
       }
 
-      val prepro = File.createTempFile("pre", "pro")
-      prepro.deleteOnExit()
-      val tempFile = new File(prepro.getParentFile, fName)
+      val tempFile = new File(System.getProperty("java.io.tmpdir"), fName)
       logger.debug(s"storing ${fName} at: ${tempFile.getAbsolutePath}")
       tempFile.deleteOnExit()
 
-      val outStream = new FileOutputStream(tempFile)
-      val stream = loaded.get
+      try {
+        Files.copy(loaded.get, Paths.get(tempFile.toURI))
+      }catch {
+        case x:FileAlreadyExistsException =>
+          logger.warn(s"reusing existing file: ${x.getMessage}")
+      }
 
-      logger.debug(s"stream size: ${stream.available()}")
-      IOUtils.copy(stream, outStream)
-
-      outStream.flush()
-      outStream.close()
-      stream.close()
       Option(tempFile)
     } else {
       logger.debug(s"File ${name} not found")

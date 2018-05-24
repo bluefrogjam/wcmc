@@ -140,11 +140,17 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         client.delete(x.id)
       }
       client.regenerateStatistics
-      client.regenerateDownloads
+      try {
+        client.regenerateDownloads
+      }
+      catch {
+        case e: Exception =>
+          logger.warn(e.getMessage, e)
+      }
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(90 seconds)) {
         client.list().size shouldBe 0
-        Thread.sleep(1000)
+        Thread.sleep(100)
       }
     }
 

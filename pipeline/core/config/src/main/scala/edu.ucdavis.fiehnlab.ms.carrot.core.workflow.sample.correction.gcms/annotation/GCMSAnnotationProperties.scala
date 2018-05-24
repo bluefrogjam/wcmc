@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.annotation
 
 import java.util
+
 import javax.validation.Valid
 import javax.validation.constraints._
-
 import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties, NestedConfigurationProperty}
 import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}
 import org.springframework.stereotype.Component
@@ -33,7 +33,7 @@ class GCMSAnnotationProperties {
 /**
   * configuration for a specific gcms annotation library
   */
-class GCMSAnnotationLibraryProperties {
+case class GCMSAnnotationLibraryProperties() {
 
   @BeanProperty
   @NotBlank
@@ -62,6 +62,9 @@ class GCMSAnnotationLibraryProperties {
   @BeanProperty
   @NestedConfigurationProperty
   var filter: java.util.List[SifterFilterConfigurations] = new util.ArrayList[SifterFilterConfigurations]()
+
+  @BeanProperty
+  var retentionIndexWindow:Double = 3000
 }
 
 /**
@@ -98,9 +101,10 @@ class SifterFilterProperties {
   @DecimalMin("0.0")
   var maxSignalNoise: Double = Double.MaxValue
 
+  override def toString = s"SifterFilterProperties(minPurity: $minPurity, maxPurity: $maxPurity, minSimilarity: $minSimilarity, maxSimilarity: $maxSimilarity, minSignalNoise: $minSignalNoise, maxSignalNoise: $maxSignalNoise)"
 }
 
-class SifterFilterConfigurations{
+case class SifterFilterConfigurations(){
 
   @Valid
   @Size(min = 1)

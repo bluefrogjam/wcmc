@@ -10,15 +10,21 @@ import org.springframework.context.ApplicationContext
   * @param timeInSeconds
   * @param window
   */
-class IncludeByRetentionIndexTimeWindow(val timeInSeconds: Double, val phaseToLog: String, val window: Double = 5) extends Filter[CorrectedSpectra] {
+class IncludeByRetentionIndexWindow(val timeInSeconds: Double, val phaseToLog: String, val window: Double = 5) extends Filter[CorrectedSpectra] {
   /**
-    * this returns true, if the spectra should be included, false if it should be excluded
+    * a method which should be overwritten, if the filter can provide details why it failed
+    *
+    * @param spectra
+    * @param applicationContext
+    * @return
     */
-  protected override def doInclude(spectra: CorrectedSpectra, applicationContext: ApplicationContext): Boolean = {
+  override protected def doIncludeWithDetails(spectra: CorrectedSpectra, applicationContext: ApplicationContext): (Boolean, Any) = {
     val min = timeInSeconds - window
     val max = timeInSeconds + window
 
-    spectra.retentionIndex >= min && spectra.retentionIndex < max
+    val result = spectra.retentionIndex >= min && spectra.retentionIndex < max
+
+    (result, Map("min" -> min, "max" -> max, "retentionIndex" -> spectra.retentionIndex))
   }
 
   /**
