@@ -17,17 +17,18 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Profile("carrot.lcms")
 public class MSDialLCMSProcessing implements MSDialProcessing {
 
-    private final SampleSerializer serializer;
+    private Optional<SampleSerializer> serializer;
 
     private Logger logger = LoggerFactory.getLogger(MSDialLCMSProcessing.class);
 
-    @Autowired(required = false)
-    public MSDialLCMSProcessing(SampleSerializer serializer) {
+    @Autowired
+    public MSDialLCMSProcessing(Optional<SampleSerializer> serializer) {
         this.serializer = serializer;
     }
 
@@ -51,9 +52,7 @@ public class MSDialLCMSProcessing implements MSDialProcessing {
 
         MSDialLCMSProcessedSample processed = new MSDialLCMSProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
 
-        if (serializer != null) {
-            serializer.saveFile(processed);
-        }
+        serializer.ifPresent(sampleSerializer -> sampleSerializer.saveFile(processed));
 
         return processed;
     }
