@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexTimeWindow}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -176,14 +176,14 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
         */
       override protected val sampleToLog: String = quantSample.fileName
     }
-    val filterByRetentionIndexNoise = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionTimeInSeconds, "replacement", zeroReplacementProperties.noiseWindowInSeconds) with JSONSampleLogging {
+    val filterByRetentionIndexNoise = new IncludeByRetentionIndexWindow(receivedTarget.retentionTimeInSeconds, "replacement", zeroReplacementProperties.noiseWindowInSeconds) with JSONSampleLogging {
       /**
         * which sample we require to log
         */
       override protected val sampleToLog: String = quantSample.fileName
     }
 
-    val filterByRetentionIndex = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionIndex, "replacement", zeroReplacementProperties.retentionIndexWindowForPeakDetection) with JSONSampleLogging {
+    val filterByRetentionIndex = new IncludeByRetentionIndexWindow(receivedTarget.retentionIndex, "replacement", zeroReplacementProperties.retentionIndexWindowForPeakDetection) with JSONSampleLogging {
       /**
         * which sample we require to log
         */

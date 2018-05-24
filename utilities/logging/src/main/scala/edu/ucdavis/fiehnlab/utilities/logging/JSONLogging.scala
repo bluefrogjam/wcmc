@@ -48,6 +48,9 @@ trait JSONLogging extends LazyLogging {
         if(JSONLoggingAppender.mongoTemplate != null) {
           JSONLoggingAppender.mongoTemplate.insert(message, "carrot_logging")
         }
+        else{
+          logger.trace("no mongo session configured!")
+        }
       }
       catch {
         case x: Exception =>

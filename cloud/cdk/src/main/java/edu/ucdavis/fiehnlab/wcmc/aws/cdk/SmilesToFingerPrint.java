@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.aws.cdk;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.fingerprint.IBitFingerprint;
 import org.openscience.cdk.fingerprint.PubchemFingerprinter;
@@ -21,29 +22,22 @@ import java.util.stream.IntStream;
 /**
  * converts a received smile code to a fingerprint
  */
-public class SmilesToFingerPrint extends ApiGatewayHandler {
+public class SmilesToFingerPrint extends SmilesToHandler {
     SmilesParser parser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
 
-    protected Map<String, Object> evaluateRequest(Map<String, Object> request) {
-        try {
-            PubchemFingerprinter printer = new PubchemFingerprinter(DefaultChemObjectBuilder.getInstance());
+    @Override
+    protected Map<String, Object> handleSmile(String smile) throws CDKException {
+        IAtomContainer container = parser.parseSmiles(smile);
+        AtomContainerManipulator.convertImplicitToExplicitHydrogens(container);
 
-            String smile = request.get("body").toString();
-
-            IAtomContainer container = parser.parseSmiles(smile);
-            AtomContainerManipulator.convertImplicitToExplicitHydrogens(container);
-            IBitFingerprint fingerprint = printer.getBitFingerprint(container);
+        PubchemFingerprinter printer = new PubchemFingerprinter(DefaultChemObjectBuilder.getInstance());
+        IBitFingerprint fingerprint = printer.getBitFingerprint(container);
 
 
 
-            Map<String, Object> result = new HashMap<>();
-            result.put("result", fingerprint.getSetbits());
-            System.out.println(fingerprint.size());
+        Map<String, Object> result = new HashMap<>();
+        result.put("fingerPubchemPrint", fingerprint.getSetbits());
 
-
-            return result;
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return result;
     }
 }

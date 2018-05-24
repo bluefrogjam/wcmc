@@ -23,7 +23,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
   override def isLookupEnabled(): Boolean = enableLookup
 
   @Autowired
-  val objectMapper:ObjectMapper = null
+  val objectMapper: ObjectMapper = null
 
   /**
     * returns the related resource or none
@@ -32,10 +32,10 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     * @return
     */
   override def load(name: String): Option[InputStream] = {
-    val url = s"http://${host}:${port}?s=${name.replaceAll("\\s", "+")}&j=1&path_column=1"
+    val url = s"http://${host}:${port}?s=${URLEncoder.encode(name, "UTF8")}&j=1&path_column=1"
     logger.info(s"load is checking url: ${url}")
 
-    val data = objectMapper.readValue(new URL(url),classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")
+    val data = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")
 
     if (data.isEmpty) {
       logger.info(s"${name} is not a file, verifying folder...")
@@ -51,7 +51,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
         Option(content)
       }
     } else {
-      val encoded = s"${data.head.path.replaceAll("\\\\","/").replaceAll("\\s","%20").replaceAll(":","%3A")}/${data.head.name}"
+      val encoded = s"${data.head.path.replaceAll("\\\\", "/").replaceAll("\\s", "%20").replaceAll(":", "%3A")}/${data.head.name}"
       val uri = s"http://${host}:${port}/${encoded}"
 
       logger.info(s"loading file from URI: ${uri}")
@@ -85,7 +85,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
       temp.toPath
     } catch {
       case ex: Exception =>
-        logger.error(s"OOPS: ${ex.getMessage}",ex)
+        logger.error(s"OOPS: ${ex.getMessage}", ex)
     }
 
     new FileInputStream(zipFile)
@@ -125,9 +125,16 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
 
   }
 
-  def downloadFile(source: String, dest: File): Unit = {
+  def downloadFile(source: String, dest: File, force: Boolean = false): Unit = {
     if (dest.exists()) {
-      dest.delete()
+      if (force) {
+        logger.warn(s"deleting file: ${dest}")
+        dest.delete()
+      }
+      else {
+        logger.debug(s"reusing file: ${dest}")
+        return
+      }
     }
 
     val content = new URI(s"http://${host}:${port}/${source}").toURL
@@ -153,7 +160,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     val url = s"http://${host}:${port}?s=${URLEncoder.encode(name, "UTF8")}&j=1&path_column=1"
     logger.info(s"exists is checking url: ${new URL(url)}")
 
-    val result  = objectMapper.readValue(new URL(url), classOf[Search]).results.nonEmpty
+    val result = objectMapper.readValue(new URL(url), classOf[Search]).results.nonEmpty
 
 
     logger.info(s"exists: ${result}")
