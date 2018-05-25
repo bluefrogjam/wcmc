@@ -3,8 +3,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, PositiveMode, QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
@@ -38,11 +38,11 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
   @Autowired
   val deco: PeakDetection = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "QuantifyByHeightProcessTest" should {
 
-    val method = AcquisitionMethod(ChromatographicMethod("targets"))
+    val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Some(PositiveMode())))
 
     val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.d.zip", "B5_SA0002_P20Lipids_Pos_1FL_1006.d.zip"))
 

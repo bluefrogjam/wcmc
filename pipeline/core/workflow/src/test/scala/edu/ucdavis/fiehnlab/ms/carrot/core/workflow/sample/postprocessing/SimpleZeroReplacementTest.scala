@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{IonMode, QuantifiedSample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, QuantifiedSample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
@@ -45,7 +45,7 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "SimpleZeroReplacementTest" must {
-    val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Some(new IonMode("positive"))))
+    val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Some(PositiveMode())))
     val rawSample = loader.getSample("B5_P20Lipids_Pos_QC000.d.zip")
     val sample: QuantifiedSample[Double] = quantify.process(
       annotation.process(

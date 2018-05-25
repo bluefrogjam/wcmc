@@ -37,12 +37,6 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "RI Correction on weiss005" should {
-    //    val method = AcquisitionMethod(ChromatographicMethod("targets_20180315", None, None, Some(PositiveMode())))
-    //    val sample: CorrectedSample = correction.process(
-    //      deco.process(
-    //        loader.getSample("Weiss066_posHILIC_99762359_193.mzML"), method, None
-    //      ), method, None
-    //    )
 
     "choose the correct ammoniated TG peak at 666.88s (11.11m)" in {
         val wrongFeature1 = new Feature {
