@@ -37,16 +37,13 @@ public class MSDialLCMSProcessing implements MSDialProcessing {
 
         // Peak picking
         List<PeakAreaBean> detectedPeaks = new DataDependentPeakSpotting().getPeaks(spectra, properties);
-        logger.debug("Peaks after peak detection: " + detectedPeaks.size());
 
         // Isotope detection
         new IsotopeEstimator().setIsotopeInformation(detectedPeaks, properties);
-        logger.debug("Peaks after isotope estimation: " + detectedPeaks.size());
 
         // Calculate peak properties for deconvolution
         // DataSummary bean does not appear to be used, so skipping that translation
         List<MS2DeconvolutionResult> deconvolutionResults = new SpectralDeconvolution().getMS2Deconvolution(spectra, detectedPeaks, properties);
-        logger.debug("Peaks after deconvolution: " + deconvolutionResults.size());
 
         logger.info("Found " + deconvolutionResults.size() + " deconvoluted features");
 
