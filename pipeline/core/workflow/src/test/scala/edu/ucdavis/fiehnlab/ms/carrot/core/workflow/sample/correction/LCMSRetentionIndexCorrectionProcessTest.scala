@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
@@ -32,13 +33,13 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
   val deco: PeakDetection = null
 
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "LCMSRetentionIndexCorrectionTest" should {
 
     val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.d.zip")
     val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.d.zip")
-    val method = AcquisitionMethod(ChromatographicMethod("targets"))
+    val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Some(PositiveMode())))
     assert(correction != null)
 
 
@@ -66,8 +67,6 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
 
         assert(corrected.regressionCurve != null)
       }
-
-
 
   }
 }
