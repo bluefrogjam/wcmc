@@ -22,7 +22,8 @@ class ExperimentTXTReaderTest extends WordSpec with LazyLogging {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "read" must {
+  //"Deprecated and unused class being tested"
+  "read" ignore {
     "convert the given file" should {
 
       "read the data" in {
@@ -50,7 +51,8 @@ class ExperimentTXTReaderTest extends WordSpec with LazyLogging {
     }
   }
 
-  "loading an experiment" should {
+  // "Deprecated and unused class being tested"
+  "loading an experiment" ignore {
     val experimentFile = "/preproc/preProcExperiment.txt"
 
     "load existing samples ignoring missing filess" in {
