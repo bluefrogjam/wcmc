@@ -88,7 +88,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
       val correctFeature = buildFeature(874.792541148294, 666.015014648438, 10000)
       val target = buildTarget(874.7882, 659.622)
 
-      gaussianSimilarity(wrongFeature, target) should be < 0.54
+      gaussianSimilarity(wrongFeature, target) should be < 0.6
       gaussianSimilarity(correctFeature, target) should be > 0.88
       correction.findBestHit(target, Seq(wrongFeature, correctFeature)).annotation shouldBe correctFeature
     }
@@ -100,8 +100,8 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
       val correctFeature = buildFeature(869.831824427935, 666.880004882812, 25000)
       val target = buildTarget(869.8329, 659.622)
 
-      gaussianSimilarity(veryWrongFeature, target) should be < 0.7
-      gaussianSimilarity(wrongFeature, target) should be < 0.75
+      gaussianSimilarity(veryWrongFeature, target) should be < 0.79
+      gaussianSimilarity(wrongFeature, target) should be < 0.85
       gaussianSimilarity(correctFeature, target) should be > 0.9
       correction.findBestHit(target, Seq(wrongFeature, correctFeature)).annotation shouldBe correctFeature
     }
