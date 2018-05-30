@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.correction
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}

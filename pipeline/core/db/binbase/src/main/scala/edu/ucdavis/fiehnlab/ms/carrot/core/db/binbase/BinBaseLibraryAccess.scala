@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, ReadonlyLibrar
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.GCMSCorrectionTarget
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.correction.GCMSCorrectionTarget
 import javax.validation.constraints.{NotBlank, NotEmpty}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
