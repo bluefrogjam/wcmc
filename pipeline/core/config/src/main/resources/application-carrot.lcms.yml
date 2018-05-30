@@ -4,7 +4,7 @@ carrot:
       config:
         -
           description: "Internal Standards used in the lab"
-          name: LCMS-ISTDs
+          name: lcms_istds
           column: all
           instrument: Agilent
           minimumPeakIntensity: 10000

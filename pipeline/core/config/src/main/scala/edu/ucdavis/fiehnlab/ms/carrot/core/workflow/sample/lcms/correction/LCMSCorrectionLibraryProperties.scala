@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.correction
 
 import java.util
 

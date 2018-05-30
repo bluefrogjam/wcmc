@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.correction
 
 import java.util
 
