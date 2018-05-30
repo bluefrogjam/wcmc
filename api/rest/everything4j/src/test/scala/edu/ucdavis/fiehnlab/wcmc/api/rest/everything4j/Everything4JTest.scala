@@ -20,7 +20,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TestConfig]))
-@ActiveProfiles(Array("file.source.luna"))
+@ActiveProfiles(Array("file.source.eclipse"))
 class Everything4JTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {
 
   @Autowired
@@ -35,6 +35,9 @@ class Everything4JTest extends WordSpec with ShouldMatchers with BeforeAndAfterE
 
       val file = everything4J.loadAsFile("090309bsesa100_1.cdf").get
 
+    }
+    "load a file with spaces" in {
+      everything4J.loadAsFile("QC6 (2013)_1.txt").get
     }
 
     //TODO: revise this test, it should figure out that the format is a zipped file by the original filename
