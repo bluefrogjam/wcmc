@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SimilaritySupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target, TargetAnnotation}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter._
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.{GCMSCorrectionLibraryProperties, GCMSCorrectionTarget, GCMSLibraryConfiguration}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.correction.{GCMSCorrectionLibraryProperties, GCMSCorrectionTarget, GCMSLibraryConfiguration}
 import edu.ucdavis.fiehnlab.ms.carrot.math.CombinedRegression
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
@@ -118,7 +118,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     * @return
     */
   private def findMatchToTarget(config: GCMSLibraryConfiguration, spectraWithCorrectionIntensity: Seq[MSSpectra], distanceValidationTarget: Option[TargetAnnotation[Target, Feature]], target: GCMSCorrectionTarget, input: Sample): TargetAnnotation[Target, Feature] = {
-    logger.info(s"evaluating target: ${target}")
+    logger.info(s"evaluating target: ${target.name.get}")
     //check for similarity
     val similarity = new IncludeBySimilarity(target, target.config.minSimilarity, "correction") with JSONSampleLogging {
       /**
@@ -164,7 +164,7 @@ class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
             */
           override protected val sampleToLog: String = input.name
         }
-          .include(_, applicationContext))
+            .include(_, applicationContext))
       }.filter(_.nonEmpty).sortBy(_.size).flatten
 
       if (distanceRatioValidated.isEmpty) {

@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByRetentionIndexWindow, SifterFilter}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.annotation.GCMSAnnotationProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.annotation.GCMSAnnotationProperties
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
