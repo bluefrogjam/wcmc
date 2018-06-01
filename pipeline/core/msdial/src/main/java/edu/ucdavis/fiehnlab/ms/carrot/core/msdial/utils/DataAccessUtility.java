@@ -77,7 +77,6 @@ public class DataAccessUtility {
         double minMz = Double.MAX_VALUE;
         double maxMz = Double.MIN_VALUE;
 
-        System.out.println("(getMS1ScanRange) Spectrum count: " + spectrumList.size());
         if (spectrumList.size() <= 0) {
             return new double[]{0, 0};
         }

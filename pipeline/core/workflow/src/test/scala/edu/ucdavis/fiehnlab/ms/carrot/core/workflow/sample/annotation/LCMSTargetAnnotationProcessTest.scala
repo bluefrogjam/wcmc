@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna","quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms"))
+@ActiveProfiles(Array("file.source.luna", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms"))
 class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired

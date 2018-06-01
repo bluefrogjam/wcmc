@@ -1,19 +1,31 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.correction
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 
-case class LCMSCorrectionTarget(target: LCMSRetentionIndexTargetConfiguration) extends Target {
+case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetConfiguration) extends Target with LazyLogging {
 
-  val config: LCMSRetentionIndexTargetConfiguration = target
+  val config: LCMSRetentionIndexTargetConfiguration = lcconfig
+
+  override def accurateMass: Option[Double] = Some(lcconfig.accurateMass)
   /**
     * a name for this spectra
     */
-  override var name: Option[String] = Option(target.identifier)
+  override var name: Option[String] = Some(lcconfig.identifier)
   /**
     * retention time in seconds of this target
     */
-  override val retentionIndex: Double = target.retentionIndex
+  override val retentionIndex: Double = {
+    lcconfig.retentionIndex match {
+      case 0 => lcconfig.retensionTimeUnit match {
+        case "minutes" => lcconfig.retentionTime * 60
+        case "seconds" => lcconfig.retentionTime
+        case _ => 0.0
+      }
+      case _ => lcconfig.retentionIndex
+    }
+  }
   /**
     * the unique inchi key for this spectra
     */
@@ -21,19 +33,19 @@ case class LCMSCorrectionTarget(target: LCMSRetentionIndexTargetConfiguration) e
   /**
     * the mono isotopic mass of this spectra
     */
-  override val precursorMass: Option[Double] = None
+  override val precursorMass: Option[Double] = Some(lcconfig.accurateMass)
   /**
     * is this a confirmed target
     */
-  override var confirmed: Boolean = true
+  override var confirmed: Boolean = lcconfig.confirmed
   /**
     * is this target required for a successful retention index correction
     */
-  override var requiredForCorrection: Boolean = false
+  override var requiredForCorrection: Boolean = lcconfig.requiredForCorrection
   /**
     * is this a retention index correction standard
     */
-  override var isRetentionIndexStandard: Boolean = true
+  override var isRetentionIndexStandard: Boolean = lcconfig.isInternalStandard
   /**
     * associated spectrum propties if applicable
     */

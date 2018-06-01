@@ -18,19 +18,18 @@ class LCMSLibraryConfiguration {
 
   @BeanProperty
   @NotBlank
-  var name: String = ""
+  var name: String = _
+
+  @BeanProperty
+  var description: String = _
 
   @BeanProperty
   @NotBlank
-  var description: String = ""
+  var column: String = _
 
   @BeanProperty
   @NotBlank
-  var column: String = ""
-
-  @BeanProperty
-  @NotBlank
-  var instrument: String = ""
+  var instrument: String = _
 
   /**
     * how high do peaks have to be to be considered as targets

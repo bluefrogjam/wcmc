@@ -1,1 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.correction.GCMSCorrectionTargetConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.correction.GCMSCorrectionTargetConfiguration,\
+  edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.correction.LCMSCorrectionTargetConfiguration
