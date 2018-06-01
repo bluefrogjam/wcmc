@@ -12,7 +12,7 @@ class LCMSRetentionIndexTargetConfiguration {
   @BeanProperty
   @DecimalMax("10000000.0")
   @DecimalMin("0.0")
-  var retentionIndex: Double = 0.0
+  var retentionIndex: Double = _
 
   @BeanProperty
   @NotNull
@@ -32,5 +32,13 @@ class LCMSRetentionIndexTargetConfiguration {
 
   @BeanProperty
   @NotNull
-  var isInternalStandard: Boolean = false
+  var isInternalStandard: Boolean = _
+
+  @BeanProperty
+  @NotNull
+  var requiredForCorrection: Boolean = _
+
+  @BeanProperty
+  @NotNull
+  var confirmed: Boolean = _
 }

@@ -5,9 +5,6 @@ import java.io.File
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, TxtStreamLibraryAccess}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
-import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4J
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -38,8 +35,8 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
     *
     * @return
     */
-  @Bean
-  def targetLibraryLCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
+  //  @Bean
+  //  def targetLibraryLCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
 
 
   @Bean
