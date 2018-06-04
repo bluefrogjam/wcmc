@@ -38,14 +38,14 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Libr
     * Intensity used for penalty calculation - the peak similarity score for targets below this
     * intensity will be scaled down by the ratio of the intensity to this threshold
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensityPenaltyThreshold:10000}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensityPenaltyThreshold:1000}")
   val intensityPenaltyThreshold: Float = 0
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
     * and will depend on inject volume for these reasons
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:5000}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:1000}")
   val minPeakIntensity: Float = 0
 
   /**
