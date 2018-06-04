@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.processing.peakdetection", "carrot.lcms"))
+@ActiveProfiles(Array("file.source.luna", "carrot.processing.peakdetection", "carrot.lcms", "carrot.lcms.correction"))
 class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
@@ -31,14 +31,11 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
   val deco: PeakDetection = null
 
   @Autowired
-  val libraryAccess: LibraryAccess[Target] = null
-
-  @Autowired
   val loader: SampleLoader = null
 
 
   def buildFeature(mz: Double, rt: Double, intensity: Float = 100): Feature = new Feature {
-    override val ionMode: Option[IonMode] = None
+    override val ionMode: Option[IonMode] = Some(PositiveMode())
     override val purity: Option[Double] = None
     override val sample: String = null
     override val retentionTimeInSeconds: Double = rt
@@ -51,7 +48,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
 
   def buildTarget(mz: Double, rt: Double): Target = new Target {
     override val retentionIndex: Double = rt
-    override var confirmed: Boolean = false
+    override var confirmed: Boolean = true
     override val precursorMass: Option[Double] = Some(mz)
     override var inchiKey: Option[String] = None
     override var name: Option[String] = None
@@ -70,7 +67,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
 
   "Retention Index Correction Process" should {
     "test Weiss005_posHILIC_40298234_039.mzML" must {
-      val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Some(PositiveMode())))
+      val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
       val sample: CorrectedSample = correction.process(
         deco.process(
           loader.getSample("Weiss005_posHILIC_40298234_039.mzML"), method, None
@@ -82,27 +79,41 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
       }
     }
 
-    "choose the correct 1_TG d5(17:0/17:1/17:0) M+Na peak in Weiss003_posHILIC_59602960_068.mzML" in {
+    "choose the correct 1_TG d5(17:0/17:1/17:0) M+Na peak in Weiss005_posHILIC_40298234_039.mzML" in {
       // 1_TG d5(17:0/17:1/17:0) iSTD [M+Na]+_OWYYELCHNALRQZ-ADIIQMQPSA-N
-      val wrongFeature = buildFeature(874.79089510745, 634.632019042969, 1000000)
-      val correctFeature = buildFeature(874.792541148294, 666.015014648438, 10000)
+      val veryWrongFeature = buildFeature(874.7783727260261, 612.0850219726562, 100)
+      val wrongFeature = buildFeature(874.7933894961609, 653.9290161132812, 100)
+      val correctFeature = buildFeature(874.789048438798, 667.3779907226562, 25229)
       val target = buildTarget(874.7882, 659.622)
 
-      gaussianSimilarity(wrongFeature, target) should be < 0.6
-      gaussianSimilarity(correctFeature, target) should be > 0.88
+      val vw = gaussianSimilarity(veryWrongFeature, target)
+      val w = gaussianSimilarity(wrongFeature, target)
+      val c = gaussianSimilarity(correctFeature, target)
+
+      logger.warn(s"very wrong:\t${vw}\nwrong:\t\t${w}\ncorrect:\t${c}")
+
+      vw should be < 0.7
+      w should be < 0.8
+      c should be > 0.9
       correction.findBestHit(target, Seq(wrongFeature, correctFeature)).annotation shouldBe correctFeature
     }
 
     "choose the correct 1_TG d5(17:0/17:1/17:0) M+NH4 peak in Weiss005_posHILIC_40298234_039.mzML" in {
       // 1_TG d5(17:0/17:1/17:0) iSTD [M+Na]+_OWYYELCHNALRQZ-ADIIQMQPSA-N
-      val veryWrongFeature = buildFeature(869.842010008935, 653.929016113281, 8900)
-      val wrongFeature = buildFeature(869.825428194475, 658.910034179688, 8300)
-      val correctFeature = buildFeature(869.831824427935, 666.880004882812, 25000)
+      val veryWrongFeature = buildFeature(869.8420100089353, 653.9290161132812, 100)
+      val wrongFeature = buildFeature(869.8254281944745, 658.9100341796875, 100)
+      val correctFeature = buildFeature(869.8318244279354, 666.8800048828125, 25000)
       val target = buildTarget(869.8329, 659.622)
 
-      gaussianSimilarity(veryWrongFeature, target) should be < 0.79
-      gaussianSimilarity(wrongFeature, target) should be < 0.85
-      gaussianSimilarity(correctFeature, target) should be > 0.9
+      val vw = gaussianSimilarity(veryWrongFeature, target)
+      val w = gaussianSimilarity(wrongFeature, target)
+      val c = gaussianSimilarity(correctFeature, target)
+
+      logger.warn(s"very wrong:\t${vw}\nwrong:\t\t${w}\ncorrect:\t${c}")
+
+      vw should be < 0.7
+      w should be < 0.8
+      c should be > 0.9
       correction.findBestHit(target, Seq(wrongFeature, correctFeature)).annotation shouldBe correctFeature
     }
   }

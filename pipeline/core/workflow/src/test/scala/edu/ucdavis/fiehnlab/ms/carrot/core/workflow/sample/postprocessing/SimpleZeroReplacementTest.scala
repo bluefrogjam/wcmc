@@ -45,7 +45,7 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "SimpleZeroReplacementTest" must {
-    val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Some(PositiveMode())))
+    val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
     val rawSample = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
     val sample: QuantifiedSample[Double] = quantify.process(
       annotation.process(

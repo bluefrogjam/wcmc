@@ -285,7 +285,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     val noiseCorrectedValue: Float = if(noise <= ion.intensity) {
       ion.intensity - noise
     } else {
-      logger.warn(s"selected ion's intensity is lower than noise, replaceing with 0")
+      logger.warn(s"selected ion's intensity is lower than noise, replacing with 0")
       0.0f
     }
 
@@ -381,7 +381,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     /**
       * the associated complete scan for this feature
       */
-    override val associatedScan = value.associatedScan
+    override val associatedScan: Option[SpectrumProperties] = value.associatedScan
   }
 
   /**
