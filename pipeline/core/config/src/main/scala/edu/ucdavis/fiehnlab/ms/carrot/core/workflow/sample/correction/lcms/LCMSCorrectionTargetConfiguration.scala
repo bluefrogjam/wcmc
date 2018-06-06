@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.correction
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod

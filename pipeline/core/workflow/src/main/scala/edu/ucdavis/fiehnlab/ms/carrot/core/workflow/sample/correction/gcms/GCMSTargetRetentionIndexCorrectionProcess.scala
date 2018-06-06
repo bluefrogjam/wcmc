@@ -10,7 +10,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SimilaritySupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target, TargetAnnotation}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter._
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.correction.{GCMSCorrectionLibraryProperties, GCMSCorrectionTarget, GCMSLibraryConfiguration}
 import edu.ucdavis.fiehnlab.ms.carrot.math.CombinedRegression
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile

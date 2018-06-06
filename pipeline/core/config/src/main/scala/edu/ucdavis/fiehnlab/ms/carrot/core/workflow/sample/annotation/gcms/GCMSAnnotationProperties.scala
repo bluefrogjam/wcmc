@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.annotation
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.gcms
 
 import java.util
 

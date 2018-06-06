@@ -16,13 +16,13 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase"))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.library.binbase"))
 class GCMSTargetRetentionIndexCorrectionProcessWithBinBaseTest extends GCMSTargetRetentionIndexCorrectionProcessTest
 
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.processing.peakdetection" /*, "carrot.logging.json.enable"*/))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.processing.peakdetection" /*, "carrot.logging.json.enable"*/))
 class GCMSTargetRetentionIndexCorrectionProcessWithDeconvoulutionTest extends GCMSTargetRetentionIndexCorrectionProcessTest with ShouldMatchers {
 
   @Autowired
@@ -40,7 +40,7 @@ class GCMSTargetRetentionIndexCorrectionProcessWithDeconvoulutionTest extends GC
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction" /*, "carrot.logging.json.enable"*/))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms" /*, "carrot.logging.json.enable"*/))
 class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers {
 
   @Autowired
