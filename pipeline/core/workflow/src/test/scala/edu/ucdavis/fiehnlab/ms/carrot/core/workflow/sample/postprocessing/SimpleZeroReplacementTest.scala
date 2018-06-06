@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "file.source.eclipse" /*, "carrot.logging.json.enable"*/))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "carrot.lcms.correction", "file.source.luna", "carrot.logging.json.enable"))
 class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers {
 
   @Autowired
@@ -51,10 +51,10 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
       annotation.process(
         correction.process(
           deco.process(
-            rawSample, method, None),
-          method, None),
-        method, None),
-      method, None)
+            rawSample, method),
+          method),
+        method),
+      method)
 
     "replaceValue" should {
 

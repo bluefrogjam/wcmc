@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.converter
 
 import java.io.{BufferedOutputStream, File, FileInputStream, FileOutputStream}
-import java.net.URL
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
@@ -11,7 +10,7 @@ import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.boot.{ApplicationArguments, ApplicationRunner, SpringApplication}
+import org.springframework.boot.{ApplicationArguments, ApplicationRunner, SpringApplication, WebApplicationType}
 import org.springframework.context.annotation.{Bean, Primary}
 
 import scala.collection.JavaConverters._
@@ -80,6 +79,6 @@ class Converter extends ApplicationRunner with LazyLogging {
 
 object Converter extends App {
   val app = new SpringApplication(classOf[Converter])
-  app.setWebEnvironment(false)
+  app.setWebApplicationType(WebApplicationType.NONE)
   val context = app.run(args: _*)
 }
