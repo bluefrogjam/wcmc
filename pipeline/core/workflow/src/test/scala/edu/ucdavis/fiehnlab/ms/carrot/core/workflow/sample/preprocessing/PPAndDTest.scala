@@ -29,7 +29,7 @@ class PPAndDTest extends WordSpec with Matchers with LazyLogging {
   @Autowired
   val peakDetection: PeakDetection = null
 
-  val method = AcquisitionMethod(ChromatographicMethod("targets", None, None, Option(PositiveMode())))
+  val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

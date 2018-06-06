@@ -57,7 +57,7 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
       val corrected = correction.process(deco.process(sample2, method, None), method, None)
 
       for (x <- corrected.featuresUsedForCorrection) {
-        logger.info(s"used for correction: ${x}")
+        logger.info(s"used for correction: ${x.annotation.massOfDetectedFeature}")
       }
 
       assert(corrected.regressionCurve != null)
