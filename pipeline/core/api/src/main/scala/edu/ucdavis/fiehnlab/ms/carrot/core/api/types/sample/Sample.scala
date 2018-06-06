@@ -47,13 +47,15 @@ trait Sample {
 /**
   * additional sample properties
   */
-trait SampleProperties {
+case class SampleProperties(
+                               sampleName: String,
 
-  /**
-    * pre processing properties, like if other software already processed these data, run a deconvolution, etc
-    */
-  val preprocessing: Option[SamplePreProcessing] = None
+                               /**
+                                 * pre processing properties, like if other software already processed these data, run a deconvolution, etc
+                                 */
+                               preprocessing: Option[SamplePreProcessing] = None) {
 
+  final def isQualityControl: Boolean = sampleName.contains("QC")
 }
 
 trait SamplePreProcessing {

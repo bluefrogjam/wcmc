@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: default
+    include:
+      - carrot.report.quantify.height
+      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+      - file.source.eclipse
+
+carrot:
+  sample:
+    name: '${CARROT_SAMPLE}'
+  method: '${CARROT_METHOD}'

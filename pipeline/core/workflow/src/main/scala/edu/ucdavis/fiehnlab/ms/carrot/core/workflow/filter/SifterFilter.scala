@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Similarity
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SimilaritySupport, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.annotation.GCMSAnnotationLibraryProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.gcms.GCMSAnnotationLibraryProperties
 import org.springframework.context.ApplicationContext
 
 import scala.collection.JavaConverters._

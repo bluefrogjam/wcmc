@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.correction
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target

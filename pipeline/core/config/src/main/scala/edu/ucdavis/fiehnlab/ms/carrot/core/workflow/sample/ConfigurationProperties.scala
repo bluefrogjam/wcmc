@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample
 
 import org.springframework.context.annotation.{ComponentScan, Configuration}
 

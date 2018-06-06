@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.correction
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSCorrectionLibraryProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.LCMSTestsConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
