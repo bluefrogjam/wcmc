@@ -11,10 +11,10 @@ import org.springframework.web.client.RestTemplate
 @Component
 class StasisClient extends StasisService with LazyLogging {
   @Autowired
-  val restTemplate: RestTemplate = null
+  private val restTemplate: RestTemplate = null
 
   @Value("${stasis.baseurl:https://dev-api.metabolomics.us/stasis}")
-  val baseUrl = ""
+  private val baseUrl = ""
 
   private val trackingPath = "tracking"
   private val resultPath = "result"
