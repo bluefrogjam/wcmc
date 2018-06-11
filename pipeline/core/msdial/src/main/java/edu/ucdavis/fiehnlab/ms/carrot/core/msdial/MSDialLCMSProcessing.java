@@ -17,36 +17,39 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Profile("carrot.lcms")
 public class MSDialLCMSProcessing implements MSDialProcessing {
 
-    @Autowired
-    SampleSerializer serializer;
+    private Optional<SampleSerializer> serializer;
 
     private Logger logger = LoggerFactory.getLogger(MSDialLCMSProcessing.class);
+
+    @Autowired
+    public MSDialLCMSProcessing(Optional<SampleSerializer> serializer) {
+        this.serializer = serializer;
+    }
 
     public Sample process(Sample sample, MSDialProcessingProperties properties) {
         List<Feature> spectra = TypeConverter.getJavaSpectrumList(sample);
 
         // Peak picking
         List<PeakAreaBean> detectedPeaks = new DataDependentPeakSpotting().getPeaks(spectra, properties);
-        logger.debug("Peaks after peak detection: " + detectedPeaks.size());
 
         // Isotope detection
         new IsotopeEstimator().setIsotopeInformation(detectedPeaks, properties);
-        logger.debug("Peaks after isotope estimation: " + detectedPeaks.size());
 
         // Calculate peak properties for deconvolution
         // DataSummary bean does not appear to be used, so skipping that translation
         List<MS2DeconvolutionResult> deconvolutionResults = new SpectralDeconvolution().getMS2Deconvolution(spectra, detectedPeaks, properties);
-        logger.debug("Peaks after deconvolution: " + deconvolutionResults.size());
 
         logger.info("Found " + deconvolutionResults.size() + " deconvoluted features");
 
         MSDialLCMSProcessedSample processed = new MSDialLCMSProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
-//        serializer.saveFile(processed);
+
+        serializer.ifPresent(sampleSerializer -> sampleSerializer.saveFile(processed));
 
         return processed;
     }

@@ -1,20 +1,18 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
-import java.io.{File, FileWriter}
+import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SampleSerializer
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -32,7 +30,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
   @Autowired
   val properties: MSDialLCMSProcessingProperties = null
 
-  @Autowired
+  @Autowired(required = false)
   val serializer: SampleSerializer = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -55,7 +53,8 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
 
       outSample shouldBe a[MSDialLCMSProcessedSample]
 
-//      serializer.saveFile(outSample)
+      if (serializer != null)
+        serializer.saveFile(outSample)
     }
 
     "check peakpicking in RT range (1.45 - 1.60)" in {
@@ -66,7 +65,9 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra.size should be > 0
       outSample shouldBe a[MSDialLCMSProcessedSample]
 
-//      saveFile("testSmall0.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
+      if (serializer != null) {
+        serializer.saveFile(outSample.asInstanceOf[MSDialLCMSProcessedSample])
+      }
     }
 
     "check peakpicking in RT range (10.00 - 10.44)" in {
@@ -77,7 +78,9 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
       outSample.spectra.size should be > 0
       outSample shouldBe a[MSDialLCMSProcessedSample]
 
-//      saveFile("testSmall1.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
+      if (serializer != null) {
+        serializer.saveFile(outSample.asInstanceOf[MSDialLCMSProcessedSample])
+      }
     }
 
     "check peakpicking in RT range (4.74 - 5.50)" in {
@@ -91,12 +94,12 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
       val ions = outSample.spectra.head.associatedScan.get.ions
       ions(0).mass should not be ions(0).intensity
 
-//      saveFile("testSmall2.carrot", outSample.asInstanceOf[MSDialLCMSProcessedSample])
+      if (serializer != null) {
+        serializer.saveFile(outSample.asInstanceOf[MSDialLCMSProcessedSample])
+      }
     }
-
   }
 }
-
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class LCTestConfig {

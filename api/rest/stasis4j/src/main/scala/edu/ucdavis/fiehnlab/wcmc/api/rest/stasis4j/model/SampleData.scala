@@ -5,6 +5,7 @@ import java.util.Date
 case class SampleData(
                          sample: String,
                          acquisition: Acquisition,
+                         processing: Processing,
                          metadata: Metadata,
                          userdata: Userdata,
                          references: Array[Reference]
@@ -12,10 +13,13 @@ case class SampleData(
 
 case class Acquisition(
                           instrument: String,
-                          name: String,
                           ionisation: String,
                           method: String
                       )
+
+case class Processing(
+                         method: String
+                     )
 
 case class Metadata(
                        `class`: String,
@@ -28,6 +32,11 @@ case class Userdata(
                        comment: String
                    )
 
+case class Reference(
+                        name: String,
+                        value: String
+                    )
+
 case class SampleResponse(
                              id: String,
                              time: Date,
@@ -37,11 +46,6 @@ case class SampleResponse(
                              userdata: Userdata,
                              references: Array[Reference]
                          )
-
-case class Reference(
-                        name: String,
-                        value: String
-                    )
 
 case class SampleMinix(
                           id: String,

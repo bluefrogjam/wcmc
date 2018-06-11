@@ -3,177 +3,233 @@ carrot:
     correction:
       config:
         -
-          description: ""
-          name: CSH positive ISTDs
-          column:
-          instrument:
-          minimumPeakIntensity: 1000
+          name: lcms_istds
+          column: test
+          instrument: test
+          minimumPeakIntensity: 10000
+          description: "Internal Standards used in the lab"
           targets:
             -
               identifier: "1_CE(22:1) iSTD [2M+Na]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
               accurateMass: 1436.3142
-              retentionTtime: 11.7166
+              retentionTime: 11.7166
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_CE(22:1) iSTD [2M+NH4]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
               accurateMass: 1431.3588
-              retentionTtime: 11.7166
+              retentionTime: 11.7166
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_CE(22:1) iSTD [M+Chol-head–H2O+H]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
               accurateMass: 1076.0144
-              retentionTtime: 11.7166
+              retentionTime: 11.7166
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_CE(22:1) iSTD [M+Na]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
               accurateMass: 729.652
-              retentionTtime: 11.7166
+              retentionTime: 11.7166
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_CE(22:1) iSTD [M+NH4]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
               accurateMass: 724.6966
-              retentionTtime: 11.7166
+              retentionTime: 11.7166
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_Cer(d18:1/17:0) iSTD [M+H]+_ICWGMOFDULMCFL-QKSCFGQVSA-N"
               accurateMass: 552.535
-              retentionTtime: 5.9386
+              retentionTime: 5.9386
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_Cer(d18:1/17:0) iSTD [M+H–H2O]+_ICWGMOFDULMCFL-QKSCFGQVSA-N"
               accurateMass: 534.5245
-              retentionTtime: 5.9386
+              retentionTime: 5.9386
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_Cer(d18:1/17:0) iSTD [M+Na]+_ICWGMOFDULMCFL-QKSCFGQVSA-N"
               accurateMass: 574.517
-              retentionTtime: 5.9386
+              retentionTime: 5.9386
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_Cholesterol d7 iSTD [M–H2O+H]+_HVYWMOMLDIMFJA-IFAPJKRJSA-N"
               accurateMass: 376.3955
-              retentionTtime: 4.8094
+              retentionTime: 4.8094
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_CUDA iSTD [M+H]+_HPTJABJPZMULFH-UHFFFAOYSA-N"
               accurateMass: 341.2799
-              retentionTtime: 0.7785
+              retentionTime: 0.7785
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_DG(12:0/12:0/0:0) iSTD [M+K]+_OQQOAWVKVDAJOI-VWLOTQADSA-N"
               accurateMass: 495.3446
-              retentionTtime: 4.2617
+              retentionTime: 4.2617
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_DG(12:0/12:0/0:0) iSTD [M+Na]+_OQQOAWVKVDAJOI-VWLOTQADSA-N"
               accurateMass: 479.3707
-              retentionTtime: 4.2617
+              retentionTime: 4.2617
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_DG(12:0/12:0/0:0) iSTD [M+NH4]+_OQQOAWVKVDAJOI-VWLOTQADSA-N"
               accurateMass: 474.4153
-              retentionTtime: 4.2617
+              retentionTime: 4.2617
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_DG(18:1/2:0/0:0) iSTD [M+K]+_PWTCCMJTPHCGMS-YRBAHSOBSA-N"
               accurateMass: 437.2664
-              retentionTtime: 3.1737
+              retentionTime: 3.1737
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_DG(18:1/2:0/0:0) iSTD [M+Na]+_PWTCCMJTPHCGMS-YRBAHSOBSA-N"
               accurateMass: 421.2924
-              retentionTtime: 3.1737
+              retentionTime: 3.1737
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_DG(18:1/2:0/0:0) iSTD [M+NH4]+_PWTCCMJTPHCGMS-YRBAHSOBSA-N"
               accurateMass: 416.3371
-              retentionTtime: 3.1737
+              retentionTime: 3.1737
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_LPC(17:0) iSTD [M+H]+_SRRQPVVYXBTRQK-XMMPIXPASA-N"
               accurateMass: 510.3554
-              retentionTtime: 1.8526
+              retentionTime: 1.8526
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_LPE(17:1) iSTD [M+H]+_LNJNONCNASQZOB-HEDKFQSOSA-N"
               accurateMass: 466.2928
-              retentionTtime: 1.3506
+              retentionTime: 1.3506
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_MG(17:0/0:0/0:0) iSTD [M+H]+_SVUQHVRAGMNPLW-UHFFFAOYSA-N"
               accurateMass: 345.2999
-              retentionTtime: 3.0386
+              retentionTime: 3.0386
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_MG(17:0/0:0/0:0) iSTD [M+Na]+_SVUQHVRAGMNPLW-UHFFFAOYSA-N"
               accurateMass: 367.2819
-              retentionTtime: 3.0386
+              retentionTime: 3.0386
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_MG(17:0/0:0/0:0) iSTD [M+NH4]+_SVUQHVRAGMNPLW-UHFFFAOYSA-N"
               accurateMass: 362.3265
-              retentionTtime: 3.0386
+              retentionTime: 3.0386
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_PC(12:0/13:0) iSTD [M+H]+_FCTBVSCBBWKZML-WJOKGBTCSA-N"
               accurateMass: 636.4599
-              retentionTtime: 3.5194
+              retentionTime: 3.5194
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_PE(17:0/17:0) iSTD [M+H]+_YSFFAUPDXKTJMR-DIPNUNPCSA-N"
               accurateMass: 720.5538
-              retentionTtime: 6.2684
+              retentionTime: 6.2684
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_SM(d18:1/17:0) iSTD [M+H]+_YMQZQHIESOAPQH-JXGHDCMNSA-N"
               accurateMass: 717.5905
-              retentionTtime: 5.0637
+              retentionTime: 5.0637
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_Sphingosine(d17:1) iSTD [M+H]+_RBEJCQPPFCKTRZ-LHMZYYNSSA-N"
               accurateMass: 286.2741
-              retentionTtime: 1.0557
+              retentionTime: 1.0557
               retensionTimeUnit: minutes
               isInternalStandard: true
-            -
-              identifier: "1_TG d5(17:0/17:1/17:0) iSTD [M+K]+_OWYYELCHNALRQZ-ADIIQMQPSA-N"
-              accurateMass: 890.7622
-              retentionTtime: 11.022
-              retensionTimeUnit: minutes
-              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_TG d5(17:0/17:1/17:0) iSTD [M+Na]+_OWYYELCHNALRQZ-ADIIQMQPSA-N"
               accurateMass: 874.7882
-              retentionTtime: 11.022
+              retentionTime: 11.022
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             -
               identifier: "1_TG d5(17:0/17:1/17:0) iSTD [M+NH4]+_OWYYELCHNALRQZ-ADIIQMQPSA-N"
               accurateMass: 869.8329
-              retentionTtime: 11.022
+              retentionTime: 11.022
               retensionTimeUnit: minutes
               isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            -
+              identifier: "1_TG d5(17:0/17:1/17:0) iSTD [M+K]+_OWYYELCHNALRQZ-ADIIQMQPSA-N"
+              accurateMass: 890.7622
+              retentionTime: 11.022
+              retensionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true

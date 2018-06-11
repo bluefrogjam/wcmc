@@ -47,6 +47,5 @@ case class ResultResponse(
                              id: String,
                              sample: String,
                              time: Date,
-                             correction: Correction,
-                             injections: java.util.Map[String, Array[Result]]
+                             injections: java.util.Map[String, Array[Injection]]
                          )

@@ -9,7 +9,6 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import org.apache.commons.io.IOUtils
 import org.apache.http.impl.client.HttpClientBuilder
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http._
@@ -23,7 +22,7 @@ import org.springframework.web.client.RestTemplate
   * sends a raw data file to DataFormer rest service to be converted into .abf and .mzml and then sends the result to fserv
   */
 class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
-  @Value("${wcmc.api.rest.dataformer.host:phobos.fiehnlab.ucdavis.edu}")
+  @Value("${wcmc.api.rest.dataformer.host:luna.fiehnlab.ucdavis.edu}")
   private val host: String = ""
 
   @Value("${wcmc.api.rest.dataformer.port:9090}")

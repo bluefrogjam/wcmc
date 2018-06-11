@@ -5,8 +5,9 @@ import java.io.{FileInputStream, FileOutputStream}
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, QuantifiedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
@@ -25,9 +26,11 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms"))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms", "carrot.lcms.correction", "carrot.processing.peakdetection", "file.source.luna"))
 class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 
+  @Autowired
+  val deconv: PeakDetection = null
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
@@ -44,17 +47,18 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
   @Autowired
   val loader: SampleLoader = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "QuantifiedSampleTxtWriterTest" should {
 
+    val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
 
-    val method = AcquisitionMethod(ChromatographicMethod("targets"))
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzML", "B5_P20Lipids_Pos_NIST02.mzML"))
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.d.zip", "B5_P20Lipids_Pos_QC000.d.zip"))
+    val deconvoluted = samples.map((item: Sample) => deconv.process(item, method))
 
     //correct the data
-    val correctedSample = samples.map((item: Sample) => correction.process(item, method))
+    val correctedSample = deconvoluted.map((item: Sample) => correction.process(item, method))
 
     val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method))
 
@@ -88,7 +92,8 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
       }
 
       assert(lines != null)
-      lines.size shouldBe 2 + 4
+      // total lines = number of samples + header lines
+      lines.size shouldBe samples.size + 5
 
       lines(0).split(seperator)(0) == "file"
       lines(4).split(seperator)(0) == results(0).fileName

@@ -22,7 +22,7 @@ import scala.collection.immutable.ListMap
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSTargetAnnotationProperties) extends AnnotateSampleProcess(targets) with LazyLogging {
+class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSAnnotationProperties) extends AnnotateSampleProcess(targets) with LazyLogging {
 
   /**
     * finds a match between the target and the sequence of spectra
@@ -81,7 +81,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
       val resultList =
         if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
           logger.info("preferring gaussian similarity over mass accuracy and rt distance")
-          matches.sortBy { r => SimilarityMethods.featureTargetSimilarity(r, target, lcmsProperties.massAccuracy, lcmsProperties.retentionIndexWindow, lcmsProperties.intensityPenaltyThreshold) }
+          matches.sortBy { r => SimilarityMethods.featureTargetSimilarity(r, target, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold) }
         } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
           logger.info("preferring accuracy over retention time distance")
           matches.sortBy { r => (MassAccuracy.calculateMassErrorPPM(r, target).get, RetentionIndexDifference.diff(target, r)) }
@@ -165,7 +165,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
           val optimizedTargetList =
             if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
               logger.info("preferring gaussian similarity over mass accuracy and rt distance")
-              x._2.sortBy { r => SimilarityMethods.featureTargetSimilarity(x._1, r, lcmsProperties.massAccuracy, lcmsProperties.retentionIndexWindow, lcmsProperties.intensityPenaltyThreshold) }
+              x._2.sortBy { r => SimilarityMethods.featureTargetSimilarity(x._1, r, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold) }
             } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
               logger.debug("preferring accuracy over retention time distance")
               x._2.sortBy(r => (MassAccuracy.calculateMassErrorPPM(x._1, r).get, RetentionIndexDifference.diff(r, x._1)))
@@ -250,7 +250,9 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
 }
 
 @Component
-class LCMSTargetAnnotationProperties {
+@Profile(Array("carrot.lcms"))
+@ConfigurationProperties(prefix = "carrot.lcms.annotation")
+class LCMSAnnotationProperties {
 
   /**
     * defined mass accuracy
@@ -297,11 +299,25 @@ class LCMSTargetAnnotationProperties {
   @Value("${workflow.lcms.annotation.detection.closePeak:3}")
   var closePeakDetection: Double = 3
 
+
+  /**
+    * Mass accuracy (in Dalton) used in target filtering and similarity calculation
+    */
+  @Value("${wcmc.lcms.annotation.peak.mass.accuracy:0.01}")
+  val massAccuracySetting: Double = 0.0
+
+  /**
+    * Retention time accuracy (in seconds) used in target filtering and similarity calculation
+    */
+  @Value("${wcmc.lcms.annotation.peak.rt.accuracy:6}")
+  val rtAccuracySetting: Double = 0.0
+
   /**
     * Intensity used for penalty calculation - the peak similarity score for targets below this
     * intensity will be scaled down by the ratio of the intensity to this threshold
     */
-  @Value("${wcmc.pipeline.workflow.config.annotation.peak.intensityPenaltyThreshold:5000}")
+  @Value("${wcmc.lcms.annotation.peak.intensityPenaltyThreshold:5000}")
   val intensityPenaltyThreshold: Float = 0
+
 
 }

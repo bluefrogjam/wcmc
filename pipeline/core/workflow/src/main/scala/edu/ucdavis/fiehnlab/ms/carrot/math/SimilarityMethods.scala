@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.math
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 
-object SimilarityMethods {
+object SimilarityMethods extends LazyLogging {
   /**
     * Gaussian similarity used for mass accuracy and retention time similarity calculations
     *
@@ -40,8 +41,10 @@ object SimilarityMethods {
     */
   def featureTargetSimilarity(feature: Feature, target: Target, mzTolerance: Double, rtTolerance: Double): Double = {
     if (feature.accurateMass.isDefined && target.precursorMass.isDefined) {
-      val mzSimilarity = gaussianSimilarity(feature.accurateMass.get, target.precursorMass.get, mzTolerance)
-      val rtSimilarity = gaussianSimilarity(feature.retentionTimeInSeconds, target.retentionIndex, rtTolerance)
+      val mzSimilarity = gaussianSimilarity(feature.accurateMass.get, target.precursorMass.get, mzTolerance) * 1.2
+      val rtSimilarity = gaussianSimilarity(feature.retentionTimeInSeconds, target.retentionIndex, rtTolerance) * 0.8
+
+      logger.debug(s"mz similarity: ${mzSimilarity} -- rt similarity: ${rtSimilarity}")
 
       (mzSimilarity + rtSimilarity) / 2
     } else {
@@ -62,6 +65,7 @@ object SimilarityMethods {
   def featureTargetSimilarity(feature: Feature, target: Target, mzTolerance: Double, rtTolerance: Double, intensityThreshold: Double): Double = {
     if (feature.massOfDetectedFeature.isDefined) {
       val intensityPenalty = penaltyFactor(feature.massOfDetectedFeature.get.intensity, intensityThreshold)
+      logger.debug(s"Feature (${feature.massOfDetectedFeature.get.mass})'s intensity: ${feature.massOfDetectedFeature.get.intensity} -- threshold: ${intensityThreshold} -- penalty: ${intensityPenalty}")
 
       intensityPenalty * featureTargetSimilarity(feature, target, mzTolerance, rtTolerance)
     } else {
