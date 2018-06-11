@@ -6,8 +6,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, RequiredStandardNotFoundException, StandardAnnotatedTwice, StandardsNotInOrderException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -63,7 +63,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     * @param optimizedMatches
     * @return
     */
-  def verifyAnnotations(optimizedMatches: Iterable[TargetAnnotation[Target, Feature]], input: Sample) = {
+  def verifyAnnotations(optimizedMatches: Iterable[TargetAnnotation[Target, Feature]], input: Sample): Unit = {
     if (optimizedMatches.map(_.target).toSet.size != optimizedMatches.size) {
       throw new StandardAnnotatedTwice(s"one of the standards, was annotated twice in sample ${input.fileName}!")
     }
@@ -82,7 +82,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     *
     * @param possibleHits
     */
-  def verifyCount(possibleHits: Iterable[TargetAnnotation[Target, Feature]], input: Sample) = {
+  def verifyCount(possibleHits: Iterable[TargetAnnotation[Target, Feature]], input: Sample): Unit = {
     //ensure we found enough standards
     if (possibleHits.size < getMinimumFoundStandards) {
       throw new NotEnoughStandardsFoundException(s"sorry we did not find enough standards in this sample: ${input.fileName} for a successful correction. We only found ${possibleHits.size}, but require ${getMinimumFoundStandards}")
@@ -94,7 +94,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     *
     * @param possibleHits
     */
-  def verifyOrder(possibleHits: Iterable[TargetAnnotation[Target, Feature]], input: Sample) = {
+  def verifyOrder(possibleHits: Iterable[TargetAnnotation[Target, Feature]], input: Sample): Unit = {
     possibleHits.foreach { x =>
       logger.info(s"validating order for ${x.target.name} with ${x.target.retentionIndex} against annotation ${x.annotation.retentionTimeInSeconds}")
     }

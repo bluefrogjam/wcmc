@@ -23,12 +23,14 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "StasisClient Integration Tests" should {
+
     val filename = s"test_${new Date().getTime}"
     val delay = 1000
 
     "create/get Acquisition" in {
       val metadata = SampleData(filename,
-        Acquisition("instrument A", "GCTOF", "positive", "gcms"),
+        Acquisition("instrument A", "positive", "gcms"),
+        Processing("my gcms method name"),
         Metadata("123456", "rat", "tissue"),
         Userdata("file123", ""), Array.empty)
 
@@ -46,10 +48,13 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
 
     "create/get Acquisition with reference data" in {
       val metadata = SampleData(s"test_${new Date().getTime}",
-        Acquisition("instrument B", "QTOF", "positive", "lcms"),
+        Acquisition("instrument B", "positive", "lcms super method"),
+        Processing("my gcms method name"),
         Metadata("123456", "rat", "tissue"),
         Userdata("file123", ""),
-        Array(Reference("ref1", "value1"), Reference("ref2", "value2")))
+        Array(Reference("ref1", "value1"),
+          Reference("ref2", "value2"))
+      )
 
       val res = client.createAcquisition(metadata)
       res.getStatusCode === 200
@@ -65,7 +70,13 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
     }
 
     "add/get Tracking" in {
-      val res = client.addTracking(filename, "entered")
+      val data = TrackingData(
+        filename.split("\\.").head,
+        "entered",
+        filename
+      )
+
+      val res = client.addTracking(data)
       res.getStatusCode === 200
       logger.debug(s"track response: ${res.getBody.toString}")
 

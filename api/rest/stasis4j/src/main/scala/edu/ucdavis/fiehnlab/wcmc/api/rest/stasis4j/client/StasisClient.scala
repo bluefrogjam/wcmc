@@ -13,8 +13,8 @@ class StasisClient extends StasisService with LazyLogging {
   @Autowired
   private val restTemplate: RestTemplate = null
 
-  @Value("${stasis.baseurl:https://dev-api.metabolomics.us/stasis}")
-  private val baseUrl = ""
+  @Value("${stasis.baseurl:https://test-api.metabolomics.us/stasis}")
+  val baseUrl = ""
 
   private val trackingPath = "tracking"
   private val resultPath = "result"
@@ -22,7 +22,7 @@ class StasisClient extends StasisService with LazyLogging {
 
   override def getTracking(sample: String): TrackingResponse = restTemplate.getForObject(s"${baseUrl}/${trackingPath}/${sample}", classOf[TrackingResponse])
 
-  override def addTracking(sample: String, status: String): ResponseEntity[TrackingResponse] = restTemplate.postForEntity(s"${baseUrl}/${trackingPath}", TrackingData(sample, status), classOf[TrackingResponse])
+  override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = restTemplate.postForEntity(s"${baseUrl}/${trackingPath}", data, classOf[TrackingResponse])
 
   override def getResults(sample: String): ResultResponse = restTemplate.getForObject(s"${baseUrl}/${resultPath}/${sample}", classOf[ResultResponse])
 

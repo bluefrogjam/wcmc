@@ -8,9 +8,11 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, MetadataSupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
+@Profile(Array("carrot.serialization.deconvolution"))
 class SampleSerializer() extends LazyLogging {
 
   val destination: String = System.getProperty("user.home") + "/.carrot_storage/deconvolution"

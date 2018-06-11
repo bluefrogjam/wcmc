@@ -9,16 +9,21 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, ReadonlyLibrar
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.correction.GCMSCorrectionTarget
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSCorrectionTarget
 import javax.validation.constraints.{NotBlank, NotEmpty}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.context.annotation.Profile
+import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
+
+@Configuration
+@Profile(Array("carrot.gcms.library.binbase"))
+@ComponentScan
+class BinBaseGCMSConfiguration
 
 /**
   * provides us with a read only access to the binbase database library
@@ -31,7 +36,7 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, cor
   /**
     * internal query to be executed
     */
-  var binQuery:String = "select * from bin where bin_id not in (select bin_id from standard)"
+  var binQuery: String = "select * from bin where bin_id not in (select bin_id from standard)"
 
   /**
     * loads all the spectra from the library

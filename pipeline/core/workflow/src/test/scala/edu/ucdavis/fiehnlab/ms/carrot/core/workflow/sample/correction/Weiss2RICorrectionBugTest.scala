@@ -1,19 +1,16 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader, TxtStreamLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, SampleLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -22,7 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna","quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms", "carrot.logging.json.enable"))
+@ActiveProfiles(Array("file.source.luna", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms", "carrot.lcms.correction" /*, "carrot.logging.json.enable"*/))
 class Weiss2RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
@@ -32,27 +29,14 @@ class Weiss2RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLo
   val deco: PeakDetection = null
 
   @Autowired
-  val libraryAccess: LibraryAccess[Target] = null
+  val loader: SampleLoader = null
 
   @Autowired
-  val loader: SampleLoader = null
+  val libraryAccess: LibraryAccess[Target] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "RI Correction on weiss002" should {
-    val method = AcquisitionMethod(ChromatographicMethod("targets_20180315", None, None, Some(PositiveMode())))
-    val sample: CorrectedSample = correction.process(
-      deco.process(
-        loader.getSample("Weiss002_posHILIC_56904920_048.mzml"), method, None
-      ), method, None
-    )
-
-    "find the closest feature for each target" in {
-      sample.featuresUsedForCorrection.foreach(x => {
-        logger.debug(x.target.name.get)
-        x.annotation.retentionTimeInSeconds === x.target.retentionIndex +- 10
-      })
-    }
 
     "choose the correct ammoniated TG peak at 666.88s (11.11m)" in {
       val wrongFeature1 = new Feature {
