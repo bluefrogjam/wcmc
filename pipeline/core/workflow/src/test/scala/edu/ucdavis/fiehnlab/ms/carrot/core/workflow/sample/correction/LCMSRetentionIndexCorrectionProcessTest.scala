@@ -20,7 +20,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna"))
+@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna" /*, "carrot.logging.json.enable"*/))
 class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -37,24 +37,24 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
 
   "LCMSRetentionIndexCorrectionTest" should {
 
-    val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.d.zip")
-    val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.d.zip")
+    val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.mzml")
+    val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
     val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
 
     s"should fail, because we don't have enough standards in ${sample3}" in {
 
-      correction.minimumFoundStandards = 20
+      correction.asInstanceOf[LCMSTargetRetentionIndexCorrectionProcess].minimumFoundStandards = 20
       val error = intercept[NotEnoughStandardsFoundException] {
-        correction.process(deco.process(sample3, method, None), method, None)
+        correction.process(deco.process(sample3, method), method)
       }
 
       assert(error != null)
     }
 
     s"should pass, because we have enough standards for us to continue ${sample2}" in {
-      correction.minimumFoundStandards = 10
+      correction.asInstanceOf[LCMSTargetRetentionIndexCorrectionProcess].minimumFoundStandards = 10
 
-      val corrected = correction.process(deco.process(sample2, method, None), method, None)
+      val corrected = correction.process(deco.process(sample2, method), method)
 
       for (x <- corrected.featuresUsedForCorrection) {
         logger.info(s"used for correction: ${x.annotation.massOfDetectedFeature}")
