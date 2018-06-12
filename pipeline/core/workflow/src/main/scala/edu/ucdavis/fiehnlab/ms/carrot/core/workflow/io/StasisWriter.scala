@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, Ion, QuantifiedSample, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target => CTarget}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, Target => STTarget}
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,8 +18,6 @@ class StasisWriter[T] extends LazyLogging {
   val stasis_cli: StasisClient = null
 
   def save(sample: QuantifiedSample[T]): ResultData = {
-    print(sample)
-
     val results = sample.spectra.map(feature =>
       Result(CarrotToStasisConverter.asStasisTarget(feature.target),
         Annotation(feature.retentionIndex,
@@ -28,13 +26,12 @@ class StasisWriter[T] extends LazyLogging {
             case _ => 0.0
           },
           replaced = feature.isInstanceOf[GapFilledTarget[T]],
-          feature.massOfDetectedFeature.getOrElse(Ion(0.0, 0.0f)).mass
+          feature.accurateMass.getOrElse(0.0)
         )
       )
     ).toArray
 
-
-    val injections = Map(sample.name -> Injection("fakelogid",
+    val injections = Map(sample.name -> Injection("fake logid",
       Correction(3, sample.correctedWith.name,
       sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
           .map(pair => Curve(pair._1, pair._2))),
