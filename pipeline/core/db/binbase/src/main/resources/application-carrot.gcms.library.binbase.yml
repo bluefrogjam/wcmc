@@ -6,7 +6,10 @@ carrot:
   gcms:
     library:
       binbase:
+        password: c258083
+        host: venus.fiehnlab.ucdavis.edu
         instrument: LECO-GC-TOF
         columns:
           - rtx5recal
           - volatile
+          - binbasebt

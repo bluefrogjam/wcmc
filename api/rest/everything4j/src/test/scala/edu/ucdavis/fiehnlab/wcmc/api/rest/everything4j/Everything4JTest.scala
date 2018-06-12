@@ -71,12 +71,17 @@ class Everything4JTest extends WordSpec with ShouldMatchers with BeforeAndAfterE
         everything4J.exists("090309bsesa100_1.cdf") shouldBe true
       }
 
+      "support spaces " in {
+        everything4J.exists("QC6 (2013)_1.txt") shouldBe true
+      }
+
       "have not file " in {
         everything4J.exists("090309bsesa100_1.cdf.D") shouldBe false
       }
 
 
     }
+
 
   }
 }

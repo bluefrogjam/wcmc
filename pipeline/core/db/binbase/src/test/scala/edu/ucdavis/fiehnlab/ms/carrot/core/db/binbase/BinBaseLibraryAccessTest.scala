@@ -51,7 +51,7 @@ class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
     }
 
     "libraries" in {
-      binBaseLibraryAccess.libraries.size should be(2)
+      binBaseLibraryAccess.libraries.size should be(3)
     }
 
   }

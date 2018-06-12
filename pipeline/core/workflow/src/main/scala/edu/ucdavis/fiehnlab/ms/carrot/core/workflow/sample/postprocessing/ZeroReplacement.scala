@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PostProcessing
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.{CorrectionProcess, PostProcessing}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
@@ -28,7 +28,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
   val sampleLoader: SampleLoader = null
 
   @Autowired
-  val correction: LCMSTargetRetentionIndexCorrectionProcess = null
+  val correction: CorrectionProcess = null
 
   /**
     * replaces the given value, with the best possible value
@@ -50,28 +50,28 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
   final override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
 
     val rawdata: Option[Sample] =
-    if(rawSample.isDefined) {
-      rawSample
-    } else {
-      zeroReplacementProperties.fileExtension.collect {
+      if (rawSample.isDefined) {
+        rawSample
+      } else {
+        zeroReplacementProperties.fileExtension.collect {
 
-        case extension: String =>
-          val fileNameToLoad = sample.name + "." + extension
-          logger.debug(s"attempting to load file: ${fileNameToLoad}")
+          case extension: String =>
+            val fileNameToLoad = sample.name + "." + extension
+            logger.debug(s"attempting to load file: ${fileNameToLoad}")
 
-          try {
-            val result = sampleLoader.loadSample(fileNameToLoad)
+            try {
+              val result = sampleLoader.loadSample(fileNameToLoad)
 
-            if (result.isDefined) {
-              logger.info(s"loaded rawdata file: ${result.get}")
-              result.get
+              if (result.isDefined) {
+                logger.info(s"loaded rawdata file: ${result.get}")
+                result.get
+              }
+            } catch {
+              case e: Throwable =>
+                logger.warn(s"observed error: ${e.getMessage} => skip", e)
             }
-          } catch {
-            case e: Throwable =>
-              logger.warn(s"observed error: ${e.getMessage} => skip", e)
-          }
-      }.collectFirst { case p: Sample => p }
-    }
+        }.collectFirst { case p: Sample => p }
+      }
 
     if (rawdata.isDefined) {
       logger.info(s"replacing data with: ${rawdata.get}")
@@ -282,7 +282,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     val ion = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get).get
 
     logger.debug(s"found best spectra for replacement: $value")
-    val noiseCorrectedValue: Float = if(noise <= ion.intensity) {
+    val noiseCorrectedValue: Float = if (noise <= ion.intensity) {
       ion.intensity - noise
     } else {
       logger.warn(s"selected ion's intensity is lower than noise, replacing with 0")
