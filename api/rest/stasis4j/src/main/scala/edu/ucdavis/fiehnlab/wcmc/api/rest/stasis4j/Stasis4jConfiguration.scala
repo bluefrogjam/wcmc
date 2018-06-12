@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.context.annotation.{ComponentScan, Configuration}
 
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]),
-  scanBasePackages = Array("edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j", "edu.ucdavis.fiehnlab.wcmc.utilities.casetojson"))
+@Configuration
+@ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j", "edu.ucdavis.fiehnlab.wcmc.utilities.casetojson"))
 class Stasis4jConfiguration {}
