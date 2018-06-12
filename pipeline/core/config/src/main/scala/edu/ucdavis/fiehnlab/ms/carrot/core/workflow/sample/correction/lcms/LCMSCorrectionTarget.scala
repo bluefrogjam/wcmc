@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
-import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 
-case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetConfiguration) extends Target with LazyLogging {
+case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetConfiguration) extends Target {
 
   val config: LCMSRetentionIndexTargetConfiguration = lcconfig
 

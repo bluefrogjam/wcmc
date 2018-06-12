@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms", "carrot.lcms.correction" /*, "carrot.logging.json.enable"*/))
+@ActiveProfiles(Array("file.source.luna", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms" /*, "carrot.logging.json.enable"*/))
 class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -53,7 +53,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
       assert(annotation.targets != null)
     }
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST01.d.zip", "B5_P20Lipids_Pos_NIST02.d.zip"))
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST01.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)
