@@ -24,7 +24,6 @@ import scala.collection.immutable.ListMap
 @Profile(Array("carrot.lcms"))
 class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSAnnotationProperties) extends AnnotateSampleProcess(targets) with LazyLogging {
 
-
   /**
     * finds a match between the target and the sequence of spectra
     *
@@ -40,17 +39,17 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target
           */
         override protected val sampleToLog: String = sample.fileName
       } ::
-      new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging with JSONTargetLogging {
-        /**
-          * which sample we require to log
-          */
-        override protected val sampleToLog: String = sample.fileName
-        /**
-          * which target we require to log
-          */
-        override protected val targetToLog: Target = target
-      } ::
-      List()
+        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging with JSONTargetLogging {
+          /**
+            * which sample we require to log
+            */
+          override protected val sampleToLog: String = sample.fileName
+          /**
+            * which target we require to log
+            */
+          override protected val targetToLog: Target = target
+        } ::
+        List()
     )
 
 

@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
 /**
   * this provides us with an easy way to utilized MSDK based data classes in our simplified schema
   */
-class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLogging {
+class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLogging with RawData{
 
   override val properties: Option[SampleProperties] = Some(SampleProperties(name, None))
 

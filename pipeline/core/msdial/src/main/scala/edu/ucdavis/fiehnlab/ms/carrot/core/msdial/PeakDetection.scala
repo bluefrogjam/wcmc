@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.RawData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
@@ -32,15 +33,21 @@ class PeakDetection extends PreProcessor with LazyLogging {
     */
   override def doProcess(item: Sample, method: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
 
+    if (item.isInstanceOf[RawData]) {
 
-    if (method.chromatographicMethod.ionMode.isDefined) {
-      processingProperties.ionMode = method.chromatographicMethod.ionMode.get
-    }
-    else{
-      throw new IonModeRequiredException("please ensure you provide an ion mode!")
-    }
+      if (method.chromatographicMethod.ionMode.isDefined) {
+        processingProperties.ionMode = method.chromatographicMethod.ionMode.get
+      }
+      else {
+        throw new IonModeRequiredException("please ensure you provide an ion mode!")
+      }
 
-    msdialProcessor.process(item, processingProperties)
+      msdialProcessor.process(item, processingProperties)
+    }
+    else {
+      logger.info("object is not of type rawdata, no peak detection required")
+      item
+    }
   }
 }
 

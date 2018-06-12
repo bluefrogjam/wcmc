@@ -48,12 +48,12 @@ trait Sample {
   * additional sample properties
   */
 case class SampleProperties(
-                               sampleName: String,
+                             sampleName: String,
 
-                               /**
-                                 * pre processing properties, like if other software already processed these data, run a deconvolution, etc
-                                 */
-                               preprocessing: Option[SamplePreProcessing] = None) {
+                             /**
+                               * pre processing properties, like if other software already processed these data, run a deconvolution, etc
+                               */
+                             preprocessing: Option[SamplePreProcessing] = None) {
 
   final def isQualityControl: Boolean = sampleName.contains("QC")
 }
@@ -238,3 +238,8 @@ trait GapFilledTarget[T] extends QuantifiedTarget[T] {
   override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
 
 }
+
+/**
+  * its a none processed raw data file
+  */
+trait RawData extends Sample
