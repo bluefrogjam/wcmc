@@ -1,7 +1,10 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j
 
-import org.springframework.context.annotation.{ComponentScan, Configuration}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
+import org.springframework.context.annotation.{Bean, Configuration}
 
 @Configuration
-@ComponentScan(basePackages = Array("edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j", "edu.ucdavis.fiehnlab.wcmc.utilities.casetojson"))
-class Stasis4jConfiguration {}
+class Stasis4jConfiguration {
+  @Bean
+  def stasisClient: StasisClient = new StasisClient()
+}

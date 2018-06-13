@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: carrot.binbase
+    include:
+      - carrot.gcms
+      - carrot.gcms.library.binbase
