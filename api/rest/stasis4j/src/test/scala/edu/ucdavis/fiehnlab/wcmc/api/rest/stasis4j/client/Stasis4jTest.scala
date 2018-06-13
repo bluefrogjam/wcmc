@@ -7,6 +7,8 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
@@ -14,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest
+@SpringBootTest(classes = Array(classOf[StasisTestConfiguration]))
 class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
@@ -124,3 +126,6 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
     }
   }
 }
+
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+class StasisTestConfiguration

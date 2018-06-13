@@ -1,0 +1,5 @@
+spring:
+  profiles:
+    active: carrot.lcms
+    include:
+      - carrot.processing.peakdetection

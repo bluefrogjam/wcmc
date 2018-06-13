@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target => CTarget}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, Target => STTarget}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -40,7 +40,9 @@ class StasisWriter[T] extends LazyLogging {
 
     val data: ResultData = ResultData(sample.name, injections)
 
-    stasis_cli.addResult(data)
+    if (stasis_cli.addResult(data).getStatusCode.value() == 200) {
+      stasis_cli.addTracking(TrackingData(sample.name, "processed", sample.fileName))
+    }
     data
   }
 }
