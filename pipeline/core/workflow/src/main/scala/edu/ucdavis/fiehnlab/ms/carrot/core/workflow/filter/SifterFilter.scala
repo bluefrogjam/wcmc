@@ -31,12 +31,12 @@ class SifterFilter(override val phaseToLog: String, val properties: GCMSAnnotati
     */
   override protected def doIncludeWithDetails(spectra: MSSpectra, applicationContext: ApplicationContext): (Boolean, Any) = {
 
-    logger.info(s"${spectra.retentionTimeInSeconds} evaluating purity: ${spectra.purity} and signal noise: ${spectra.signalNoise}")
+    logger.debug(s"${spectra.retentionTimeInSeconds} evaluating purity: ${spectra.purity} and signal noise: ${spectra.signalNoise}")
 
     (
       properties.filter.asScala.exists { filterConfig =>
         filterConfig.matching.asScala.exists { config =>
-          logger.info(s"current config: ${config}")
+          logger.debug(s"current config: ${config}")
           if (spectra.purity.isDefined && spectra.purity.get > config.minPurity && spectra.purity.get < config.maxPurity) {
             if (spectra.signalNoise.isDefined && spectra.signalNoise.get > config.minSignalNoise && spectra.signalNoise.get < config.maxSignalNoise) {
               val sim: SimilaritySupport = spectra match {

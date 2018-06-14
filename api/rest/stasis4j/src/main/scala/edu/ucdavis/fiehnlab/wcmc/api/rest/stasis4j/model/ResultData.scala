@@ -23,7 +23,7 @@ case class ResultData(
 case class Injection(
                         logid: String,
                         correction: Correction,
-                        results: Array[Result]
+                        results: Seq[Result]
                     )
 
 /**
@@ -47,7 +47,7 @@ case class Curve(
 case class Correction(
                          polynomial: Double,
                          sampleUsed: String,
-                         curve: Array[Curve]
+                         curve: Seq[Curve]
                      )
 
 /**
@@ -94,5 +94,5 @@ case class ResultResponse(
                              id: String,
                              sample: String,
                              time: Date,
-                             injections: java.util.Map[String, Array[Injection]]
+                             injections: java.util.Map[String, Seq[Injection]]
                          )

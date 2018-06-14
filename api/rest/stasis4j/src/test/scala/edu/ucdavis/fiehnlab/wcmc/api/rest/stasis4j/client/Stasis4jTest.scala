@@ -74,7 +74,7 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
     "add/get Tracking" in {
       val data = TrackingData(
         filename.split("\\.").head,
-        "entered",
+        "processing",
         filename
       )
 
@@ -86,7 +86,7 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
 
       val res2 = client.getTracking(filename)
       res2.id should equal(filename)
-      res2.status.head.value should equal("entered")
+      res2.status.head.value should equal("processing")
     }
 
     "add/get Result" in {

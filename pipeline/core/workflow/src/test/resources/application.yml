@@ -24,3 +24,24 @@ mona:
       port: 9090
       user: admin
       password: admin
+
+stasis:
+  baseurl: https://api.metabolomics.us/stasis
+
+---
+
+spring:
+  profiles:
+    active: dev
+
+stasis:
+  baseurl: https://dev-api.metabolomics.us/stasis
+
+---
+
+spring:
+  profiles:
+    active: test
+
+stasis:
+  baseurl: https://test-api.metabolomics.us/stasis

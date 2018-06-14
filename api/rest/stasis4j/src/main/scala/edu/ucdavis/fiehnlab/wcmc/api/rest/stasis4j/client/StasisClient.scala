@@ -14,7 +14,9 @@ class StasisClient extends StasisService with LazyLogging {
   private val restTemplate: RestTemplate = null
 
   @Value("${stasis.baseurl:https://test-api.metabolomics.us/stasis}")
-  val baseUrl = ""
+  val baseUrl: String = ""
+
+  logger.info(s"Using Stasis URL: ${baseUrl}")
 
   private val trackingPath = "tracking"
   private val resultPath = "result"

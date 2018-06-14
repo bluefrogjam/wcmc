@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
@@ -18,7 +19,7 @@ class StasisWriter[T] extends LazyLogging {
   val stasis_cli: StasisClient = null
 
   def save(sample: QuantifiedSample[T]): ResultData = {
-    val results = sample.spectra.map(feature =>
+    val results = sample.spectra.map(feature => {
       Result(CarrotToStasisConverter.asStasisTarget(feature.target),
         Annotation(feature.retentionIndex,
           feature.quantifiedValue.get match {
@@ -29,19 +30,25 @@ class StasisWriter[T] extends LazyLogging {
           feature.accurateMass.getOrElse(0.0)
         )
       )
-    ).toArray
+    })
 
     val injections = Map(sample.name -> Injection("fake logid",
-      Correction(3, sample.correctedWith.name,
-      sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
-          .map(pair => Curve(pair._1, pair._2))),
+      Correction(3,
+        sample.correctedWith.name,
+        sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
+            .map(pair => Curve(pair._1, pair._2))
+      ),
       results)
     ).asJava
 
     val data: ResultData = ResultData(sample.name, injections)
 
-    if (stasis_cli.addResult(data).getStatusCode.value() == 200) {
-      stasis_cli.addTracking(TrackingData(sample.name, "processed", sample.fileName))
+    val response = stasis_cli.addResult(data)
+
+    if (response.getStatusCode == HttpStatus.OK) {
+      stasis_cli.addTracking(TrackingData(sample.name, "processing", sample.fileName))
+    } else {
+      logger.info(response.getStatusCode.getReasonPhrase)
     }
     data
   }

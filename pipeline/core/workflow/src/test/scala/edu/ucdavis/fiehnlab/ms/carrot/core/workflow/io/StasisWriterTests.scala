@@ -5,29 +5,32 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.Res
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.Injection
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.junit.runner.RunWith
+import org.mockito.Mockito._
+import org.mockito.{InjectMocks, Mock}
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration, Import}
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
+@SpringBootTest
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.writer.aws"))
-class StasisWriterTests extends WordSpec with ShouldMatchers with LazyLogging {
+class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfterEach with MockitoSugar with LazyLogging {
   @Autowired
   val deconv: PeakDetection = null
 
@@ -46,18 +49,25 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with LazyLogging {
   @Autowired
   val sampleLoader: SampleLoader = null
 
-  @Autowired
+  @Mock
   val stasis_cli: StasisClient = null
 
   @Autowired
+  @InjectMocks
   val writer: StasisWriter[Double] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+  import org.mockito.MockitoAnnotations
+
+  override def beforeEach(): Unit = {
+    logger.info(" initiating mocks")
+    MockitoAnnotations.initMocks(this)
+  }
+
   "StasisWriter " should {
     val sample = sampleLoader.loadSample("B5_P20Lipids_Pos_NIST01.mzml").get
     val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
-
 
     val result = quantification.process(
       annotation.process(
@@ -69,19 +79,25 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with LazyLogging {
 
     "have a stasisWriter" in {
       stasis_cli should not be null
+      stasis_cli shouldBe a[StasisClient]
       writer.stasis_cli should not be null
+      writer.stasis_cli shouldBe a[StasisClient]
     }
 
     "send the result of a sample to stasis" in {
+      when(stasis_cli.addTracking(TrackingData(sample.name, "processing", sample.fileName))).thenReturn(ResponseEntity.ok(mock[TrackingResponse]))
+      when(stasis_cli.addResult(mock[ResultData])).thenReturn(ResponseEntity.ok(mock[ResultData]))
+
       val data = writer.save(result)
 
-      data.sample === "B5_P20Lipids_Pos_NIST01"
-
       data.injections should have size 1
+
       logger.info(data.injections.keySet().asScala.mkString(";"))
       val injections = data.injections.asScala
-      injections("B5_P20Lipids_Pos_NIST01") shouldBe an[Injection]
-      injections("B5_P20Lipids_Pos_NIST01").results.length should be >= 14
+      injections(sample.name) shouldBe an[Injection]
+      injections(sample.name).results.length should be > 0
+
+      writer.stasis_cli.getTracking(sample.name).status === "PROCESSING"
     }
   }
 }
@@ -90,5 +106,6 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with LazyLogging {
 @Import(Array(classOf[RestClientConfig], classOf[TargetedWorkflowTestConfiguration]))
 class StatisWriterTestConfig extends MockitoSugar {
   @Bean
-  def stasis_cli: StasisClient = mock[StasisClient]
+  def writer: StasisWriter[Double] = new StasisWriter[Double]()
+
 }

@@ -11,7 +11,7 @@ case class TrackingData(
 case class TrackingResponse(
                                id: String,
                                sample: String,
-                               status: Array[StatusItem]
+                               status: Seq[StatusItem]
                            )
 
 case class StatusItem(

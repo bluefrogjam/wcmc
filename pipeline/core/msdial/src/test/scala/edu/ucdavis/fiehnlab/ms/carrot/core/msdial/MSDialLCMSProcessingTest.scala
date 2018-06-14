@@ -47,7 +47,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
 
       val outSample = msdProcessing.process(sample, properties)
 
-      logger.debug(s"Sample result: $outSample")
+      //      logger.debug(s"Sample result: $outSample")
       outSample.spectra should not be null
       outSample.spectra.size should be > 0
 
