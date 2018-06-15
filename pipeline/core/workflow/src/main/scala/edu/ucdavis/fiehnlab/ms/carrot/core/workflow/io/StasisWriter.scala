@@ -46,7 +46,7 @@ class StasisWriter[T] extends LazyLogging {
     val response = stasis_cli.addResult(data)
 
     if (response.getStatusCode == HttpStatus.OK) {
-      stasis_cli.addTracking(TrackingData(sample.name, "processing", sample.fileName))
+      stasis_cli.addTracking(TrackingData(sample.name, "exported", sample.fileName))
     } else {
       logger.info(response.getStatusCode.getReasonPhrase)
     }
