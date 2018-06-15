@@ -38,6 +38,6 @@ class Runner extends CommandLineRunner with LazyLogging {
       logger.info(s"Method: ${method}")
     }
 
-    workflow.process(sampleLoader.loadSample(sampleName).get, AcquisitionMethod.desialize(method))
+    workflow.process(sampleLoader.loadSample(sampleName).get, AcquisitionMethod.deserialize(method))
   }
 }
