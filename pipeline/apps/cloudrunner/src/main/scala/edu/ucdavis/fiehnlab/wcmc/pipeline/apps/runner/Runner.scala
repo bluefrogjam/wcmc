@@ -38,6 +38,15 @@ class Runner extends CommandLineRunner with LazyLogging {
       logger.info(s"Method: ${method}")
     }
 
-    workflow.process(sampleLoader.loadSample(sampleName).get, AcquisitionMethod.desialize(method))
+    logger.info("loading sample"  + sampleName)
+    logger.info("exit"  + sampleLoader.sampleExists(sampleName))
+
+    if(sampleLoader.sampleExists(sampleName)) {
+      workflow.process(sampleLoader.loadSample(sampleName).get, AcquisitionMethod.deserialize(method))
+    }
+    else{
+      logger.warn("sample not found, discarding message, please schedule manually")
+      //TODO email user
+    }
   }
 }

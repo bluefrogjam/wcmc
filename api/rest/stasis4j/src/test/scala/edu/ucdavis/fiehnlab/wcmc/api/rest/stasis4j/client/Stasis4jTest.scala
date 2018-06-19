@@ -7,6 +7,8 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
@@ -14,8 +16,8 @@ import org.springframework.test.context.junit4.SpringRunner
 import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest
 @ActiveProfiles(Array("test"))
+@SpringBootTest(classes = Array(classOf[StasisTestConfiguration]))
 class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
@@ -73,7 +75,7 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
     "add/get Tracking" in {
       val data = TrackingData(
         filename.split("\\.").head,
-        "entered",
+        "processing",
         filename
       )
 
@@ -85,7 +87,7 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
 
       val res2 = client.getTracking(filename)
       res2.id should equal(filename)
-      res2.status.head.value should equal("entered")
+      res2.status.head.value should equal("processing")
     }
 
     "add/get Result" in {
@@ -125,3 +127,6 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
     }
   }
 }
+
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+class StasisTestConfiguration
