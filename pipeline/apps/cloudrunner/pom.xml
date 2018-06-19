@@ -17,6 +17,8 @@
     <properties>
         <docker.jvm>-Xmx16186m</docker.jvm>
         <docker.registry>702514165722.dkr.ecr.us-west-2.amazonaws.com</docker.registry>
+        <docker.imageName>carrot</docker.imageName>
+
     </properties>
 
     <dependencies>
@@ -51,4 +53,28 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <executions>
+                    <execution><!-- login -->
+                        <id>aws-login</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bash
+                            </executable>
+                            <commandlineArgs>-c '$(aws ecr get-login --no-include-email --region us-west-2)'
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
