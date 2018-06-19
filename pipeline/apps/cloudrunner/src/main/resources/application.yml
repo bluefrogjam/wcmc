@@ -4,7 +4,6 @@ spring:
     include:
       - carrot.report.quantify.height
       - carrot.processing.replacement.simple
-      - file.source.eclipse
 
 
 carrot:
