@@ -36,7 +36,7 @@ object AcquisitionMethod extends LazyLogging {
     * @param name
     * @return
     */
-  def desialize(name: String): AcquisitionMethod = {
+  def deserialize(name: String): AcquisitionMethod = {
 
     logger.info(s"deserialize: ${name}")
 

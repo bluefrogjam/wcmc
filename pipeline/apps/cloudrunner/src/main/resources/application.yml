@@ -4,27 +4,11 @@ spring:
     include:
       - carrot.report.quantify.height
       - carrot.processing.replacement.simple
-
+      - carrot.processing.peakdetection
+      - carrot.output.writer.aws
+      - carrot.resource.loader.bucket
 
 carrot:
   sample:
     name: '${CARROT_SAMPLE}'
-  method: '${CARROT_METHOD}'
-
-
----
-
-spring:
-  profiles:
-    active: carrot.binbase
-    include:
-      - carrot.gcms
-      - carrot.gcms.library.binbase
-
----
-
-spring:
-  profiles:
-    active: carrot.lcms
-    include:
-      - carrot.processing.peakdetection
+    method: '${CARROT_METHOD}'
