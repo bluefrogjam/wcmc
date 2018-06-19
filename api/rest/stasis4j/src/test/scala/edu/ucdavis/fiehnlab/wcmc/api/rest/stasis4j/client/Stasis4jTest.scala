@@ -8,13 +8,14 @@ import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 
 import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
+@ActiveProfiles(Array("test"))
 class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
