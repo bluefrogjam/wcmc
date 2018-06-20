@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage.StasisResultStorage
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
@@ -29,7 +30,7 @@ import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.writer.aws"))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.storage.aws"))
 class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfterEach with MockitoSugar with LazyLogging {
   @Autowired
   val deconv: PeakDetection = null
@@ -54,7 +55,7 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
 
   @Autowired
   @InjectMocks
-  val writer: StasisWriter[Double] = null
+  val writer: StasisResultStorage[Double] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -106,6 +107,6 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
 @Import(Array(classOf[RestClientConfig], classOf[TargetedWorkflowTestConfiguration]))
 class StatisWriterTestConfig extends MockitoSugar {
   @Bean
-  def writer: StasisWriter[Double] = new StasisWriter[Double]()
+  def writer: StasisResultStorage[Double] = new StasisResultStorage[Double]()
 
 }

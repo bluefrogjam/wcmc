@@ -11,7 +11,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[RunnerTestConfig]))
-@ActiveProfiles(Array("carrot.binbase", "carrot.output.writer.aws"))
+@ActiveProfiles(Array("carrot.binbase", "carrot.output.storage.aws"))
 @TestPropertySource(properties = Array(
   "carrot.sample:180501dngsa32_1.txt",
   "carrot.method:Gerstel | LECO-GC-TOF | rtx5recal | positive"
