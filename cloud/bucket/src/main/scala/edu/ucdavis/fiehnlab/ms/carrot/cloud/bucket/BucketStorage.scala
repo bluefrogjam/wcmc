@@ -91,7 +91,7 @@ class BucketLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfi
   override def exists(name: String): Boolean = client.doesObjectExist(properties.name, name)
 }
 
-@Profile(Array("carrot.resource.store.bucket"))
+@Profile(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket"))
 @ConfigurationProperties(prefix = "carrot.resource.store.bucket")
 @Component
 class BucketStorageConfigurationProperties {
@@ -106,7 +106,7 @@ class BucketStorageConfigurationProperties {
 @EnableConfigurationProperties
 @Configuration
 @ComponentScan
-@Profile(Array("carrot.resource.store.bucket"))
+@Profile(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket"))
 class BucketStorageConfiguration {
 
   @Bean
