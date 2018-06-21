@@ -11,7 +11,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[RunnerTestConfig]))
-@ActiveProfiles(Array("carrot.lcms"))
+@ActiveProfiles(Array("carrot.lcms", "carrot.output.writer.aws"))
 @TestPropertySource(properties = Array(
   "carrot.sample:B5_P20Lipids_Pos_NIST01.mzml",
   "carrot.method:lcms_istds | test | test | positive"

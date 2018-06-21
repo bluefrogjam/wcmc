@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api._
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.http.ResponseEntity
+import org.springframework.http.{HttpEntity, HttpMethod, ResponseEntity}
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
@@ -33,4 +33,6 @@ class StasisClient extends StasisService with LazyLogging {
   override def getAcquisition(sample: String): SampleResponse = restTemplate.getForObject(s"${baseUrl}/${acquisitionPath}/${sample}", classOf[SampleResponse])
 
   override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", data, classOf[SampleData])
+
+  override def deleteTracking(sample: String): HttpEntity[String] = restTemplate.execute[HttpEntity[String]](s"${baseUrl}/${sample}", HttpMethod.DELETE, null, null)
 }

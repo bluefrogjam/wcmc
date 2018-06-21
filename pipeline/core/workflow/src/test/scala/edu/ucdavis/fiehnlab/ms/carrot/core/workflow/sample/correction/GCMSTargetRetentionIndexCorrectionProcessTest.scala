@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sampl
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSTargetRetentionIndexCorrectionProcess
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.slf4j.{Logger, LoggerFactory}
@@ -49,6 +50,9 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
   @Autowired
   val sampleLoader: SampleLoader = null
 
+  @Autowired
+  val stasis_cli: StasisService = null
+
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
   val method = AcquisitionMethod(ChromatographicMethod(name = "Gerstel", instrument = Some("LECO-GC-TOF"), column = Some("rtx5recal"), ionMode = Option(PositiveMode())))
@@ -86,6 +90,8 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Should
             //old correction only has 7 results
             assert(result.featuresUsedForCorrection.size >= 7)
 
+            stasis_cli.getTracking(result.name).status.map(_.value) should contain("deconvoluted")
+            stasis_cli.getTracking(result.name).status.map(_.value) should contain("corrected")
           }
 
         }

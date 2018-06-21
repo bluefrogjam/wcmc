@@ -4,6 +4,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.QuantificationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.report.quantify.height"))
-class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target]) extends QuantificationProcess[Double](libraryAccess) {
+class QuantifyByHeightProcess @Autowired()(libraryAccess: LibraryAccess[Target], stasisClient: StasisService) extends QuantificationProcess[Double](libraryAccess, stasisClient) {
 
   /**
     * computes the height by utilizing the mass from the target
