@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
-@SpringBootTest
+@SpringBootTest(classes = Array(classOf[SampleLoaderTestConfig]))
 class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugTest extends WordSpec {
 
   @Autowired
@@ -33,7 +33,7 @@ class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugTest extends WordSpec {
   }
 }
 
-@SpringBootTest
+@SpringBootTest(classes = Array(classOf[SampleLoaderTestConfig]))
 @ActiveProfiles(Array("file.source.eclipse", "file.source.luna"))
 class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugUsingEverything4jTest extends WordSpec {
 
@@ -59,4 +59,3 @@ class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugUsingEverything4jTest extend
     }
   }
 }
-
