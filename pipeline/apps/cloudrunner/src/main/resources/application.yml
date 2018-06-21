@@ -1,14 +1,24 @@
 spring:
+  main:
+    web-application-type: none
   profiles:
     active: default
     include:
       - carrot.report.quantify.height
       - carrot.processing.replacement.simple
       - carrot.processing.peakdetection
-      - carrot.output.writer.aws
-      - file.source.eclipse
+      - carrot.output.storage.aws
+      - carrot.resource.loader.bucket
 
 carrot:
   sample:
     name: '${CARROT_SAMPLE}'
-  method: '${CARROT_METHOD}'
+    method: '${CARROT_METHOD}'
+
+
+#which email account to use
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: fiehnlab-2018

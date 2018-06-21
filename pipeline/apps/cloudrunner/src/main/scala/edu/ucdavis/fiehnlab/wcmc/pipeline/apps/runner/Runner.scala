@@ -1,12 +1,11 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.CommandLineRunner
-import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 
 @Component
@@ -18,17 +17,10 @@ class Runner extends CommandLineRunner with LazyLogging {
   val method: String = null
 
   @Autowired
-  val env: Environment = null
-
-  @Autowired
-  val workflow: Workflow[Double] = null
-
-  @Autowired
-  val sampleLoader: SampleLoader = null
+  val taskRunner: TaskRunner = null
 
   override def run(args: String*): Unit = {
 
-    logger.info(s"profiles: [${env.getActiveProfiles.mkString("; ")}]")
 
     if (sampleName.isEmpty || method == null) {
       logger.error("One or more required environment variables are not defined. Please set CARROT_SAMPLE, CARROT_METHOD with correct values.")
@@ -38,6 +30,12 @@ class Runner extends CommandLineRunner with LazyLogging {
       logger.info(s"Method: ${method}")
     }
 
-    workflow.process(sampleLoader.loadSample(sampleName).get, AcquisitionMethod.deserialize(method))
+
+    taskRunner.run(Task(
+      name = s"processing ${sampleName} with ${method}",
+      email = "wohlgemuth@ucdavis.edu",
+      acquisitionMethod = AcquisitionMethod.deserialize(method),
+      samples = Seq(SampleToProcess(sampleName))
+    ))
   }
 }

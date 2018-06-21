@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api._
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
+import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.http.{HttpEntity, HttpMethod, ResponseEntity}
 import org.springframework.stereotype.Component
@@ -13,10 +14,13 @@ class StasisClient extends StasisService with LazyLogging {
   @Autowired
   private val restTemplate: RestTemplate = null
 
-  @Value("${stasis.baseurl:https://test-api.metabolomics.us/stasis}")
-  val baseUrl: String = ""
+  @Value("${stasis.baseurl}")
+  val baseUrl = ""
 
-  logger.info(s"Using Stasis URL: ${baseUrl}")
+  @PostConstruct
+  def post = {
+    logger.info(s"utilizing url: $baseUrl")
+  }
 
   private val trackingPath = "tracking"
   private val resultPath = "result"
