@@ -8,6 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Chromat
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByScanProcess
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.Matchers._
 import org.scalatest.WordSpec
@@ -38,6 +39,9 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
   @Autowired
   val deco: PeakDetection = null
+
+  @Autowired
+  val stasis_cli: StasisService = null
 
   /**
     * used to verify picked scans are correct
@@ -133,6 +137,11 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
           logger.info(s"target: ${quantified.spectra.filter(_.target.name.get == tgt._1).map(f => s"${f.retentionIndex} (${f.massOfDetectedFeature})").mkString("; ")}")
           quantified.spectra.filter(_.target.name.get == tgt._1).head.retentionTimeInSeconds shouldBe tgt._2 +- 0.02
         })
+
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("deconvoluted")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("corrected")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("annotated")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("quantified")
       }
 
       //TODO: fix this failing on NIST02 -- annotation is picking a scan after the actual peak top scan
@@ -172,6 +181,11 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
         targetValues(sample.name).foreach(tgt =>
           quantified.spectra.filter(_.target.name.get == tgt._1).head.retentionTimeInSeconds shouldBe tgt._2 +- 0.02
         )
+
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("deconvoluted")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("corrected")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("annotated")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("quantified")
       }
     }
 

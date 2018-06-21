@@ -15,4 +15,6 @@ trait StasisService {
   def getAcquisition(sample: String): SampleResponse
 
   def createAcquisition(data: SampleData): HttpEntity[SampleData]
+
+  def deleteTracking(sample: String): HttpEntity[String]
 }

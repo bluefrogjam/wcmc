@@ -89,15 +89,22 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
       res2.status.head.value should equal("processing")
     }
 
+    "delete tracking" in {
+      val sample = filename.split("\\.").head
+      val resp = client.deleteTracking(sample)
+      logger.info(s"Deleted: ${resp}")
+
+      // client.getTracking(sample) should equal(None)
+    }
+
     "add/get Result" in {
       val data = ResultData(filename,
         Map[String, Injection](
           "test_1" -> Injection("R2D2",
             Correction(5, "test",
-              Array(Curve(121.12, 121.2),
-                Curve(123.12, 123.2))
+              curve = Array(Curve(121.12, 121.2), Curve(123.12, 123.2))
             ),
-            Array(
+            results = Array(
               Result(
                 Target(121.12, "test", "test_id", 12.2),
                 Annotation(121.2, 10.0, replaced = false, 12.2)

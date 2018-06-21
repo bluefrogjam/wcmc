@@ -5,24 +5,27 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccess
-import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
 import org.scalatest.{ShouldMatchers, WordSpec}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.TestContextManager
+import org.springframework.context.annotation.Bean
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
 
 /**
   * Created by wohlgemuth on 10/17/17.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[CarrotTestConfig]))
 class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually {
 
 
@@ -33,7 +36,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
   val template: RestTemplate = null
 
   @Autowired
-  val libraryAccess: LibraryAccess[Target] = null
+  val libraryAccess: LibraryAccess[_ <: Target] = null
 
   @Autowired
   val monaLibraryAccess: MonaLibraryAccess = null
@@ -44,7 +47,6 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "delete all data" in {
       libraryAccess.deleteAll
-
     }
 
     "add 1 target to the library test" in {
@@ -140,14 +142,26 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
     "able to update " in {
 
       val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
-
       val lib = libraries.toSeq.head
-
       val targets = monaLibraryAccess.load(lib)
-
-
     }
+  }
+}
 
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@ActiveProfiles(Array("carrot.lcms"))
+class CarrotTestConfig {
 
+  @Value("${server.port}")
+  val port: Integer = 0
+
+  /**
+    * should be done over a profile TODO
+    *
+    * @return
+    */
+  @Bean
+  def workflow: Workflow[Double] = {
+    new Workflow[Double]()
   }
 }

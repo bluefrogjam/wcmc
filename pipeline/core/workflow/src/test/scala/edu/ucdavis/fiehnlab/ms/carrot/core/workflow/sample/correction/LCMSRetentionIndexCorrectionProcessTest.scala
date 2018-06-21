@@ -8,8 +8,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -21,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna" /*, "carrot.logging.json.enable"*/))
-class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging {
+class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
@@ -31,6 +32,9 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
 
   @Autowired
   val deco: PeakDetection = null
+
+  @Autowired
+  val stasis_cli: StasisService = null
 
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -61,6 +65,9 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with LazyLogging 
       }
 
       assert(corrected.regressionCurve != null)
+
+      stasis_cli.getTracking(sample2.name).status.map(_.value) should contain("deconvoluted")
+      stasis_cli.getTracking(sample2.name).status.map(_.value) should contain("corrected")
     }
 
   }
