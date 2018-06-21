@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.web.client.HttpClientErrorException
 
 import scala.collection.JavaConverters._
 
@@ -92,10 +94,11 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
 
     "delete tracking" in {
       val sample = filename.split("\\.").head
-      val resp = client.deleteTracking(sample)
-      logger.info(s"Deleted: ${resp}")
+      client.deleteTracking(sample)
+      logger.info(s"Deleted")
 
-      // client.getTracking(sample) should equal(None)
+      val thrown = the[HttpClientErrorException] thrownBy client.getTracking(sample)
+      thrown.getStatusCode should be(HttpStatus.NOT_FOUND)
     }
 
     "add/get Result" in {

@@ -66,7 +66,6 @@ class DataFormerClientTestConfiguration {
   @Value("${wcmc.api.rest.fserv4j.port:80}")
   val fservPort = 0
 
-
   @Bean
   def fserv4j: FServ4jClient = new FServ4jClient(fservHost, fservPort)
 
