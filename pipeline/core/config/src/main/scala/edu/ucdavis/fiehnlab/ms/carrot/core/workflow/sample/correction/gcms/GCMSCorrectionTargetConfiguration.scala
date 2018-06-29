@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 
@@ -23,7 +23,7 @@ class GCMSCorrectionTargetConfiguration {
     * @return
     */
   @Bean
-  def correctionTargets(properties: GCMSCorrectionLibraryProperties): LibraryAccess[Target] = {
+  def correctionTargets(properties: GCMSCorrectionLibraryProperties): LibraryAccess[CorrectionTarget] = {
 
     val libs = properties.config.asScala.map { x =>
 
@@ -47,10 +47,10 @@ class GCMSCorrectionTargetConfiguration {
         }
 
         override def libraries: Seq[AcquisitionMethod] = Seq.empty
-      }.asInstanceOf[LibraryAccess[Target]]
+      }.asInstanceOf[LibraryAccess[CorrectionTarget]]
     }.toSeq.asJava
 
-    new DelegateLibraryAccess[Target](libs)
+    new DelegateLibraryAccess[CorrectionTarget](libs)
   }
 
 }

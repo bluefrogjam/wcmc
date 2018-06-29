@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Ion, Target}
 
-case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) extends Target{
+case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) extends CorrectionTarget{
 
   val config: GCMSRetentionIndexTargetConfiguration = target
   /**

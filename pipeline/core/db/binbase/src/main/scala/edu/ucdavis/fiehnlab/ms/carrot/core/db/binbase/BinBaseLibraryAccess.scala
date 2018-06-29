@@ -31,7 +31,7 @@ class BinBaseGCMSConfiguration
   */
 @Component
 @Profile(Array("carrot.gcms.library.binbase"))
-class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, correction: LibraryAccess[GCMSCorrectionTarget]) extends ReadonlyLibrary[Target] with LazyLogging {
+class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, correction: LibraryAccess[CorrectionTarget]) extends ReadonlyLibrary[Target] with LazyLogging {
 
   /**
     * internal query to be executed

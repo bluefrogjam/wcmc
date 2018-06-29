@@ -1,13 +1,14 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 
-case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetConfiguration) extends Target {
+case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetConfiguration) extends CorrectionTarget {
 
   val config: LCMSRetentionIndexTargetConfiguration = lcconfig
 
   override def accurateMass: Option[Double] = Some(lcconfig.accurateMass)
+
   /**
     * a name for this spectra
     */

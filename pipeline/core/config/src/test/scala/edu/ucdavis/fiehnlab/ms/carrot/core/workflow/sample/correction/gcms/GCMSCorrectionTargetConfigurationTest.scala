@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.gcms.GCMSAnnotationProperties
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 class GCMSCorrectionTargetConfigurationTest extends WordSpec with ShouldMatchers {
 
   @Autowired
-  val library: LibraryAccess[Target] = null
+  val library: LibraryAccess[CorrectionTarget] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

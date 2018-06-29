@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SimilaritySupport}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target, TargetAnnotation}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Sample, Target, TargetAnnotation}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter._
 import edu.ucdavis.fiehnlab.ms.carrot.math.CombinedRegression
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
 
 @Component
 @Profile(Array("carrot.gcms"))
-class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[Target], val config: GCMSCorrectionLibraryProperties) extends CorrectionProcess(libraryAccess) with LazyLogging {
+class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[CorrectionTarget], val config: GCMSCorrectionLibraryProperties) extends CorrectionProcess(libraryAccess) with LazyLogging {
   override lazy val regression: Regression = new CombinedRegression(2, 5)
 
   /**
