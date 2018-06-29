@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[Target], val config: LCMSCorrectionLibraryProperties) extends CorrectionProcess(libraryAccess) with LazyLogging {
+class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[CorrectionTarget], val config: LCMSCorrectionLibraryProperties) extends CorrectionProcess(libraryAccess) with LazyLogging {
   /**
     * Mass accuracy (in Dalton) used in target filtering and similarity calculation
     */

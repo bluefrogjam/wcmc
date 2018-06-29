@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.binbase
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSCorrectionTarget
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -18,7 +19,7 @@ class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
   val binBaseLibraryAccess: BinBaseLibraryAccess = null
 
   @Autowired
-  val  correction:LibraryAccess[GCMSCorrectionTarget] = null
+  val  correction:LibraryAccess[CorrectionTarget] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

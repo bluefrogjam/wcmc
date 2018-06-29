@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
   *
   * @param libraryAccess
   */
-abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[Target]) extends AnnotationProcess[Target, Sample, CorrectedSample](libraryAccess) with LazyLogging {
+abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[CorrectionTarget]) extends AnnotationProcess[CorrectionTarget, Sample, CorrectedSample](libraryAccess) with LazyLogging {
 
   val regression: Regression
 
@@ -25,7 +25,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[T
     * @param input
     * @return
     */
-  override final def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod): CorrectedSample = {
+  override final def process(input: Sample, target: Iterable[CorrectionTarget], method: AcquisitionMethod): CorrectedSample = {
 
     val retentionIndexMarkers = target.filter(_.isRetentionIndexStandard)
     var requiredTargets = retentionIndexMarkers.filter(_.requiredForCorrection)

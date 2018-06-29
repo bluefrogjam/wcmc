@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.annotation
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.gcms.GCMSAnnotationProperties
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -19,7 +19,7 @@ class GCMSAnnotationPropertiesTest extends WordSpec with ShouldMatchers{
   val gCMSAnnotationProperties:GCMSAnnotationProperties = null
 
   @Autowired
-  val library:LibraryAccess[Target] = null
+  val library:LibraryAccess[CorrectionTarget] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
