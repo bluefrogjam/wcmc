@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 
 @SpringBootTest
-@ActiveProfiles(Array("carrot.targets.mona"))
+@ActiveProfiles(Array("carrot.targets.mona","test"))
 class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually with BeforeAndAfterEach {
   val testTarget = new Target {
     /**

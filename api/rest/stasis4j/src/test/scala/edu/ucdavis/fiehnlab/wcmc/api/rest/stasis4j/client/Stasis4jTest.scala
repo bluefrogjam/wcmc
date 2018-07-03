@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.web.client.HttpClientErrorException
 
 import scala.collection.JavaConverters._
 
@@ -35,7 +37,7 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
         Acquisition("instrument A", "positive", "gcms"),
         Processing("my gcms method name"),
         Metadata("123456", "rat", "tissue"),
-        Userdata("file123", ""), Array.empty)
+        Userdata("file123", ""), Array.empty, experiment = "none")
 
       val res = client.createAcquisition(metadata)
       res.getStatusCode === 200
@@ -57,6 +59,7 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
         Userdata("file123", ""),
         Array(Reference("ref1", "value1"),
           Reference("ref2", "value2"))
+        , experiment = "none"
       )
 
       val res = client.createAcquisition(metadata)
@@ -70,6 +73,36 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
       res2.acquisition.instrument should equal("instrument B")
       res2.references.length should be > 0
       res2.references(0) should equal(Reference("ref1", "value1"))
+    }
+
+    "schedule a sample" must {
+      val name = s"test_${new Date().getTime}"
+      "first upload a sample" in {
+
+        val metadata = SampleData(name,
+          Acquisition("instrument B", "positive", "lcms super method"),
+          Processing("my gcms method name"),
+          Metadata("123456", "rat", "tissue"),
+          Userdata("file123", ""),
+          Array(Reference("ref1", "value1"),
+            Reference("ref2", "value2"))
+          , experiment = "none"
+        )
+
+        val res = client.createAcquisition(metadata)
+        res.getStatusCode === 200
+
+        Thread.sleep(delay)
+      }
+
+      "and than schedule it" in {
+        val res2 = client.schedule(name, "lcms super method", "lcms", "test")
+        //res2.getStatusCode === 200
+
+        println(res2)
+      }
+
+
     }
 
     "add/get Tracking" in {
@@ -90,15 +123,23 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
       res2.status.head.value should equal("processing")
     }
 
+    "delete tracking" in {
+      val sample = filename.split("\\.").head
+      client.deleteTracking(sample)
+      logger.info(s"Deleted")
+
+      val thrown = the[HttpClientErrorException] thrownBy client.getTracking(sample)
+      thrown.getStatusCode should be(HttpStatus.NOT_FOUND)
+    }
+
     "add/get Result" in {
       val data = ResultData(filename,
         Map[String, Injection](
           "test_1" -> Injection("R2D2",
             Correction(5, "test",
-              Array(Curve(121.12, 121.2),
-                Curve(123.12, 123.2))
+              curve = Array(Curve(121.12, 121.2), Curve(123.12, 123.2))
             ),
-            Array(
+            results = Array(
               Result(
                 Target(121.12, "test", "test_id", 12.2),
                 Annotation(121.2, 10.0, replaced = false, 12.2)

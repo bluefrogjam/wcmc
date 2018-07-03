@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.processing.peakdetection", "carrot.lcms"))
+@ActiveProfiles(Array("file.source.luna", "carrot.processing.peakdetection", "carrot.lcms", "test"))
 class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired

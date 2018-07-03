@@ -10,7 +10,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -29,6 +30,9 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
 
   @Autowired
   val correction: CorrectionProcess = null
+
+  @Autowired
+  val stasisClient: StasisClient = null
 
   /**
     * replaces the given value, with the best possible value
@@ -97,7 +101,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
       }
 
       logger.info("finished replacement")
-      new GapFilledSample[Double] {
+      val gapFilledSample = new GapFilledSample[Double] {
         override val quantifiedTargets: Seq[QuantifiedTarget[Double]] = replacedSpectra
         override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = sample.noneAnnotated
         override val correctedWith: Sample = sample.correctedWith
@@ -111,6 +115,10 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
         override val properties: Option[SampleProperties] = sample.properties
 
       }
+
+      stasisClient.addTracking(TrackingData(gapFilledSample.name, "replaced", gapFilledSample.fileName))
+
+      gapFilledSample
     }
     //toss exception
     else {
@@ -232,7 +240,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     }
     logger.debug(s"found ${filteredByTime.size} spectra, after retention index filter for target ${receivedTarget}")
 
-    //error here, sometime mass is not found for some reason and so things are failing
+    // error here, sometime mass is not found for some reason and so things are failing
     //TODO: Gert shuold check if this makes sense. In case mass isn't there, I create a Corrected Feature using the original QuantifiedSample and RT, RI, scan# from target with 0 intensity.
     val value: (Feature with CorrectedSpectra) = {
       if (filteredByTime.isEmpty) {

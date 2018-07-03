@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.math.{CombinedRegression, SimilarityMethods}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[CorrectionTarget], val config: LCMSCorrectionLibraryProperties) extends CorrectionProcess(libraryAccess) with LazyLogging {
+class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[CorrectionTarget], val config: LCMSCorrectionLibraryProperties, stasisClient: StasisService) extends CorrectionProcess(libraryAccess, stasisClient) with LazyLogging {
   /**
     * Mass accuracy (in Dalton) used in target filtering and similarity calculation
     */
