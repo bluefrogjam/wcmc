@@ -116,26 +116,6 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
 				new File("target/test.txt.result").exists() should be(true)
 			}
-
-      "download zipped agilent" in {
-        val headers = new HttpHeaders
-        headers.setAccept(java.util.Arrays.asList(MediaType.APPLICATION_OCTET_STREAM))
-
-        val entity = new HttpEntity[String](headers)
-        val response = template.exchange(s"http://testfserv.fiehnlab.ucdavis.edu/rest/file/download/B5_P20Lipids_Pos_QC000.d.zip", HttpMethod.GET, entity, classOf[Array[Byte]])
-
-        response.getStatusCode should be(HttpStatus.OK)
-      }
-
-      "download unzipped agilent" in {
-        val headers = new HttpHeaders
-        headers.setAccept(java.util.Arrays.asList(MediaType.APPLICATION_OCTET_STREAM))
-
-        val entity = new HttpEntity[String](headers)
-        val response = template.exchange(s"http://localhost:${port}/rest/file/download/B5_P20Lipids_Pos_QC000.d", HttpMethod.GET, entity, classOf[Array[Byte]])
-
-        response.getStatusCode should be(HttpStatus.NOT_FOUND)
-      }
     }
 	}
 }

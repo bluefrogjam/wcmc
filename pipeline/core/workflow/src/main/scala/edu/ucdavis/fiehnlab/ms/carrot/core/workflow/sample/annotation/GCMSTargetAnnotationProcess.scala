@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByRetentionIndexWindow, SifterFilter}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.gcms.GCMSAnnotationProperties
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -19,7 +20,7 @@ import scala.collection.immutable.ListMap
 
 @Component
 @Profile(Array("carrot.gcms"))
-class GCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val gcmsPropterties: GCMSAnnotationProperties) extends AnnotateSampleProcess(targets) with LazyLogging {
+class GCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val gcmsPropterties: GCMSAnnotationProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with LazyLogging {
 
   /**
     * should a recruce annotation mode be used

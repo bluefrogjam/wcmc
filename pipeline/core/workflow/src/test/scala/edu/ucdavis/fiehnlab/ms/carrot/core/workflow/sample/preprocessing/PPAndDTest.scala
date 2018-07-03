@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,10 +25,13 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.processing.peakdetection", "quantify-by-scan", "carrot.lcms"))
+@ActiveProfiles(Array("carrot.processing.peakdetection", "quantify-by-scan", "carrot.lcms", "test"))
 class PPAndDTest extends WordSpec with Matchers with LazyLogging {
   @Autowired
   val peakDetection: PeakDetection = null
+
+  @Autowired
+  val stasis_cli: StasisService = null
 
   val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
 
@@ -50,6 +54,7 @@ class PPAndDTest extends WordSpec with Matchers with LazyLogging {
       deconv.spectra should not be Seq.empty
       deconv.spectra should have size 125
 
+      stasis_cli.getTracking(sample.name).status.map(_.value) should contain("deconvoluted")
     }
   }
 }

@@ -5,8 +5,9 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sampl
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.binbase.{BinBaseLibraryAccess, BinBaseLibraryTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSTargetRetentionIndexCorrectionProcess
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.{ShouldMatchers, WordSpec}
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -15,8 +16,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase", "carrot.logging.json.enable"))
-class GCMSTargetAnnotationProcessTest extends WordSpec {
+@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase" , "test"/*, "carrot.logging.json.enable"*/))
+class GCMSTargetAnnotationProcessTest extends WordSpec with ShouldMatchers {
 
 
   @Autowired
@@ -35,11 +36,14 @@ class GCMSTargetAnnotationProcessTest extends WordSpec {
   @Autowired
   val library: BinBaseLibraryAccess = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  @Autowired
+  val stasis_cli: StasisService = null
+
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   def filexExtension: String = "txt"
 
-  protected def prepareSample(sample: Sample) = {
+  protected def prepareSample(sample: Sample): Sample = {
     sample
   }
 
@@ -147,6 +151,11 @@ class GCMSTargetAnnotationProcessTest extends WordSpec {
           logger.info(s"found in carrot but not binbase: ${foundInCarrotBytNotBinBase.size}")
           foundInBinBaseButNotCarrot.foreach { x => logger.info(s"in binbase: ${x}") }
           foundInCarrotBytNotBinBase.foreach { x => logger.info(s"in carrot: ${x}") }
+
+
+          //there is no deconvolution or quantification done on this sample
+          stasis_cli.getTracking(annotationResult.name).status.map(_.value) should contain("corrected")
+          stasis_cli.getTracking(annotationResult.name).status.map(_.value) should contain("annotated")
         }
 
       }

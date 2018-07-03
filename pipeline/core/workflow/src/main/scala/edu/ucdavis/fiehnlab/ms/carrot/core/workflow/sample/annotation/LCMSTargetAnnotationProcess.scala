@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.math.SimilarityMethods
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -22,7 +23,7 @@ import scala.collection.immutable.ListMap
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSAnnotationProperties) extends AnnotateSampleProcess(targets) with LazyLogging {
+class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSAnnotationProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with LazyLogging {
 
   /**
     * finds a match between the target and the sequence of spectra

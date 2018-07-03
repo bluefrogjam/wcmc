@@ -3,8 +3,9 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.RawData
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RawData, Sample}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
@@ -22,6 +23,9 @@ class PeakDetection extends PreProcessor with LazyLogging {
 
   @Autowired
   private val processingProperties: MSDialProcessingProperties = null
+
+  @Autowired
+  val stasisClient: StasisClient = null
 
   override def priortiy: Int = 50
 
@@ -42,7 +46,9 @@ class PeakDetection extends PreProcessor with LazyLogging {
         throw new IonModeRequiredException("please ensure you provide an ion mode!")
       }
 
-      msdialProcessor.process(item, processingProperties)
+      val deconvolutedSample = msdialProcessor.process(item, processingProperties)
+      stasisClient.addTracking(TrackingData(deconvolutedSample.name, "deconvoluted", deconvolutedSample.fileName))
+      deconvolutedSample
     }
     else {
       logger.info("object is not of type rawdata, no peak detection required")

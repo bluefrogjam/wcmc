@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna"))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test"))
 class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers {
 
   @Autowired
@@ -42,6 +43,9 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   @Autowired
   val loader: SampleLoader = null
 
+  @Autowired
+  val stasis_cli: StasisService = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "SimpleZeroReplacementTest" must {
@@ -58,6 +62,13 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
 
     "replaceValue" should {
 
+      "add tracking info to stasis" in {
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("deconvoluted")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("corrected")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("annotated")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("quantified")
+      }
+
       "replace the null values in the file" in {
         val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
 
@@ -68,6 +79,8 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
 
         //all spectra should be the same count as the targets
         replaced.spectra.size should be(replaced.quantifiedTargets.size)
+
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("replaced")
       }
     }
 

@@ -7,6 +7,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.immutable.ListMap
@@ -16,7 +18,7 @@ import scala.collection.immutable.ListMap
   *
   * @param libraryAccess
   */
-abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: LibraryAccess[Target]) extends AnnotationProcess[Target, CorrectedSample, AnnotatedSample](libraryAccess) with LazyLogging {
+abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: LibraryAccess[Target], stasisClient: StasisService) extends AnnotationProcess[Target, CorrectedSample, AnnotatedSample](libraryAccess, stasisClient) with LazyLogging {
 
   /**
     * are we in debug mode, adds some sorting and prettifying for debug messages
@@ -114,7 +116,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: LibraryAcce
     logger.debug(s"annotated spectra count: ${annotatedSpectra.size}")
     logger.debug(s"none annotated spectra count: ${noneAnnotatedSpectra.size}")
 
-    new AnnotatedSample {
+    val annotatedSample = new AnnotatedSample {
 
       override val spectra: Seq[_ <: Feature with AnnotatedSpectra with CorrectedSpectra] = annotatedSpectra
       override val correctedWith: Sample = input.correctedWith
@@ -127,6 +129,9 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: LibraryAcce
         */
       override val properties: Option[SampleProperties] = input.properties
     }
+
+    stasisClient.addTracking(TrackingData(annotatedSample.name, "annotated", annotatedSample.fileName))
+    annotatedSample
   }
 
   /**

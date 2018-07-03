@@ -9,15 +9,15 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Sample, Target, _}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Component
 
 /**
   * quantifies a sample, so it's ready to be exported
   */
 
-abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess) with LazyLogging {
+abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target], stasisClient: StasisService) extends AnnotationProcess[Target, AnnotatedSample, QuantifiedSample[T]](libraryAccess, stasisClient) with LazyLogging {
 
   @Autowired(required = false)
   val postprocessingInstructions: java.util.List[PostProcessing[T]] = new util.ArrayList[PostProcessing[T]]()
@@ -136,6 +136,7 @@ abstract class QuantificationProcess[T](libraryAccess: LibraryAccess[Target]) ex
         }
     }.seq.toSeq.sortBy(_.retentionTimeInSeconds)
 
+    stasisClient.addTracking(TrackingData(input.name, "quantified", input.fileName))
     buildResult(input, resultList)
   }
 

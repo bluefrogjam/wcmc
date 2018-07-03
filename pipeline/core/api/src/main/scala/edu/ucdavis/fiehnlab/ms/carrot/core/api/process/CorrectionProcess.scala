@@ -8,6 +8,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStand
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -15,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
   *
   * @param libraryAccess
   */
-abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[CorrectionTarget]) extends AnnotationProcess[CorrectionTarget, Sample, CorrectedSample](libraryAccess) with LazyLogging {
+abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[CorrectionTarget], val stasisClient: StasisService) extends AnnotationProcess[CorrectionTarget, Sample, CorrectedSample](libraryAccess, stasisClient) with LazyLogging {
 
   val regression: Regression
 
@@ -152,7 +154,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[C
       * and computes all it's properties
       */
 
-    new CorrectedSample {
+    val correctedSample = new CorrectedSample {
       //needs to be possible to replace this with a different sample later
       override val correctedWith: Sample = sampleUsedForCorrection
 
@@ -167,6 +169,10 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[C
       override val properties: Option[SampleProperties] = sampleToCorrect.properties
     }
 
+    // update stasis tracking data
+    stasisClient.addTracking(TrackingData(correctedSample.name, "corrected", correctedSample.fileName))
+
+    correctedSample
   }
 
 }

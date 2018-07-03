@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpect
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Sample, Target, TargetAnnotation}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter._
 import edu.ucdavis.fiehnlab.ms.carrot.math.CombinedRegression
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -19,7 +20,7 @@ import scala.collection.JavaConverters._
 
 @Component
 @Profile(Array("carrot.gcms"))
-class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[CorrectionTarget], val config: GCMSCorrectionLibraryProperties) extends CorrectionProcess(libraryAccess) with LazyLogging {
+class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: LibraryAccess[CorrectionTarget], val config: GCMSCorrectionLibraryProperties, stasisClient: StasisService) extends CorrectionProcess(libraryAccess, stasisClient) with LazyLogging {
   override lazy val regression: Regression = new CombinedRegression(2, 5)
 
   /**

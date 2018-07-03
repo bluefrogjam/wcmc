@@ -32,16 +32,18 @@ class TaskRunnerTest extends WordSpec {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+  // IGNORING for now until we rewrite the scheduler to use aws
+
   "TaskRunnerTest" should {
 
-    "run - should fail since no samples are provided" in {
+    "run - should fail since no samples are provided" ignore {
 
       intercept[AssertionError] {
         taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu", acquisitionMethod = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode()))), samples = Seq.empty))
       }
     }
 
-    "run - should pass" in {
+    "run - should pass" ignore {
       taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu", acquisitionMethod = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode()))), samples = SampleToProcess("B5_P20Lipids_Pos_QC000.mzml") :: List()))
     }
 
