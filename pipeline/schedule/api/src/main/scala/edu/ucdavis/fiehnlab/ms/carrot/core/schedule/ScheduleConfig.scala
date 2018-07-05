@@ -6,8 +6,7 @@ import org.springframework.context.annotation.{Bean, ComponentScan, Configuratio
   * Created by wohlgemuth on 9/15/17.
   */
 @Configuration
+@ComponentScan
 class ScheduleConfig {
 
-  @Bean
-  def taskRunner:TaskRunner = new TaskRunner
 }

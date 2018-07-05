@@ -1,10 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule.impl.aws
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskScheduler
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Profile
+import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}
 import org.springframework.stereotype.Component
 
 /**
@@ -24,5 +25,16 @@ class AWSTaskScheduler extends TaskScheduler {
     * @return
     */
   override protected def doSubmit(task: Task): String = {
+    task.samples.foreach { sample =>
+      stasisClient.schedule(sample.fileName, AcquisitionMethod.serialize(task.acquisitionMethod), task.mode, task.env)
+    }
+
+    ""
   }
+}
+
+@Configuration
+@ComponentScan
+class AWSConfiguration{
+
 }

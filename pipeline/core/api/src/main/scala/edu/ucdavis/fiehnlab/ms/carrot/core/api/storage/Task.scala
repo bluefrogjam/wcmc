@@ -29,7 +29,17 @@ case class Task(
                  /**
                    * defines a list of samples to process
                    */
-                 samples: Seq[SampleToProcess]
+                 samples: Seq[SampleToProcess],
+
+                 /**
+                   * are we in lcms, gcms, etc mode
+                   */
+                 mode: String = "lcms",
+
+                 /**
+                   * which enviornemt we are running
+                   */
+                 env: String = "prod"
 
                )
 

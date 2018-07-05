@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
@@ -22,6 +23,7 @@ import scala.collection.JavaConverters._
   * The behavior can be adjusted by injected additional beans to modify the generated results.
   */
 @Component
+@Profile(Array("carrot.runner.required"))
 class TaskRunner extends LazyLogging {
 
 

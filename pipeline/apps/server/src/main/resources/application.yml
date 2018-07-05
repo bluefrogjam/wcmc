@@ -1,26 +1,22 @@
+
 spring:
   profiles:
-    active:  file.source.eclipse, file.source.luna, carrot.lcms, carrot.targets.mona, carrot.target.dynamic, carrot.report.quantify.height, carrot.store.result.fserv4j, carrot.output.writer.flat, carrot.processing.replacement.simple, carrot.processing.peakdetection
+    active: default
+    include:
+      - carrot.output.storage.aws
+      - carrot.resource.loader.bucket
+      - carrot.resource.store.bucket
+      - carrot.targets.mona
+      - carrot.scheduler.aws
+      - carrot.gcms
+      - carrot.lcms
+      - carrot.gcms.library.binbase
+      - prod
+
   servlet:
     multipart:
       max-file-size: 2048MB
       max-request-size: 2048MB
-
-#which rabbit mq to use
-  rabbitmq:
-    host: blonde.fiehnlab.ucdavis.edu
-    port: 5673
-    username: rabbituser
-    password: rabbitpass
-
-#which mona server to use
-mona:
-  rest:
-    server:
-      user: admin
-      password: admin
-      host: megamona.fiehnlab.ucdavis.edu
-      port: 80
 
 server:
   port: 18080
@@ -32,12 +28,11 @@ email:
   username: binbase@gmail.com
   pass: fiehnlab-2018
 
-#which rest backend to use
-wcmc:
-  api:
-    rest:
-      msdialrest4j:
-        host: luna.fiehnlab.ucdavis.edu
-        port: 9090
-
-#which redis server to use for
+# mona server to run against
+mona:
+  rest:
+    server:
+      user: admin
+      password: admin
+      host: cream.fiehnlab.ucdavis.edu
+      port: 8080
