@@ -109,8 +109,6 @@ trait ReadonlyLibrary[T <: Target] extends LibraryAccess[T] {
 
 }
 
-@Primary
-@Component
 class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] {
 
   /**

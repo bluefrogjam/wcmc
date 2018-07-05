@@ -24,12 +24,9 @@ class GCMSCorrectionTargetConfigurationTest extends WordSpec with ShouldMatchers
 
   "GCMSCorrectionTargetConfigurationTest" should {
 
-    "correctionTargets" in {
-
+    "must have libraries defined" in {
+      library.libraries.size should be(1)
     }
 
   }
 }
-
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class TestApplication

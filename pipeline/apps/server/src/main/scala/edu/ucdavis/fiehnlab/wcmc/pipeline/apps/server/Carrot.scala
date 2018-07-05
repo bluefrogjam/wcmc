@@ -1,5 +1,10 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
+import com.typesafe.scalalogging.LazyLogging
+
+import scala.collection.JavaConverters._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.Value
@@ -15,30 +20,30 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
   * Created by wohlgemuth on 9/7/17.
   */
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class Carrot {
+class Carrot extends LazyLogging{
 
   @Value("${server.port}")
   val port: Integer = 0
-
-  /**
-    * should be done over a profile TODO
-    *
-    * @return
-    */
-  @Bean
-  def workflow: Workflow[Double] = {
-    new Workflow[Double]()
-  }
 
   @Bean
   def client: FServ4jClient = new FServ4jClient(
     "localhost", port
   )
+
+  @Bean
+  def library(correctionLibraries: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[Target] = {
+
+    val result = new DelegateLibraryAccess[Target](correctionLibraries.asScala.map(_.asInstanceOf[LibraryAccess[Target]]).seq.toList.asJava)
+
+    logger.warn(s"${result.libraries}")
+    result
+
+  }
 }
 
 object Carrot extends App {
   val app = new SpringApplication(classOf[Carrot])
-    app.setWebApplicationType(WebApplicationType.SERVLET)
+  app.setWebApplicationType(WebApplicationType.SERVLET)
   val context = app.run(args: _*)
 }
 
