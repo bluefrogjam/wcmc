@@ -24,7 +24,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("backend-txt-lcms", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna"))
+@ActiveProfiles(Array("backend-txt-lcms", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna","test","carrot.runner.required"))
 class TaskRunnerTest extends WordSpec {
 
   @Autowired
@@ -36,14 +36,14 @@ class TaskRunnerTest extends WordSpec {
 
   "TaskRunnerTest" should {
 
-    "run - should fail since no samples are provided" ignore {
+    "run - should fail since no samples are provided" in {
 
       intercept[AssertionError] {
         taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu", acquisitionMethod = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode()))), samples = Seq.empty))
       }
     }
 
-    "run - should pass" ignore {
+    "run - should pass" in {
       taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu", acquisitionMethod = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode()))), samples = SampleToProcess("B5_P20Lipids_Pos_QC000.mzml") :: List()))
     }
 

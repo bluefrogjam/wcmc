@@ -62,13 +62,6 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
 
     "replaceValue" should {
 
-      "add tracking info to stasis" in {
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("deconvoluted")
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("corrected")
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("annotated")
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("quantified")
-      }
-
       "replace the null values in the file" in {
         val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
 
