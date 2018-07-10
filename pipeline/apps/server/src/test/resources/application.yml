@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: carrot.target.dynamic, carrot.report.quantify.height, carrot.output.writer.aws, carrot.processing.replacement.simple, file.source.luna
   http:
     multipart:
       max-file-size: 2048MB

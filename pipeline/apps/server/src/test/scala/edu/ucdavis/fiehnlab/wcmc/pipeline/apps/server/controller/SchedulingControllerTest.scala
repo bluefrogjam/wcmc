@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, SampleToP
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.AdvancedTaskScheduler
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, TaskRunner}
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
