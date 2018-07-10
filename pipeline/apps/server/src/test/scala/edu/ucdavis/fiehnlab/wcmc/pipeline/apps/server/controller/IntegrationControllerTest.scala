@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
-@ActiveProfiles(Array("carrot.targets.mona", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna","test","carrot.runner.required"))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna","test","carrot.runner.required"))
 class IntegrationControllerTest extends WordSpec with ShouldMatchers {
 
 

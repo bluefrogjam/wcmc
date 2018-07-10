@@ -1,8 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
 import com.typesafe.scalalogging.LazyLogging
-
-import scala.collection.JavaConverters._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
@@ -16,11 +14,13 @@ import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.http.MediaType
 import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, CorsRegistry, WebMvcConfigurerAdapter}
 
+import scala.collection.JavaConverters._
+
 /**
   * Created by wohlgemuth on 9/7/17.
   */
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class Carrot extends LazyLogging{
+class Carrot extends LazyLogging {
 
   @Value("${server.port}")
   val port: Integer = 0
@@ -39,6 +39,9 @@ class Carrot extends LazyLogging{
     result
 
   }
+
+  @Bean
+  def workflow: Workflow[Double] = new Workflow[Double]
 }
 
 object Carrot extends App {
