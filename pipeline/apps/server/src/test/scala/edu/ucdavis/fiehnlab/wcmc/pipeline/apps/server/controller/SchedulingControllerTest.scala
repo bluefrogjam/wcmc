@@ -16,7 +16,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.Primary
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.web.client.RestTemplate
 
@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna","test","carrot.runner.required"))
 class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @LocalServerPort
@@ -44,7 +45,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
   "SchedulingControllerTest" should {
     "support the following " must {
 
-      "queue" ignore {
+      "queue" in {
 
         val url = s"http://localhost:${port}/rest/schedule/queue"
 
@@ -55,7 +56,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
         result.size shouldBe 1
       }
 
-      "submit with AcquisitionMethod(None)" ignore {
+      "submit with AcquisitionMethod(None)" in {
         val task = Task("test", "test@test.de", AcquisitionMethod(), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
 
         val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
@@ -70,7 +71,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
 
       }
 
-      "isFailed" ignore {
+      "isFailed" in {
 
         template.getForObject(s"http://localhost:${port}/rest/schedule/failed/TaskA", classOf[Map[String, Any]]).get("result").get shouldBe true
         template.getForObject(s"http://localhost:${port}/rest/schedule/failed/TaskCB", classOf[Map[String, Any]]).get("result").get shouldBe false
@@ -78,28 +79,28 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
 
       }
 
-      "isScheduled" ignore {
+      "isScheduled" in {
 
         template.getForObject(s"http://localhost:${port}/rest/schedule/scheduled/TaskB", classOf[Map[String, Any]]).get("result").get shouldBe true
         template.getForObject(s"http://localhost:${port}/rest/schedule/scheduled/TaskCB", classOf[Map[String, Any]]).get("result").get shouldBe false
 
       }
 
-      "isFinished" ignore {
+      "isFinished" in {
 
         template.getForObject(s"http://localhost:${port}/rest/schedule/finished/TaskC", classOf[Map[String, Any]]).get("result").get shouldBe true
         template.getForObject(s"http://localhost:${port}/rest/schedule/finished/TaskCB", classOf[Map[String, Any]]).get("result").get shouldBe false
 
       }
 
-      "isRunning" ignore {
+      "isRunning" in {
 
         template.getForObject(s"http://localhost:${port}/rest/schedule/running/TaskD", classOf[Map[String, Any]]).get("result").get shouldBe true
         template.getForObject(s"http://localhost:${port}/rest/schedule/running/TaskCB", classOf[Map[String, Any]]).get("result").get shouldBe false
 
       }
 
-      "submit with AcquisitionMethod(Some(...))" ignore {
+      "submit with AcquisitionMethod(Some(...))" in {
         val task = Task("test", "binbase@gmail.com", AcquisitionMethod(ChromatographicMethod("test", None, None, None)), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
 
         val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
@@ -114,7 +115,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
 
       }
 
-      "submit with AcquisitionMethod(Some(...)) and positive ion mode" ignore {
+      "submit with AcquisitionMethod(Some(...)) and positive ion mode" in {
         val task = Task("test", "binbase@gmail.com", AcquisitionMethod(ChromatographicMethod("test", None, None, Option(PositiveMode()))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
 
         val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
@@ -128,7 +129,7 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
         testScheduler.submittedTask.acquisitionMethod shouldEqual AcquisitionMethod(ChromatographicMethod("test", None, None, Option(PositiveMode())))
 
       }
-      "submit with AcquisitionMethod(Some(...)) and negative ion mode" ignore {
+      "submit with AcquisitionMethod(Some(...)) and negative ion mode" in {
         val task = Task("test", "binbase@gmail.com", AcquisitionMethod(ChromatographicMethod("test", None, None, Option(NegativeMode()))), Seq(SampleToProcess("test", "test", "test", "test", Matrix("test", "test", "test", Seq.empty))))
 
         val result: ResponseEntity[Map[String, String]] = template.postForEntity(s"http://localhost:${port}/rest/schedule/submit", task, classOf[Map[String, String]])
