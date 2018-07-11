@@ -31,7 +31,7 @@ class Carrot extends LazyLogging {
   )
 
   @Bean
-  def library(correctionLibraries: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[Target] = {
+  def library(correctionLibraries: java.util.List[LibraryAccess[Target]]): LibraryAccess[Target] = {
 
     val result = new DelegateLibraryAccess[Target](correctionLibraries.asScala.map(_.asInstanceOf[LibraryAccess[Target]]).seq.toList.asJava)
 
