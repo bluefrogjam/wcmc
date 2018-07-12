@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>apps</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
+        <version>1.0.16-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.apps</groupId>
+    <artifactId>server</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+    <description>
+        Provides the REST based entry server
+    </description>
+
+    <properties>
+        <docker.expose>18080</docker.expose>
+        <docker.jvm>-Xmx16186m</docker.jvm>
+    </properties>
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
+            <artifactId>minix</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
+            <artifactId>aws</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
+            <artifactId>api</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
+            <artifactId>workflow</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
+            <artifactId>fserv4j</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
+            <artifactId>mona</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
+            <artifactId>config</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
+            <artifactId>bucket</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.server</groupId>
+            <artifactId>fserv</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.5.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
+            <artifactId>binbase</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
+</project>
