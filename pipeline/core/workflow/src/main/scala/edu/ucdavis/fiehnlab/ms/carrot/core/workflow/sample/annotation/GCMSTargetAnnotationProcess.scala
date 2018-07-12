@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.RetentionIndexDifference
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotateSampleProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectedSample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByRetentionIndexWindow, SifterFilter}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.gcms.GCMSAnnotationProperties
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
@@ -20,7 +20,7 @@ import scala.collection.immutable.ListMap
 
 @Component
 @Profile(Array("carrot.gcms"))
-class GCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val gcmsPropterties: GCMSAnnotationProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with LazyLogging {
+class GCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[AnnotationTarget], val gcmsPropterties: GCMSAnnotationProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with LazyLogging {
 
   /**
     * should a recruce annotation mode be used

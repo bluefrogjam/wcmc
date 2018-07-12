@@ -13,9 +13,7 @@
         <module>api</module>
         <module>pipeline</module>
         <module>cloud</module>
-        <!--
-        <module>binbase</module>
-        -->
+        <module>apps</module>
     </modules>
 
     <packaging>pom</packaging>

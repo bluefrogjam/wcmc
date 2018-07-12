@@ -18,7 +18,7 @@ import scala.collection.immutable.ListMap
   *
   * @param libraryAccess
   */
-abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: LibraryAccess[Target], stasisClient: StasisService) extends AnnotationProcess[Target, CorrectedSample, AnnotatedSample](libraryAccess, stasisClient) with LazyLogging {
+abstract class AnnotateSampleProcess[T <: Target] @Autowired()(val libraryAccess: LibraryAccess[T], stasisClient: StasisService) extends AnnotationProcess[T, CorrectedSample, AnnotatedSample](libraryAccess, stasisClient) with LazyLogging {
 
   /**
     * are we in debug mode, adds some sorting and prettifying for debug messages
@@ -36,7 +36,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: LibraryAcce
     * @param input
     * @return
     */
-  final override def process(input: CorrectedSample, targets: Iterable[Target], method: AcquisitionMethod): AnnotatedSample = {
+  final override def process(input: CorrectedSample, targets: Iterable[T], method: AcquisitionMethod): AnnotatedSample = {
     logger.info(s"Annotating sample: ${input.name}")
 
     /**

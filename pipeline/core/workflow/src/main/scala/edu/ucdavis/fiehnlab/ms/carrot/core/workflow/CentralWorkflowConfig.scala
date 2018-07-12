@@ -7,7 +7,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Target}
+
 /**
   * Created by wohlgemuth on 7/14/17.
   */
@@ -27,5 +28,10 @@ class CentralWorkflowConfig {
   def loader(resourceLoader: DelegatingResourceLoader, dataFormerClient: DataFormerClient): ConversionAwareSampleLoader = new ConversionAwareSampleLoader(dataFormerClient, resourceLoader)
 
   @Bean
-  def library(targets:java.util.List[LibraryAccess[Target]]) : DelegateLibraryAccess[Target] = new DelegateLibraryAccess[Target](targets)
+  def annotation_library(targets: java.util.List[LibraryAccess[AnnotationTarget]]): DelegateLibraryAccess[AnnotationTarget] = new DelegateLibraryAccess[AnnotationTarget](targets)
+
+  @Bean
+  def correction_library(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
+
+
 }

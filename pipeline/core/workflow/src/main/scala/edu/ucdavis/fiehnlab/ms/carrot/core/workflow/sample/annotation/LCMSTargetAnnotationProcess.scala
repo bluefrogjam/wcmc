@@ -23,7 +23,7 @@ import scala.collection.immutable.ListMap
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[Target], val lcmsProperties: LCMSAnnotationProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with LazyLogging {
+class LCMSTargetAnnotationProcess @Autowired()(val targets: LibraryAccess[AnnotationTarget], val lcmsProperties: LCMSAnnotationProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with LazyLogging {
 
   /**
     * finds a match between the target and the sequence of spectra
