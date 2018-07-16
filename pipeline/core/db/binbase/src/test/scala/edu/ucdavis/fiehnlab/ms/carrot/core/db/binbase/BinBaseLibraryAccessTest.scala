@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.binbase
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSCorrectionTarget
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -16,10 +16,11 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
 
   @Autowired
-  val binBaseLibraryAccess: BinBaseLibraryAccess = null
+  val  correction:LibraryAccess[CorrectionTarget] = null
+
 
   @Autowired
-  val  correction:LibraryAccess[CorrectionTarget] = null
+  val  library:LibraryAccess[AnnotationTarget] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -27,7 +28,7 @@ class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
 
     "load" in {
       val method = AcquisitionMethod(ChromatographicMethod("binbase", None, Option("rtx5recal"), None))
-      val spectra = binBaseLibraryAccess.load(method)
+      val spectra = library.load(method)
 
 
       //we need more than 1000 bins in it
@@ -36,7 +37,7 @@ class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
 
     "load must also merge the correction standards into the library" in {
       val method = AcquisitionMethod(ChromatographicMethod("binbase", None, Option("rtx5recal"), None))
-      val spectra = binBaseLibraryAccess.load(method)
+      val spectra = library.load(method)
       val markers = correction.load(method)
 
       //this library should have been merged with the marker library
@@ -52,7 +53,7 @@ class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
     }
 
     "libraries" in {
-      binBaseLibraryAccess.libraries.size should be(3)
+      library.libraries.size should be(3)
     }
 
   }

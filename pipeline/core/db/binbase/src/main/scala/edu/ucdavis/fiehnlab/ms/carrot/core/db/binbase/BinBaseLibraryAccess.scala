@@ -31,7 +31,7 @@ class BinBaseGCMSConfiguration
   */
 @Component
 @Profile(Array("carrot.gcms.library.binbase"))
-class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, correction: LibraryAccess[CorrectionTarget]) extends ReadonlyLibrary[Target] with LazyLogging {
+class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) extends ReadonlyLibrary[AnnotationTarget] with LazyLogging {
 
   /**
     * internal query to be executed
@@ -44,7 +44,7 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, cor
     *
     * @return
     */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = {
+  override def load(acquisitionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = {
     acquisitionMethod.chromatographicMethod.column match {
       case Some(column) =>
 
@@ -52,7 +52,7 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, cor
         try {
           val result = connection.createStatement().executeQuery(binQuery)
 
-          val annotations = new Iterator[Target] {
+          val annotations = new Iterator[AnnotationTarget] {
             def hasNext = result.next()
 
             def next() = BinBaseLibraryTarget(
@@ -66,12 +66,10 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties, cor
                 Ion(data(0).toDouble, data(1).toFloat)
               },
               unique = result.getDouble("uniquemass")
-            ).asInstanceOf[Target]
+            ).asInstanceOf[AnnotationTarget]
           }.toSeq
 
-          val correctionMarkers = correction.load(acquisitionMethod)
-
-          annotations ++ correctionMarkers
+          annotations
         }
         finally {
           connection.close()
@@ -150,7 +148,7 @@ case class BinBaseLibraryTarget(
                                  masses: Seq[Ion],
                                  unique: Double
                                )
-  extends Target with Idable[String] {
+  extends AnnotationTarget with Idable[String] {
   /**
     * a name for this spectra
     */
