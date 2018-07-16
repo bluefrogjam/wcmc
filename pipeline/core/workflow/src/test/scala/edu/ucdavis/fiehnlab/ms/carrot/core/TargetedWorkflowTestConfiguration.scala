@@ -30,14 +30,6 @@ class TargetedWorkflowTestConfiguration extends LazyLogging {
   @Bean
   def resourceLoaderSrc: RecursiveDirectoryResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
 
-  /**
-    * our defined library of library targets
-    *
-    * @return
-    */
-  //  @Bean
-  //  def targetLibraryLCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
-
 
   @Bean
   def client:FServ4jClient = new FServ4jClient(

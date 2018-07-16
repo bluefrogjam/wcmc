@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Sample, Target}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
@@ -185,4 +185,48 @@ class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[
   override def libraries: Seq[AcquisitionMethod] = {
     delegates.asScala.flatMap(_.libraries)
   }
+}
+
+class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget], annotation: LibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] {
+  /**
+    * loads all the spectra from the library
+    * applicable for the given acquistion method
+    *
+    * @return
+    */
+  override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = {
+    this.correction.load(acquisitionMethod) ++ this.annotation.load(acquisitionMethod)
+  }
+
+  /**
+    * this will update the existing target with the provided values in the selected method
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def update(target: Target, acquisitionMethod: AcquisitionMethod): Boolean = this.annotation.update(target.asInstanceOf[AnnotationTarget], acquisitionMethod)
+
+  /**
+    * deletes a specified target from the acquisition method
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: Target, acquisitionMethod: AcquisitionMethod): Unit = this.annotation.delete(target.asInstanceOf[AnnotationTarget], acquisitionMethod)
+
+  /**
+    * adds a list of targets
+    *
+    * @param targets
+    */
+  override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
+    this.annotation.add(targets.map(_.asInstanceOf[AnnotationTarget]), acquisitionMethod)
+  }
+
+  /**
+    * returns all associated acquisition methods for this library
+    *
+    * @return
+    */
+  override def libraries: Seq[AcquisitionMethod] = annotation.libraries.filter(correction.libraries.contains(_))
 }

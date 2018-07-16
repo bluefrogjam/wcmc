@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.QuantificationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("quantify-by-scan"))
-class QuantifyByScanProcess @Autowired()(libraryAccess: LibraryAccess[Target], stasisClient: StasisService) extends QuantificationProcess[Int](libraryAccess, stasisClient) {
+class QuantifyByScanProcess @Autowired()(libraryAccess: MergeLibraryAccess, stasisClient: StasisService) extends QuantificationProcess[Int](libraryAccess, stasisClient) {
 
   /**
     * computes the height by utilizing the mass from the target

@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -18,7 +18,7 @@ import scala.collection.immutable.ListMap
   *
   * @param libraryAccess
   */
-abstract class AnnotateSampleProcess[T <: Target] @Autowired()(val libraryAccess: LibraryAccess[T], stasisClient: StasisService) extends AnnotationProcess[T, CorrectedSample, AnnotatedSample](libraryAccess, stasisClient) with LazyLogging {
+abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibraryAccess, stasisClient: StasisService) extends AnnotationProcess[CorrectedSample, AnnotatedSample](libraryAccess, stasisClient) with LazyLogging {
 
   /**
     * are we in debug mode, adds some sorting and prettifying for debug messages
@@ -36,7 +36,7 @@ abstract class AnnotateSampleProcess[T <: Target] @Autowired()(val libraryAccess
     * @param input
     * @return
     */
-  final override def process(input: CorrectedSample, targets: Iterable[T], method: AcquisitionMethod): AnnotatedSample = {
+  final override def process(input: CorrectedSample, targets: Iterable[Target], method: AcquisitionMethod): AnnotatedSample = {
     logger.info(s"Annotating sample: ${input.name}")
 
     /**

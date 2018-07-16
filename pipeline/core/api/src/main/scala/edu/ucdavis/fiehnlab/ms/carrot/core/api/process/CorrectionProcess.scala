@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, RequiredStandardNotFoundException, StandardAnnotatedTwice, StandardsNotInOrderException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
   *
   * @param libraryAccess
   */
-abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[CorrectionTarget], val stasisClient: StasisService) extends AnnotationProcess[CorrectionTarget, Sample, CorrectedSample](libraryAccess, stasisClient) with LazyLogging {
+abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAccess, val stasisClient: StasisService) extends AnnotationProcess[Sample, CorrectedSample](libraryAccess, stasisClient) with LazyLogging {
 
   val regression: Regression
 
@@ -27,7 +27,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: LibraryAccess[C
     * @param input
     * @return
     */
-  override final def process(input: Sample, target: Iterable[CorrectionTarget], method: AcquisitionMethod): CorrectedSample = {
+  override final def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod): CorrectedSample = {
 
     val retentionIndexMarkers = target.filter(_.isRetentionIndexStandard)
     var requiredTargets = retentionIndexMarkers.filter(_.requiredForCorrection)

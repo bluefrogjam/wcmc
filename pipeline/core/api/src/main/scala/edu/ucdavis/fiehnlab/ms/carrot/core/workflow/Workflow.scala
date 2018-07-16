@@ -38,7 +38,7 @@ class Workflow[T] extends LazyLogging {
   val postProcessor: java.util.List[PostProcessing[T]] = new util.ArrayList[PostProcessing[T]]()
 
   @Autowired
-  val annotate: AnnotateSampleProcess[AnnotationTarget] = null
+  val annotate: AnnotateSampleProcess = null
 
   /**
     * executes required pre processing steps, if applicable
