@@ -9,7 +9,7 @@ spring:
       - carrot.processing.peakdetection
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
-
+      - carrot.runner.required
 carrot:
   sample:
     name: '${CARROT_SAMPLE}'
