@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccess
@@ -38,7 +38,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
   val template: RestTemplate = null
 
   @Autowired
-  val libraryAccess: DelegateLibraryAccess[Target] = null
+  val libraryAccess: MergeLibraryAccess = null
 
   @Autowired
   val monaLibraryAccess: MonaLibraryAccess = null
