@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
@@ -46,6 +47,9 @@ class TaskRunner extends LazyLogging {
   @Autowired(required = false)
   val storage: java.util.Collection[ResultStorage] = new util.ArrayList[ResultStorage]()
 
+  @Autowired
+  val context: ApplicationContext = null
+
   /**
     * runs the specified TASK
     *
@@ -58,7 +62,8 @@ class TaskRunner extends LazyLogging {
     assert(task.name != null)
     assert(task.samples != null)
     assert(task.samples.nonEmpty)
-
+    assert(task.mode != null, "task.mode cannot be null")
+    assert(task.env != null, "task.env cannot be null")
 
     logger.info(s"executing received task: ${task} and discovering ${task.samples.size} files")
     val classes: Seq[ExperimentClass] = task.samples.groupBy(_.matrix).map { entry =>
@@ -68,7 +73,9 @@ class TaskRunner extends LazyLogging {
 
         try {
           //processes the actual sample
-          workflow.process(sampleLoader.loadSample(x.fileName).get, task.acquisitionMethod)
+          val value = sampleLoader.loadSample(x.fileName)
+          assert(value.isDefined, "please ensure that specified file name is defined!")
+          workflow.process(value.get, task.acquisitionMethod)
         }
         catch {
           case e: UnsupportedSampleException =>
