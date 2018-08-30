@@ -4,11 +4,11 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, Ion, NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
-import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -22,8 +22,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest
 @ActiveProfiles(Array("carrot.targets.mona","test"))
-class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually with BeforeAndAfterEach {
-  val testTarget = new Target {
+class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually with BeforeAndAfter with BeforeAndAfterEach {
+  val testTarget = new AnnotationTarget {
     /**
       * a name for this spectra
       */
@@ -74,7 +74,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       */
     override val uniqueMass: Option[Double] = None
   }
-  val testTarget2 = new Target {
+  val testTarget2 = new AnnotationTarget {
     override val uniqueMass: Option[Double] = None
     /**
       * a name for this spectra
@@ -122,6 +122,9 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     })
   }
 
+  val acquisitionMethod1: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, Some(PositiveMode())))
+  val acquisitionMethod2: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, Some(NegativeMode())))
+
 
   @Autowired
   val library: MonaLibraryAccess = null
@@ -132,23 +135,28 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "MonaLibraryAccessTest" should {
+  after {
+    library.deleteLibrary(acquisitionMethod1)
+    library.deleteLibrary(acquisitionMethod2)
+  }
 
+  "MonaLibraryAccessTest" should {
 
     "reset database using mona client" in {
       client.list().foreach { x =>
+        println(s"deleting: ${x.id}")
         client.delete(x.id)
       }
       client.regenerateStatistics
-      try {
-        client.regenerateDownloads
-      }
-      catch {
-        case e: Exception =>
-          logger.warn(e.getMessage, e)
-      }
+      //      try {
+      //        client.regenerateDownloads
+      //      }
+      //      catch {
+      //        case e: Exception =>
+      //          logger.warn(e.getMessage, e)
+      //      }
 
-      eventually(timeout(90 seconds)) {
+      eventually(timeout(10 seconds)) {
         client.list().size shouldBe 0
         Thread.sleep(100)
       }
@@ -157,17 +165,16 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "be possible to add and load targets" in {
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod()
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
 
       eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
       }
-      library.add(testTarget2, acquisitionMethod, None)
+      library.add(testTarget2, acquisitionMethod2, None)
 
       eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 2
+        library.load(acquisitionMethod2).size shouldBe 1
         Thread.sleep(1000)
       }
 
@@ -175,20 +182,19 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "be possible to add and load targets from a different library" in {
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
       eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
       }
-      library.add(testTarget2, acquisitionMethod, None)
+      library.add(testTarget2, acquisitionMethod1, None)
       eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 2
+        library.load(acquisitionMethod1).size shouldBe 2
         Thread.sleep(1000)
       }
 
       eventually(timeout(5 seconds)) {
-        library.load(AcquisitionMethod()).size shouldBe 2
+        library.load(acquisitionMethod2).size shouldBe 1
         Thread.sleep(1000)
       }
       eventually(timeout(5 seconds)) {
@@ -206,7 +212,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "there should be 2 acquisition methods defined now" in {
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 2
         Thread.sleep(1000)
       }
@@ -216,27 +222,25 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       library.deleteAll
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
-
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         Thread.sleep(1000)
       }
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
 
       eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
       }
 
-      val target = library.load(acquisitionMethod).head
+      val target = library.load(acquisitionMethod1).head
 
       target.name = Option("12345")
 
-      library.update(target, acquisitionMethod)
+      library.update(target, acquisitionMethod1)
 
-      eventually(timeout(15 seconds)) {
-        val updatedSpectra = library.load(acquisitionMethod).head
+      eventually(timeout(5 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.name.get shouldBe ("12345")
       }
 
@@ -247,32 +251,29 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       library.deleteAll
 
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
-
-
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
 
       eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
 
       }
 
 
-      val target = library.load(acquisitionMethod).head
+      val target = library.load(acquisitionMethod1).head
 
       target.inchiKey = Option("QNAYBMKLOCPYGJ-REOHCLBHSA-N")
 
-      library.update(target, acquisitionMethod)
+      library.update(target, acquisitionMethod1)
 
-      eventually(timeout(15 seconds)) {
-        val updatedSpectra = library.load(acquisitionMethod).head
+      eventually(timeout(5 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.inchiKey.get shouldBe ("QNAYBMKLOCPYGJ-REOHCLBHSA-N")
       }
 
@@ -281,30 +282,28 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     "able to update the confirmed status a spectrum to true" in {
 
       library.deleteAll
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
 
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
-
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
 
       eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
       }
 
-      val target = library.load(acquisitionMethod).head
+      val target = library.load(acquisitionMethod1).head
 
       target.confirmed = true
 
-      library.update(target, acquisitionMethod)
+      library.update(target, acquisitionMethod1)
 
-      eventually(timeout(15 seconds)) {
-        val updatedSpectra = library.load(acquisitionMethod).head
+      eventually(timeout(5 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.confirmed shouldBe true
         Thread.sleep(1000)
 
@@ -315,29 +314,28 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     "able to update the confirmed status a spectrum to false" in {
 
       library.deleteAll
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
 
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(15 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+      eventually(timeout(5 seconds)) {
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
       }
 
-      val target = library.load(acquisitionMethod).head
+      val target = library.load(acquisitionMethod1).head
 
       target.confirmed = false
 
-      library.update(target, acquisitionMethod)
+      library.update(target, acquisitionMethod1)
 
-      eventually(timeout(15 seconds)) {
-        val updatedSpectra = library.load(acquisitionMethod).head
+      eventually(timeout(5 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.confirmed shouldBe false
         Thread.sleep(1000)
 
@@ -348,29 +346,28 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     "able to update the retention index status of a spectrum to false" in {
 
       library.deleteAll
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
 
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(15 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+      eventually(timeout(5 seconds)) {
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
       }
 
-      val target = library.load(acquisitionMethod).head
+      val target = library.load(acquisitionMethod1).head
 
       target.isRetentionIndexStandard = true
 
-      library.update(target, acquisitionMethod)
+      library.update(target, acquisitionMethod1)
 
-      eventually(timeout(15 seconds)) {
-        val updatedSpectra = library.load(acquisitionMethod).head
+      eventually(timeout(5 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.isRetentionIndexStandard shouldBe true
         Thread.sleep(1000)
 
@@ -381,29 +378,28 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     "able to update the retention index status of a spectrum to true" in {
 
       library.deleteAll
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
 
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(15 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+      eventually(timeout(5 seconds)) {
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
       }
 
-      val target = library.load(acquisitionMethod).head
+      val target = library.load(acquisitionMethod1).head
 
       target.isRetentionIndexStandard = true
 
-      library.update(target, acquisitionMethod)
+      library.update(target, acquisitionMethod1)
 
-      eventually(timeout(15 seconds)) {
-        val updatedSpectra = library.load(acquisitionMethod).head
+      eventually(timeout(5 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.isRetentionIndexStandard shouldBe true
         Thread.sleep(1000)
 
@@ -413,29 +409,28 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     "able to update the retention index requiered status of a spectrum to true" in {
 
       library.deleteAll
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
 
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(15 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+      eventually(timeout(5 seconds)) {
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
       }
 
-      val target = library.load(acquisitionMethod).head
+      val target = library.load(acquisitionMethod1).head
 
       target.requiredForCorrection = true
 
-      library.update(target, acquisitionMethod)
+      library.update(target, acquisitionMethod1)
 
-      eventually(timeout(15 seconds)) {
-        val updatedSpectra = library.load(acquisitionMethod).head
+      eventually(timeout(5 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.requiredForCorrection shouldBe true
       }
 
@@ -444,32 +439,32 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
     "able to update the retention index required status of a spectrum to false" in {
 
       library.deleteAll
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
 
         Thread.sleep(1000)
       }
 
-      val acquisitionMethod: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, None))
-      library.add(testTarget, acquisitionMethod, None)
+      library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(15 seconds)) {
-        library.load(acquisitionMethod).size shouldBe 1
+      eventually(timeout(5 seconds)) {
+        library.load(acquisitionMethod1).size shouldBe 1
         Thread.sleep(1000)
       }
 
-      val target = library.load(acquisitionMethod).head
+      val target = library.load(acquisitionMethod1).head
 
       target.requiredForCorrection = false
 
-      library.update(target, acquisitionMethod)
+      library.update(target, acquisitionMethod1)
 
-      eventually(timeout(15 seconds)) {
-        val updatedSpectra = library.load(acquisitionMethod).head
+      eventually(timeout(5 seconds)) {
+        val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.requiredForCorrection shouldBe false
       }
 
+      library.deleteAll
     }
   }
 

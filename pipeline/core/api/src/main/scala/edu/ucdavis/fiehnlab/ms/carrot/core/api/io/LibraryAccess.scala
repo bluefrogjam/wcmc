@@ -3,8 +3,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Sample, Target}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Primary
-import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
 
@@ -75,6 +73,8 @@ trait LibraryAccess[T <: Target] {
     * @param acquisitionMethod
     */
   def deleteLibrary(acquisitionMethod: AcquisitionMethod) = {}
+
+  override def toString = s"${getClass.getName}(\n\n${libraries.mkString("\n\t")}\n)"
 }
 
 /**
@@ -185,6 +185,8 @@ class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[
   override def libraries: Seq[AcquisitionMethod] = {
     delegates.asScala.flatMap(_.libraries)
   }
+
+  override def toString = s"DelegateLibraryAccess(\n\t\t${this.delegates}\n)"
 }
 
 class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget], annotation: LibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] {
@@ -229,4 +231,6 @@ class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget
     * @return
     */
   override def libraries: Seq[AcquisitionMethod] = annotation.libraries.filter(correction.libraries.contains(_))
+
+  override def toString = s"MergeLibraryAccess(\n\n\tannotation: ${annotation.toString}\n\n\tcorrection:${correction.toString})"
 }

@@ -2,9 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, ReadonlyLibrary}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, PositiveMode, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSCorrectionTarget
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 
@@ -27,7 +26,11 @@ class LCMSCorrectionTargetConfiguration extends LazyLogging{
   def correctionTargets(properties: LCMSCorrectionLibraryProperties): LibraryAccess[CorrectionTarget] = {
     logger.info("loading lcms correction targets")
     val methods: Map[AcquisitionMethod, Iterable[LCMSCorrectionTarget]] = properties.config.asScala.map { x =>
-      (AcquisitionMethod(ChromatographicMethod(x.name, Some(x.instrument), Some(x.column), Some(PositiveMode()))), x.targets.asScala.map(LCMSCorrectionTarget))
+      (AcquisitionMethod(ChromatographicMethod(x.name, Some(x.instrument), Some(x.column), x.ionMode match {
+        case "positive" => Some(PositiveMode())
+        case "negative" => Some(NegativeMode())
+        case _ => None
+      })), x.targets.asScala.map(LCMSCorrectionTarget))
     }.toMap
 
 
@@ -38,7 +41,7 @@ class LCMSCorrectionTargetConfiguration extends LazyLogging{
 
         override def load(acquisitionMethod: AcquisitionMethod): Iterable[LCMSCorrectionTarget] = {
           if (acquisitionMethod == x) {
-            return methods(x)
+            methods(x)
           }
           else {
             Seq.empty

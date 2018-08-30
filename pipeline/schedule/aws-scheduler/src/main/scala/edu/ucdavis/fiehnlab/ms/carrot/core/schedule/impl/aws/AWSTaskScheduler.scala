@@ -5,6 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskScheduler
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}
 import org.springframework.stereotype.Component
 
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component
 @Component
 @Profile(Array("carrot.scheduler.aws"))
 class AWSTaskScheduler extends TaskScheduler {
+  @Autowired
+  val context: ApplicationContext = null
 
   @Autowired
   val stasisClient: StasisClient = null
@@ -29,7 +32,7 @@ class AWSTaskScheduler extends TaskScheduler {
       stasisClient.schedule(sample.fileName, AcquisitionMethod.serialize(task.acquisitionMethod), task.mode, task.env)
     }
 
-    ""
+    s"task ${task.name} submitted"
   }
 }
 
