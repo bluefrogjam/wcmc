@@ -31,6 +31,10 @@ class LCMSLibraryConfiguration {
   @NotBlank
   var instrument: String = _
 
+  @BeanProperty
+  @NotBlank
+  var ionMode: String = _
+
   /**
     * how high do peaks have to be to be considered as targets
     * for RI correction

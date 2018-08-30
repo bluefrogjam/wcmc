@@ -28,7 +28,7 @@ class LCMSRetentionIndexTargetConfiguration {
 
   @BeanProperty
   @NotNull
-  var retensionTimeUnit: String = _
+  var retentionTimeUnit: String = _
 
   @BeanProperty
   @NotNull

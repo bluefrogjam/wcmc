@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.CorrectionTarget
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 
 case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetConfiguration) extends CorrectionTarget {
@@ -18,7 +18,7 @@ case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetConfiguration)
     */
   override val retentionIndex: Double = {
     lcconfig.retentionIndex match {
-      case 0 => lcconfig.retensionTimeUnit match {
+      case 0 => lcconfig.retentionTimeUnit match {
         case "minutes" => lcconfig.retentionTime * 60
         case "seconds" => lcconfig.retentionTime
         case _ => 0.0

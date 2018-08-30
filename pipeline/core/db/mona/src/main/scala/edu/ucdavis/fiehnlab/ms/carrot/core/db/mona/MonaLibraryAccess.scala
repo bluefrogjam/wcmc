@@ -29,7 +29,7 @@ import scala.collection.mutable
   */
 @Profile(Array("carrot.targets.mona"))
 @Component
-class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
+class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging {
 
   private val executionService: ExecutorService = Executors.newFixedThreadPool(1)
 
@@ -92,7 +92,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @return
     */
-  override def load(acquistionMethod: AcquisitionMethod): Iterable[Target] = {
+  override def load(acquistionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = {
     monaSpectrumRestClient.list(query = if (query(acquistionMethod) != "") Option(query(acquistionMethod)) else None).map { x => generateTarget(x) }
 
   }
@@ -434,7 +434,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param x
     * @return
     */
-  private def generateTarget(x: Spectrum): Target = {
+  private def generateTarget(x: Spectrum): AnnotationTarget = {
 
     val compound = x.compound.head
     val name = compound.names.head.name
@@ -525,7 +525,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @param targets
     */
-  override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
+  override def add(targets: Iterable[AnnotationTarget], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
 
     logger.info(s"adding ${targets.size} targets for method ${acquisitionMethod}")
     targets.foreach {
@@ -565,7 +565,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param acquisitionMethod
     */
   @CacheEvict(value = Array("monacache"), allEntries = true)
-  override def delete(t: Target, acquisitionMethod: AcquisitionMethod): Unit = {
+  override def delete(t: AnnotationTarget, acquisitionMethod: AcquisitionMethod): Unit = {
     t match {
       case target: Target with Idable[String] =>
         val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
@@ -589,7 +589,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param acquisitionMethod
     */
   @CacheEvict(value = Array("monacache"), allEntries = true)
-  override def update(target: Target, acquisitionMethod: AcquisitionMethod) = {
+  override def update(target: AnnotationTarget, acquisitionMethod: AcquisitionMethod) = {
     val spectrum = generateSpectrum(target, acquisitionMethod, None).get
     this.monaSpectrumRestClient.update(spectrum, spectrum.id)
     true
@@ -681,7 +681,7 @@ case class MonaLibraryTarget(
                               override val uniqueMass: Option[Double]
 
                             )
-  extends Target with Idable[String] {
+    extends AnnotationTarget with Idable[String] {
 
   /**
     * required since targets expects a spectrum, while its being optional on the carrot level
