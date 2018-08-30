@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, I
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest
 @ActiveProfiles(Array("carrot.targets.mona","test"))
-class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually with BeforeAndAfter with BeforeAndAfterEach {
+class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually with BeforeAndAfterEach {
   val testTarget = new AnnotationTarget {
     /**
       * a name for this spectra
@@ -135,11 +135,6 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  after {
-    library.deleteLibrary(acquisitionMethod1)
-    library.deleteLibrary(acquisitionMethod2)
-  }
-
   "MonaLibraryAccessTest" should {
 
     "reset database using mona client" in {
@@ -148,13 +143,13 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         client.delete(x.id)
       }
       client.regenerateStatistics
-      //      try {
-      //        client.regenerateDownloads
-      //      }
-      //      catch {
-      //        case e: Exception =>
-      //          logger.warn(e.getMessage, e)
-      //      }
+      try {
+        client.regenerateDownloads
+      }
+      catch {
+        case e: Exception =>
+          logger.warn(e.getMessage, e)
+      }
 
       eventually(timeout(10 seconds)) {
         client.list().size shouldBe 0
@@ -220,7 +215,8 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "able to update the name of a spectrum" in {
 
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod1)
+      library.deleteLibrary(acquisitionMethod2)
 
       eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
@@ -249,7 +245,8 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "able to update the inchi key of a spectrum" in {
 
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod1)
+      library.deleteLibrary(acquisitionMethod2)
 
       eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
@@ -281,7 +278,9 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "able to update the confirmed status a spectrum to true" in {
 
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod1)
+      library.deleteLibrary(acquisitionMethod2)
+
       eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
@@ -313,7 +312,9 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "able to update the confirmed status a spectrum to false" in {
 
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod1)
+      library.deleteLibrary(acquisitionMethod2)
+
       eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
@@ -345,7 +346,9 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "able to update the retention index status of a spectrum to false" in {
 
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod1)
+      library.deleteLibrary(acquisitionMethod2)
+
       eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
@@ -377,7 +380,9 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "able to update the retention index status of a spectrum to true" in {
 
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod1)
+      library.deleteLibrary(acquisitionMethod2)
+
       eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
@@ -408,7 +413,9 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "able to update the retention index requiered status of a spectrum to true" in {
 
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod1)
+      library.deleteLibrary(acquisitionMethod2)
+
       eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
@@ -438,7 +445,9 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
 
     "able to update the retention index required status of a spectrum to false" in {
 
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod1)
+      library.deleteLibrary(acquisitionMethod2)
+
       eventually(timeout(5 seconds)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
@@ -464,7 +473,8 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
         updatedSpectra.requiredForCorrection shouldBe false
       }
 
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod1)
+      library.deleteLibrary(acquisitionMethod2)
     }
   }
 

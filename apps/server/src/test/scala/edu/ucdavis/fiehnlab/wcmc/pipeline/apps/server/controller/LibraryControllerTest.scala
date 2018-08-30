@@ -1,23 +1,17 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
-import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
 import org.scalatest.{ShouldMatchers, WordSpec}
-import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.context.annotation.Bean
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
@@ -27,7 +21,7 @@ import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna","test","carrot.runner.required","carrot.targets.mona"))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test", "carrot.runner.required", "carrot.targets.mona"))
 class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually {
 
 
@@ -40,19 +34,20 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
   @Autowired
   val libraryAccess: MergeLibraryAccess = null
 
-  @Autowired
-  val monaLibraryAccess: MonaLibraryAccess = null
+  //  @Autowired
+  //  val monaLibraryAccess: MonaLibraryAccess = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "LibraryControllerTest" should {
 
     "delete all data" in {
+      println(libraryAccess)
       libraryAccess.deleteAll
     }
 
     "add 1 target to the library test" in {
-      template.postForObject(s"http://localhost:${port}/rest/library", AddTarget(
+      val result = template.postForEntity(s"http://localhost:${port}/rest/library", AddTarget(
         targetName = "target-1",
         precursor = 1.0,
         retentionTime = 2.0,
@@ -60,13 +55,14 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
         riMarker = true,
         mode = "positive"
       ), classOf[Void])
+
+      logger.info(s"Addition result: ${result.getStatusCode}\n${result.getHeaders.entrySet().toArray.mkString(";")}\n${result.getBody}")
     }
 
     "have 1 library" in {
       eventually(timeout(15 seconds)) {
 
         val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
-
 
         libraries.size shouldBe 1
 
@@ -78,10 +74,9 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       val result = template.getForObject(s"http://localhost:${port}/rest/library/test", classOf[Array[Map[Any, Any]]])
 
-      logger.info(s"result ${result}")
+      logger.info(s"result ${result.mkString("\n")}")
       result.foreach { x =>
-        logger.info(s"entry: ${x}")
-
+        logger.info(s"entry: ${x.mkString("; ")}")
       }
 
       result.length should not be 0
@@ -145,7 +140,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
       val lib = libraries.toSeq.head
-      val targets = monaLibraryAccess.load(lib)
+      //      val targets = monaLibraryAccess.load(lib)
     }
   }
 }

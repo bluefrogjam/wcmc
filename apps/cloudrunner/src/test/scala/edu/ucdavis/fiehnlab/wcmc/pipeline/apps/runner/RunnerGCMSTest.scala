@@ -6,15 +6,17 @@ import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager, TestPropertySource}
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[RunnerTestConfig]))
-@ActiveProfiles(Array("carrot.binbase", "carrot.output.storage.aws"))
+@ActiveProfiles(Array("carrot.binbase", "carrot.output.storage.aws", "test", "file.source.eclipse"))
 @TestPropertySource(properties = Array(
-  "carrot.sample:180501dngsa32_1.txt",
-  "carrot.method:Gerstel | LECO-GC-TOF | rtx5recal | positive"
+  "CARROT_SAMPLE:180501dngsa32_1.txt",
+  "CARROT_METHOD:Gerstel | LECO-GC-TOF | rtx5recal | positive",
+  "CARROT_MODE:gcms",
+  "carrot.submitter:dpedrosa@ucdavis.edu"
 ))
 class RunnerGCMSTest extends WordSpec with ShouldMatchers with LazyLogging {
 

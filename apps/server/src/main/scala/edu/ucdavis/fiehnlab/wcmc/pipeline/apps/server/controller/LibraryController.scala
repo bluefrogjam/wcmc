@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.{DeserializationContext, JsonDeserializer}
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
@@ -44,6 +44,8 @@ class LibraryController extends LazyLogging {
 
     if (hasExistings.isEmpty) {
       libraryAccess.add(t, method, None)
+      val existingTargets = libraryAccess.load(method)
+      logger.info(s"library contains ${existingTargets.size} targets after addition")
     }
     else {
       logger.info(s"target already existed: $t")
@@ -187,7 +189,7 @@ class JsonBooleanDeserializer extends JsonDeserializer[Boolean] {
 case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String, @(JsonDeserialize@field) riMarker: Boolean, mode: String) {
 
   /**
-    * builds the associated acquition method
+    * builds the associated acquisition method
     *
     * @return
     */
@@ -203,7 +205,7 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
 
     AcquisitionMethod(
       ChromatographicMethod(
-        //TODO possibile bug later down the line, due to explicietly set to none for instrument and column
+        //TODO possible bug later down the line, due to explicitly set to none for instrument and column
         name = target.library, None, None, ionMode = Some(ionMode)
       )
     )
@@ -214,10 +216,10 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
     *
     * @return
     */
-  def buildTarget: Target = {
+  def buildTarget: AnnotationTarget = {
     val target: AddTarget = this
 
-    new Target {
+    new AnnotationTarget {
 
       override val uniqueMass: Option[Double] = None
 
