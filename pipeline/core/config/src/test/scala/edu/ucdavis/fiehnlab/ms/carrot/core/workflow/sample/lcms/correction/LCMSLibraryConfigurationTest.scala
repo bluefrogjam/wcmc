@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
-@ActiveProfiles(Array("carrot.lcms"))
+@ActiveProfiles(Array("carrot.lcms", "test"))
 @SpringBootTest(classes = Array(classOf[LCMSTestsConfiguration]))
 class LCMSLibraryConfigurationTest extends WordSpec with ShouldMatchers with LazyLogging {
   @Autowired

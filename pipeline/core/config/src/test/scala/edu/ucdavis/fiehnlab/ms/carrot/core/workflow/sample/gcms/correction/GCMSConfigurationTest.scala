@@ -9,7 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
-@ActiveProfiles(Array("carrot.gcms"))
+@ActiveProfiles(Array("carrot.gcms", "test"))
 @SpringBootTest
 class GCMSConfigurationTest extends WordSpec with ShouldMatchers {
 

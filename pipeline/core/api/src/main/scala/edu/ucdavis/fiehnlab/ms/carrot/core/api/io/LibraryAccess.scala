@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Sample, Target}
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,6 +62,11 @@ trait LibraryAccess[T <: Target] {
   def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample] = None)
 
   /**
+    * adds the first annotation target for a new library/method
+    */
+  def addNew(target: Target, acquisitionMethod: AcquisitionMethod, sample: Option[Sample] = None)
+
+  /**
     * returns all associated acquisition methods for this library
     *
     * @return
@@ -107,9 +113,12 @@ trait ReadonlyLibrary[T <: Target] extends LibraryAccess[T] {
     */
   override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {}
 
+  /**
+    * adds the first annotation target
+    */
 }
 
-class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] {
+class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with LazyLogging {
 
   /**
     * loads all the spectra from the library
@@ -169,10 +178,18 @@ class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[
     * @param targets
     */
   override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
-    val t = delegates.asScala.filter(!_.isInstanceOf[ReadonlyLibrary[T]]).find(_.load(acquisitionMethod).nonEmpty)
+
+    logger.info(s"\ndelegates classes: ${delegates.asScala.filterNot(_.isInstanceOf[ReadonlyLibrary[T]]).mkString("\n")}\n")
+    logger.info(s"\ndelegates count: ${delegates.size()}\n")
+
+    val t = delegates.asScala.filterNot(_.isInstanceOf[ReadonlyLibrary[T]]).find(_.load(acquisitionMethod).nonEmpty)
 
     if (t.isDefined) {
       t.get.add(targets, acquisitionMethod, sample)
+    }
+    else {
+      logger.error("Method is not defined, should force add the target")
+      delegates.asScala.foreach(it => logger.info(it.getClass.getSimpleName + " => " + it.isInstanceOf[DelegateLibraryAccess[Target]].toString))
     }
 
   }
@@ -189,7 +206,7 @@ class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[
   override def toString = s"DelegateLibraryAccess(\n\t\t${this.delegates}\n)"
 }
 
-class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget], annotation: LibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] {
+class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget], annotation: LibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with LazyLogging {
   /**
     * loads all the spectra from the library
     * applicable for the given acquistion method
@@ -222,6 +239,8 @@ class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget
     * @param targets
     */
   override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
+    logger.info(s"-- libraries: ${annotation.libraries.mkString("; ")}")
+    logger.info(s"-- adding : ${targets.mkString("; ")}")
     this.annotation.add(targets.map(_.asInstanceOf[AnnotationTarget]), acquisitionMethod)
   }
 

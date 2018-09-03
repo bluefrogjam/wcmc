@@ -6,11 +6,11 @@ import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.{SpringJUnit4ClassRunner, SpringRunner}
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
-@ActiveProfiles(Array("carrot.lcms"))
+@RunWith(classOf[SpringRunner])
+@ActiveProfiles(Array("carrot.lcms", "test"))
 @SpringBootTest
 class LCMSCorrectionTargetConfigurationTest extends WordSpec with ShouldMatchers {
 
@@ -23,7 +23,7 @@ class LCMSCorrectionTargetConfigurationTest extends WordSpec with ShouldMatchers
 
     "correctionTargets" in {
 
-      library.libraries.size should be(1)
+      library.libraries.size should be(4)
     }
 
   }
