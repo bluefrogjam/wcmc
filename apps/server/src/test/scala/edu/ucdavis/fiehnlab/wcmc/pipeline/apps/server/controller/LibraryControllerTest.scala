@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccess
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
@@ -34,8 +35,8 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
   @Autowired
   val libraryAccess: MergeLibraryAccess = null
 
-  //  @Autowired
-  //  val monaLibraryAccess: MonaLibraryAccess = null
+  @Autowired
+  val monaLibraryAccess: MonaLibraryAccess = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

@@ -29,7 +29,7 @@ class LibraryController extends LazyLogging {
   /**
     * this adds a new target to the specified library
     */
-  @RequestMapping(value = Array(""), method = Array(RequestMethod.POST))
+  @PostMapping(value = Array(""))
   def addTarget(@RequestBody target: AddTarget): Unit = {
 
     val t = target.buildTarget
