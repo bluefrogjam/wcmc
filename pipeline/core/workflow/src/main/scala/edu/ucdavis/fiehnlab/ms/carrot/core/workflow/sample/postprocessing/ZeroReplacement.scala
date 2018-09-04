@@ -93,8 +93,9 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
           }
           catch {
             case e: Exception =>
-              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e)
-              e.printStackTrace()
+              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e.getMessage)
+              // commented to avoid excessive logging output.
+              // e.printStackTrace()
               target
           }
         }
