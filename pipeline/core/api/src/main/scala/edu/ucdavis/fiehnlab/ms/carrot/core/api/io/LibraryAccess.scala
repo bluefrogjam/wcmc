@@ -10,7 +10,7 @@ import scala.collection.JavaConverters._
 /**
   * Created by wohlg_000 on 4/22/2016.
   */
-trait LibraryAccess[T <: Target] {
+trait LibraryAccess[T <: Target] extends LazyLogging {
 
   /**
     * loads all the spectra from the library
@@ -50,6 +50,7 @@ trait LibraryAccess[T <: Target] {
     */
   def deleteAll: Unit = {
     libraries.foreach { x =>
+      logger.info(s"deleting library ${x}")
       load(x).foreach(y => delete(y, x))
     }
   }
@@ -60,11 +61,6 @@ trait LibraryAccess[T <: Target] {
     * @param targets
     */
   def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample] = None)
-
-  /**
-    * adds the first annotation target for a new library/method
-    */
-  def addNew(target: Target, acquisitionMethod: AcquisitionMethod, sample: Option[Sample] = None)
 
   /**
     * returns all associated acquisition methods for this library
@@ -118,7 +114,7 @@ trait ReadonlyLibrary[T <: Target] extends LibraryAccess[T] {
     */
 }
 
-class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with LazyLogging {
+final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with LazyLogging {
 
   /**
     * loads all the spectra from the library
@@ -179,19 +175,14 @@ class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[
     */
   override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
 
-    logger.info(s"\ndelegates classes: ${delegates.asScala.filterNot(_.isInstanceOf[ReadonlyLibrary[T]]).mkString("\n")}\n")
-    logger.info(s"\ndelegates count: ${delegates.size()}\n")
-
-    val t = delegates.asScala.filterNot(_.isInstanceOf[ReadonlyLibrary[T]]).find(_.load(acquisitionMethod).nonEmpty)
-
-    if (t.isDefined) {
-      t.get.add(targets, acquisitionMethod, sample)
-    }
-    else {
-      logger.error("Method is not defined, should force add the target")
-      delegates.asScala.foreach(it => logger.info(it.getClass.getSimpleName + " => " + it.isInstanceOf[DelegateLibraryAccess[Target]].toString))
-    }
-
+    delegates.asScala
+        .filterNot(_.isInstanceOf[ReadonlyLibrary[T]])
+        .filterNot(_.isInstanceOf[DelegateLibraryAccess[T]])
+        .foreach { lib => {
+          logger.info(s"adding target to ${lib}")
+          lib.add(targets, acquisitionMethod, sample)
+        }
+        }
   }
 
   /**
@@ -203,10 +194,10 @@ class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[
     delegates.asScala.flatMap(_.libraries)
   }
 
-  override def toString = s"DelegateLibraryAccess(\n\t\t${this.delegates}\n)"
+  override def toString = s"DelegateLibraryAccess(\n\t${this.delegates}\n)"
 }
 
-class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget], annotation: LibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with LazyLogging {
+final class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget], annotation: LibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with LazyLogging {
   /**
     * loads all the spectra from the library
     * applicable for the given acquistion method
@@ -239,9 +230,7 @@ class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget
     * @param targets
     */
   override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
-    logger.info(s"-- libraries: ${annotation.libraries.mkString("; ")}")
-    logger.info(s"-- adding : ${targets.mkString("; ")}")
-    this.annotation.add(targets.map(_.asInstanceOf[AnnotationTarget]), acquisitionMethod)
+    this.annotation.add(targets.map(_.asInstanceOf[AnnotationTarget]), acquisitionMethod, sample)
   }
 
   /**
@@ -249,7 +238,10 @@ class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget
     *
     * @return
     */
-  override def libraries: Seq[AcquisitionMethod] = annotation.libraries.filter(correction.libraries.contains(_))
 
-  override def toString = s"MergeLibraryAccess(\n\n\tannotation: ${annotation.toString}\n\n\tcorrection:${correction.toString})"
+  // !!! Correction library might have dofferent name than annotation library
+  // override def libraries: Seq[AcquisitionMethod] = annotation.libraries.filter(correction.libraries.contains(_))
+  override def libraries: Seq[AcquisitionMethod] = annotation.libraries
+
+  override def toString = s"MergeLibraryAccess(\n\tannotation: ${annotation.toString}\n\tcorrection:${correction.toString})"
 }

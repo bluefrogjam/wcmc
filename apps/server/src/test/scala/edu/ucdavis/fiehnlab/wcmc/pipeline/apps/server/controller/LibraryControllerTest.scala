@@ -22,7 +22,7 @@ import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test", "carrot.runner.required", "carrot.targets.mona"))
+@ActiveProfiles(Array("carrot.lcms", "test"))
 class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually {
 
 
@@ -61,11 +61,11 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "have 1 library" in {
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
 
         val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
 
-        libraries.size shouldBe 1
+        libraries.size should be >= 1
 
         Thread.sleep(250)
       }
@@ -97,7 +97,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "have 2 libraries" in {
-      eventually(timeout(15 seconds)) {
+      eventually(timeout(5 seconds)) {
 
         val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
 

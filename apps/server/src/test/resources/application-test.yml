@@ -1,0 +1,42 @@
+spring:
+  profiles:
+    active: test
+    include:
+      - file.source.luna
+      - file.source.eclipse
+      - carrot.lcms
+      - carrot.targets.mona
+      - carrot.target.dynamic
+      - carrot.report.quantify.height
+      - carrot.store.result.fserv4j
+      - carrot.output.writer.flat
+      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+
+  #which rabbit mq to use
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+wcmc:
+  pipeline:
+    workflow:
+      config:
+        correction:
+          minimumFoundStandards: 10
+          regression:
+            polynom: 3
+
+stasis:
+  baseUrl: "https://test-api.metabolomics.us/stasis"
+
+
+mona:
+  rest:
+    server:
+      user: admin
+      password: admin
+      host: 127.0.0.1
+      port: 9090
