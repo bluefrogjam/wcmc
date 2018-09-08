@@ -4,14 +4,14 @@ import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ConversionAwareSampleLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Target}
-import org.springframework.beans.factory.annotation.Autowired
 
 /**
   * Created by wohlgemuth on 7/14/17.
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired
 @ComponentScan
 @EnableConfigurationProperties
 @EnableCaching
-class CentralWorkflowConfig extends LazyLogging{
+class CentralWorkflowConfig extends LazyLogging {
 
   /**
     * assembles all loaders in the system and allows prioritized loading ofr the resources
