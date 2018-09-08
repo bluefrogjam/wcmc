@@ -4,15 +4,15 @@ import javax.validation.constraints._
 
 import scala.beans.BeanProperty
 
-class LCMSRetentionIndexTargetConfiguration {
+class LCMSRetentionIndexTargetProperties {
   @BeanProperty
   @NotBlank
-  var identifier: String = _
+  var identifier: String = "unknown"
 
   @BeanProperty
   @DecimalMax("10000000.0")
   @DecimalMin("0.0")
-  var retentionIndex: Double = _
+  var retentionIndex: Double = 0.0
 
   @BeanProperty
   @NotNull
@@ -27,18 +27,18 @@ class LCMSRetentionIndexTargetConfiguration {
   var retentionTime: Float = 0.0f
 
   @BeanProperty
-  @NotNull
-  var retentionTimeUnit: String = _
+  @Pattern(regexp = "minutes|seconds")
+  var retentionTimeUnit: String = "minutes"
 
   @BeanProperty
   @NotNull
-  var isInternalStandard: Boolean = _
+  var isInternalStandard: Boolean = false
 
   @BeanProperty
   @NotNull
-  var requiredForCorrection: Boolean = _
+  var requiredForCorrection: Boolean = false
 
   @BeanProperty
   @NotNull
-  var confirmed: Boolean = _
+  var confirmed: Boolean = false
 }

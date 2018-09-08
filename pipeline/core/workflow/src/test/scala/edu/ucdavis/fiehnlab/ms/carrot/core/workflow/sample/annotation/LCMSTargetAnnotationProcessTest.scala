@@ -32,7 +32,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
   val annotation: LCMSTargetAnnotationProcess = null
 
   @Autowired
-  val lcmsProperties: LCMSAnnotationProperties = null
+  val lcmsProperties: LCMSAnnotationProcessProperties = null
 
   @Autowired
   val loader: SampleLoader = null

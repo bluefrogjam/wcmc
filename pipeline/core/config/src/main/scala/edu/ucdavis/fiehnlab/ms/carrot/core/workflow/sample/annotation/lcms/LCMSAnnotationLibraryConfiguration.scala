@@ -1,18 +1,17 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.lcms
 
 import java.util
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSRetentionIndexTargetProperties
 import javax.validation.Valid
 import javax.validation.constraints.{NotBlank, Pattern, Size}
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 import scala.beans.BeanProperty
 
-class LCMSLibraryConfiguration {
-
+class LCMSAnnotationLibraryConfiguration {
   @BeanProperty
   @Valid
-  @Size(min = 1)
   @NestedConfigurationProperty
   val targets: java.util.List[LCMSRetentionIndexTargetProperties] = new util.ArrayList[LCMSRetentionIndexTargetProperties]()
 
@@ -35,10 +34,6 @@ class LCMSLibraryConfiguration {
   @Pattern(regexp="positive|negative")
   var ionMode: String = "positive"
 
-  /**
-    * how high do peaks have to be to be considered as targets
-    * for RI correction
-    */
   @BeanProperty
   var minimumPeakIntensity: Float = 0f
 

@@ -114,6 +114,33 @@ trait ReadonlyLibrary[T <: Target] extends LibraryAccess[T] {
     */
 }
 
+trait ReadWriteLibrary[T <: Target] extends LibraryAccess[T] {
+
+  /**
+    * this will update the existing target with the provided values in the selected method
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean = ???
+
+  /**
+    * deletes a specified target from the acquisition method
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = ???
+
+  /**
+    * adds a list of targets
+    *
+    * @param targets
+    */
+  override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = ???
+
+}
+
 final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with LazyLogging {
 
   /**

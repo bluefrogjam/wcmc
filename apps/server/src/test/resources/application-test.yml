@@ -30,7 +30,7 @@ wcmc:
             polynom: 3
 
 stasis:
-  baseUrl: "https://test-api.metabolomics.us/stasis"
+  baseurl: "https://test-api.metabolomics.us/stasis"
 
 
 mona:

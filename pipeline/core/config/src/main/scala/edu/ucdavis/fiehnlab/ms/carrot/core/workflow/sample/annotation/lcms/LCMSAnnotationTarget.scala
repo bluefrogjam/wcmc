@@ -1,9 +1,10 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.lcms
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.CorrectionTarget
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.AnnotationTarget
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSRetentionIndexTargetProperties
 
-case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetProperties) extends CorrectionTarget {
+case class LCMSAnnotationTarget(lcconfig: LCMSRetentionIndexTargetProperties) extends AnnotationTarget {
 
   val config: LCMSRetentionIndexTargetProperties = lcconfig
 

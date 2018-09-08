@@ -1,11 +1,13 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
+import java.util
+
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.{SpringApplication, WebApplicationType}
@@ -32,6 +34,28 @@ class Carrot extends LazyLogging {
 
   @Bean
   def workflow: Workflow[Double] = new Workflow[Double]
+
+
+
+
+
+  // I added these 3 beans to comply with bean requirements. [Diego - 2018-08-07]
+  @Bean
+  def annotationLibrary(@Autowired(required = false) targets: java.util.List[LibraryAccess[AnnotationTarget]]): DelegateLibraryAccess[AnnotationTarget] = {
+    if (targets == null) {
+      logger.warn("no library provided, annotations will be empty!")
+      new DelegateLibraryAccess[AnnotationTarget](new util.ArrayList())
+    }
+    else {
+      new DelegateLibraryAccess[AnnotationTarget](targets)
+    }
+  }
+
+  @Bean
+  def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
+
+  @Bean
+  def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = new MergeLibraryAccess(correction, annotation)
 }
 
 object Carrot extends App {
