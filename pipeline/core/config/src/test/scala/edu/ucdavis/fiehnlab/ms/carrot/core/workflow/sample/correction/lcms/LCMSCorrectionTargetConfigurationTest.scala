@@ -21,7 +21,7 @@ class LCMSCorrectionTargetConfigurationTest extends WordSpec with ShouldMatchers
 
   "LCMSCorrectionTargetConfigurationTest" should {
 
-    "correctionTargets" in {
+    "have several libraies" in {
 
       library.libraries.size should be(4)
     }
