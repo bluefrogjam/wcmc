@@ -12,6 +12,7 @@ import scala.beans.BeanProperty
 class LCMSAnnotationLibraryConfiguration {
   @BeanProperty
   @Valid
+  @Size(min = 1)
   @NestedConfigurationProperty
   val targets: java.util.List[LCMSRetentionIndexTargetProperties] = new util.ArrayList[LCMSRetentionIndexTargetProperties]()
 
@@ -37,4 +38,5 @@ class LCMSAnnotationLibraryConfiguration {
   @BeanProperty
   var minimumPeakIntensity: Float = 0f
 
+  println(s" === creating annotation library ${name} (${targets.size()} targets)=== ")
 }

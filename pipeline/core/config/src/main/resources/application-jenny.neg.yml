@@ -2,7 +2,7 @@ carrot:
   lcms:
     correction:
       config:
-        - name: jenny_tribe
+        - name: lcms_istds
           description: ""
           column: test
           ionMode: negative

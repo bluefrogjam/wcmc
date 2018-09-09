@@ -37,7 +37,7 @@ class LCMSAnnotationTargetConfiguration extends LazyLogging {
     val libs = methods.keySet.map { x =>
 
 
-      new ReadWriteLibrary[LCMSAnnotationTarget] {
+      new ReadonlyLibrary[LCMSAnnotationTarget] {
 
         override def load(acquisitionMethod: AcquisitionMethod): Iterable[LCMSAnnotationTarget] = {
           if (acquisitionMethod == x) {

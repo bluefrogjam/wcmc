@@ -42,4 +42,5 @@ class LCMSLibraryConfiguration {
   @BeanProperty
   var minimumPeakIntensity: Float = 0f
 
+  println(s" === creating correction library ${name} (${targets.size()} targets)=== ")
 }
