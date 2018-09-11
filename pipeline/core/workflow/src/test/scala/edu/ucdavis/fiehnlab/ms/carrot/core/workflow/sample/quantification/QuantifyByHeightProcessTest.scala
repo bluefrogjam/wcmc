@@ -23,6 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "carrot.lcms.correction", "file.source.luna", "test"))
 class QuantifyByHeightProcessTest extends WordSpec with ShouldMatchers with LazyLogging {
+  val libName = "lcms_istds"
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
@@ -46,7 +47,7 @@ class QuantifyByHeightProcessTest extends WordSpec with ShouldMatchers with Lazy
 
   "QuantifyByHeightProcessTest" should {
 
-    val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Option(PositiveMode())))
+    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Option(PositiveMode())))
 
     val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.mzml", "B5_SA0002_P20Lipids_Pos_1FL_1006.mzml"))
 

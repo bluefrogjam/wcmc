@@ -23,6 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "file.source.eclipse", "test"))
 class NegativeIntensitiesTest extends WordSpec with LazyLogging with ShouldMatchers {
+  val libName = "lcms_istds"
 
   @Autowired
   val simpleZeroReplacement: SimpleZeroReplacement = null
@@ -45,7 +46,7 @@ class NegativeIntensitiesTest extends WordSpec with LazyLogging with ShouldMatch
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "ZeroReplacement" should {
-    val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
+    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
     val rawSample = loader.getSample("Weiss003_posHILIC_59602960_068.mzml")
     val sample: QuantifiedSample[Double] = quantify.process(
       annotation.process(

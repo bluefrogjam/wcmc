@@ -18,13 +18,15 @@ class LCMSCorrectionLibraryConfigurationTest extends WordSpec with ShouldMatcher
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+  val libName = "lcms_istds"
+
   "Correction library properties" should {
     "have properties for correction" in {
       properties.config should not be null
     }
 
     "load library 'lcms_istds'" in {
-      properties.config.get(0).name should equal("lcms_istds")
+      properties.config.get(0).name should equal(libName)
     }
 
     "have 28 targets in library" in {

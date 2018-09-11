@@ -36,8 +36,10 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
     * @param input
     * @return
     */
-  final override def process(input: CorrectedSample, targets: Iterable[Target], method: AcquisitionMethod): AnnotatedSample = {
+  final override def process(input: CorrectedSample, targetsRaw: Iterable[Target], method: AcquisitionMethod): AnnotatedSample = {
     logger.info(s"Annotating sample: ${input.name}")
+
+    val targets =  targetsRaw.filterNot(_.isRetentionIndexStandard).filter(_.confirmed)
 
     /**
       * internal recursive function to find all possible annotations in the sample
@@ -46,7 +48,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
       * @param targets
       */
     def annotate(input: CorrectedSample, spectra: Seq[_ <: Feature with CorrectedSpectra], targets: Iterable[Target]): Seq[(Target, _ <: Feature with CorrectedSpectra)] = {
-      logger.info(s"sspectra requiring annotation: ${spectra.size}")
+      logger.info(s"spectra requiring annotation: ${spectra.size}")
       val annotatedTargets: Map[Target, _ <: Feature with CorrectedSpectra] = if (debug) {
         //if debugging is enable, we sort by name
         ListMap(findMatchesForTargets(input, targets, spectra,method).toSeq.sortBy(_._1.name): _*)

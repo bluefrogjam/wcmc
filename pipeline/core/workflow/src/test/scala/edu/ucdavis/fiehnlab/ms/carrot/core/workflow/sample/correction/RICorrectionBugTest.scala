@@ -23,6 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("file.source.luna","file.source.eclipse", "carrot.processing.peakdetection", "carrot.lcms", "test"))
 class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging {
+  val libName = "lcms_istds"
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
@@ -67,7 +68,7 @@ class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging 
 
   "Retention Index Correction Process" should {
     "test Weiss005_posHILIC_40298234_039.mzML" must {
-      val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
+      val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
       val sample: CorrectedSample = correction.process(
         deco.process(
           loader.getSample("Weiss005_posHILIC_40298234_039.mzML"), method, None

@@ -30,8 +30,12 @@ import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.storage.aws", "test"))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple",
+  "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.storage.aws",
+  "test"))
 class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfterEach with MockitoSugar with LazyLogging {
+  val libName = "lcms_istds"
+
   @Autowired
   val deconv: PeakDetection = null
 
@@ -62,13 +66,13 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
   import org.mockito.MockitoAnnotations
 
   override def beforeEach(): Unit = {
-    logger.info(" initiating mocks")
+    logger.info("initiating mocks")
     MockitoAnnotations.initMocks(this)
   }
 
   "StasisWriter " should {
     val sample = sampleLoader.loadSample("B5_P20Lipids_Pos_NIST01.mzml").get
-    val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
+    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
     val result = quantification.process(
       annotation.process(
@@ -77,6 +81,11 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
           method),
         method),
       method)
+
+    "have quantified data" in {
+      logger.info(s"QUANTIFIED: ${result.quantifiedTargets.size}")
+      result.quantifiedTargets should not be empty
+    }
 
     "have a stasisWriter" in {
       stasis_cli should not be null
@@ -93,12 +102,12 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
 
       data.injections should have size 1
 
-      logger.info(data.injections.keySet().asScala.mkString(";"))
+      logger.info("INJECTIONS: " + data.injections.keySet().asScala.mkString(";"))
       val injections = data.injections.asScala
       injections(sample.name) shouldBe an[Injection]
       injections(sample.name).results.length should be > 0
 
-      writer.stasis_cli.getTracking(sample.name).status === "PROCESSING"
+      writer.stasis_cli.getTracking(sample.name).status.maxBy(_.priority).value === "PROCESSING"
     }
   }
 }

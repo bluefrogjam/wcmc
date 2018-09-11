@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.CorrectionTarget
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Ion}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 
 case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetProperties) extends CorrectionTarget {
@@ -50,6 +50,7 @@ case class LCMSCorrectionTarget(lcconfig: LCMSRetentionIndexTargetProperties) ex
     * associated spectrum propties if applicable
     */
   override val spectrum: Option[SpectrumProperties] = None
+
   /**
     * unique mass for a given target
     */

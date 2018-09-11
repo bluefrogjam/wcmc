@@ -1,9 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.annotation
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.lcms.LCMSAnnotationLibraryProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSCorrectionLibraryProperties
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +29,7 @@ class LCMSAnnotationLibraryConfigurationTest extends WordSpec with ShouldMatcher
       annotProperties.config.size() === 2
     }
 
-    "have librarie 'jenny_tribe'" in {
+    "have library 'jenny-tribe'" in {
       println(s"libraries: ${annotProperties.config.size()}")
       println(annotProperties.config.asScala.map(it => s"annotation ${it.name} | ${it.instrument} | ${it.column} | ${it.ionMode}").mkString("; "))
       annotProperties.config.asScala.map(_.name) should have size 2

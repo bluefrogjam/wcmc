@@ -42,11 +42,11 @@ case class LCMSAnnotationTarget(lcconfig: LCMSRetentionIndexTargetProperties) ex
   /**
     * is this target required for a successful retention index correction
     */
-  override var requiredForCorrection: Boolean = lcconfig.requiredForCorrection
+  override var requiredForCorrection: Boolean = false
   /**
     * is this a retention index correction standard
     */
-  override var isRetentionIndexStandard: Boolean = lcconfig.isInternalStandard
+  override var isRetentionIndexStandard: Boolean = false
   /**
     * associated spectrum propties if applicable
     */
