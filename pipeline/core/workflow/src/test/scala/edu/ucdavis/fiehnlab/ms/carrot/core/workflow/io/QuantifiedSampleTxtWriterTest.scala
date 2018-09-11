@@ -28,6 +28,7 @@ import scala.io.Source
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms", "carrot.lcms.correction", "carrot.processing.peakdetection", "file.source.luna", "test"))
 class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
+  val libName = "lcms_istds"
 
   @Autowired
   val deconv: PeakDetection = null
@@ -51,7 +52,7 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 
   "QuantifiedSampleTxtWriterTest" should {
 
-    val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
+    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
     val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzML", "B5_P20Lipids_Pos_NIST02.mzML"))
 

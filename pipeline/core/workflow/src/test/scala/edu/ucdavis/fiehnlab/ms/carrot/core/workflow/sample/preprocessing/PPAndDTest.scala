@@ -27,13 +27,15 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.processing.peakdetection", "quantify-by-scan", "carrot.lcms", "test"))
 class PPAndDTest extends WordSpec with Matchers with LazyLogging {
+  val libName = "lcms_istds"
+
   @Autowired
   val peakDetection: PeakDetection = null
 
   @Autowired
   val stasis_cli: StasisService = null
 
-  val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
+  val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

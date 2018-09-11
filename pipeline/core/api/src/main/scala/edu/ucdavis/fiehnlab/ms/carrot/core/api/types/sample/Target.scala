@@ -62,7 +62,10 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
     */
   var isRetentionIndexStandard: Boolean
 
-  override def toString = f"Target(name=${name.getOrElse("None")}, retentionTimeMinutes=$retentionTimeInMinutes (min), retentionTimeSeconds=$retentionIndex (s), accurateMass=${accurateMass.getOrElse("NA")}, inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${precursorMass.getOrElse("None")})"
+  override def toString: String = f"Target(name=${name.getOrElse("None")}, retentionTimeMinutes=$retentionTimeInMinutes (min), " +
+      f"retentionTimeSeconds=$retentionIndex (s), accurateMass=${accurateMass.getOrElse("NA")}, " +
+      f"inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${precursorMass.getOrElse("None")}, " +
+      f"${if(isRetentionIndexStandard) "ISTD"})"
 
   override def equals(obj: scala.Any): Boolean = {
     obj match {

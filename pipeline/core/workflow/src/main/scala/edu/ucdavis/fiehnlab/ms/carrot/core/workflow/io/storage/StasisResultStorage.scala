@@ -47,13 +47,15 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
     val data: ResultData = ResultData(sample.name, injections)
 
     val response = stasis_cli.addResult(data)
+    logger.info(s"stasis response: ${response}")
 
     if (response.getStatusCode == HttpStatus.OK) {
       stasis_cli.addTracking(TrackingData(sample.name, "exported", sample.fileName))
+      response.getBody
     } else {
       logger.info(response.getStatusCode.getReasonPhrase)
+      data
     }
-    data
   }
 
   /**

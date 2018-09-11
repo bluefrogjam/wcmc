@@ -26,6 +26,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @SpringBootTest
 @ActiveProfiles(Array("backend-txt-lcms", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna","test","carrot.runner.required"))
 class TaskRunnerTest extends WordSpec {
+  val libName = "lcms_istds"
 
   @Autowired
   val taskRunner: TaskRunner = null
@@ -40,7 +41,7 @@ class TaskRunnerTest extends WordSpec {
 
       intercept[AssertionError] {
         taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu",
-          acquisitionMethod = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode()))),
+          acquisitionMethod = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode()))),
           samples = Seq.empty,
           mode = "lcms",
           env = "test"
@@ -50,7 +51,7 @@ class TaskRunnerTest extends WordSpec {
 
     "run - should pass" in {
       taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu",
-        acquisitionMethod = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode()))),
+        acquisitionMethod = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode()))),
         samples = SampleToProcess("B5_P20Lipids_Pos_QC000.mzML") :: List(),
         mode = "lcms",
         env = "test"

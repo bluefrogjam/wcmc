@@ -266,9 +266,17 @@ final class MergeLibraryAccess @Autowired()(correction: LibraryAccess[Correction
     * @return
     */
 
-  // !!! Correction library might have dofferent name than annotation library
+  // !!! Correction library might have different name than annotation library
   // override def libraries: Seq[AcquisitionMethod] = annotation.libraries.filter(correction.libraries.contains(_))
   override def libraries: Seq[AcquisitionMethod] = annotation.libraries
+
+  def correctionLibraries(acquisitionMethod: AcquisitionMethod): Iterable[CorrectionTarget] = {
+    this.correction.load(acquisitionMethod)
+  }
+
+  def annotationLibraries(acquisitionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = {
+    this.annotation.load(acquisitionMethod)
+  }
 
   override def toString = s"MergeLibraryAccess(\n\tannotation: ${annotation.toString}\n\tcorrection:${correction.toString})"
 }

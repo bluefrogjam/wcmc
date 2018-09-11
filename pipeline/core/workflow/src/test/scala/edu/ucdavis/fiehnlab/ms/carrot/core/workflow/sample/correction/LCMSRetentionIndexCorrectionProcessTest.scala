@@ -23,6 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test" /*, "carrot.logging.json.enable"*/))
 class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers with LazyLogging {
+  val libName = "lcms_istds"
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
@@ -43,7 +44,7 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatche
 
     val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.mzml")
     val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
-    val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
+    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
     s"should fail, because we don't have enough standards in ${sample3}" in {
 

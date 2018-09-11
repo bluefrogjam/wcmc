@@ -41,4 +41,7 @@ class LCMSRetentionIndexTargetProperties {
   @BeanProperty
   @NotNull
   var confirmed: Boolean = false
+
+  @BeanProperty
+  var spectrum: String = _
 }
