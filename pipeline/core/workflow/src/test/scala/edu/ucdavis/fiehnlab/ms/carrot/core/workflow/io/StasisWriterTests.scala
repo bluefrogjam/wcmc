@@ -28,6 +28,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.collection.JavaConverters._
 
+import org.mockito.MockitoAnnotations
+
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple",
@@ -63,8 +65,6 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  import org.mockito.MockitoAnnotations
-
   override def beforeEach(): Unit = {
     logger.info("initiating mocks")
     MockitoAnnotations.initMocks(this)
@@ -95,7 +95,7 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
     }
 
     "send the result of a sample to stasis" in {
-      when(stasis_cli.addTracking(TrackingData(sample.name, "processing", sample.fileName))).thenReturn(ResponseEntity.ok(mock[TrackingResponse]))
+      when(stasis_cli.addTracking(TrackingData(sample.name, "exported", sample.fileName))).thenReturn(ResponseEntity.ok(mock[TrackingResponse]))
       when(stasis_cli.addResult(mock[ResultData])).thenReturn(ResponseEntity.ok(mock[ResultData]))
 
       val data = writer.save(result)
@@ -107,7 +107,7 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
       injections(sample.name) shouldBe an[Injection]
       injections(sample.name).results.length should be > 0
 
-      writer.stasis_cli.getTracking(sample.name).status.maxBy(_.priority).value === "PROCESSING"
+      writer.stasis_cli.getTracking(sample.name).status.maxBy(_.priority).value.toLowerCase === "exported"
     }
   }
 }

@@ -10,6 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,7 +33,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
   val correction: CorrectionProcess = null
 
   @Autowired
-  val stasisClient: StasisClient = null
+  val stasisClient: StasisService = null
 
   /**
     * replaces the given value, with the best possible value
@@ -242,7 +243,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     logger.debug(s"found ${filteredByTime.size} spectra, after retention index filter for target ${receivedTarget}")
 
     // error here, sometime mass is not found for some reason and so things are failing
-    //TODO: Gert shuold check if this makes sense. In case mass isn't there, I create a Corrected Feature using the original QuantifiedSample and RT, RI, scan# from target with 0 intensity.
+    //TODO: Gert should check if this makes sense. In case mass isn't there, I create a Corrected Feature using the original QuantifiedSample and RT, RI, scan# from target with 0 intensity.
     val value: (Feature with CorrectedSpectra) = {
       if (filteredByTime.isEmpty) {
         logger.warn("Created failsafe feature_wirh_correctedspectra from target data and 0 intensity")

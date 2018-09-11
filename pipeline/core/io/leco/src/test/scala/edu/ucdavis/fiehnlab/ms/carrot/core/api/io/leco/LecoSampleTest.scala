@@ -53,7 +53,7 @@ class LecoSampleTest extends WordSpec with ShouldMatchers with BeforeAndAfterEac
         val sample = new LecoSample(client.load("QC6 (2013)_1.txt").get, "QC6 (2013)_1.txt")
 
         "able to read all" in {
-          println(sample.spectra)
+          logger.debug(sample.spectra.toString())
           assert(sample.spectra.size == 298)
         }
       }

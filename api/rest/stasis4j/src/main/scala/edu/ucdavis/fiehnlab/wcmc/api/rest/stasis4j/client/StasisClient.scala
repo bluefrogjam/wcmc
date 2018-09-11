@@ -30,7 +30,10 @@ class StasisClient extends StasisService with LazyLogging {
 
   override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = restTemplate.postForEntity(s"${baseUrl}/${trackingPath}", data, classOf[TrackingResponse])
 
-  override def getResults(sample: String): ResultResponse = restTemplate.getForObject(s"${baseUrl}/${resultPath}/${sample}", classOf[ResultResponse])
+  override def getResults(sample: String): ResultResponse = {
+    logger.info(s"calling url: ${baseUrl}/${resultPath}/${sample}")
+    restTemplate.getForObject(s"${baseUrl}/${resultPath}/${sample}", classOf[ResultResponse])
+  }
 
   override def addResult(data: ResultData): ResponseEntity[ResultData] = restTemplate.postForEntity(s"${baseUrl}/${resultPath}", data, classOf[ResultData])
 
