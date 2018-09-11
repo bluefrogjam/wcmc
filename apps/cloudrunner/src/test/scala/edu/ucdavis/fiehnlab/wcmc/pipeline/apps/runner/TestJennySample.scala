@@ -1,15 +1,11 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.DelegateLibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, ShouldMatchers, WordSpec}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.ApplicationContext
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager, TestPropertySource}
 
@@ -26,36 +22,24 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
 ))
 class TestJennySample extends WordSpec with ShouldMatchers with LazyLogging with BeforeAndAfter {
 
+  @Value("#{CARROT_SAMPLE}")  // experimental, i'm getting 404 or 403 when calling stasis/result api
+  val sample = ""
+
   @Autowired
   val runner: Runner = null
 
   @Autowired
-  val stasis_cli: StasisService = null
-
-  @Autowired
-  val ctx: ApplicationContext = null
+  val stasis_cli: StasisClient = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  before {
-    logger.info(ctx.getBeanDefinitionNames.mkString("\n"))
-  }
-
-
   "a runner" should {
-    "have a correction library" in {
-      val clib = ctx.containsBean("correctionLibrary").asInstanceOf[DelegateLibraryAccess[CorrectionTarget]]
-      clib.load(AcquisitionMethod.deserialize("jenny-tribe | test | test | positive")) should have size 25
-      clib.load(AcquisitionMethod.deserialize("jenny-tribe | test | test | negative")) should have size 11
-    }
-
-    "have an annotation library" in {
-      val alib = ctx.containsBean("annotationLibrary").asInstanceOf[DelegateLibraryAccess[AnnotationTarget]]
-      alib.load(AcquisitionMethod.deserialize("jenny-tribe | test | test | positive")) should have size 1016
-      alib.load(AcquisitionMethod.deserialize("jenny-tribe | test | test | negative")) should have size 1110
+    "have valid sample name" in {
+      sample.split(".").head should equal("BioRec_LipidsPos_PhIV_001a")
     }
 
     "have a stasis client" in {
+      println(stasis_cli.getClass.getSimpleName)
       stasis_cli should not be null
     }
 
@@ -64,7 +48,7 @@ class TestJennySample extends WordSpec with ShouldMatchers with LazyLogging with
     }
 
     "have results on aws" in {
-      stasis_cli.getResults("LipidsPos_PhV14_021_265096") should not be null
+      stasis_cli.getResults(sample.split(".").head) should not be null
     }
   }
 }

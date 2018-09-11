@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,21 +22,23 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
   val stasis_cli: StasisClient = null
 
   def save(sample: QuantifiedSample[T]): ResultData = {
-    logger.info(s"uploading to server: ${sample.name}")
+    logger.info(s"Storing '${sample.name}' on AWS")
+
     val results = sample.spectra.map(feature => {
+      logger.debug(s"\treplaced? ${feature.isInstanceOf[GapFilledTarget[T]] || feature.isInstanceOf[ZeroreplacedTarget]}")
       Result(CarrotToStasisConverter.asStasisTarget(feature.target),
         Annotation(feature.retentionIndex,
           feature.quantifiedValue.get match {
             case x: Double => x.toDouble
             case _ => 0.0
           },
-          replaced = feature.isInstanceOf[GapFilledTarget[T]],
+          replaced = feature.isInstanceOf[GapFilledTarget[T]] || feature.isInstanceOf[ZeroreplacedTarget],
           feature.accurateMass.getOrElse(0.0)
         )
       )
     })
 
-    val injections = Map(sample.name -> Injection("fake logid",
+    val injections = Map(sample.name -> Injection(System.currentTimeMillis().toString,
       Correction(3,
         sample.correctedWith.name,
         sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
@@ -47,7 +50,7 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
     val data: ResultData = ResultData(sample.name, injections)
 
     val response = stasis_cli.addResult(data)
-    logger.info(s"stasis response: ${response}")
+    logger.trace(s"stasis response: ${response}")
 
     if (response.getStatusCode == HttpStatus.OK) {
       stasis_cli.addTracking(TrackingData(sample.name, "exported", sample.fileName))

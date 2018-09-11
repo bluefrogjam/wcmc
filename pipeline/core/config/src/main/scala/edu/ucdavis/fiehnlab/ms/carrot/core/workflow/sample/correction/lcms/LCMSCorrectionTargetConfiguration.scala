@@ -13,7 +13,7 @@ import scala.collection.JavaConverters._
 @Configuration
 @Profile(Array("carrot.lcms"))
 @ComponentScan
-class LCMSCorrectionTargetConfiguration extends LazyLogging{
+class LCMSCorrectionTargetConfiguration extends LazyLogging {
 
   /**
     * defines a library access method, based on all methods
@@ -24,7 +24,7 @@ class LCMSCorrectionTargetConfiguration extends LazyLogging{
     */
   @Bean
   def correctionTargets(properties: LCMSCorrectionLibraryProperties): LibraryAccess[CorrectionTarget] = {
-    logger.info(s"==== correctionTargets ====")
+    logger.trace(s"==== correctionTargets ====")
 
     val methods: Map[AcquisitionMethod, Iterable[LCMSCorrectionTarget]] = properties.config.asScala.map { x =>
       (AcquisitionMethod(ChromatographicMethod(x.name, Some(x.instrument), Some(x.column), x.ionMode match {
@@ -36,7 +36,7 @@ class LCMSCorrectionTargetConfiguration extends LazyLogging{
 
 
     val libs = methods.keySet.map { x =>
-        logger.info(s"==== method $x ====")
+      logger.trace(s"==== method $x ====")
 
       new ReadonlyLibrary[LCMSCorrectionTarget] {
 
