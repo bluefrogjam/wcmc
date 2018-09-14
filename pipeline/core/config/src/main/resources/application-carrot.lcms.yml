@@ -293,7 +293,7 @@ carrot:
           description: ""
           column: test
           ionMode: positive
-          instrument: test
+          instrument: 6530
           minimumPeakIntensity: 10000
           targets:
             - identifier: "1_CE(22:1) iSTD [M+Chol-head-H2O+H]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
@@ -475,7 +475,7 @@ carrot:
           description: ""
           column: test
           ionMode: negative
-          instrument: test
+          instrument: 6550
           minimumPeakIntensity: 10000
           targets:
             - identifier: "1_Ceramide (d18:1/17:0) iSTD [M+Cl]-_ICWGMOFDULMCFL-QKSCFGQVSA-N"
@@ -561,7 +561,7 @@ carrot:
           description: ''
           column: test
           ionMode: positive
-          instrument: test
+          instrument: 6530
           minimumPeakIntensity: 10000
           targets:
             - identifier: "AC(10:0) [M+H]+_LZOSYCMHQXPBFU-UHFFFAOYSA-N"
@@ -7680,7 +7680,7 @@ carrot:
           description: ''
           column: test
           ionMode: negative
-          instrument: test
+          instrument: 6550
           minimumPeakIntensity: 10000
           targets:
             - identifier: "Ceramide (d32:1) [M+Cl]-_ZKRPGPZHULJLKJ-JHRQRACZSA-N"

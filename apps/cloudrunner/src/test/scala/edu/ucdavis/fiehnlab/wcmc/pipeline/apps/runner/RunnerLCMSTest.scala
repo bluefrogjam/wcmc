@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager, TestPropertySource}
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[RunnerTestConfig]))
+@SpringBootTest /*(classes = Array(classOf[RunnerTestConfig]))*/
 @ActiveProfiles(Array("test", "carrot.lcms",
   "carrot.output.writer.aws", "file.source.eclipse"))
 @TestPropertySource(properties = Array(

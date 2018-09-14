@@ -41,7 +41,7 @@ class LCMSAnnotationLibraryConfigurationTest extends WordSpec with ShouldMatcher
     }
 
     "have instrument name 'test'" in {
-      annotProperties.config.get(0).instrument should equal("test")
+      annotProperties.config.get(0).instrument should equal("6530")
     }
 
     "have column name 'test'" in {

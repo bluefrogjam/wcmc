@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: "jenny"
+    include:
+      - prod
+      - carrot.lcms
+      - file.source.luna
+      - carrot.output.storage.aws
+      - carrot.resource.loader.bucket
+      - carrot.resource.store.bucket
+      - carrot.report.quantify.height
+      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+      - carrot.runner.required
