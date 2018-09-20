@@ -23,7 +23,7 @@ class MetaDataResolver {
   @Autowired
   val metadataRepository: FileMetadataRepository = null
 
-  val validExtensions: Array[String] = Array("mzXML")
+  val validExtensions: Array[String] = Array("mzML", "mzml")
 
   /**
     * resolve metadata for this sample

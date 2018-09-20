@@ -21,7 +21,7 @@ class ConversionAwareSampleLoader @Autowired()(dataForm: DataFormerClient, resou
   /**
     * these are the extensions the data form client can convert too
     */
-  val supportOutputExtensionForDataForm: Array[String] = Array("mzML", "mzXML")
+  val supportOutputExtensionForDataForm: Array[String] = Array("mzML", "mzml")
 
   /**
     * loads a sample as an option, so that we can evaluate it we have it or not, without an exception
