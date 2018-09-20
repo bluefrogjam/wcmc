@@ -144,11 +144,11 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
             results = Array(
               Result(
                 Target(121.12, "test", "test_id", 12.2),
-                Annotation(121.2, 10.0, replaced = false, 12.2)
+                Annotation(121.2, 10.0, replaced = false, 12.2, Some(121.1), None, None, None)
               ),
               Result(
                 Target(123.12, "test2", "test_id2", 132.12),
-                Annotation(123.2, 103.0, replaced = true, 132.12)
+                Annotation(123.2, 103.0, replaced = true, 132.12, Some(123.3), None, None, None)
               )
             )
           )

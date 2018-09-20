@@ -77,7 +77,11 @@ case class Annotation(
                          retentionIndex: Double,
                          intensity: Double,
                          replaced: Boolean,
-                         mass: Double
+                         mass: Double,
+                         nonCorrectedRt: Option[Double] = None,
+                         massError: Option[Double] = None,
+                         massErrorPPM: Option[Double] = None,
+                         rtDistance: Option[Double] = None
                      )
 
 /**
