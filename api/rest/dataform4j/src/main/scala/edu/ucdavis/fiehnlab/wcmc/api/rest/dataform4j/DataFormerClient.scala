@@ -101,13 +101,7 @@ class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
         try {
           val upresponse = upload(file.get, filename)
 
-          if (extension.equalsIgnoreCase("abf")) {
-            Option(download(filename, FileType.ABF))
-          }
-          else if (extension.equalsIgnoreCase("mzxml")) {
-            Option(download(filename, FileType.MZXML))
-          }
-          else if (extension.equalsIgnoreCase("mzml")) {
+          if (extension.equalsIgnoreCase("mzml")) {
             Option(download(filename, FileType.MZML))
           }
           else {

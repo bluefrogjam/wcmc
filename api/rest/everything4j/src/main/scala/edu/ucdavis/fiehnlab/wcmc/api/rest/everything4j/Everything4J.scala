@@ -38,25 +38,23 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     val data = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")
 
     if (data.isEmpty) {
-      logger.info(s"${name} is not a file, verifying folder...")
       val folder = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "folder")
 
       if (folder.isEmpty) {
         logger.warn(s"we can't identify what type of resource '${name}' is...")
         None
       } else {
-        logger.info(s"${name} is a folder, compressing now.")
+        logger.debug(s"${name} is a folder, compressing now.")
         val content = createZip(folder.head.name, folder.head.path)
-        logger.info("returning compressed stream...")
+        logger.debug("returning compressed stream...")
         Option(content)
       }
     } else {
       val encoded = s"${data.head.path.replaceAll("\\\\", "/").replaceAll("\\s", "%20").replaceAll(":", "%3A")}/${URLEncoder.encode(data.head.name, "UTF8").replaceAll("\\+", "%20")}"
       val uri = s"http://${host}:${port}/${encoded}"
 
-      logger.info(s"loading file from URI: ${uri}")
+      logger.debug(s"loading file from URI: ${uri}")
       val content = new URI(uri).toURL
-
 
       try {
         Option(content.openStream())
@@ -71,18 +69,21 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     * creates a compressed stream from a folder
     */
   def createZip(name: String, dir: String): InputStream = {
-    val temp = new File(s"tmp/${name}")
-    temp.mkdirs()
+    val temp = s"tmp/${name}"
+    val tempFile = new File(temp)
+    tempFile.mkdirs()
+
+    logger.debug(s"recursion starts at: ${name}")
 
     recurse(dir.concat("/").concat(name), temp, orig = name)
-    logger.debug(s"Compressed File source: ${temp.getAbsolutePath}")
+    logger.debug(s"Compressed File source: ${tempFile.getAbsolutePath}")
 
     val zipFile = new File(s"tmp/${name}.zip")
 
     try {
-      ZipUtil.pack(temp, zipFile)
+      ZipUtil.pack(tempFile, zipFile)
 
-      temp.toPath
+      tempFile.toPath
     } catch {
       case ex: Exception =>
         logger.error(s"OOPS: ${ex.getMessage}", ex)
@@ -97,32 +98,32 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     * @param start
     * @param orig
     */
-  def recurse(start: String, temp: File, orig: String = ""): Unit = {
-    val path = start.replaceAll("\\\\", "/").replaceAll("\\s", "%20").replaceAll(":", "%3A") // hack to fix everything's duplicated 'size' field on folder request bug
+  def recurse(start: String, tempDestFolder: String = "tmp", orig: String = ""): Option[String] = {
+
+    val path = start.replaceAll("\\\\", "/").replaceAll("\\s", "%20") // hack to fix everything's duplicated 'size' field on folder request bug
     val queryStr = "j=1&path_column=1&size_column=0&date_modified_column=0&date_created_column=0&attributes_column=0"
-    val url = /*if (orig.isEmpty)
-      new URL(s"http://${host}:${port}/?q=${path}&${queryStr}")
-    else*/
-      new URL(s"http://${host}:${port}/${path}?${queryStr}")
+    val url = new URL(s"http://${host}:${port}/${path}?${queryStr}")
 
     val search = objectMapper.readValue(url, classOf[Search])
+    logger.debug(s"Search result: ${search.results}")
 
     search.results.foreach(t => {
       val goodPath = if (t.path != null) t.path else path
 
       t.`type`.toLowerCase() match {
         case "file" => //download file
-          downloadFile(goodPath.concat("/").concat(t.name), new File(s"${temp}/${t.name}"))
+          downloadFile(goodPath.concat("/").concat(t.name), new File(s"${tempDestFolder}/${t.name}"))
         case "folder" => {
           val dir = s"${if (t.path != null) t.path else path}/${t.name}"
-          val sd = new File(s"${temp}/${t.name}")
-          sd.mkdirs()
+          val sd = s"$tempDestFolder/${t.name}"
+          new File(sd).mkdirs()
           recurse(dir, sd, s"${orig}/${t.name}")
         }
         case _ => None
       }
     })
 
+    Option(tempDestFolder)
   }
 
   def downloadFile(source: String, dest: File, force: Boolean = false): Unit = {
@@ -130,15 +131,14 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
       if (force) {
         logger.warn(s"deleting file: ${dest}")
         dest.delete()
-      }
-      else {
+      } else {
         logger.debug(s"reusing file: ${dest}")
         return
       }
     }
 
-    val content = new URI(s"http://${host}:${port}/${URLEncoder.encode(source, "UTF8")}").toURL
-    logger.info(s"Downloading file: ${content.getFile}")
+    val content = new URI(s"http://${host}:${port}/${source}").toURL
+    logger.debug(s"Downloading file '${content.getFile}' to ${dest}")
 
     val outstr = new FileOutputStream(dest)
 
@@ -158,12 +158,10 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
     */
   override def exists(name: String): Boolean = {
     val url = s"http://${host}:${port}?s=${URLEncoder.encode(name, "UTF8")}&j=1&path_column=1"
-    logger.info(s"exists is checking url: ${new URL(url)}")
+    logger.info(s"${this.getClass.getSimpleName} is checking url: ${new URL(url)}")
 
     val result = objectMapper.readValue(new URL(url), classOf[Search]).results.nonEmpty
 
-
-    logger.info(s"exists: ${result}")
     result
   }
 }

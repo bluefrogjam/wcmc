@@ -19,7 +19,7 @@ class AgilentSample(override val fileName: String, file: File, dataFormerClient:
     val start = System.nanoTime()
 
     try {
-      val result = dataFormerClient.convert(fileName, "mzML")
+      val result = dataFormerClient.convert(fileName, "mzml")
       logger.debug(s"converting ${file} to msDialV2 representation")
 
       MSDKSample(fileName, result.get).spectra
