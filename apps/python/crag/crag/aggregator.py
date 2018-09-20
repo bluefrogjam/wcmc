@@ -1,3 +1,4 @@
+import numpy
 import pandas as pd
 import re
 import requests
@@ -54,14 +55,23 @@ def getFileResults(filename):
 
 def format_sample(data):
     intensities = []
+    masses = []
+    rts = []
+    curve = []
+
     for k, v in data['injections'].items():
-        intensities = {k: [int(r['annotation']['intensity']) for r in v['results']]}
+        intensities = {k: [round(r['annotation']['intensity']) for r in v['results']]}
+        masses = {k: [r['annotation']['mass'] for r in v['results']]}
+        rts = {k: [r['annotation']['retentionIndex'] for r in v['results']]}
+        curve = {k: [r for r in v['correction']['curve']]}
 
-    return pd.DataFrame.from_dict(intensities, orient='columns')
+    return [intensities, masses, rts, curve]
 
 
-def format_metadata(filename, data):
-    names = rts = masses = inchikeys = []
+def format_metadata(data):
+    names = []
+    rts = []
+    masses = []
 
     pattern = re.compile(".*?_[A-Z]{14}-[A-Z]{10}-[A-Z]")
 
@@ -73,33 +83,30 @@ def format_metadata(filename, data):
     inchikeys = [name.split('_')[-1] if pattern.match(name) else None for name in names]
     names2 = [name.rsplit('_', maxsplit=1)[0] if pattern.match(name) else name for name in names]
 
-    metadata = pd.DataFrame({'name': names2, 'rt(s)': rts, 'mz': masses, 'inchikey': inchikeys})
-    metadata[filename] = format_sample(data)
+    metadata = pd.DataFrame({'name': names2, 'ri(s)': rts, 'mz': masses, 'inchikey': inchikeys,
+                             'delta': pd.np.nan, 'AVG (br)': pd.np.nan, '% RSD': pd.np.nan})
     return metadata
 
 
-def export_intensity_matrix(data):
-    # add metadata
-    result =
+def export_excel(intensity, mass, rt, curve, args):
+    # saving excel file
+    print("Exporting excel file")
 
-    # adding intensity matrix
-    for file in files[0:3]:
-        if 'error' not in data[file]:
-            result[file] = format_sample(data)
+    output_name = '/g/study-jenny/jenny-tribe.xlsx'
 
+    if args.test:
+        output_name = '/g/study-jenny/jenny-tribe_test.xlsx'
 
-def export_mass_matrix(data):
-    # adding intensity matrix
-    for item in data.items():
-        if 'error' not in item:
-            result[file] = format_sample(data)
+    intensity.set_index('name')
+    mass.set_index('name')
+    rt.set_index('name')
 
-
-def export_rt_matrix(data):
-    # adding intensity matrix
-    for file in files[0:3]:
-        if 'error' not in data[file]:
-            result[file] = format_sample(data)
+    writer = pd.ExcelWriter(output_name)
+    intensity.fillna('').to_excel(writer, 'Intensity matrix')
+    mass.fillna('NA').to_excel(writer, 'Mass matrix')
+    rt.fillna('NA').to_excel(writer, 'Retention index matrix')
+    curve.fillna('NA').to_excel(writer, 'Correction curves')
+    writer.save()
 
 
 def aggregate(args):
@@ -107,7 +114,7 @@ def aggregate(args):
     Collects information on the experiment and decides if aggregation of the full experiment is possible
 
     :param args: parameters containing the experiment name
-    :return: the filename of the aggregated file (csv? xsls?)
+    :return: the filename of the aggregated (excel) file
     """
 
     # commented since it returns partial list of experiment files
@@ -118,24 +125,77 @@ def aggregate(args):
     with open('/g/study-jenny/aws-results.txt') as processed:
         files = [p.split(' ')[-1].rstrip() for p in processed.readlines()]
 
-    # get all data from aws
-    data = {}
-    for file in files[0:3]:
+    if args.test:
+        files = files[3:7]
+
+    # creating target section
+    first_data = getFileResults(files[0])
+    intensity = format_metadata(first_data)
+    mass = format_metadata(first_data)
+    rt = format_metadata(first_data)
+    curve = format_metadata(first_data)
+
+    # adding intensity matrix
+    for file in files:
         # commented due to missing tracking data for most files
         # status = getSampleTracking(file)
         # print(status)
 
-        data[file] = getFileResults(file)
+        data = getFileResults(file)
+        if 'error' not in data:
+            formatted = format_sample(data)
+            intensity[file] = pd.DataFrame.from_dict(formatted[0])
+            mass[file] = pd.DataFrame.from_dict(formatted[1])
+            rt[file] = pd.DataFrame.from_dict(formatted[2])
+            curve[file] = pd.DataFrame.from_dict(formatted[3])
+        else:
+            intensity[file] = pd.np.nan
+            mass[file] = pd.np.nan
+            rt[file] = pd.np.nan
 
-    export_intensity_matrix(data)
+    biorecs = [br for br in intensity.columns if 'biorec' in str(br).lower()]
 
-    df_mz = export_mass_matrix(data)
+    pd.set_option('display.max_rows', 100)
+    pd.set_option('display.max_columns', 10)
+    pd.set_option('display.width', 1000)
 
-    df_rt = export_rt_matrix(data)
+    calculate_delta(intensity, mass, rt)
 
-    # saving excel file
-    writer = pd.ExcelWriter('/g/study-jenny/jenny-tribe.xlsx')
-    df_int.to_excel(writer, "Intensity Matrix")
-    df_mz.to_excel(writer, "Mass Matrix")
-    df_rt.to_excel(writer, "RT Matrix")
-    writer.save()
+    calculate_average(intensity, mass, rt, biorecs)
+
+    calculate_rsd(intensity, mass, rt, biorecs)
+
+    export_excel(intensity, mass, rt, curve, args)
+
+
+def calculate_delta(intensity, mass, rt):
+    print('Calculating ranges for intensity, mass and RT (ignoring missing results)')
+
+    for i in range(len(intensity)):
+        intensity.loc[i, 'delta'] = intensity.iloc[i, 4:].max() - intensity.iloc[i, 4:].min()
+        mass.loc[i, 'delta'] = mass.iloc[i, 4:].max() - mass.iloc[i, 4:].min()
+        rt.loc[i, 'delta'] = rt.iloc[i, 4:].max() - rt.iloc[i, 4:].min()
+
+
+def calculate_average(intensity, mass, rt, biorecs):
+    print('Calculating average of biorecs for intensity, mass and RT (ignoring missing results)')
+
+    for i in range(len(intensity)):
+        intensity.loc[i, 'AVG (br)'] = intensity.loc[i, biorecs].mean()
+        mass.loc[i, 'AVG (br)'] = mass.loc[i, biorecs].mean()
+        rt.loc[i, 'AVG (br)'] = rt.loc[i, biorecs].mean()
+
+
+def calculate_rsd(intensity, mass, rt, biorecs):
+    print('Calculating %RDS of biorecs for intensity, mass and RT (ignoring missing results)')
+    size = range(len(intensity))
+    numpy.seterr(invalid='log')
+
+    for i in size:
+        try:
+            intensity.loc[i, '% RSD'] = (intensity.loc[i, biorecs].std() / intensity.loc[i, biorecs].mean()) * 100
+        except Exception as e:
+            print(f'\tCan\'t calculate % RSD for target {intensity.loc[i, "name"]}.'
+                  f' Sum of intensities = {intensity.loc[i, biorecs].sum()}')
+        mass.loc[i, '% RSD'] = (mass.loc[i, biorecs].std() / mass.loc[i, biorecs].mean()) * 100
+        rt.loc[i, '% RSD'] = (rt.loc[i, biorecs].std() / rt.loc[i, biorecs].mean()) * 100
