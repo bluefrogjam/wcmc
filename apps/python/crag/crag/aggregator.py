@@ -1,6 +1,8 @@
+import os
+import re
+
 import numpy
 import pandas as pd
-import re
 import requests
 
 stasis_url = "https://api.metabolomics.us/stasis"
@@ -91,11 +93,11 @@ def format_metadata(data):
 def export_excel(intensity, mass, rt, curve, args):
     # saving excel file
     print("Exporting excel file")
-
-    output_name = '/g/study-jenny/jenny-tribe.xlsx'
+    file, ext = os.path.splitext(args.input)
+    output_name = f'{file}.xlsx'
 
     if args.test:
-        output_name = '/g/study-jenny/jenny-tribe_test.xlsx'
+        output_name = f'{file}_test.xlsx'
 
     intensity.set_index('name')
     mass.set_index('name')
@@ -107,6 +109,39 @@ def export_excel(intensity, mass, rt, curve, args):
     rt.fillna('NA').to_excel(writer, 'Retention index matrix')
     curve.fillna('NA').to_excel(writer, 'Correction curves')
     writer.save()
+
+
+def calculate_delta(intensity, mass, rt):
+    print('Calculating ranges for intensity, mass and RT (ignoring missing results)')
+
+    for i in range(len(intensity)):
+        intensity.loc[i, 'delta'] = intensity.iloc[i, 4:].max() - intensity.iloc[i, 4:].min()
+        mass.loc[i, 'delta'] = mass.iloc[i, 4:].max() - mass.iloc[i, 4:].min()
+        rt.loc[i, 'delta'] = rt.iloc[i, 4:].max() - rt.iloc[i, 4:].min()
+
+
+def calculate_average(intensity, mass, rt, biorecs):
+    print('Calculating average of biorecs for intensity, mass and RT (ignoring missing results)')
+
+    for i in range(len(intensity)):
+        intensity.loc[i, 'AVG (br)'] = intensity.loc[i, biorecs].mean()
+        mass.loc[i, 'AVG (br)'] = mass.loc[i, biorecs].mean()
+        rt.loc[i, 'AVG (br)'] = rt.loc[i, biorecs].mean()
+
+
+def calculate_rsd(intensity, mass, rt, biorecs):
+    print('Calculating %RDS of biorecs for intensity, mass and RT (ignoring missing results)')
+    size = range(len(intensity))
+    numpy.seterr(invalid='log')
+
+    for i in size:
+        try:
+            intensity.loc[i, '% RSD'] = (intensity.loc[i, biorecs].std() / intensity.loc[i, biorecs].mean()) * 100
+        except Exception as e:
+            print(f'\tCan\'t calculate % RSD for target {intensity.loc[i, "name"]}.'
+                  f' Sum of intensities = {intensity.loc[i, biorecs].sum()}')
+        mass.loc[i, '% RSD'] = (mass.loc[i, biorecs].std() / mass.loc[i, biorecs].mean()) * 100
+        rt.loc[i, '% RSD'] = (rt.loc[i, biorecs].std() / rt.loc[i, biorecs].mean()) * 100
 
 
 def aggregate(args):
@@ -122,11 +157,11 @@ def aggregate(args):
     # files = getExperimentFiles(args.experiment)
     # print(files)
 
-    with open('/g/study-jenny/aws-results.txt') as processed:
+    with open(args.input) as processed:
         files = [p.split(' ')[-1].rstrip() for p in processed.readlines()]
 
     if args.test:
-        files = files[3:7]
+        files = files[3:5]
 
     # creating target section
     first_data = getFileResults(files[0])
@@ -166,36 +201,3 @@ def aggregate(args):
     calculate_rsd(intensity, mass, rt, biorecs)
 
     export_excel(intensity, mass, rt, curve, args)
-
-
-def calculate_delta(intensity, mass, rt):
-    print('Calculating ranges for intensity, mass and RT (ignoring missing results)')
-
-    for i in range(len(intensity)):
-        intensity.loc[i, 'delta'] = intensity.iloc[i, 4:].max() - intensity.iloc[i, 4:].min()
-        mass.loc[i, 'delta'] = mass.iloc[i, 4:].max() - mass.iloc[i, 4:].min()
-        rt.loc[i, 'delta'] = rt.iloc[i, 4:].max() - rt.iloc[i, 4:].min()
-
-
-def calculate_average(intensity, mass, rt, biorecs):
-    print('Calculating average of biorecs for intensity, mass and RT (ignoring missing results)')
-
-    for i in range(len(intensity)):
-        intensity.loc[i, 'AVG (br)'] = intensity.loc[i, biorecs].mean()
-        mass.loc[i, 'AVG (br)'] = mass.loc[i, biorecs].mean()
-        rt.loc[i, 'AVG (br)'] = rt.loc[i, biorecs].mean()
-
-
-def calculate_rsd(intensity, mass, rt, biorecs):
-    print('Calculating %RDS of biorecs for intensity, mass and RT (ignoring missing results)')
-    size = range(len(intensity))
-    numpy.seterr(invalid='log')
-
-    for i in size:
-        try:
-            intensity.loc[i, '% RSD'] = (intensity.loc[i, biorecs].std() / intensity.loc[i, biorecs].mean()) * 100
-        except Exception as e:
-            print(f'\tCan\'t calculate % RSD for target {intensity.loc[i, "name"]}.'
-                  f' Sum of intensities = {intensity.loc[i, biorecs].sum()}')
-        mass.loc[i, '% RSD'] = (mass.loc[i, biorecs].std() / mass.loc[i, biorecs].mean()) * 100
-        rt.loc[i, '% RSD'] = (rt.loc[i, biorecs].std() / rt.loc[i, biorecs].mean()) * 100
