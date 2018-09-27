@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsDefinedException
@@ -29,6 +29,12 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
   val massAccuracySetting: Double = 0.0
 
   /**
+    * MassAccuracy in PPM for correction target search
+    */
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracyppm:10}")
+  val massAccuracyPPMSetting: Double = 0.0
+
+  /**
     * Retention time accuracy (in seconds) used in target filtering and similarity calculation
     */
   @Value("${wcmc.pipeline.workflow.config.correction.peak.rt.accuracy:12}")
@@ -38,7 +44,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     * Intensity used for penalty calculation - the peak similarity score for targets below this
     * intensity will be scaled down by the ratio of the intensity to this threshold
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensityPenaltyThreshold:1000}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensityPenaltyThreshold:10000}")
   val intensityPenaltyThreshold: Float = 0
 
   /**
@@ -140,6 +146,11 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     }.toSeq.sortBy(_.target.retentionIndex)
 
     logger.info(s"after optimization, we kept ${result.size} ri standards out of ${matches.size}")
+    logger.info(s"\tStandards used: ${
+      result.map {
+        _.target.name
+      }.mkString("\n")
+    }")
 
     result
   }
@@ -157,7 +168,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     /**
       * allows us to filter the data by the height of the ion
       */
-    val massIntensity = new MassAccuracyPPMorMD(5, massAccuracySetting, "correction", minIntensity = minPeakIntensity) with JSONSampleLogging {
+    val massIntensity = new MassAccuracyPPMorMD(massAccuracyPPMSetting, massAccuracySetting, "correction", minIntensity = minPeakIntensity) with JSONSampleLogging {
       /**
         * which sample we require to log
         */
