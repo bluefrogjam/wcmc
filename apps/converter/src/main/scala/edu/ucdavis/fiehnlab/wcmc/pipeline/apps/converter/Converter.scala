@@ -16,7 +16,7 @@ import org.springframework.context.annotation.{Bean, Primary}
 import scala.collection.JavaConverters._
 
 /**
-  * converts a given file to mzXML
+  * converts a given file to mzML
   */
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class Converter extends ApplicationRunner with LazyLogging {
@@ -52,13 +52,13 @@ class Converter extends ApplicationRunner with LazyLogging {
     if (applicationArguments.containsOption("file")) {
       applicationArguments.getOptionValues("file").asScala.foreach { f: String =>
         logger.info(s"converting: ${f}")
-        val out: Option[File] = dataForm.convert(f, "mzXML")
+        val out: Option[File] = dataForm.convert(f, "mzML")
 
         out match {
           case Some(x) =>
             logger.info(s"converted ${x}")
 
-            val out = new BufferedOutputStream(new FileOutputStream(s"${x.getName.substring(0,x.getName.indexOf("."))}.mzXML"))
+            val out = new BufferedOutputStream(new FileOutputStream(s"${x.getName.substring(0, x.getName.indexOf("."))}.mzML"))
             try {
               IOUtils.copy(new FileInputStream(x), out)
               out.flush()

@@ -32,21 +32,10 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
       result shouldBe None
     }
 
-    // mzxml disabled on serverside
-    "convert a raw data file (.d.zip) to mzXML" ignore {
+    "convert a raw data file (.d.zip) to mzml" in {
       val filename = "testA.d.zip"
 
-      val result = dfClient.convert(filename, "mzXML")
-
-      result.isDefined shouldBe true
-
-      result.get.getName.toLowerCase.endsWith("mzxml") shouldBe true
-    }
-
-    "convert a raw data file (.d.zip) to mzML" in {
-      val filename = "testA.d.zip"
-
-      val result = dfClient.convert(filename, "mzML")
+      val result = dfClient.convert(filename, "mzml")
 
       result.isDefined shouldBe true
 
