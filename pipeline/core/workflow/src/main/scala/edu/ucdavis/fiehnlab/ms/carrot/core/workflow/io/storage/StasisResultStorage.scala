@@ -23,22 +23,21 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
   def save(sample: QuantifiedSample[T]): ResultData = {
     logger.info(s"Storing '${sample.name}' on AWS")
 
-    val results = sample.spectra.map(feature => { // of type $anon$5 or anon$7
-      //      logger.info(s"type: ${feature.getClass}")
-      //      logger.info(s"\treplaced? ${feature.getClass.getGenericInterfaces.contains(classOf[GapFilledTarget[T]]) ||
-      //          feature.getClass.getGenericInterfaces.contains(classOf[ZeroreplacedTarget])}")
+    val results = sample.spectra.map(feature => {
+      logger.info(s"\tType of feature: ${feature.getClass.getName}")
       Result(CarrotToStasisConverter.asStasisTarget(feature.target),
         Annotation(feature.retentionIndex,
           feature.quantifiedValue.get match {
             case x: Double => x.toDouble
             case _ => 0.0
           },
+          //TODO I know this is bad, BUT it WORKS!!!
           replaced = feature.getClass.getTypeName.contains("ZeroreplacedTarget") || feature.getClass.getTypeName.contains("GapFilledTarget"),
           feature.accurateMass.getOrElse(0.0),
-          nonCorrectedRt = Some(feature.retentionTimeInSeconds),
-          feature.massAccuracy,
-          feature.massAccuracyPPM,
-          feature.retentionIndexDistance
+          nonCorrectedRt = feature.retentionTimeInSeconds,
+          feature.massAccuracy.getOrElse(0),
+          feature.massAccuracyPPM.getOrElse(0),
+          feature.retentionIndexDistance.getOrElse(0)
         )
       )
     })
@@ -47,7 +46,7 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
       Correction(3,
         sample.correctedWith.name,
         sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
-          .map(pair => Curve(pair._1, pair._2))
+            .map(pair => Curve(pair._1, pair._2))
       ),
       results)
     ).asJava

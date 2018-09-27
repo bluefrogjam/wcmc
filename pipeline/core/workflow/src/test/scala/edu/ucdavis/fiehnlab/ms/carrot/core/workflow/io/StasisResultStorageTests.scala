@@ -12,11 +12,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage.StasisResultStora
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.junit.runner.RunWith
 import org.mockito.Mockito._
-import org.mockito.{InjectMocks, Mock}
+import org.mockito.{InjectMocks, Mock, MockitoAnnotations}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,14 +29,12 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.collection.JavaConverters._
 
-import org.mockito.MockitoAnnotations
-
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple",
   "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.storage.aws",
   "test"))
-class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfterEach with MockitoSugar with LazyLogging {
+class StasisResultStorageTests extends WordSpec with ShouldMatchers with BeforeAndAfterEach with MockitoSugar with LazyLogging {
   val libName = "lcms_istds"
 
   @Autowired
@@ -57,7 +56,10 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
   val sampleLoader: SampleLoader = null
 
   @Mock
-  val stasis_cli: StasisClient = null
+  val mockStasis: StasisClient = MockitoSugar.mock[StasisClient](CALLS_REAL_METHODS)
+
+  @Autowired
+  val stasis_cli: StasisService = null
 
   @Autowired
   @InjectMocks
@@ -70,7 +72,7 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
     MockitoAnnotations.initMocks(this)
   }
 
-  "StasisWriter " should {
+  "StasisResultStorage" should {
     val sample = sampleLoader.loadSample("B5_P20Lipids_Pos_NIST01.mzml").get
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
@@ -88,26 +90,37 @@ class StasisWriterTests extends WordSpec with ShouldMatchers with BeforeAndAfter
     }
 
     "have a stasisWriter" in {
-      stasis_cli should not be null
-      stasis_cli shouldBe a[StasisClient]
+      mockStasis should not be null
+      mockStasis shouldBe a[StasisClient]
       writer.stasis_cli should not be null
       writer.stasis_cli shouldBe a[StasisClient]
     }
 
     "send the result of a sample to stasis" in {
-      when(stasis_cli.addTracking(TrackingData(sample.name, "exported", sample.fileName))).thenReturn(ResponseEntity.ok(mock[TrackingResponse]))
-      when(stasis_cli.addResult(mock[ResultData])).thenReturn(ResponseEntity.ok(mock[ResultData]))
+      when(mockStasis.addTracking(TrackingData(sample.name, "exported", sample.fileName))).thenReturn(ResponseEntity.ok(mock[TrackingResponse]))
+      when(mockStasis.addResult(mock[ResultData])).thenReturn(ResponseEntity.ok(mock[ResultData]))
 
       val data = writer.save(result)
-
       data.injections should have size 1
 
-      logger.info("INJECTIONS: " + data.injections.keySet().asScala.mkString(";"))
       val injections = data.injections.asScala
       injections(sample.name) shouldBe an[Injection]
-      injections(sample.name).results.length should be > 0
 
       writer.stasis_cli.getTracking(sample.name).status.maxBy(_.priority).value.toLowerCase === "exported"
+
+      var results: ResultResponse = null
+      try {
+        results = stasis_cli.getResults(sample.name)
+      } catch {
+        case ex: Exception =>
+          logger.error(ex.getMessage, ex)
+      }
+
+      results should have(
+        'sample (sample.name),
+        'id (sample.name)
+      )
+
     }
   }
 }
