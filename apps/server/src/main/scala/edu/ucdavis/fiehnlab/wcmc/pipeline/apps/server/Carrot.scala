@@ -4,7 +4,7 @@ import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -14,9 +14,7 @@ import org.springframework.boot.{SpringApplication, WebApplicationType}
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.http.MediaType
-import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, CorsRegistry, WebMvcConfigurerAdapter}
-
-import scala.collection.JavaConverters._
+import org.springframework.web.servlet.config.annotation.{ContentNegotiationConfigurer, CorsRegistry, WebMvcConfigurer}
 
 /**
   * Created by wohlgemuth on 9/7/17.
@@ -52,7 +50,7 @@ class Carrot extends LazyLogging {
   }
 
   @Bean
-  def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
+  def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): LibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
 
   @Bean
   def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = new MergeLibraryAccess(correction, annotation)
@@ -65,10 +63,16 @@ object Carrot extends App {
 }
 
 @Configuration
-class CarrotCors extends WebMvcConfigurerAdapter {
+class CarrotCors extends WebMvcConfigurer {
 
   override def configureContentNegotiation(configurer: ContentNegotiationConfigurer): Unit = {
-    configurer.favorPathExtension(false).favorParameter(false).parameterName("mediaType").ignoreAcceptHeader(false).useJaf(false).defaultContentType(MediaType.APPLICATION_JSON).mediaType("json", MediaType.APPLICATION_JSON)
+    configurer.favorPathExtension(false)
+        .favorParameter(false)
+        .parameterName("mediaType")
+        .ignoreAcceptHeader(false)
+        .useRegisteredExtensionsOnly(true)
+        .defaultContentType(MediaType.APPLICATION_JSON)
+        .mediaType("json", MediaType.APPLICATION_JSON)
   }
 
   override def addCorsMappings(registry: CorsRegistry): Unit = registry.addMapping("/**")

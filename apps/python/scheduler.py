@@ -62,11 +62,12 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--files', help='File with a list of samples to schedule', required=True)
     parser.add_argument('-s', '--submitter', help='Submitter\'s email', required=True)
     parser.add_argument('-t', '--task', help='Task name', default='task', type=str)
-    parser.add_argument('-p', '--platform', help='Data\'s chromatography type', default='LC-MS', type=str,
-                        choices=['LC-MS', 'GC-MS'])
+    parser.add_argument('-p', '--platform', help='Data\'s chromatography type', default='lcms', type=str,
+                        choices=['lcms', 'gcms'])
     parser.add_argument('-i', '--ion_mode', help='Ion mode of the samples', default='positive',
                         choices=['positive', 'negative'])
-    parser.add_argument('-m', '--method', help='Name of the chromatographic method (library)', default='csh-diego-pos')
+    parser.add_argument('-m', '--method', help='Name of the chromatographic method (library)',
+                        default='lcms_istds | test | test | positive')
     parser.add_argument('--start_index', help='Starting index (1 to number of files)', default=1, type=int)
     parser.add_argument('--dry_run', help='Do not submit the tasks, just print them', dest='dry', action='store_true')
     args = parser.parse_args()
