@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 
+import java.util.Date
+
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api._
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
@@ -8,6 +10,8 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.http.{HttpEntity, HttpMethod, ResponseEntity}
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
+
+import scala.collection.JavaConverters._
 
 @Component
 class StasisClient extends StasisService with LazyLogging {
@@ -31,8 +35,15 @@ class StasisClient extends StasisService with LazyLogging {
   override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = restTemplate.postForEntity(s"${baseUrl}/${trackingPath}", data, classOf[TrackingResponse])
 
   override def getResults(sample: String): ResultResponse = {
-    logger.info(s"calling url: ${baseUrl}/${resultPath}/${sample}")
-    restTemplate.getForObject(s"${baseUrl}/${resultPath}/${sample}", classOf[ResultResponse])
+    if (sample.contains('.')) {
+      logger.warn("The sample name provided might contain an extension. Please provide sample name without extension!")
+    }
+    val result = restTemplate.getForEntity[ResultResponse](s"${baseUrl}/${resultPath}/${sample}", classOf[ResultResponse])
+
+    if (result.getStatusCodeValue == 200)
+      result.getBody
+    else
+      ResultResponse("none", "none", new Date(), Map[String, Seq[Injection]]().asJava)
   }
 
   override def addResult(data: ResultData): ResponseEntity[ResultData] = restTemplate.postForEntity(s"${baseUrl}/${resultPath}", data, classOf[ResultData])
@@ -43,6 +54,6 @@ class StasisClient extends StasisService with LazyLogging {
 
   override def deleteTracking(sample: String): HttpEntity[String] = restTemplate.execute[ResponseEntity[String]](s"${baseUrl}/${trackingPath}/${sample}", HttpMethod.DELETE, null, null)
 
-  override def schedule(sample: String, method: String, mode: String, env: String): HttpEntity[String] = restTemplate.postForEntity(s"${baseUrl}/schedule", ScheduleData(sample, method, mode, env, "3"), classOf[String])
+  override def schedule(sample: String, method: String, mode: String, env: String): ResponseEntity[String] = restTemplate.postForEntity(s"${baseUrl}/schedule", ScheduleData(sample, method, mode, env, "3"), classOf[String])
 
 }
