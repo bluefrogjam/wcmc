@@ -26,7 +26,10 @@ class JennyRunner extends WordSpec with LazyLogging with ShouldMatchers {
 
   "Run samples" should {
     "process samples" ignore {
-      val fileList = Source.fromFile("/g/study-jenny/tracked-files.txt").getLines().map(_ + ".mzml").toSeq.par
+      //      val fileList = Source.fromFile("/g/study-jenny/aws-tracking.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
+      //      val fileList = Source.fromFile("/g/study-jenny/small-jenny-trouble.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
+      //      val fileList = Seq("BioRec_LipidsPos_PhIV_024.mzml").par
+      val fileList = Source.fromFile("/g/study-jenny/clean to process/files-002.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
       logger.info(s"loaded ${fileList.size} filenames")
 
       val forkJoinPool = new ForkJoinPool(10)
