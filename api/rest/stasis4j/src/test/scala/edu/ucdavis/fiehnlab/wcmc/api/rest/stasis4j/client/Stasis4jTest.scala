@@ -5,6 +5,7 @@ import java.util.Date
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.junit.runner.RunWith
+import org.scalatest.concurrent.Eventually
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -20,7 +21,7 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[SpringRunner])
 @ActiveProfiles(Array("test"))
 @SpringBootTest(classes = Array(classOf[StasisTestConfiguration]))
-class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
+class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually {
 
   @Autowired
   val client: StasisClient = null
@@ -95,14 +96,10 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
         Thread.sleep(delay)
       }
 
-      "and than schedule it" in {
+      "and then schedule it" in {
         val res2 = client.schedule(name, "lcms super method", "lcms", "test")
-        //res2.getStatusCode === 200
-
-        println(res2)
+        res2.getStatusCode should be(HttpStatus.OK)
       }
-
-
     }
 
     "add/get Tracking" in {
@@ -144,11 +141,11 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging {
             results = Array(
               Result(
                 Target(121.12, "test", "test_id", 12.2),
-                Annotation(121.2, 10.0, replaced = false, 12.2, Some(121.1), None, None, None)
+                Annotation(121.2, 10.0, replaced = false, 12.2, 121.1)
               ),
               Result(
                 Target(123.12, "test2", "test_id2", 132.12),
-                Annotation(123.2, 103.0, replaced = true, 132.12, Some(123.3), None, None, None)
+                Annotation(123.2, 103.0, replaced = true, 132.12, 123.3)
               )
             )
           )
