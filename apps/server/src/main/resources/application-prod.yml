@@ -1,17 +1,18 @@
-
 spring:
   profiles:
     active: default
     include:
+      - prod
+      - carrot.gcms
+      - carrot.lcms
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket
       - carrot.targets.mona
       - carrot.scheduler.aws
-      - carrot.gcms
-      - carrot.lcms
       - carrot.gcms.library.binbase
-      - prod
+      - file.source.luna
+      - file.source.eclipse
 
   servlet:
     multipart:
@@ -34,5 +35,5 @@ mona:
     server:
       user: admin
       password: admin
-      host: cream.fiehnlab.ucdavis.edu
-      port: 8080
+      host: localhost
+      port: 9090
