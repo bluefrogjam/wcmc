@@ -1,8 +1,7 @@
-import os
-import re
-
 import numpy
+import os
 import pandas as pd
+import re
 import requests
 
 stasis_url = "https://api.metabolomics.us/stasis"
@@ -158,7 +157,7 @@ def aggregate(args):
     # print(files)
 
     with open(args.input) as processed:
-        files = [p.split(' ')[-1].rstrip() for p in processed.readlines()]
+        files = [p.split(' ')[-1].rstrip() for p in processed.readlines() if p.strip()]
 
     if args.test:
         files = files[3:5]
