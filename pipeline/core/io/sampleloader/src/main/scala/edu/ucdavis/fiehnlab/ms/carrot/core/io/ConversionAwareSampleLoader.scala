@@ -16,7 +16,7 @@ class ConversionAwareSampleLoader @Autowired()(dataForm: DataFormerClient, resou
   /**
     * this are the extensions the dataformer client supports natively
     */
-  val supportedInputExtensionForDataForm: Array[String] = Array("d.zip", "raw", "wiff", "d")
+  val supportedInputExtensionForDataForm: Array[String] = Array("d.zip", "raw", "wiff")
 
   /**
     * these are the extensions the data form client can convert too
@@ -74,7 +74,7 @@ class ConversionAwareSampleLoader @Autowired()(dataForm: DataFormerClient, resou
       } =>
         val fileToConvert = s"${fileName}.${x}"
         logger.debug(s"found rawdata file: ${fileToConvert}")
-        dataForm.convert(fileToConvert, extension)
+        dataForm.convert(fileToConvert, "mzml")
     }
 
     logger.debug(s"conversion successful: ${result.isDefined}")
