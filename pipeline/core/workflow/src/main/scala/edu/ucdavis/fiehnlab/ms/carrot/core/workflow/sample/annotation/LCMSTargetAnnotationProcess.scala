@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.{JSONSampleLogging, JSONTargetLogging}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, RetentionIndexDifference}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotateSampleProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -34,7 +34,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
     */
   override protected def findMatches(target: Target, spectra: Seq[_ <: Feature with CorrectedSpectra], sample: CorrectedSample, method: AcquisitionMethod): Seq[_ <: Feature with CorrectedSpectra] = {
     val filters: SequentialAnnotate = new SequentialAnnotate(
-      new MassAccuracyPPMorMD(5, lcmsProperties.massAccuracy, "annotation", lcmsProperties.massIntensity) with JSONSampleLogging {
+      new MassAccuracyPPMorMD(lcmsProperties.massAccuracySettingPpm, lcmsProperties.massAccuracySetting, "annotation", lcmsProperties.massIntensity) with JSONSampleLogging {
         /**
           * which sample we require to log
           */
@@ -159,8 +159,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
         }
         //several annotations found, optimizing association
         else {
-          logger.debug("")
-          logger.debug(s"found ${x._2.size} targets for spectra ${x._1}")
+          logger.debug(s"\nfound ${x._2.size} targets for spectra ${x._1}")
 
           //find the target, which has the closest mass accuracy, followed by the closes retention time
           val optimizedTargetList =
@@ -210,12 +209,12 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
                 logger.debug(f"\t\t=> rank:                ${y._2}")
                 logger.debug(f"\t\t=> ri distance:         ${RetentionIndexDifference.diff(y._1, x._1)}%1.2f seconds")
                 logger.debug(f"\t\t=> mass error:          ${MassAccuracy.calculateMassError(x._1, y._1).get}%1.5f dalton")
-                //                logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.mass)}%1.5f dalton")
+                // logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.mass)}%1.5f dalton")
                 logger.debug(f"\t\t=> mass error (ppm):    ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get}%1.5f ppm")
                 logger.debug(f"\t\t=> mass error * ri dis: ${MassAccuracy.calculateMassError(x._1, y._1).get * RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
                 logger.debug(f"\t\t=> mass error / ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get / RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
                 logger.debug(f"\t\t=> mass intensity:      ${x._1.massOfDetectedFeature.get.intensity}%1.0f")
-                //                logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.intensity}%1.0f")
+                // logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.intensity}%1.0f")
 
 
                 logger.debug("")
@@ -258,8 +257,8 @@ class LCMSAnnotationProcessProperties {
   /**
     * defined mass accuracy
     */
-  @Value("${workflow.lcms.annotation.detection.massAccuracy:0.01}")
-  var massAccuracy: Double = _
+  //  @Value("${workflow.lcms.annotation.detection.massAccuracy:0.01}")
+  //  var massAccuracy: Double = _
 
   /**
     * minimum intensity in percent the mass needs to have to be considered
@@ -291,7 +290,7 @@ class LCMSAnnotationProcessProperties {
     *
     * by default we define the retention index to be more important due to isomeres.
     */
-  @Value("${workflow.lcms.annotation.detection.massOverRI:true}")
+  @Value("${workflow.lcms.annotation.detection.gaussian:true}")
   var preferGaussianSimilarityForAnnotation: Boolean = true
 
   /**
@@ -304,8 +303,14 @@ class LCMSAnnotationProcessProperties {
   /**
     * Mass accuracy (in Dalton) used in target filtering and similarity calculation
     */
-  @Value("${wcmc.lcms.annotation.peak.mass.accuracy:0.01}")
+  @Value("${wcmc.lcms.annotation.peak.mass.accuracy:0.015}")
   val massAccuracySetting: Double = 0.0
+
+  /**
+    * Mass accuracy (in Dalton) used in target filtering and similarity calculation
+    */
+  @Value("${wcmc.lcms.annotation.peak.mass.accuracyppm:5}")
+  val massAccuracySettingPpm: Double = 0.0
 
   /**
     * Retention time accuracy (in seconds) used in target filtering and similarity calculation

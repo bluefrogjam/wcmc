@@ -296,13 +296,13 @@ carrot:
           instrument: 6530
           minimumPeakIntensity: 10000
           targets:
-            - identifier: "1_CE(22:1) iSTD [M+Chol-head-H2O+H]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
-              accurateMass: 1076.0151
-              retentionTime: 11.73
-              retentionTimeUnit: minutes
-              isInternalStandard: true
-              requiredForCorrection: false
-              confirmed: true
+#            - identifier: "1_CE(22:1) iSTD [M+Chol-head-H2O+H]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
+#              accurateMass: 1076.0151
+#              retentionTime: 11.73
+#              retentionTimeUnit: minutes
+#              isInternalStandard: true
+#              requiredForCorrection: false
+#              confirmed: true
             - identifier: "1_CE(22:1) iSTD [M+Na]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
               accurateMass: 729.653
               retentionTime: 11.73
@@ -317,7 +317,7 @@ carrot:
               isInternalStandard: true
               requiredForCorrection: false
               confirmed: true
-            - identifier: "1_Cer(d18:1/17:0) iSTD [M+H?H2O]+_ICWGMOFDULMCFL-QKSCFGQVSA-N"
+            - identifier: "1_Cer(d18:1/17:0) iSTD [M+H-H2O]+_ICWGMOFDULMCFL-QKSCFGQVSA-N"
               accurateMass: 534.5247
               retentionTime: 5.95
               retentionTimeUnit: minutes
@@ -338,7 +338,7 @@ carrot:
               isInternalStandard: true
               requiredForCorrection: false
               confirmed: true
-            - identifier: "1_Cholesterol d7 iSTD [M?H2O+H]+_HVYWMOMLDIMFJA-IFAPJKRJSA-N"
+            - identifier: "1_Cholesterol d7 iSTD [M-H2O+H]+_HVYWMOMLDIMFJA-IFAPJKRJSA-N"
               accurateMass: 376.39599999999996
               retentionTime: 4.78
               retentionTimeUnit: minutes
@@ -356,7 +356,7 @@ carrot:
               accurateMass: 495.3448
               retentionTime: 4.26
               retentionTimeUnit: minutes
-              isInternalStandard: true
+              isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
             - identifier: "1_DG(12:0/12:0/0:0) iSTD [M+Na]+_OQQOAWVKVDAJOI-VWLOTQADSA-N"
@@ -562,7 +562,7 @@ carrot:
           column: test
           ionMode: positive
           instrument: 6530
-          minimumPeakIntensity: 10000
+          minimumPeakIntensity: 3000
           targets:
             - identifier: "AC(10:0) [M+H]+_LZOSYCMHQXPBFU-UHFFFAOYSA-N"
               accurateMass: 316.2484
@@ -998,7 +998,7 @@ carrot:
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "Cer(d42:2) B [M+H?H2O]+_VJSBNBBOSZJDKB-KPEYJIHVSA-N"
+            - identifier: "Cer(d42:2) B [M+H-H2O]+_VJSBNBBOSZJDKB-KPEYJIHVSA-N"
               accurateMass: 630.6182
               retentionTime: 7.75
               retentionTimeUnit: minutes
@@ -1026,245 +1026,245 @@ carrot:
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #002 [M+H]+'"
+            - identifier: "CSH posESI #002 [M+H]+"
               accurateMass: 719.5701
               retentionTime: 4.54
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #017 [M+H]+'"
+            - identifier: "CSH posESI #017 [M+H]+"
               accurateMass: 549.4886
               retentionTime: 10.43
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #025 [M+H]+'"
+            - identifier: "CSH posESI #025 [M+H]+"
               accurateMass: 970.7863
               retentionTime: 9.68
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #027 [M+H]+'"
+            - identifier: "CSH posESI #027 [M+H]+"
               accurateMass: 391.2845
               retentionTime: 3.45
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #033 [M+H]+'"
+            - identifier: "CSH posESI #033 [M+H]+"
               accurateMass: 872.5386
               retentionTime: 4.64
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #034 [M+H]+'"
+            - identifier: "CSH posESI #034 [M+H]+"
               accurateMass: 896.5383
               retentionTime: 4.78
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #037 [M+H]+'"
+            - identifier: "CSH posESI #037 [M+H]+"
               accurateMass: 858.5982
               retentionTime: 5.58
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #041 [M+H]+'"
+            - identifier: "CSH posESI #041 [M+H]+"
               accurateMass: 430.3802
               retentionTime: 5.24
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #042 [M+H]+'"
+            - identifier: "CSH posESI #042 [M+H]+"
               accurateMass: 900.5695
               retentionTime: 5.57
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #043 [M+H]+'"
+            - identifier: "CSH posESI #043 [M+H]+"
               accurateMass: 893.5589
               retentionTime: 5.71
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #056 [M+H]+'"
+            - identifier: "CSH posESI #056 [M+H]+"
               accurateMass: 694.6824
               retentionTime: 8.29
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #106 [M+H]+'"
+            - identifier: "CSH posESI #106 [M+H]+"
               accurateMass: 790.5721
               retentionTime: 5.29
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #116 [M+H]+'"
+            - identifier: "CSH posESI #116 [M+H]+"
               accurateMass: 885.6736
               retentionTime: 9.41
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #124 [M+H]+'"
+            - identifier: "CSH posESI #124 [M+H]+"
               accurateMass: 864.5253
               retentionTime: 5.14
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #130 [M+H]+'"
+            - identifier: "CSH posESI #130 [M+H]+"
               accurateMass: 903.6545
               retentionTime: 6.68
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #142 [M+H]+'"
+            - identifier: "CSH posESI #142 [M+H]+"
               accurateMass: 435.3223
               retentionTime: 3.45
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #156 [M+H]+'"
+            - identifier: "CSH posESI #156 [M+H]+"
               accurateMass: 803.5439
               retentionTime: 3.45
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #176 [M+H]+'"
+            - identifier: "CSH posESI #176 [M+H]+"
               accurateMass: 551.506
               retentionTime: 10.84
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #187 [M+H]+'"
+            - identifier: "CSH posESI #187 [M+H]+"
               accurateMass: 601.5197
               retentionTime: 10.5
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #201 [M+H]+'"
+            - identifier: "CSH posESI #201 [M+H]+"
               accurateMass: 369.3522
               retentionTime: 10.41
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #205 [M+H]+'"
+            - identifier: "CSH posESI #205 [M+H]+"
               accurateMass: 381.3001
               retentionTime: 3.15
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #230 [M+H]+'"
+            - identifier: "CSH posESI #230 [M+H]+"
               accurateMass: 848.5377
               retentionTime: 4.98
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #270 [M+H]+'"
+            - identifier: "CSH posESI #270 [M+H]+"
               accurateMass: 627.5346
               retentionTime: 4.91
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #275 [M+H]+'"
+            - identifier: "CSH posESI #275 [M+H]+"
               accurateMass: 887.5642
               retentionTime: 4.91
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #282 [M+H]+'"
+            - identifier: "CSH posESI #282 [M+H]+"
               accurateMass: 577.5212
               retentionTime: 10.85
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #285 [M+H]+'"
+            - identifier: "CSH posESI #285 [M+H]+"
               accurateMass: 876.5707
               retentionTime: 5.62
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #288 [M+H]+'"
+            - identifier: "CSH posESI #288 [M+H]+"
               accurateMass: 577.5193
               retentionTime: 4.85
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #290 [M+H]+'"
+            - identifier: "CSH posESI #290 [M+H]+"
               accurateMass: 866.5404
               retentionTime: 5.62
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #293 [M+H]+'"
+            - identifier: "CSH posESI #293 [M+H]+"
               accurateMass: 776.5803
               retentionTime: 4.83
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #296 [M+H]+'"
+            - identifier: "CSH posESI #296 [M+H]+"
               accurateMass: 603.5347
               retentionTime: 5.0
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #298 [M+H]+'"
+            - identifier: "CSH posESI #298 [M+H]+"
               accurateMass: 603.5372
               retentionTime: 10.86
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #301 [M+H]+'"
+            - identifier: "CSH posESI #301 [M+H]+"
               accurateMass: 850.5543
               retentionTime: 5.47
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #303 [M+H]+'"
+            - identifier: "CSH posESI #303 [M+H]+"
               accurateMass: 874.5544
               retentionTime: 5.2
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #307 [M+H]+'"
+            - identifier: "CSH posESI #307 [M+H]+"
               accurateMass: 872.5392
               retentionTime: 4.93
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH posESI #308 [M+H]+'"
+            - identifier: "CSH posESI #308 [M+H]+"
               accurateMass: 878.5861
               retentionTime: 6.15
               retentionTimeUnit: minutes
@@ -7681,7 +7681,7 @@ carrot:
           column: test
           ionMode: negative
           instrument: 6550
-          minimumPeakIntensity: 10000
+          minimumPeakIntensity: 3000
           targets:
             - identifier: "Ceramide (d32:1) [M+Cl]-_ZKRPGPZHULJLKJ-JHRQRACZSA-N"
               accurateMass: 544.4506
@@ -7928,252 +7928,252 @@ carrot:
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #109'"
+            - identifier: "CSH_negESI #109"
               accurateMass: 697.6111
               retentionTime: 8.09
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #113'"
+            - identifier: "CSH_negESI #113"
               accurateMass: 711.6274
               retentionTime: 8.41
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #223'"
+            - identifier: "CSH_negESI #223"
               accurateMass: 325.1843
               retentionTime: 4.94
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #223'"
+            - identifier: "CSH_negESI #223"
               accurateMass: 339.2001
               retentionTime: 4.94
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #376'"
+            - identifier: "CSH_negESI #376"
               accurateMass: 707.6136
               retentionTime: 8.41
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #378'"
+            - identifier: "CSH_negESI #378"
               accurateMass: 709.6112
               retentionTime: 7.74
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #501'"
+            - identifier: "CSH_negESI #501"
               accurateMass: 397.2043
               retentionTime: 0.41
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #520'"
+            - identifier: "CSH_negESI #520"
               accurateMass: 504.3096
               retentionTime: 1.2
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #524'"
+            - identifier: "CSH_negESI #524"
               accurateMass: 480.3096
               retentionTime: 1.45
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #527'"
+            - identifier: "CSH_negESI #527"
               accurateMass: 478.2933
               retentionTime: 1.67
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #528'"
+            - identifier: "CSH_negESI #528"
               accurateMass: 506.3247
               retentionTime: 1.6
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #530'"
+            - identifier: "CSH_negESI #530"
               accurateMass: 436.2834
               retentionTime: 1.68
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #564'"
+            - identifier: "CSH_negESI #564"
               accurateMass: 659.5118
               retentionTime: 4.22
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #569'"
+            - identifier: "CSH_negESI #569"
               accurateMass: 685.5272
               retentionTime: 4.31
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #579'"
+            - identifier: "CSH_negESI #579"
               accurateMass: 735.5222
               retentionTime: 4.31
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #581'"
+            - identifier: "CSH_negESI #581"
               accurateMass: 673.5284
               retentionTime: 4.51
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #592'"
+            - identifier: "CSH_negESI #592"
               accurateMass: 840.5327
               retentionTime: 4.91
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #593'"
+            - identifier: "CSH_negESI #593"
               accurateMass: 850.5615
               retentionTime: 4.6
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #598'"
+            - identifier: "CSH_negESI #598"
               accurateMass: 687.5427
               retentionTime: 4.82
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #616'"
+            - identifier: "CSH_negESI #616"
               accurateMass: 713.5583
               retentionTime: 4.92
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #628'"
+            - identifier: "CSH_negESI #628"
               accurateMass: 734.5352
               retentionTime: 5.08
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #632'"
+            - identifier: "CSH_negESI #632"
               accurateMass: 788.5247
               retentionTime: 5.05
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #668'"
+            - identifier: "CSH_negESI #668"
               accurateMass: 736.5297
               retentionTime: 5.77
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #693'"
+            - identifier: "CSH_negESI #693"
               accurateMass: 743.6063
               retentionTime: 6.19
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #713'"
+            - identifier: "CSH_negESI #713"
               accurateMass: 744.5559
               retentionTime: 6.42
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #715'"
+            - identifier: "CSH_negESI #715"
               accurateMass: 757.6225
               retentionTime: 6.53
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #722'"
+            - identifier: "CSH_negESI #722"
               accurateMass: 802.5765
               retentionTime: 6.57
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #728'"
+            - identifier: "CSH_negESI #728"
               accurateMass: 797.6527
               retentionTime: 6.84
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #733'"
+            - identifier: "CSH_negESI #733"
               accurateMass: 771.6353
               retentionTime: 6.87
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #743'"
+            - identifier: "CSH_negESI #743"
               accurateMass: 859.6926
               retentionTime: 7.1
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #749'"
+            - identifier: "CSH_negESI #749"
               accurateMass: 680.5784
               retentionTime: 7.17
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #762'"
+            - identifier: "CSH_negESI #762"
               accurateMass: 700.6026
               retentionTime: 7.38
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #764'"
+            - identifier: "CSH_negESI #764"
               accurateMass: 799.6675
               retentionTime: 7.55
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #767'"
+            - identifier: "CSH_negESI #767"
               accurateMass: 684.6077
               retentionTime: 7.97
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #770'"
+            - identifier: "CSH_negESI #770"
               accurateMass: 702.6182
               retentionTime: 8.05
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: "'CSH_negESI #773'"
+            - identifier: "CSH_negESI #773"
               accurateMass: 672.6073
               retentionTime: 8.31
               retentionTimeUnit: minutes
