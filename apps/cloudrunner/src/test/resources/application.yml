@@ -11,10 +11,9 @@ spring:
       - carrot.resource.loader.bucket
       - carrot.runner.required
 carrot:
-  sample:
-    name: '${CARROT_SAMPLE}'
-    method: '${CARROT_METHOD}'
-
+  sample: '${CARROT_SAMPLE}'
+  method: '${CARROT_METHOD}'
+  mode: '${CARROT_MODE}'
 
 #which email account to use
 email:
@@ -23,5 +22,14 @@ email:
   username: binbase@gmail.com
   pass: fiehnlab-2018
 
-stasis:
-  baseurl: "https://test-api.metabolomics.us/stasis"
+wcmc:
+  pipeline:
+    workflow:
+      config:
+        correction:
+          minimumFoundStandards: 10
+          peak:
+            intensity: 2000
+
+#stasis:
+#  baseurl: "https://test-api.metabolomics.us/stasis"
