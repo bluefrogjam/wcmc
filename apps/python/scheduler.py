@@ -6,12 +6,30 @@ import simplejson as json
 import time
 
 
-def create_tasks(files, args):
+def create_tasks_stasis(files, args):
     indexed = zip(range(1, len(files) + 1), files)
 
     tasks = []
     for (idx, file) in indexed:
-        if (idx < args.start_index):
+        if idx < args.start_index:
+            continue
+
+        tasks.append({
+            'profile': args.platform,
+            'env': 'test',
+            'sample': file,
+            'method': args.method
+        })
+
+    return tasks
+
+
+def create_tasks_carrot(files, args):
+    indexed = zip(range(1, len(files) + 1), files)
+
+    tasks = []
+    for (idx, file) in indexed:
+        if idx < args.start_index:
             continue
 
         samples = [{'fileName': file,
@@ -40,19 +58,23 @@ def create_tasks(files, args):
                           },
                           'title': args.method + ' (' + args.ion_mode + ')'
                       },
-                      'platform': {'platform': {'name': 'LC-MS'}},
+                      'platform': {'platform': {'name': 'lcms'}},
                       'samples': samples
                       })
 
     return tasks
 
 
-def submit(task):
-    print(f'scheduling task {task["name"]}...')
-    submissionUrl = 'http://localhost:18080/rest/schedule/submit'
-    headers = {'Content-Type': 'application/json'}
+def submit(task, api):
+    print(f'scheduling task to {api}...')
 
-    r = requests.post(submissionUrl, data=json.dumps(task), headers=headers)
+    if api == 'carrot':
+        submission_url = 'http://localhost:18080/rest/schedule'
+    else:
+        submission_url = 'https://test-api.metabolomics.us/stasis/schedule'
+
+    headers = {'Content-Type': 'application/json'}
+    r = requests.post(submission_url, data=json.dumps(task), headers=headers)
     print(r.status_code, r.reason)
     time.sleep(1)  # in seconds, unlike java's millis
 
@@ -64,22 +86,27 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--task', help='Task name', default='task', type=str)
     parser.add_argument('-p', '--platform', help='Data\'s chromatography type', default='lcms', type=str,
                         choices=['lcms', 'gcms'])
-    parser.add_argument('-i', '--ion_mode', help='Ion mode of the samples', default='positive',
+    parser.add_argument('-i', '--ionmode', help='Ion mode of the samples', default='positive',
                         choices=['positive', 'negative'])
-    parser.add_argument('-m', '--method', help='Name of the chromatographic method (library)',
-                        default='lcms_istds | test | test | positive')
+    parser.add_argument('-m', '--method', help='Name of the chromatographic method (library)', default='lcms-istds')
+    parser.add_argument('-a', '--api', help='Submit the tasks to the selected api: carrot or stasis', default='carrot',
+                        choices=['carrot', 'stasis'])
     parser.add_argument('--start_index', help='Starting index (1 to number of files)', default=1, type=int)
     parser.add_argument('--dry_run', help='Do not submit the tasks, just print them', dest='dry', action='store_true')
+
     args = parser.parse_args()
 
     data = open(args.files, 'r')
     list = [l for l in (line.strip() for line in data) if l]
     data.close()
 
-    tasks = create_tasks(list, args)
+    if args.api == 'carrot':
+        tasks = create_tasks_carrot(list, args)
+    else:
+        tasks = create_tasks_stasis(list, args)
 
     for task in tasks:
-        if (args.dry):
+        if args.dry:
             print(task)
         else:
-            submit(task)
+            submit(task, args.api)
