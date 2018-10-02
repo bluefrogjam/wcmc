@@ -109,7 +109,7 @@ class JennyRunner extends WordSpec with LazyLogging with ShouldMatchers {
 
     val pw = new PrintWriter(new File(s"/g/study-jenny/biorecs_reprocess/${sample}-${idx}.csv"))
     pw.println(s"T-id,T-mass,T-RI,A-intensity,A-replaced,A-RI,A-orig_RT,rt Distance,A-mass,A-massError,A-massErrorPPM")
-    results.injections.asScala.map(item => item._2.foreach(injection => {
+    results.injections.asScala.foreach(item => item._2.foreach(injection => {
       injection.results.foreach(ir => {
         pw.println(s"${ir.target.id},${ir.target.mass},${ir.target.retentionIndex},${ir.annotation.intensity},${ir.annotation.replaced}," +
             s"${ir.annotation.retentionIndex},${ir.annotation.nonCorrectedRt},${ir.annotation.rtDistance}," +
