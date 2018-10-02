@@ -4,6 +4,11 @@ import pandas as pd
 import re
 import requests
 
+AVG_BR_ = 'AVG (br)'
+
+RSD_SA_ = '% RSD (sa)'
+RSD_BR_ = '% RSD (br)'
+
 stasis_url = "https://api.metabolomics.us/stasis"
 test_url = "https://test-api.metabolomics.us/stasis"
 
@@ -85,7 +90,7 @@ def format_metadata(data):
     names2 = [name.rsplit('_', maxsplit=1)[0] if pattern.match(name) else name for name in names]
 
     metadata = pd.DataFrame({'name': names2, 'ri(s)': rts, 'mz': masses, 'inchikey': inchikeys,
-                             'delta': pd.np.nan, 'AVG (br)': pd.np.nan, '% RSD': pd.np.nan})
+                             'delta': pd.np.nan, AVG_BR_: pd.np.nan, RSD_BR_: pd.np.nan, RSD_SA_: pd.np.nan})
     return metadata
 
 
@@ -123,9 +128,9 @@ def calculate_average(intensity, mass, rt, biorecs):
     print('Calculating average of biorecs for intensity, mass and RT (ignoring missing results)')
 
     for i in range(len(intensity)):
-        intensity.loc[i, 'AVG (br)'] = intensity.loc[i, biorecs].mean()
-        mass.loc[i, 'AVG (br)'] = mass.loc[i, biorecs].mean()
-        rt.loc[i, 'AVG (br)'] = rt.loc[i, biorecs].mean()
+        intensity.loc[i, AVG_BR_] = intensity.loc[i, biorecs].mean()
+        mass.loc[i, AVG_BR_] = mass.loc[i, biorecs].mean()
+        rt.loc[i, AVG_BR_] = rt.loc[i, biorecs].mean()
 
 
 def calculate_rsd(intensity, mass, rt, biorecs):
@@ -135,12 +140,27 @@ def calculate_rsd(intensity, mass, rt, biorecs):
 
     for i in size:
         try:
-            intensity.loc[i, '% RSD'] = (intensity.loc[i, biorecs].std() / intensity.loc[i, biorecs].mean()) * 100
+            intensity.loc[i, RSD_BR_] = (intensity.loc[i, biorecs].std() / intensity.loc[i, biorecs].mean()) * 100
         except Exception as e:
             print(f'\tCan\'t calculate % RSD for target {intensity.loc[i, "name"]}.'
                   f' Sum of intensities = {intensity.loc[i, biorecs].sum()}')
-        mass.loc[i, '% RSD'] = (mass.loc[i, biorecs].std() / mass.loc[i, biorecs].mean()) * 100
-        rt.loc[i, '% RSD'] = (rt.loc[i, biorecs].std() / rt.loc[i, biorecs].mean()) * 100
+        mass.loc[i, RSD_BR_] = (mass.loc[i, biorecs].std() / mass.loc[i, biorecs].mean()) * 100
+        rt.loc[i, RSD_BR_] = (rt.loc[i, biorecs].std() / rt.loc[i, biorecs].mean()) * 100
+
+
+def calculate_rsd_sa(intensity, mass, rt, samples):
+    print('Calculating %RDS of samples for intensity, mass and RT (ignoring missing results)')
+    size = range(len(intensity))
+    numpy.seterr(invalid='log')
+
+    for i in size:
+        try:
+            intensity.loc[i, RSD_SA_] = (intensity.loc[i, samples].std() / intensity.loc[i, samples].mean()) * 100
+        except Exception as e:
+            print(f'\tCan\'t calculate % RSD for target {intensity.loc[i, "name"]}.'
+                  f' Sum of intensities = {intensity.loc[i, samples].sum()}')
+        mass.loc[i, RSD_SA_] = (mass.loc[i, samples].std() / mass.loc[i, samples].mean()) * 100
+        rt.loc[i, RSD_SA_] = (rt.loc[i, samples].std() / rt.loc[i, samples].mean()) * 100
 
 
 def aggregate(args):
@@ -163,7 +183,10 @@ def aggregate(args):
         files = files[3:5]
 
     # creating target section
-    first_data = getFileResults(files[0])
+    for file in files:
+        first_data = getFileResults(file)
+        if 'error' not in first_data: break
+
     intensity = format_metadata(first_data)
     mass = format_metadata(first_data)
     rt = format_metadata(first_data)
@@ -188,6 +211,7 @@ def aggregate(args):
             rt[file] = pd.np.nan
 
     biorecs = [br for br in intensity.columns if 'biorec' in str(br).lower()]
+    samples = [sa for sa in intensity.columns if sa.startswith('SA')]
 
     pd.set_option('display.max_rows', 100)
     pd.set_option('display.max_columns', 10)
@@ -198,5 +222,6 @@ def aggregate(args):
     calculate_average(intensity, mass, rt, biorecs)
 
     calculate_rsd(intensity, mass, rt, biorecs)
+    calculate_rsd_sa(intensity, mass, rt, samples)
 
     export_excel(intensity, mass, rt, curve, args)

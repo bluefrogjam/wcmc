@@ -29,7 +29,10 @@ class AWSTaskScheduler extends TaskScheduler {
     */
   override protected def doSubmit(task: Task): String = {
     task.samples.foreach { sample =>
-      stasisClient.schedule(sample.fileName, AcquisitionMethod.serialize(task.acquisitionMethod), task.mode, task.env)
+      if (task.mode.startsWith("carrot."))
+        stasisClient.schedule(sample.fileName, AcquisitionMethod.serialize(task.acquisitionMethod), task.mode, task.env)
+      else
+        stasisClient.schedule(sample.fileName, AcquisitionMethod.serialize(task.acquisitionMethod), s"carrot.${task.mode}", task.env)
     }
 
     s"task ${task.name} submitted"
@@ -38,6 +41,6 @@ class AWSTaskScheduler extends TaskScheduler {
 
 @Configuration
 @ComponentScan
-class AWSConfiguration{
+class AWSConfiguration {
 
 }

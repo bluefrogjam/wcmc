@@ -17,10 +17,11 @@ class Runner extends CommandLineRunner with LazyLogging {
   @Value("${carrot.method:#{environment.CARROT_METHOD}}")
   val method: String = null
 
-  @Value("${carrot.mode:#{environment.CARROT_MODE}}")
+  @Value("#{environment.CARROT_MODE}")
+  // This turns into the active profile to run the sample ['carrot.lcms','carrot.gcms']
   val mode: String = null
 
-  @Value("${carrot.submitter:wohlgemuth@ucdavis.edu}")
+  @Value("${carrot.submitter:dpedrosa@ucdavis.edu}")
   val submitter: String = null
 
   @Autowired
@@ -39,9 +40,9 @@ class Runner extends CommandLineRunner with LazyLogging {
     taskRunner.run(Task(
       name = s"processing ${sampleName} with ${method}",
       email = submitter,
-      mode = mode,
       acquisitionMethod = AcquisitionMethod.deserialize(method),
       samples = Seq(SampleToProcess(sampleName)),
+      mode = mode,
       env = context.getEnvironment.getActiveProfiles.filter(p => Set("prod", "dev", "test").contains(p)).head
     ))
   }

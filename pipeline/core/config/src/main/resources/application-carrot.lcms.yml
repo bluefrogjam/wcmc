@@ -296,13 +296,13 @@ carrot:
           instrument: 6530
           minimumPeakIntensity: 10000
           targets:
-#            - identifier: "1_CE(22:1) iSTD [M+Chol-head-H2O+H]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
-#              accurateMass: 1076.0151
-#              retentionTime: 11.73
-#              retentionTimeUnit: minutes
-#              isInternalStandard: true
-#              requiredForCorrection: false
-#              confirmed: true
+            - identifier: "1_CE(22:1) iSTD [M+Chol-head-H2O+H]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
+              accurateMass: 1076.0151
+              retentionTime: 11.73
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
             - identifier: "1_CE(22:1) iSTD [M+Na]+_SQHUGNAFKZZXOT-JWTURFAQSA-N"
               accurateMass: 729.653
               retentionTime: 11.73
@@ -338,13 +338,13 @@ carrot:
               isInternalStandard: true
               requiredForCorrection: false
               confirmed: true
-            - identifier: "1_Cholesterol d7 iSTD [M-H2O+H]+_HVYWMOMLDIMFJA-IFAPJKRJSA-N"
+            - identifier: "2_Cholesterol d7 iSTD [M-H2O+H]+_HVYWMOMLDIMFJA-IFAPJKRJSA-N"
               accurateMass: 376.39599999999996
               retentionTime: 4.78
               retentionTimeUnit: minutes
-              isInternalStandard: true
+              isInternalStandard: false
               requiredForCorrection: false
-              confirmed: true
+              confirmed: false
             - identifier: "1_CUDA iSTD [M+H]+_HPTJABJPZMULFH-UHFFFAOYSA-N"
               accurateMass: 341.2801
               retentionTime: 0.74
@@ -358,7 +358,7 @@ carrot:
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
-              confirmed: true
+              confirmed: false
             - identifier: "1_DG(12:0/12:0/0:0) iSTD [M+Na]+_OQQOAWVKVDAJOI-VWLOTQADSA-N"
               accurateMass: 479.3713
               retentionTime: 4.26
@@ -412,9 +412,9 @@ carrot:
               accurateMass: 362.3264
               retentionTime: 3.02
               retentionTimeUnit: minutes
-              isInternalStandard: true
+              isInternalStandard: false
               requiredForCorrection: false
-              confirmed: true
+              confirmed: false
             - identifier: "1_MG(17:0/0:0/0:0) iSTD [M+H]+_SVUQHVRAGMNPLW-UHFFFAOYSA-N"
               accurateMass: 345.3001
               retentionTime: 3.02
@@ -433,9 +433,9 @@ carrot:
               accurateMass: 636.4604
               retentionTime: 3.5
               retentionTimeUnit: minutes
-              isInternalStandard: true
+              isInternalStandard: false
               requiredForCorrection: false
-              confirmed: true
+              confirmed: false
             - identifier: "1_PE(17:0/17:0) iSTD [M+H]+_YSFFAUPDXKTJMR-DIPNUNPCSA-N"
               accurateMass: 720.554
               retentionTime: 6.26
@@ -1770,7 +1770,7 @@ carrot:
               confirmed: true
             - identifier: "LPE(20:4) [M+H]+"
               accurateMass: 502.2931
-              retentionTime: 1.08
+              retentionTime: 1.20
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false

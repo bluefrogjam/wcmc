@@ -24,7 +24,7 @@ wcmc:
             mass:
               accuracy: 0.020
               accuracyppm: 7.0
-            intensityPenaltyThreshold: 15000
+            intensityPenaltyThreshold: 10000
   lcms:
     annotation:
       peak:

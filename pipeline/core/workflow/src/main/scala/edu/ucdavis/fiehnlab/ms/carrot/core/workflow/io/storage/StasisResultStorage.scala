@@ -24,7 +24,7 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
     logger.info(s"Storing '${sample.name}' on AWS")
 
     val results = sample.spectra.map(feature => {
-      logger.info(s"\tType of feature: ${feature.getClass.getName}")
+      logger.debug(s"\tType of feature: ${feature.getClass.getName}")
       Result(CarrotToStasisConverter.asStasisTarget(feature.target),
         Annotation(feature.retentionIndex,
           feature.quantifiedValue.get match {
