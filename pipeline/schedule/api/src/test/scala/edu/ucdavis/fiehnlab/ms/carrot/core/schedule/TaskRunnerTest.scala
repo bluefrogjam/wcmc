@@ -1,15 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
-import java.io.File
-
-import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
-import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
-import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4J
-import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,13 +11,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("backend-txt-lcms", "carrot.report.quantify.height", "carrot.processing.peakdetection",
-  "carrot.lcms", "file.source.luna", "test", "carrot.runner.required"))
+@ActiveProfiles(Array("test"))
 class TaskRunnerTest extends WordSpec {
   val libName = "lcms_istds"
 
@@ -32,14 +25,12 @@ class TaskRunnerTest extends WordSpec {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  // IGNORING for now until we rewrite the scheduler to use aws
-
   "TaskRunnerTest" should {
 
     "run - should fail since no samples are provided" in {
 
       intercept[AssertionError] {
-        taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu",
+        taskRunner.run(Task("test", "dpedrosa@ucdavis.edu",
           acquisitionMethod = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode()))),
           samples = Seq.empty,
           mode = "lcms",
@@ -49,54 +40,18 @@ class TaskRunnerTest extends WordSpec {
     }
 
     "run - should pass" in {
-      taskRunner.run(Task("test", "wohlgemuth@ucdavis.edu",
+      taskRunner.run(Task("test", "dpedrosa@ucdavis.edu",
         acquisitionMethod = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode()))),
-        samples = SampleToProcess("B5_P20Lipids_Pos_QC000.mzML") :: List(),
+        samples = SampleToProcess("B5_P20Lipids_Pos_QC000.mzML") +: Seq.empty,
         mode = "lcms",
         env = "test"
       ))
     }
-
-
   }
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class TestConfiguration {
-
-  @Autowired
-  val resourceLoader: DelegatingResourceLoader = null
-
-
-  /**
-    * below there will be all different directory loaders from the different workstations we are working on
-    * smarter would be to use spring profiles
-    *
-    * @return
-    */
-  @Bean
-  def resourceLoaderSrc: RecursiveDirectoryResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
-
-  //  /**
-  //    * our defined library of library targets
-  //    *
-  //    * @return
-  //    */
-  //  @Profile(Array("backend-txt-lcms"))
-  //  @Bean
-  //  def targetLibraryLCMS: LibraryAccess[Target] = new TxtStreamLibraryAccess[Target](resourceLoader.loadAsFile("targets.txt").get, "\t")
-
-
-  @Bean
-  def client: FServ4jClient = new FServ4jClient(
-    "testfserv.fiehnlab.ucdavis.edu",
-    80
-  )
-
-
-  @Bean
-  def everything4JEclipse: Everything4J = new Everything4J("eclipse.fiehnlab.ucdavis.edu")
-
   @Bean
   def workflow: Workflow[Double] = new Workflow[Double]
 }

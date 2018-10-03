@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: "test"
+    include:
+      - carrot.lcms
+      - file.source.luna
+      - carrot.output.storage.aws
+      - carrot.resource.store.bucket
+      - carrot.report.quantify.height
+      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+      - carrot.runner.required
+
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: fiehnlab-2018
