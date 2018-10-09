@@ -156,7 +156,7 @@ class ZeroReplacementProperties {
   /**
     * extension of our rawdata files, to be used for replacement
     */
-  var fileExtension: List[String] = "mzml" :: "d.zip" :: "cdf" :: List()
+  var fileExtension: List[String] = "mzml" :: "cdf" :: List() //removed .d and .d.zip since mzml and cdf ARE raw data files
 }
 
 /**

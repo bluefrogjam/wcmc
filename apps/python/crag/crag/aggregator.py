@@ -50,6 +50,9 @@ def getFileResults(filename):
     :param filename: name of file to get results from
     :return: dictionary with results or {error: msg}
     """
+
+    if filename[-5:] == '.mzml': filename = filename[:-5]
+
     print(f"\tGetting results for file '{filename}'")
     response = requests.get(stasis_url + "/result/" + filename)
 
@@ -183,6 +186,7 @@ def aggregate(args):
         files = files[3:5]
 
     # creating target section
+    first_data = ""
     for file in files:
         first_data = getFileResults(file)
         if 'error' not in first_data: break

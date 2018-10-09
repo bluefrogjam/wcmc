@@ -165,6 +165,12 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging with Ev
       res2.sample should equal(filename)
       res2.injections.size() should be >= 1
     }
+
+    "schedule a sample" in {
+      val res2 = client.schedule("B5_P20Lipid_Pos_NIST001.mzml", "lcms_istds | test | test | positive", "carrot.lcms", "test")
+      res2.getStatusCode should be(HttpStatus.OK)
+    }
+
   }
 }
 
