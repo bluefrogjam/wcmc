@@ -32,12 +32,12 @@ class JennyRunner extends WordSpec with LazyLogging with ShouldMatchers {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "Run samples" should {
+    //      val fileList = Source.fromFile("/g/study-jenny/aws-tracking.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
+    //      val fileList = Source.fromFile("/g/study-jenny/small-jenny-trouble.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
+    //      val fileList = Seq("BioRec_LipidsPos_PhIV_024.mzml").par
+    val fileList = Source.fromFile("/g/study-jenny/processed/batch1/batch-1b-pos-miss-run2.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
+    logger.info(s"loaded ${fileList.size} filenames")
     "process samples bulk" ignore {
-      //      val fileList = Source.fromFile("/g/study-jenny/aws-tracking.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
-      //      val fileList = Source.fromFile("/g/study-jenny/small-jenny-trouble.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
-      //      val fileList = Seq("BioRec_LipidsPos_PhIV_024.mzml").par
-      val fileList = Source.fromFile("/g/study-jenny/biorecs_reprocess/reprocess-2.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
-      logger.info(s"loaded ${fileList.size} filenames")
 
       val forkJoinPool = new ForkJoinPool(5)
       fileList.tasksupport = new ForkJoinTaskSupport(forkJoinPool)
@@ -72,30 +72,27 @@ class JennyRunner extends WordSpec with LazyLogging with ShouldMatchers {
       }
     }
 
-    "process single file n times" ignore {
-      val sample = "BioRec_LipidsPos_PhIV_042.mzml"
+    "process single file n times" in {
+      fileList.foreach { sample =>
+        val task = Task(s"${sample} processing",
+          "linuxmant@gmail.com",
+          AcquisitionMethod(
+            ChromatographicMethod("jenny-tribe", Some("6530"), Some("test"), Some(PositiveMode()))
+          ),
+          Seq(SampleToProcess(sample, "", "", sample,
+            Matrix(System.currentTimeMillis().toString, "human", "plasma", Seq.empty)
+          )),
+          mode = "lcms",
+          env = "prod"
+        )
 
-      val task = Task(s"${sample} processing",
-        "linuxmant@gmail.com",
-        AcquisitionMethod(
-          ChromatographicMethod("jenny-tribe", Some("6530"), Some("test"), Some(PositiveMode()))
-        ),
-        Seq(SampleToProcess(sample, "", "", sample,
-          Matrix(System.currentTimeMillis().toString, "human", "plasma", Seq.empty)
-        )),
-        mode = "lcms",
-        env = "prod"
-      )
-
-      1 to 10 foreach { x =>
-        val start = System.currentTimeMillis()
         try {
+          val start = System.currentTimeMillis()
           taskRunner.run(task)
           println()
-          logger.info(s"\tSuccessfully finished processing ${sample}-$x")
+          logger.info(s"\tSuccessfully finished processing ${sample} in ${(System.currentTimeMillis() - start) / 1000} s")
           println()
 
-          save_sample(x, sample)
         } catch {
           case ex: Exception =>
             logger.error(s"\tFailed processing ${sample}.", ex)

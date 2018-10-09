@@ -28,6 +28,10 @@ class AWSTaskScheduler extends TaskScheduler {
     * @return
     */
   override protected def doSubmit(task: Task): String = {
+    assert(task.mode != null, "Please provide the chromatography mode ['lcms' or 'gcms']")
+    assert(task.env != null, "Please provide the running profile ['prod', 'dev' or 'test']")
+
+
     task.samples.foreach { sample =>
       if (task.mode.startsWith("carrot."))
         stasisClient.schedule(sample.fileName, AcquisitionMethod.serialize(task.acquisitionMethod), task.mode, task.env)

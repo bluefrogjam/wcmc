@@ -16,3 +16,33 @@ email:
   port: 25
   username: binbase@gmail.com
   pass: fiehnlab-2018
+
+
+
+#{
+#  "Version": "2018-10-03",
+#  "Statement": [
+#    {
+#      "Effect": "Allow",
+#      "Action": [
+#        "s3:GetBucketLocation",
+#        "s3:ListAllMyBuckets"
+#      ],
+#      "Resource": "*"
+#    },
+#    {
+#      "Effect": "Allow",
+#      "Action": ["s3:ListBucket"],
+#      "Resource": ["arn:aws:s3:::data-carrot", "arn:aws:s3:::wcmc-data-stasis-result-prod"]
+#    },
+#    {
+#      "Effect": "Allow",
+#      "Action": [
+#        "s3:PutObject",
+#        "s3:GetObject",
+#        "s3:DeleteObject"
+#      ],
+#      "Resource": ["arn:aws:s3:::data-carrot/*", "arn:aws:s3:::wcmc-data-stasis-result-prod/*"]
+#    }
+#  ]
+#}

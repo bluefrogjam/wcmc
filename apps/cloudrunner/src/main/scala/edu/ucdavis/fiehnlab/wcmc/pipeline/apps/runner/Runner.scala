@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.CommandLineRunner
@@ -33,15 +33,15 @@ class Runner extends CommandLineRunner with LazyLogging {
   override def run(args: String*): Unit = {
 
 
-    if (sampleName.isEmpty || method == null) {
-      logger.error("One or more required environment variables are not defined. Please set CARROT_SAMPLE, CARROT_METHOD environment variables with correct values.")
+    if (sampleName.isEmpty || method.isEmpty || mode.isEmpty) {
+      logger.error("One or more required environment variables are not defined. Please set CARROT_SAMPLE, CARROT_METHOD and CARROT_MODE environment variables with correct values.")
     }
 
     taskRunner.run(Task(
       name = s"processing ${sampleName} with ${method}",
       email = submitter,
       acquisitionMethod = AcquisitionMethod.deserialize(method),
-      samples = Seq(SampleToProcess(sampleName)),
+      samples = Seq(SampleToProcess(fileName = sampleName, matrix = Matrix("hp0", "human", "plasma", Seq.empty))),
       mode = mode,
       env = context.getEnvironment.getActiveProfiles.filter(p => Set("prod", "dev", "test").contains(p)).head
     ))
