@@ -42,22 +42,18 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
   "LibraryControllerTest" should {
 
-    "delete all data" in {
-      println(libraryAccess)
-      libraryAccess.deleteAll
-    }
-
     "add 1 target to the library test" in {
-      val result = template.postForEntity(s"http://localhost:${port}/rest/library", AddTarget(
+      val result = template.postForObject(s"http://localhost:${port}/rest/library", AddTarget(
         targetName = "target-1",
         precursor = 1.0,
         retentionTime = 2.0,
         library = "test",
         riMarker = true,
         mode = "positive"
-      ), classOf[Void])
+      ), classOf[Map[Any, Any]])
 
-      logger.info(s"Addition result: ${result.getStatusCode}\n${result.getHeaders.entrySet().toArray.mkString(";")}\n${result.getBody}")
+      result should not be null
+      result("name") shouldBe "target-1"
     }
 
     "have 1 library" in {
@@ -65,9 +61,9 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
         val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
 
-        libraries.size should be >= 1
+        libraries.length should be >= 1
 
-        Thread.sleep(250)
+        Thread.sleep(500)
       }
     }
 
@@ -85,15 +81,17 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "add 1 target to the library test 2" in {
-      template.postForObject(s"http://localhost:${port}/rest/library", AddTarget(
+      val result = template.postForObject(s"http://localhost:${port}/rest/library", AddTarget(
         targetName = "target-2",
         precursor = 1.0,
         retentionTime = 2.0,
         library = "test 2",
         riMarker = true,
         mode = "positive"
-      ), classOf[Void])
+      ), classOf[Map[Any, Any]])
 
+      result should not be null
+      result("name") shouldBe "target-2"
     }
 
     "have 2 libraries" in {
@@ -102,8 +100,8 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
         val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
 
 
-        libraries.size shouldBe 2
-        Thread.sleep(250)
+        libraries.length shouldBe 2
+        Thread.sleep(500)
       }
     }
 
@@ -119,7 +117,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
       )
 
       intercept[HttpClientErrorException] {
-        template.postForObject(s"http://localhost:${port}/rest/library", target, classOf[Void])
+        template.postForObject(s"http://localhost:${port}/rest/library", target, classOf[AddTarget])
       }
     }
 
@@ -137,11 +135,5 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
       result.length should not be 0
     }
 
-    "able to update " in {
-
-      val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
-      val lib = libraries.toSeq.head
-      //      val targets = monaLibraryAccess.load(lib)
-    }
   }
 }

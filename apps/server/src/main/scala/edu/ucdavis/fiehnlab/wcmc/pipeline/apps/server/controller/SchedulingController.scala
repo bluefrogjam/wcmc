@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, Task
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.bind.annotation._
+import org.springframework.web.client.HttpClientErrorException
 
 import scala.collection.JavaConverters._
 
@@ -31,7 +32,15 @@ class SchedulingController extends LazyLogging {
     * @param task
     */
   @RequestMapping(value = Array("/submit"), method = Array(RequestMethod.POST))
-  def submit(@RequestBody task: Task): Map[String, Any] = Map("result" -> taskScheduler.submit(task))
+  def submit(@RequestBody task: Task): Map[String, Any] = {
+    try {
+      Map("result" -> taskScheduler.submit(task))
+    } catch {
+      case ex: HttpClientErrorException =>
+        logger.error(ex.getMessage)
+        Map("result" -> ex.getMessage)
+    }
+  }
 
   /**
     * the task has finished
@@ -55,12 +64,12 @@ class SchedulingController extends LazyLogging {
     */
   @RequestMapping(path = Array("/failed/{id}"), method = Array(RequestMethod.GET))
   def isFailed(@PathVariable("id") id: String): Map[String, Any] =
-  taskScheduler match {
-    case scheduler: AdvancedTaskScheduler =>
-      Map("result" -> scheduler.isFailed(id))
-    case _ =>
-      Map("result" -> "not supported")
-  }
+    taskScheduler match {
+      case scheduler: AdvancedTaskScheduler =>
+        Map("result" -> scheduler.isFailed(id))
+      case _ =>
+        Map("result" -> "not supported")
+    }
 
   /**
     * the task has been scheduled
@@ -97,12 +106,12 @@ class SchedulingController extends LazyLogging {
     */
   @RequestMapping(path = Array("/queue"), method = Array(RequestMethod.GET))
   def queue: java.util.List[String] =
-  taskScheduler match {
-    case scheduler: AdvancedTaskScheduler =>
-      scheduler.queue.asJava
-    case _ =>
-      List.empty[String].asJava
-  }
+    taskScheduler match {
+      case scheduler: AdvancedTaskScheduler =>
+        scheduler.queue.asJava
+      case _ =>
+        List.empty[String].asJava
+    }
 
 }
 

@@ -1,5 +1,13 @@
+debug: false
+
+logging:
+  level:
+    org.hibernate: info
+    org.springframework: info
+    org.springframework.web.client.RestTemplate: DEBUG
+
 spring:
-  http:
+  servlet:
     multipart:
       max-file-size: 2048MB
       max-request-size: 2048MB

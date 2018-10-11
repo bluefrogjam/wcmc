@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, SampleToP
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, TaskRunner}
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.AdvancedTaskScheduler
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -16,8 +16,8 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.Primary
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.web.client.RestTemplate
 
 /**
@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna","test","carrot.runner.required"))
+@ActiveProfiles(Array("test"))
 class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @LocalServerPort
@@ -38,9 +38,6 @@ class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLog
   val testScheduler: TestTaskScheduler = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
-
-
-  // IGNORING tests till we rewrite the scheduler to use aws
 
   "SchedulingControllerTest" should {
     "support the following " must {
