@@ -16,7 +16,6 @@
 
     <modules>
         <module>aws</module>
-        <module>storage</module>
         <module>bucket</module>
         <module>cdk</module>
     </modules>
