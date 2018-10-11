@@ -1,1 +1,0 @@
-﻿console.log("!function(){\n var st = {version: " + JSON.stringify(require("../package.json").version) + "};");
