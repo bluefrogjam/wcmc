@@ -142,7 +142,7 @@ trait ReadWriteLibrary[T <: Target] extends LibraryAccess[T] {
 }
 
 final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with LazyLogging {
-
+  logger.debug("==== creating delegate library ====")
   /**
     * loads all the spectra from the library
     * applicable for the given acquistion method
@@ -225,6 +225,7 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
 }
 
 final class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget], annotation: LibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with LazyLogging {
+  logger.debug("==== creating merged library ====")
   /**
     * loads all the spectra from the library
     * applicable for the given acquistion method
