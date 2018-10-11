@@ -6,7 +6,6 @@ spring:
       - file.source.eclipse
       - carrot.lcms
       - carrot.targets.mona
-      - carrot.target.dynamic
       - carrot.output.storage.aws
       - carrot.processing.replacement.simple
       - carrot.processing.peakdetection
@@ -14,30 +13,6 @@ spring:
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket
       - carrot.scheduler.aws
-#      - carrot.store.result.fserv4j
-#      - carrot.output.writer.flat
 
-#which rabbit mq to use
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-
-#which mona server to use
-mona:
-  rest:
-    server:
-      user: admin
-      password: admin
-      host: localhost
-      port: 9090
-
-wcmc:
-  pipeline:
-    workflow:
-      config:
-        correction:
-          minimumFoundStandards: 10
-          regression:
-            polynom: 3
+stasis:
+  baseurl: http://dev-api.metabolomics.us/stasis

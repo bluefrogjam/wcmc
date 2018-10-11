@@ -3,6 +3,8 @@ spring:
     active: default
     include:
       - prod
+      - file.source.luna
+      - file.source.eclipse
       - carrot.gcms
       - carrot.lcms
       - carrot.output.storage.aws
@@ -11,29 +13,7 @@ spring:
       - carrot.targets.mona
       - carrot.scheduler.aws
       - carrot.gcms.library.binbase
-      - file.source.luna
-      - file.source.eclipse
+      - carrot.runner.required
 
-  servlet:
-    multipart:
-      max-file-size: 2048MB
-      max-request-size: 2048MB
-
-server:
-  port: 18080
-
-#which email account to use
-email:
-  host: smtp.gmail.com
-  port: 25
-  username: binbase@gmail.com
-  pass: fiehnlab-2018
-
-# mona server to run against
-mona:
-  rest:
-    server:
-      user: admin
-      password: admin
-      host: localhost
-      port: 9090
+stasis:
+  baseurl: http://api.metabolomics.us/stasis

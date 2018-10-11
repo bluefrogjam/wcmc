@@ -1,3 +1,5 @@
+debug: false
+
 spring:
   profiles:
     active: test
@@ -6,9 +8,8 @@ spring:
       - file.source.eclipse
       - carrot.lcms
       - carrot.targets.mona
-      - carrot.target.dynamic
+      - carrot.targets.dynamic
       - carrot.report.quantify.height
-      - carrot.store.result.fserv4j
       - carrot.output.writer.flat
       - carrot.processing.replacement.simple
       - carrot.processing.peakdetection
@@ -31,7 +32,6 @@ wcmc:
 
 stasis:
   baseurl: "https://test-api.metabolomics.us/stasis"
-
 
 mona:
   rest:

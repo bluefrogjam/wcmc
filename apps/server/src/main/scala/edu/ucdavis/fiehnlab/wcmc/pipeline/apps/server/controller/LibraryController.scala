@@ -33,23 +33,16 @@ class LibraryController extends LazyLogging {
   def addTarget(@RequestBody target: AddTarget): Unit = {
 
     val t = target.buildTarget
-
     val method = target.buildMethod
 
-    val existingTargets = libraryAccess.load(method)
-
-    logger.info(s"library contains currently ${existingTargets.size} targets")
-
-    val hasExistings = existingTargets.filter(_.equals(t))
+    val hasExistings = libraryAccess.load(method).filter(_.equals(t))
 
     if (hasExistings.isEmpty) {
       libraryAccess.add(t, method, None)
-      val existingTargets = libraryAccess.load(method)
-      logger.info(s"library contains ${existingTargets.size} targets after addition")
-    }
-    else {
-      logger.info(s"target already existed: $t")
-      logger.debug(s"\t=>existing target was: ${hasExistings}")
+
+      t
+
+    } else {
       throw new ResourceAlreadyExistException
     }
   }
@@ -61,17 +54,15 @@ class LibraryController extends LazyLogging {
     */
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.PUT))
   def updateTarget(@PathVariable("library") id: String, @RequestBody target: TargetExtended): Iterable[Target] = {
-    logger.info(s"Update requested: $target")
     val result = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.name == id =>
         x
     }
 
     if (result.isDefined) {
-      logger.info(s"Result: $result")
       libraryAccess.update(target, result.get)
 
-      Array(target)
+      Iterable(target)
     }
     else {
       throw new ResourceNotFoundException
@@ -103,7 +94,6 @@ class LibraryController extends LazyLogging {
 
   @DeleteMapping(value = Array("deleteLibrary/{library}"))
   def deleteLibrary(@PathVariable("library") library: String): Unit = {
-    logger.debug(s"User requested library: ${library}'s deletion...")
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.name == library => x
     }
@@ -115,7 +105,6 @@ class LibraryController extends LazyLogging {
 
   @DeleteMapping(value = Array("deleteTarget/{library}/{target}"))
   def deleteTarget(@PathVariable("library") library: String, @PathVariable("target") target: String): Unit = {
-    logger.info(s"User requested target: ${target}'s deletion...")
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.name == library => x
     }
