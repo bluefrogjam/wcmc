@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.types
 
-import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{IonMode, NegativeMode, PositiveMode}
 
 /**
@@ -28,7 +27,7 @@ case class Matrix(
 
 case class AcquisitionMethod(chromatographicMethod: ChromatographicMethod = ChromatographicMethod("default", None, None))
 
-object AcquisitionMethod extends LazyLogging {
+object AcquisitionMethod {
 
   /**
     * loads a method form an encoded string
@@ -38,11 +37,7 @@ object AcquisitionMethod extends LazyLogging {
     */
   def deserialize(name: String): AcquisitionMethod = {
 
-    logger.info(s"deserialize: ${name}")
-
     val entries = name.split("\\s\\|\\s")
-
-    logger.info(entries.mkString(","))
     assert(entries.size == 4)
 
     val methodName = entries(0)
