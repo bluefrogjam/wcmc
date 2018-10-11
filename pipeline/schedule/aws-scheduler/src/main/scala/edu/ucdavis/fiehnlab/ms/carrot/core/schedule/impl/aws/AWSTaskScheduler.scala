@@ -31,6 +31,11 @@ class AWSTaskScheduler extends TaskScheduler {
     assert(task.mode != null, "Please provide the chromatography mode ['lcms' or 'gcms']")
     assert(task.env != null, "Please provide the running profile ['prod', 'dev' or 'test']")
 
+    val mode = task.mode match {
+      case "lcms" => "carrot.lcms"
+      case "gcms" => "carrot.gcms"
+      case _ => task.mode
+    }
 
     task.samples.foreach { sample =>
       if (task.mode.startsWith("carrot."))

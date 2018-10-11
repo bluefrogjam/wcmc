@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.cloud.aws
 
-import com.amazonaws.auth.{AWSCredentialsProvider, DefaultAWSCredentialsProviderChain, EnvironmentVariableCredentialsProvider}
+import com.amazonaws.auth.{AWSCredentialsProvider, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.regions.Regions
 import javax.validation.constraints.{NotBlank, NotNull}
 import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties}
@@ -20,7 +20,6 @@ class AWSConfiguration {
     * @return
     */
   @Bean
-//  def provider: AWSCredentialsProvider = new EnvironmentVariableCredentialsProvider
   def provider: AWSCredentialsProvider = new DefaultAWSCredentialsProviderChain
 
 }
