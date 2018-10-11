@@ -17,7 +17,7 @@ class Runner extends CommandLineRunner with LazyLogging {
   @Value("${carrot.method:#{environment.CARROT_METHOD}}")
   val method: String = null
 
-  @Value("#{environment.CARROT_MODE}")
+  @Value("${carrot.mode:#{environment.CARROT_MODE}}")
   // This turns into the active profile to run the sample ['carrot.lcms','carrot.gcms']
   val mode: String = null
 
