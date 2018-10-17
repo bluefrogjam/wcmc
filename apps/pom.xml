@@ -15,9 +15,9 @@
     <version>1.0.16-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
+        <module>localrunner</module>
         <module>cloudrunner</module>
         <module>server</module>
-        <module>client</module>
         <module>converter</module>
     </modules>
 
