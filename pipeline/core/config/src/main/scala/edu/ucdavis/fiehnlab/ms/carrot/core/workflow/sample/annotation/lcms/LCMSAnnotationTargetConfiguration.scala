@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 
@@ -23,6 +24,7 @@ class LCMSAnnotationTargetConfiguration extends LazyLogging {
     * @return
     */
   @Bean
+  @Qualifier("staticAnnotationLibraryAccess")
   def annotationTargets(properties: LCMSAnnotationLibraryProperties): LibraryAccess[AnnotationTarget] = {
     logger.info("loading lcms annotation targets")
     val methods: Map[AcquisitionMethod, Iterable[LCMSAnnotationTarget]] = properties.config.asScala.map { x =>

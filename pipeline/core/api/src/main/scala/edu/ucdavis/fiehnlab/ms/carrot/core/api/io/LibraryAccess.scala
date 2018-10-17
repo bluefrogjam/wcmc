@@ -224,7 +224,7 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
   override def toString = s"DelegateLibraryAccess(\n\t${this.delegates}\n)"
 }
 
-final class MergeLibraryAccess @Autowired()(correction: LibraryAccess[CorrectionTarget], annotation: LibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with LazyLogging {
+final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with LazyLogging {
   logger.debug("==== creating merged library ====")
   /**
     * loads all the spectra from the library
