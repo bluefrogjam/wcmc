@@ -19,7 +19,7 @@
         <docker.expose>18080</docker.expose>
         <docker.jvm>-Xmx16186m</docker.jvm>
         <docker.registry>eros.fiehnlab.ucdavis.edu</docker.registry>
-        <docker.imageName>carrot</docker.imageName>
+        <docker.imageName>carrot-local</docker.imageName>
     </properties>
 
     <dependencies>

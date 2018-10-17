@@ -18,9 +18,25 @@ class LCMSAnnotationLibraryConfigurationTest extends WordSpec with ShouldMatcher
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "Annotation library properties" should {
-    "have properties for correction" in {
+  "Default annotation library properties" should {
+    "not have annotation targets" in {
       annotProperties.config shouldBe empty
+    }
+  }
+}
+
+@RunWith(classOf[SpringRunner])
+@ActiveProfiles(Array("test", "carrot.lcms", "carrot.jenny"))
+@SpringBootTest
+class LCMSCustomAnnotationLibraryConfigurationTest extends WordSpec with ShouldMatchers with LazyLogging {
+  @Autowired
+  val annotProperties: LCMSAnnotationLibraryProperties = null
+
+  new TestContextManager(this.getClass).prepareTestInstance(this)
+
+  "Custom annotation library properties" should {
+    "have annotation targets" in {
+      annotProperties.config should not be empty
     }
   }
 }
