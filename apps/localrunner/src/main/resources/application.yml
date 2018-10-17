@@ -12,7 +12,7 @@ spring:
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket
-      - carrot.targets.mona
+#      - carrot.targets.mona
       - carrot.runner.required
       - carrot.processing.replacement.simple
       - carrot.processing.peakdetection
