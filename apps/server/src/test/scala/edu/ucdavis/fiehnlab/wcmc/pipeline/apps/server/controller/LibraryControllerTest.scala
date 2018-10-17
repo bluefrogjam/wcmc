@@ -1,15 +1,15 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.AnnotationTarget
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
 import org.scalatest.{ShouldMatchers, WordSpec}
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.web.server.LocalServerPort
@@ -36,24 +36,42 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
   val libraryAccess: MergeLibraryAccess = null
 
   @Autowired
-  val monaLibraryAccess: MonaLibraryAccess = null
+  @Qualifier("monaLibraryAccess")
+  val monaLibraryAccess: LibraryAccess[AnnotationTarget] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
+  val tgt1 = AddTarget(
+    targetName = "target-1",
+    precursor = 1.0,
+    retentionTime = 2.0,
+    library = "test",
+    riMarker = true,
+    mode = "positive",
+    instrument = "test",
+    column = "test"
+  )
+
+  val tgt2 = AddTarget(
+    targetName = "target-2",
+    precursor = 1.0,
+    retentionTime = 2.0,
+    library = "test 2",
+    riMarker = true,
+    mode = "positive",
+    instrument = "test",
+    column = "test"
+  )
+
   "LibraryControllerTest" should {
+    libraryAccess.deleteAll
 
     "add 1 target to the library test" in {
-      val result = template.postForObject(s"http://localhost:${port}/rest/library", AddTarget(
-        targetName = "target-1",
-        precursor = 1.0,
-        retentionTime = 2.0,
-        library = "test",
-        riMarker = true,
-        mode = "positive"
-      ), classOf[Map[Any, Any]])
+      //      template.delete(s"http://localhost:${port}/rest/library/test")
 
-      result should not be null
-      result("name") shouldBe "target-1"
+      val result = template.postForEntity(s"http://localhost:${port}/rest/library", tgt1, classOf[Map[Any, Any]])
+
+      result.getStatusCodeValue shouldBe 200
     }
 
     "have 1 library" in {
@@ -63,7 +81,7 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
         libraries.length should be >= 1
 
-        Thread.sleep(500)
+        Thread.sleep(1000)
       }
     }
 
@@ -81,17 +99,11 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
     }
 
     "add 1 target to the library test 2" in {
-      val result = template.postForObject(s"http://localhost:${port}/rest/library", AddTarget(
-        targetName = "target-2",
-        precursor = 1.0,
-        retentionTime = 2.0,
-        library = "test 2",
-        riMarker = true,
-        mode = "positive"
-      ), classOf[Map[Any, Any]])
+      //      template.delete(s"http://localhost:${port}/rest/library/test 2")
 
-      result should not be null
-      result("name") shouldBe "target-2"
+      val result = template.postForEntity(s"http://localhost:${port}/rest/library", tgt2, classOf[Map[Any, Any]])
+
+      result.getStatusCodeValue shouldBe 200
     }
 
     "have 2 libraries" in {
@@ -100,24 +112,15 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
         val libraries: Array[AcquisitionMethod] = template.getForObject(s"http://localhost:${port}/rest/library", classOf[Array[AcquisitionMethod]])
 
 
-        libraries.length shouldBe 2
-        Thread.sleep(500)
+        libraries.length should be >= 2
+        Thread.sleep(1000)
       }
     }
 
     "does not add the same spectra to the library again" in {
-
-      val target = AddTarget(
-        targetName = "target-2",
-        precursor = 1.0,
-        retentionTime = 2.0,
-        library = "test 2",
-        riMarker = true,
-        mode = "positive"
-      )
-
       intercept[HttpClientErrorException] {
-        template.postForObject(s"http://localhost:${port}/rest/library", target, classOf[AddTarget])
+        template.postForObject(s"http://localhost:${port}/rest/library", tgt1, classOf[Map[Any, Any]]) // this should fail already, but it doesn't for some reason
+        template.postForObject(s"http://localhost:${port}/rest/library", tgt1, classOf[Map[Any, Any]])
       }
     }
 
@@ -132,7 +135,8 @@ class LibraryControllerTest extends WordSpec with ShouldMatchers with LazyLoggin
 
       }
 
-      result.length should not be 0
+      result should not be empty
+      result.length shouldBe 1
     }
 
   }

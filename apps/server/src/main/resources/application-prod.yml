@@ -1,8 +1,7 @@
 spring:
   profiles:
-    active: default
+    active: prod
     include:
-      - prod
       - file.source.luna
       - file.source.eclipse
       - carrot.gcms

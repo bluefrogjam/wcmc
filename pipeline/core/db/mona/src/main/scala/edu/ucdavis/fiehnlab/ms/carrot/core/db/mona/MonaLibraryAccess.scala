@@ -409,8 +409,8 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging
       val values: Array[String] = tag.text.split(" - ")
 
 
-      val instrument = if (values(1) == noneSpecifiedValue) None else Option(values(1))
-      val column = if (values(2) == noneSpecifiedValue) None else Option(values(2))
+      val instrument = if (values(1) == noneSpecifiedValue || values(1) == null) None else Option(values(1))
+      val column = if (values(2) == noneSpecifiedValue || values(1) == null) None else Option(values(2))
       val mode = if (values(3).toLowerCase == "positive") {
         Some(PositiveMode())
       }

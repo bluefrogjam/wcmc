@@ -20,30 +20,35 @@ import scala.annotation.meta.field
   */
 @CrossOrigin
 @RestController
-@RequestMapping(value = Array("/rest/library"))
+@RequestMapping(path = Array("/rest/library"))
 class LibraryController extends LazyLogging {
 
   @Autowired
   val libraryAccess: MergeLibraryAccess = null
 
+  @RequestMapping(value = Array(""), method = Array(RequestMethod.GET))
+  def listLibraries(): Seq[AcquisitionMethod] = {
+    libraryAccess.libraries
+  }
+
   /**
     * this adds a new target to the specified library
     */
-  @PostMapping(value = Array(""))
-  def addTarget(@RequestBody target: AddTarget): Unit = {
+  @RequestMapping(value = Array(""), method = Array(RequestMethod.POST))
+  def addTarget(@RequestBody target: AddTarget): Target = {
 
     val t = target.buildTarget
     val method = target.buildMethod
 
     val hasExistings = libraryAccess.load(method).filter(_.equals(t))
+    logger.debug(s"Has existing: ${hasExistings}")
 
     if (hasExistings.isEmpty) {
       libraryAccess.add(t, method, None)
-
+      logger.info(t.toString)
       t
-
     } else {
-      throw new ResourceAlreadyExistException
+      throw new ResourceAlreadyExistException(s"Target ${t.name} already in the library")
     }
   }
 
@@ -53,7 +58,7 @@ class LibraryController extends LazyLogging {
     * @param target
     */
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.PUT))
-  def updateTarget(@PathVariable("library") id: String, @RequestBody target: TargetExtended): Iterable[Target] = {
+  def updateTarget(@PathVariable("library") id: String, @RequestBody target: TargetExtended): Target = {
     val result = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.name == id =>
         x
@@ -62,14 +67,12 @@ class LibraryController extends LazyLogging {
     if (result.isDefined) {
       libraryAccess.update(target, result.get)
 
-      Iterable(target)
-    }
-    else {
-      throw new ResourceNotFoundException
+      target
+    } else {
+      throw new ResourceNotFoundException(s"Target ${target.name} not found")
     }
 
   }
-
 
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.GET))
   def listTargets(@PathVariable("library") id: String): Iterable[Target] = {
@@ -87,12 +90,7 @@ class LibraryController extends LazyLogging {
     }
   }
 
-  @RequestMapping(value = Array(""), method = Array(RequestMethod.GET))
-  def listLibraries(): Seq[AcquisitionMethod] = {
-    libraryAccess.libraries
-  }
-
-  @DeleteMapping(value = Array("deleteLibrary/{library}"))
+  @RequestMapping(value = Array("deleteLibrary/{library}"), method = Array(RequestMethod.DELETE))
   def deleteLibrary(@PathVariable("library") library: String): Unit = {
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.name == library => x
@@ -103,7 +101,7 @@ class LibraryController extends LazyLogging {
     }
   }
 
-  @DeleteMapping(value = Array("deleteTarget/{library}/{target}"))
+  @RequestMapping(value = Array("deleteTarget/{library}/{target}"), method = Array(RequestMethod.DELETE))
   def deleteTarget(@PathVariable("library") library: String, @PathVariable("target") target: String): Unit = {
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.name == library => x
@@ -117,10 +115,10 @@ class LibraryController extends LazyLogging {
 }
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-class ResourceNotFoundException extends RuntimeException
+class ResourceNotFoundException(message: String) extends RuntimeException(message)
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
-class ResourceAlreadyExistException extends RuntimeException
+class ResourceAlreadyExistException(message: String) extends RuntimeException(message)
 
 /**
   * utilized to update fields of the given target
@@ -175,7 +173,9 @@ class JsonBooleanDeserializer extends JsonDeserializer[Boolean] {
   * @param riMarker
   * @param mode
   */
-case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String, @(JsonDeserialize@field) riMarker: Boolean, mode: String) {
+case class AddTarget(targetName: String, precursor: Double, retentionTime: Double, library: String,
+                     @(JsonDeserialize@field) riMarker: Boolean, mode: String,
+                     instrument: String, column: String) {
 
   /**
     * builds the associated acquisition method
@@ -192,10 +192,12 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
       case _ => NegativeMode()
     }
 
+    val instrument: String = target.instrument
+    val column: String = target.column
+
     AcquisitionMethod(
       ChromatographicMethod(
-        //TODO possible bug later down the line, due to explicitly set to none for instrument and column
-        name = target.library, None, None, ionMode = Some(ionMode)
+        name = target.library, Some(instrument), Some(column), ionMode = Some(ionMode)
       )
     )
   }
