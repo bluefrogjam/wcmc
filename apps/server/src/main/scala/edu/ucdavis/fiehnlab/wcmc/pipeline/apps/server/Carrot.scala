@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
-import org.springframework.beans.factory.annotation.{Qualifier, Value}
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.{SpringApplication, WebApplicationType}
@@ -32,7 +32,21 @@ class Carrot extends LazyLogging {
   def workflow: Workflow[Double] = new Workflow[Double]
 
   @Bean
-  def mergedLibrary(correction: LibraryAccess[CorrectionTarget], @Qualifier("monaLibraryAccess") annotation: LibraryAccess[AnnotationTarget]): MergeLibraryAccess = new MergeLibraryAccess(correction, annotation)
+  def annotationLibrary(@Autowired(required = false) targets: java.util.List[LibraryAccess[AnnotationTarget]]): DelegateLibraryAccess[AnnotationTarget] = {
+    if (targets == null) {
+      logger.warn("no library provided, annotations will be empty!")
+      new DelegateLibraryAccess[AnnotationTarget](new java.util.ArrayList())
+    }
+    else {
+      new DelegateLibraryAccess[AnnotationTarget](targets)
+    }
+  }
+
+  @Bean
+  def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
+
+  @Bean
+  def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = new MergeLibraryAccess(correction, annotation)
 }
 
 object Carrot extends App {

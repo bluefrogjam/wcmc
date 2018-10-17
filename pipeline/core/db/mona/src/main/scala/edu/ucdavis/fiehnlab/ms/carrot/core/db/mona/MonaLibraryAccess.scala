@@ -29,6 +29,8 @@ import scala.collection.mutable
   */
 @Profile(Array("carrot.targets.mona"))
 @Component
+//@Primary
+@Qualifier("monaAnnotationLibraryAccess")
 class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging {
 
   private val executionService: ExecutorService = Executors.newFixedThreadPool(1)

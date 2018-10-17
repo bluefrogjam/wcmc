@@ -1,9 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -51,7 +52,19 @@ class TaskRunnerTest extends WordSpec {
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class TestConfiguration {
+class TestConfiguration extends LazyLogging {
   @Bean
-  def workflow: Workflow[Double] = new Workflow[Double]
+  def annotationLibrary(@Autowired(required = false) targets: java.util.List[LibraryAccess[AnnotationTarget]]): DelegateLibraryAccess[AnnotationTarget] = {
+    if (targets == null) {
+      logger.warn("no library provided, annotations will be empty!")
+      new DelegateLibraryAccess[AnnotationTarget](new java.util.ArrayList())
+    }
+    else {
+      new DelegateLibraryAccess[AnnotationTarget](targets)
+    }
+  }
+
+  @Bean
+  def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
+
 }

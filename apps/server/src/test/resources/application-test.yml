@@ -8,7 +8,6 @@ spring:
       - file.source.eclipse
       - carrot.lcms
       - carrot.targets.mona
-      - carrot.targets.dynamic
       - carrot.report.quantify.height
       - carrot.output.writer.flat
       - carrot.processing.replacement.simple
