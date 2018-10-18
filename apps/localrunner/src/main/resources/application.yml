@@ -2,10 +2,9 @@ debug: false
 
 spring:
   profiles:
-    active: defaultt
+    active: prod
     include:
-      - dev
-      - jenny
+      - carrot.jenny
       - carrot.lcms
       - file.source.luna
       - file.source.eclipse
@@ -17,6 +16,10 @@ spring:
       - carrot.processing.replacement.simple
       - carrot.processing.peakdetection
       - carrot.report.quantify.height
+  autoconfigure:
+    exclude:
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 
 stasis:
   baseurl: http://api.metabolomics.us/stasis
@@ -27,3 +30,9 @@ mona:
       user: admin
       password: admin
       port: 9090
+
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: fiehnlab-2018
