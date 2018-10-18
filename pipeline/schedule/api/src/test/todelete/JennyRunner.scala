@@ -7,21 +7,16 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
-import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.collection.JavaConverters._
 import scala.collection.parallel.ForkJoinTaskSupport
 import scala.concurrent.forkjoin.ForkJoinPool
 import scala.io.Source
 
-@RunWith(classOf[SpringRunner])
-@SpringBootTest
-@ActiveProfiles(Array("jenny"))
+//@RunWith(classOf[SpringRunner])
+//@SpringBootTest
+//@ActiveProfiles(Array("jenny"))
 class JennyRunner extends WordSpec with LazyLogging with ShouldMatchers {
   @Autowired
   val taskRunner: TaskRunner = null
@@ -35,7 +30,7 @@ class JennyRunner extends WordSpec with LazyLogging with ShouldMatchers {
     //      val fileList = Source.fromFile("/g/study-jenny/aws-tracking.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
     //      val fileList = Source.fromFile("/g/study-jenny/small-jenny-trouble.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
     //      val fileList = Seq("BioRec_LipidsPos_PhIV_024.mzml").par
-    val fileList = Source.fromFile("/g/study-jenny/processed/batch1/batch-1b-pos-miss-run2.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
+    val fileList = Source.fromFile("/g/study-jenny/processed/batch1/batch-1b-pos.txt").getLines().filterNot(_.isEmpty).map(_ + ".mzml").toSeq.par
     logger.info(s"loaded ${fileList.size} filenames")
     "process samples bulk" ignore {
 
@@ -72,7 +67,7 @@ class JennyRunner extends WordSpec with LazyLogging with ShouldMatchers {
       }
     }
 
-    "process single file n times" in {
+    "process single file n times" ignore {
       fileList.foreach { sample =>
         val task = Task(s"${sample} processing",
           "linuxmant@gmail.com",
