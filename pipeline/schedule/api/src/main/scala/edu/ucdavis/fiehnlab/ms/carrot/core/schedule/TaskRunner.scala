@@ -104,15 +104,13 @@ class TaskRunner extends LazyLogging {
     storage.asScala.par.foreach { x: ResultStorage =>
       try {
         x.store(experiment, task)
+        emailService.send(emailSender, task.email :: List(), s"Dear user, your result with ${task.name} is now ready for download!", "carrot: your result is finished", None)
       }
       catch {
         case e: Exception =>
           logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
       }
     }
-
-    //send notification email
-    emailService.send(emailSender, task.email :: List(), s"Dear user, your result with ${task.name} is now ready for download!", "carrot: your result is finished", None)
 
   }
 }
