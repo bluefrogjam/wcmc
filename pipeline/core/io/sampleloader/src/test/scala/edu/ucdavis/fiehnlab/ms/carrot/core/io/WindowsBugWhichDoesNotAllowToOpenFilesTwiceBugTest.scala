@@ -11,7 +11,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugTest extends WordSpec {
 
   @Autowired
-  val sampleLoader:SampleLoader = null
+  val sampleLoader: SampleLoader = null
 
   val context = new TestContextManager(this.getClass)
   context.prepareTestInstance(this)
@@ -23,15 +23,13 @@ class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugTest extends WordSpec {
       1 to 10 foreach { run =>
 
         s"load data attempts - $run" in {
-
-          val delegate: Sample = sampleLoader.loadSample("test.mzXML").get
-
           if (System.getProperties.getProperty("os.name").toLowerCase() == "linux")
             true
-          else
+          else {
+            val delegate: Sample = sampleLoader.loadSample("test.mzXML").get
             assert(delegate.spectra.size == 1)
+          }
         }
-
       }
 
     }
@@ -43,7 +41,7 @@ class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugTest extends WordSpec {
 class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugUsingEverything4jTest extends WordSpec {
 
   @Autowired
-  val sampleLoader:SampleLoader = null
+  val sampleLoader: SampleLoader = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -54,16 +52,14 @@ class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugUsingEverything4jTest extend
       1 to 10 foreach { run =>
 
         s"load data attempts - $run" in {
-          val delegate: Sample = sampleLoader.loadSample("Pos_QC029.mzXML").get
-
           if (System.getProperties.getProperty("os.name").toLowerCase() == "linux")
             true
-          else
+          else {
+            val delegate: Sample = sampleLoader.loadSample("Pos_QC029.mzXML").get
             assert(delegate.spectra.nonEmpty)
+          }
         }
-
       }
-
     }
   }
 }
