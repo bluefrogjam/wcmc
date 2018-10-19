@@ -28,9 +28,9 @@ echo "end: $end"
 
 for idx in `seq $start $end`; do
     docker run -d --rm --name localrunner-$idx \
-     --mount type=bind,source=\"$source\",target=$target \
+     --mount type=bind,source="$source",target=$target \
      --mount type=bind,source=$awssrc,target=$awstgt \
      eros.fiehnlab.ucdavis.edu/carrot-local \
      $target/segment_$idx.txt \
-     \"$method\"
+     "$method"
 done
