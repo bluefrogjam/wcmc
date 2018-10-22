@@ -33,4 +33,5 @@ for idx in `seq $start $end`; do
      eros.fiehnlab.ucdavis.edu/carrot-local \
      $target/segment_$idx.txt \
      "$method"
+    sleep 1s
 done

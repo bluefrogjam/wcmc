@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
+import java.io.FileNotFoundException
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
@@ -10,6 +11,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Profile
@@ -40,6 +43,9 @@ class TaskRunner extends LazyLogging {
   @Autowired
   val emailService: EmailService = null
 
+  @Autowired
+  val stasisCli: StasisService = null
+
   /**
     * This provides the system with N-instructions after the processing is finished. The concrete implementations can write the result to a file,
     * do additional processing, store it in databases.
@@ -68,9 +74,10 @@ class TaskRunner extends LazyLogging {
     logger.info(s"executing received task: ${task} and discovering ${task.samples.size} files")
     val classes: Seq[ExperimentClass] = task.samples.groupBy(_.matrix).map { entry =>
       val samples = entry._2.map { x =>
-        print(s"\n\n${x.toString}\n\n")
         assert(x.fileName != null, "you need to provide a file name!")
         assert(x.fileName.length > 0, "you need to provide a file name!")
+
+        stasisCli.addTracking(TrackingData(x.fileName.split('.').head, "scheduled", x.fileName))
 
         try {
           //processes the actual sample
@@ -83,7 +90,9 @@ class TaskRunner extends LazyLogging {
             logger.warn(s"discovered a none supported sample format, ignoring it: ${x.fileName}")
             null
           case e: AssertionError =>
-            e.printStackTrace()
+            logger.error(s"Error processing sample '${x.fileName}'. skipping from process", e)
+            null
+          case e: FileNotFoundException =>
             logger.error(s"Missing sample '${x.fileName}' data file. skipping from process")
             null
         }
@@ -104,13 +113,18 @@ class TaskRunner extends LazyLogging {
     storage.asScala.par.foreach { x: ResultStorage =>
       try {
         x.store(experiment, task)
-        emailService.send(emailSender, task.email :: List(), s"Dear user, your result with ${task.name} is now ready for download!", "carrot: your result is finished", None)
-      }
-      catch {
+        emailService.send(emailSender, task.email :: List(),
+          s"Dear user, your result with ${task.name} is now ready for download!",
+          "carrot: your result is finished",
+          None)
+      } catch {
         case e: Exception =>
           logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
+          emailService.send(emailSender, task.email :: List(),
+            s"Dear user, the task '${task.name}' did not execute properly!",
+            s"carrot: your result had problems.\n\n${e.getStackTrace}",
+            None)
       }
     }
-
   }
 }
