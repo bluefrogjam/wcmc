@@ -90,10 +90,10 @@ class TaskRunner extends LazyLogging {
             logger.warn(s"discovered a none supported sample format, ignoring it: ${x.fileName}")
             null
           case e: AssertionError =>
-            logger.error(s"Error processing sample '${x.fileName}'. skipping from process", e)
+            logger.error(s"assertion error in sample sample '${x.fileName}' data file. skipping from process", e)
             null
           case e: FileNotFoundException =>
-            logger.error(s"Missing sample '${x.fileName}' data file. skipping from process")
+            logger.error(s"sorry we did not find the sample: ${x.fileName}, message was: ${e.getMessage()}")
             null
         }
       }.filter(x => x != null)
