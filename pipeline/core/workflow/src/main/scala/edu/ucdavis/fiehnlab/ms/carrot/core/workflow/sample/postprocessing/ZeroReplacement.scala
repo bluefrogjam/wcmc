@@ -89,7 +89,9 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
         }
         else {
           try {
-            replaceValue(target, sample, correctedRawData)
+            val replaced = replaceValue(target, sample, correctedRawData)
+            stasisClient.addTracking(TrackingData(sample.name, "replaced", sample.fileName))
+            replaced
           }
           catch {
             case e: Exception =>

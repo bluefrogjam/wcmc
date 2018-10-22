@@ -2,6 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 
 /**
@@ -15,6 +17,9 @@ trait TaskScheduler {
   @Autowired
   val emailService:EmailService = null
 
+  @Autowired
+  val stasisCli: StasisService = null
+
   /**
     * runs this provided task
     *
@@ -23,6 +28,7 @@ trait TaskScheduler {
   final def submit(task: Task): String = {
     verify(task)
 
+    updateTracking(task)
     //send notification email
     emailService.send(emailSender,task.email :: List(),s"Dear user, your job with ${task.name} has been submitted for calculations","job scheduled",None)
 
@@ -51,5 +57,11 @@ trait TaskScheduler {
     assert(task.email != null, "you need to provide a valid email address")
   }
 
+  final def updateTracking(task: Task): Unit = {
+    task.samples.foreach(sample => {
+      val name = sample.fileName.split('.').head
+      stasisCli.addTracking(TrackingData(name, "scheduled", sample.fileName))
+    })
+  }
 }
 

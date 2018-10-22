@@ -37,7 +37,7 @@ class LCMSAnnotationTargetConfiguration extends LazyLogging {
 
 
     val libs = methods.keySet.map { x =>
-
+        logger.info(s"=== method ${x} ===")
 
       new ReadonlyLibrary[LCMSAnnotationTarget] {
 
