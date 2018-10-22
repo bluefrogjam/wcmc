@@ -20,6 +20,7 @@ import scala.io.Source
 object LocalRunner extends App {
   val app = new SpringApplication(classOf[LocalRunner])
   app.setWebApplicationType(WebApplicationType.NONE)
+  args.foreach(println)
   val context = app.run(args: _*)
 }
 
@@ -48,7 +49,7 @@ class LocalRunner extends CommandLineRunner with LazyLogging {
           s"${line}.mzml"
       ).toSeq
 
-      process(fileList, method)
+      process(fileList, AcquisitionMethod.deserialize(method))
     } catch {
       case ex: FileNotFoundException =>
         logger.error(s"File ${args(0)} not found.")
@@ -59,14 +60,12 @@ class LocalRunner extends CommandLineRunner with LazyLogging {
     System.exit(0)
   }
 
-  def process(fileList: Seq[String], method: String): Unit = {
+  def process(fileList: Seq[String], method: AcquisitionMethod): Unit = {
     fileList.foreach { sample =>
       logger.info(s"Processing sample: ${sample}")
       val task = Task(s"${sample} processing",
         "linuxmant@gmail.com",
-        AcquisitionMethod(
-          ChromatographicMethod("jenny-tribe", Some("6530"), Some("test"), Some(PositiveMode()))
-        ),
+        method,
         Seq(SampleToProcess(sample, "", "", sample,
           Matrix(System.currentTimeMillis().toString, "human", "plasma", Seq.empty)
         )),

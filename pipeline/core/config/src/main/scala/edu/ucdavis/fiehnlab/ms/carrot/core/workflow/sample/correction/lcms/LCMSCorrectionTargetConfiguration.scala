@@ -26,7 +26,7 @@ class LCMSCorrectionTargetConfiguration extends LazyLogging {
   @Bean
   @Qualifier("staticCorrectionLibraryAccess")
   def correctionTargets(properties: LCMSCorrectionLibraryProperties): LibraryAccess[CorrectionTarget] = {
-    logger.trace(s"==== correctionTargets ====")
+    logger.info(s"==== correctionTargets ====")
 
     val methods: Map[AcquisitionMethod, Iterable[LCMSCorrectionTarget]] = properties.config.asScala.map { x =>
       (AcquisitionMethod(ChromatographicMethod(x.name, Some(x.instrument), Some(x.column), x.ionMode match {
@@ -38,7 +38,7 @@ class LCMSCorrectionTargetConfiguration extends LazyLogging {
 
 
     val libs = methods.keySet.map { x =>
-      logger.trace(s"==== method $x ====")
+      logger.info(s"==== method $x ====")
 
       new ReadonlyLibrary[LCMSCorrectionTarget] {
 
