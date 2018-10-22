@@ -9,8 +9,9 @@ spring:
       - carrot.processing.peakdetection
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
+      - carrot.resource.store.bucket
       - carrot.runner.required
-      - file.source.luna
+#      - file.source.luna
 
 carrot:
   sample: '${CARROT_SAMPLE}'

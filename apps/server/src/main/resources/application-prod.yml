@@ -4,7 +4,7 @@ spring:
     include:
       - file.source.luna
       - file.source.eclipse
-      - carrot.gcms
+#      - carrot.gcms
       - carrot.lcms
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
@@ -13,6 +13,10 @@ spring:
       - carrot.scheduler.aws
       - carrot.gcms.library.binbase
       - carrot.runner.required
+      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+      - carrot.report.quantify.height
+
 
 stasis:
   baseurl: http://api.metabolomics.us/stasis
