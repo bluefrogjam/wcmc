@@ -25,7 +25,6 @@ wcmc:
     workflow:
       config:
         correction:
-          minimumFoundStandards: 10
           regression:
             polynom: 3
 

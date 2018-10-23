@@ -10,6 +10,10 @@ spring:
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
       - carrot.runner.required
+      - carrot.output.storage.aws
+      - file.source.eclipse
+      - file.source.luna
+
 carrot:
   sample: '${CARROT_SAMPLE}'
   method: '${CARROT_METHOD}'

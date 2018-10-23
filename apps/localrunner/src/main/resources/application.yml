@@ -4,10 +4,8 @@ spring:
   profiles:
     active: prod
     include:
-      - carrot.jenny
       - carrot.lcms
       - file.source.luna
-#      - file.source.eclipse
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket

@@ -58,13 +58,13 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     * minimum amount of standards, which have to be defined for this method to work
     */
   @Value("${wcmc.pipeline.workflow.config.correction.minimumDefinedStandard:5}")
-  var minimumDefinedStandard: Int = 5
+  var minimumDefinedStandard: Int = 0
 
   /**
     * this defines how many standards we need to find on minimum
     * for a retention index correction method to be successful
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.minimumFoundStandards:14}")
+  @Value("${wcmc.pipeline.workflow.config.correction.minimumFoundStandards:5}")
   var minimumFoundStandards: Int = 0
   /**
     * how many data points are required for the linear regression at the beginning and the end of the curve

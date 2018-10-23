@@ -5,8 +5,8 @@ import java.io.FileNotFoundException
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, PositiveMode}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import org.springframework.beans.factory.annotation.Autowired
@@ -75,9 +75,7 @@ class LocalRunner extends CommandLineRunner with LazyLogging {
       try {
         val start = System.currentTimeMillis()
         taskRunner.run(task)
-        println()
-        logger.info(s"\tSuccessfully finished processing ${sample} in ${(System.currentTimeMillis() - start) / 1000} s")
-        println()
+        logger.info(s"\n\tSuccessfully finished processing ${sample} in ${(System.currentTimeMillis() - start) / 1000} s\n")
 
       } catch {
         case ex: Exception =>
