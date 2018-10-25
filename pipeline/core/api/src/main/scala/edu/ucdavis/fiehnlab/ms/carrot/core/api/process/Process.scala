@@ -1,7 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 
@@ -9,10 +12,13 @@ import org.springframework.context.ApplicationContext
   * @tparam I
   * @tparam O
   */
-abstract class Process[I <: Sample, O <: Sample]() {
+abstract class Process[I <: Sample, O <: Sample]() extends LazyLogging {
 
   @Autowired
   protected val applicationContext: ApplicationContext = null
+
+  @Autowired
+  private val stasisClient: StasisService = null
 
   /**
     * processes the data
@@ -21,8 +27,16 @@ abstract class Process[I <: Sample, O <: Sample]() {
     * @return
     */
   final def process(item: I, method: AcquisitionMethod, rawSample: Option[Sample] = None): O = {
-    val result: O = doProcess(item, method, rawSample)
-    result
+    try {
+      val result: O = doProcess(item, method, rawSample)
+      result
+    }
+    catch {
+      case e: Exception =>
+        logger.warn(s"discovered critical error: ${e}, updating stasis with failed status")
+        stasisClient.addTracking(TrackingData(item.name, "failed", item.fileName))
+        throw e
+    }
   }
 
   /**
