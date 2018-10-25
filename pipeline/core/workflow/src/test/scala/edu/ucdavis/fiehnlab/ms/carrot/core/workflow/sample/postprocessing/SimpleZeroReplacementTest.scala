@@ -3,12 +3,13 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, QuantifiedSample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PeakDetection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,14 +22,15 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height","carrot.processing.replacement.simple", "carrot.processing.peakdetection"))
-class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers{
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test"))
+class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers {
+  val libName = "lcms_istds"
 
   @Autowired
   val simpleZeroReplacement: SimpleZeroReplacement = null
 
   @Autowired
-  val correction: LCMSTargetRetentionIndexCorrection = null
+  val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
   @Autowired
   val deco: PeakDetection = null
@@ -40,40 +42,39 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
   val quantify: QuantifyByHeightProcess = null
 
   @Autowired
-  val loader:SampleLoader = null
+  val loader: SampleLoader = null
+
+  @Autowired
+  val stasis_cli: StasisService = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "SimpleZeroReplacementTest" must {
-    val method = AcquisitionMethod(None)
-    val sample:QuantifiedSample[Double] =
-      quantify.process(annotation.process(
-                correction.process(
-                  deco.process(
-                  loader.getSample("B5_P20Lipids_Pos_QC000.d.zip"), method
-                  ),
-                  method
-                ), method
-              ), method)
+    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
+    val rawSample = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
+    val sample: QuantifiedSample[Double] = quantify.process(
+      annotation.process(
+        correction.process(
+          deco.process(
+            rawSample, method),
+          method),
+        method),
+      method)
 
     "replaceValue" should {
 
-      var replaced:QuantifiedSample[Double] = null
       "replace the null values in the file" in {
-          replaced = simpleZeroReplacement.process(sample,method )
+        val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
 
-
-        replaced.spectra.foreach{ x =>
-          logger.info(s"spectra: ${x}")
-        }
-
-        logger.info("---")
-        replaced.quantifiedTargets.foreach{ x=>
-          logger.info(s"target: ${x}")
+        replaced.quantifiedTargets.foreach { x =>
+          logger.info(s"target: ${x.name.get} = ${x.quantifiedValue}")
+          x.quantifiedValue.getOrElse(-1.0) should be >= 0.0
         }
 
         //all spectra should be the same count as the targets
         replaced.spectra.size should be(replaced.quantifiedTargets.size)
+
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("replaced")
       }
     }
 

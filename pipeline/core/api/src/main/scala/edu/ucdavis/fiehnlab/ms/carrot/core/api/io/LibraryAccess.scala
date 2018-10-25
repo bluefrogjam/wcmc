@@ -1,19 +1,16 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
-import java.io._
-
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Sample, Target}
+import org.springframework.beans.factory.annotation.Autowired
 
-import scala.io.Source
-
+import scala.collection.JavaConverters._
 
 /**
   * Created by wohlg_000 on 4/22/2016.
   */
-trait LibraryAccess[T <: Target] {
+trait LibraryAccess[T <: Target] extends LazyLogging {
 
   /**
     * loads all the spectra from the library
@@ -24,170 +21,161 @@ trait LibraryAccess[T <: Target] {
   def load(acquisitionMethod: AcquisitionMethod): Iterable[T]
 
   /**
-    * adds a new target to the internal list of targets
+    * adds a new target to the internal list of targets for the selected method
     *
     * @param target
     */
-  def add(target: T,acquisitionMethod: AcquisitionMethod,sample:Option[Sample]): Unit = {
-    add(Seq(target),acquisitionMethod,sample)
+  def add(target: T, acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
+    add(Seq(target), acquisitionMethod, sample)
   }
 
   /**
-    * this will update the existing target with the provided values
+    * this will update the existing target with the provided values in the selected method
+    *
     * @param target
     * @param acquisitionMethod
     */
-  def update(target: T, acquisitionMethod: AcquisitionMethod):Boolean
+  def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean
 
   /**
-    * deletes a specified target from the library
+    * deletes a specified target from the acquisition method
+    *
     * @param target
     * @param acquisitionMethod
     */
-  def delete(target: T, acquisitionMethod: AcquisitionMethod) : Unit
+  def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit
 
   /**
     * deletes the complete library
     */
-  def deleteAll : Unit = {
-    libraries.foreach{ x =>
-      load(x).foreach( y => delete(y,x))
+  def deleteAll: Unit = {
+    logger.info(s"deleting all libraries")
+    libraries.foreach { x =>
+      logger.info(s"\t${x}")
+      load(x).foreach(y => delete(y, x))
     }
   }
+
   /**
     * adds a list of targets
     *
     * @param targets
     */
-  def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod,sample:Option[Sample] = None)
+  def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample] = None)
 
   /**
-    * returns all associated acuqisiton methods for this library
-    * @return
-    */
-  def libraries : Seq[AcquisitionMethod]
-}
-
-/**
-  * it's a simple file based reader to get access to targets in a stream
-  *
-  * @param file
-  */
-class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\t") extends LibraryAccess[T] with LazyLogging{
-
-  /**
-    * returns all associated acuqisiton methods for this library
+    * returns all associated acquisition methods for this library
     *
     * @return
     */
-  override def libraries: Seq[AcquisitionMethod] = AcquisitionMethod(None) :: List()
+  def libraries: Seq[AcquisitionMethod]
 
   /**
+    * deletes the specified acquisition method from the list
+    *
+    * @param acquisitionMethod
+    */
+  def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {}
+
+  override def toString = s"${getClass.getName}(\n\n${libraries.mkString("\n\t")}\n)"
+}
+
+/**
+  * a read only implementation, which ignores any write access
+  *
+  * @tparam T
+  */
+trait ReadonlyLibrary[T <: Target] extends LibraryAccess[T] {
+
+  /**
+    * this will update the existing target with the provided values
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean = false
+
+  /**
+    * deletes a specified target from the library
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = {}
+
+  /**
+    * adds a list of targets
+    *
+    * @param targets
+    */
+  override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {}
+
+  /**
+    * adds the first annotation target
+    */
+}
+
+trait ReadWriteLibrary[T <: Target] extends LibraryAccess[T] {
+
+  /**
+    * this will update the existing target with the provided values in the selected method
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean = ???
+
+  /**
+    * deletes a specified target from the acquisition method
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = ???
+
+  /**
+    * adds a list of targets
+    *
+    * @param targets
+    */
+  override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = ???
+
+}
+
+final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with LazyLogging {
+  logger.debug("==== creating delegate library ====")
+  /**
     * loads all the spectra from the library
+    * applicable for the given acquistion method
     *
     * @return
     */
   override def load(acquisitionMethod: AcquisitionMethod): Iterable[T] = {
-    val result = Source.fromFile(file).getLines().collect {
+    val targets = delegates.asScala.find(_.load(acquisitionMethod).nonEmpty)
 
-      case x: String =>
-        if (!x.startsWith("#")) {
-
-          val temp = x.split(seperator)
-
-          if (temp.length == 3) {
-            new Target {
-              override val precursorMass: Option[Double] = Some(temp(1).toDouble)
-              override var name: Option[String] = Some(temp(2))
-              override val retentionIndex: Double = temp(0).toDouble * 60
-              override var inchiKey: Option[String] = None
-              override var requiredForCorrection: Boolean = false
-              override var isRetentionIndexStandard: Boolean = false
-              /**
-                * is this a confirmed target
-                */
-              override var confirmed: Boolean = true
-              /**
-                * associated spectrum propties if applicable
-                */
-              override val spectrum: Option[SpectrumProperties] = None
-            }
-          }
-          else if (temp.length == 2) {
-            new Target {
-              override val precursorMass: Option[Double] = Some(temp(1).toDouble)
-              override var name: Option[String] = None
-              override val retentionIndex: Double = temp(0).toDouble * 60
-              override var inchiKey: Option[String] = None
-              override var requiredForCorrection: Boolean = false
-              override var isRetentionIndexStandard: Boolean = false
-              override var confirmed: Boolean = true
-              override val spectrum: Option[SpectrumProperties] = None
-
-            }
-          }
-          else if (temp.length == 4) {
-            new Target {
-              override val precursorMass: Option[Double] = Some(temp(1).toDouble)
-              override var name: Option[String] = Some(temp(2))
-              override val retentionIndex: Double = temp(0).toDouble * 60
-              override var inchiKey: Option[String] = None
-              override var requiredForCorrection: Boolean = false
-              override var isRetentionIndexStandard: Boolean = temp(3).toBoolean
-              override var confirmed: Boolean = true
-              override val spectrum: Option[SpectrumProperties] = None
-
-            }
-          }
-          else if (temp.length == 5) {
-            new Target {
-              override val retentionIndex: Double = temp(0).toDouble * 60
-              override val precursorMass: Option[Double] = Some(temp(1).toDouble)
-              override var name: Option[String] = Some(temp(2))
-              override var inchiKey: Option[String] = None
-              override var requiredForCorrection: Boolean = false
-              override var isRetentionIndexStandard: Boolean = temp(4).toBoolean
-              override var confirmed: Boolean = true
-              override val spectrum: Option[SpectrumProperties] = None
-
-            }
-          }
-
-          else {
-            logger.info(s"target line is: ${temp.mkString(" ")}")
-            throw new IOException("unsupported file format discovered!")
-          }
-        }
-    }.collect {
-      case x: T => x
-    }.toList
-
-    result
+    if (targets.isDefined) {
+      targets.get.load(acquisitionMethod)
+    }
+    else {
+      Seq.empty
+    }
   }
 
   /**
-    * adds a new target to the internal list of targets
+    * this will update the existing target with the provided values
     *
-    * @param targets
+    * @param target
+    * @param acquisitionMethod
     */
-  override def add(targets: Iterable[T],acquisitionMethod: AcquisitionMethod,sample:Option[Sample]): Unit = {
+  override def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean = {
+    val targets = delegates.asScala.filter(!_.isInstanceOf[ReadonlyLibrary[T]]).find(_.load(acquisitionMethod).nonEmpty)
 
-    logger.info(s"updating library at: ${file.getAbsolutePath}")
-    val out = new FileWriter(file, true)
-
-    targets.foreach { target =>
-
-      writeTarget(out, target)
+    if (targets.isDefined) {
+      targets.get.update(target, acquisitionMethod)
     }
-
-    out.flush()
-    out.close()
-  }
-
-  private def writeTarget(out: FileWriter, target: T) = {
-    out.write(
-      s"""${target.retentionIndex}$seperator${target.precursorMass.get}$seperator${target.name.getOrElse("unknown")}$seperator${target.requiredForCorrection}$seperator${target.inchiKey.getOrElse("")}\n"""
-    )
+    else {
+      false
+    }
   }
 
   /**
@@ -197,24 +185,100 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     * @param acquisitionMethod
     */
   override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = {
+    val targets = delegates.asScala.filter(!_.isInstanceOf[ReadonlyLibrary[T]]).find(_.load(acquisitionMethod).nonEmpty)
 
-    logger.info(s"updating library at: ${file.getAbsolutePath}")
-    val out = new FileWriter(file, false)
-
-    load(acquisitionMethod).filterNot(_.equals(target)).foreach{ x =>
-      writeTarget(out,x)
+    if (targets.isDefined) {
+      targets.get.delete(target, acquisitionMethod)
+    }
+    else {
+      false
     }
 
-
-    out.flush()
-    out.close()
   }
 
   /**
-    * this will update the existing target with the provided values
+    * adds a list of targets
+    *
+    * @param targets
+    */
+  override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
+
+    delegates.asScala
+        .filterNot(_.isInstanceOf[ReadonlyLibrary[T]])
+        .filterNot(_.isInstanceOf[DelegateLibraryAccess[T]])
+        .foreach { lib => {
+          logger.info(s"adding target to ${lib}")
+          lib.add(targets, acquisitionMethod, sample)
+        }
+        }
+  }
+
+  /**
+    * returns all associated acuqisiton methods for this library
+    *
+    * @return
+    */
+  override def libraries: Seq[AcquisitionMethod] = {
+    delegates.asScala.flatMap(_.libraries)
+  }
+
+  override def toString = s"DelegateLibraryAccess(\n\t${this.delegates}\n)"
+}
+
+final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with LazyLogging {
+  logger.debug("==== creating merged library ====")
+  /**
+    * loads all the spectra from the library
+    * applicable for the given acquistion method
+    *
+    * @return
+    */
+  override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = {
+    this.correction.load(acquisitionMethod) ++ this.annotation.load(acquisitionMethod)
+  }
+
+  /**
+    * this will update the existing target with the provided values in the selected method
     *
     * @param target
     * @param acquisitionMethod
     */
-  override def update(target: T, acquisitionMethod: AcquisitionMethod): Boolean = false
+  override def update(target: Target, acquisitionMethod: AcquisitionMethod): Boolean = this.annotation.update(target.asInstanceOf[AnnotationTarget], acquisitionMethod)
+
+  /**
+    * deletes a specified target from the acquisition method
+    *
+    * @param target
+    * @param acquisitionMethod
+    */
+  override def delete(target: Target, acquisitionMethod: AcquisitionMethod): Unit = this.annotation.delete(target.asInstanceOf[AnnotationTarget], acquisitionMethod)
+
+  /**
+    * adds a list of targets
+    *
+    * @param targets
+    */
+  override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
+    this.annotation.add(targets.map(_.asInstanceOf[AnnotationTarget]), acquisitionMethod, sample)
+  }
+
+  /**
+    * returns all associated acquisition methods for this library
+    *
+    * @return
+    */
+
+  // !!! Correction library might have different name than annotation library
+  // override def libraries: Seq[AcquisitionMethod] = annotation.libraries.filter(correction.libraries.contains(_))
+  override def libraries: Seq[AcquisitionMethod] = annotation.libraries
+
+  def correctionLibraries(acquisitionMethod: AcquisitionMethod): Iterable[CorrectionTarget] = {
+    this.correction.load(acquisitionMethod)
+  }
+
+  def annotationLibraries(acquisitionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = {
+    this.annotation.load(acquisitionMethod)
+  }
+
+  override def toString = s"MergeLibraryAccess(\n\tannotation: ${annotation.toString}\n\tcorrection:${correction.toString})"
 }

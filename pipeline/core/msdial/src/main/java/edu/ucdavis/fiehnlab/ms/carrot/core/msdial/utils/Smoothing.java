@@ -1,7 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils;
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Smoothing {
@@ -29,6 +32,23 @@ public class Smoothing {
             default:
                 return linearWeightedMovingAverage(peakList, smoothingLevel);
         }
+    }
+
+    /**
+     *
+     * @param peakList
+     * @param method
+     * @param smoothingLevel
+     * @return
+     */
+    public static List<Peak> smoothPeaks(List<Peak> peakList, SmoothingMethod method, int smoothingLevel) {
+        List<double[]> doublePeakList = peakList.stream()
+                .map(p -> new double[] {p.scanNumber, p.retentionTime, p.mz, p.intensity})
+                .collect(Collectors.toList());
+
+        return smooth(doublePeakList, method, smoothingLevel).stream()
+                .map(p -> new Peak((int)p[0], p[1], p[2], p[3]))
+                .collect(Collectors.toList());
     }
 
     private static List<double[]> linearWeightedMovingAverage(List<double[]> peakList, int smoothingLevel) {

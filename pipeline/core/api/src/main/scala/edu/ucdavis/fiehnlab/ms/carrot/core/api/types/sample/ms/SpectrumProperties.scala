@@ -9,12 +9,23 @@ trait Feature extends AccurateMassSupport {
   /**
     * the associated sample
     */
-  val sample:Sample
+  val sample:String
 
   /**
     * how pure this spectra is
     */
   val purity: Option[Double]
+
+  /**
+    * the signal noise of this spectra
+    */
+  val signalNoise:Option[Double]
+
+  /**
+    * the unique mass of this spectra
+    */
+  val uniqueMass:Option[Double]
+
   /**
     * the local scan number
     */
@@ -76,14 +87,14 @@ trait SpectrumProperties {
   /**
     * base peak for this spectra
     */
-  def basePeak: Ion = ions.maxBy(_.intensity)
+  lazy val basePeak: Ion = ions.maxBy(_.intensity)
 
   /**
     * computes the tic for this spectra
     *
     * @return
     */
-  def tic: Double = ions.map(_.intensity).sum
+  lazy val tic: Double = ions.map(_.intensity).sum
 
   /**
     * a list of model ions used during the deconvolution
@@ -115,7 +126,7 @@ trait SpectrumProperties {
     */
   def relativeSpectra: Seq[Ion] = {
 
-    val maxIntensity: Double = ions.maxBy(_.intensity).intensity
+    val maxIntensity: Float = ions.maxBy(_.intensity).intensity
 
     ions.map(x => Ion(x.mass, 100 * x.intensity / maxIntensity))
   }
@@ -185,3 +196,9 @@ trait SimilaritySupport {
 
 }
 
+trait MetadataSupport {
+  /**
+    * Contains random metadata associated to the object we mix this into
+    */
+  val metadata: Map[String,AnyRef]
+}

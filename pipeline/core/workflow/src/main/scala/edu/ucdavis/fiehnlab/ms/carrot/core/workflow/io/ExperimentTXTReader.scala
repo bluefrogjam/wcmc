@@ -4,10 +4,9 @@ import java.io.InputStream
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{Reader, SampleLoader}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ProxySample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
@@ -40,7 +39,7 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
       case line: String =>
         if (!line.startsWith("#")) {
           val data = line.split(properties.delimiter)
-          val sample = new ProxySample(data(0), loader)
+          val sample = loader.loadSample(data(0)).get
 
           if (data.size == 1) {
             ("none", sample)
@@ -56,7 +55,7 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
       .filter(_ != null) // leave nulls out
       .groupBy(k => k._1) // group by class index (from experiment file)
       .mapValues(v => v.map(_._2)) // for each group extract the filename from the tuple (created in groupBy)
-      .map(tuple => ExperimentClass(tuple._2, Some(new Matrix(tuple._1, "None", "None", Seq.empty)))).toSeq, acquisitionMethod = AcquisitionMethod(None)) // for each value create an ExperimentClass from the tuple data
+      .map(tuple => ExperimentClass(tuple._2, Some(new Matrix(tuple._1, "None", "None", Seq.empty)))).toSeq, acquisitionMethod = AcquisitionMethod()) // for each value create an ExperimentClass from the tuple data
 
     if (result.classes.isEmpty) throw new RuntimeException("no classes for the experiment are defined!")
 

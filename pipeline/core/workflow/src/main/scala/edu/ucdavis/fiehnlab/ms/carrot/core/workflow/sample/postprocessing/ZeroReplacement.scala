@@ -1,14 +1,17 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.{CorrectionProcess, PostProcessing}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -19,60 +22,66 @@ import org.springframework.stereotype.Component
   */
 abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
 
-	@Autowired
-	val zeroReplacementProperties: ZeroReplacementProperties = null
+  @Autowired
+  val zeroReplacementProperties: ZeroReplacementProperties = null
 
-	@Autowired
-	val sampleLoader: SampleLoader = null
+  @Autowired
+  val sampleLoader: SampleLoader = null
 
-	@Autowired
-	val correction: LCMSTargetRetentionIndexCorrection = null
+  @Autowired
+  val correction: CorrectionProcess = null
 
-	/**
-		* replaces the given value, with the best possible value
-		* based on the provided configuration settings
-		*
-		* @param needsReplacement
-		* @param sample
-		* @param rawdata
-		* @return
-		*/
-	def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double]
+  @Autowired
+  val stasisClient: StasisService = null
 
-	/**
-		* actually processes the item
-		*
-		* @param sample
-		* @return
-		*/
-	final override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod): QuantifiedSample[Double] = {
+  /**
+    * replaces the given value, with the best possible value
+    * based on the provided configuration settings
+    *
+    * @param needsReplacement
+    * @param sample
+    * @param rawdata
+    * @return
+    */
+  def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double]
 
-    //contains a bug doing unnessescary search against the server. A collect first would be more appropriate
-    //to check if a file exist
-    val rawdata: Option[Sample] = zeroReplacementProperties.fileExtension.collect {
+  /**
+    * actually processes the item
+    *
+    * @param sample
+    * @return
+    */
+  final override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
 
-			case extension: String =>
-				val fileNameToLoad = sample.name + "." + extension
-				logger.debug(s"attempting to load file: ${fileNameToLoad}")
+    val rawdata: Option[Sample] =
+      if (rawSample.isDefined) {
+        rawSample
+      } else {
+        zeroReplacementProperties.fileExtension.collect {
 
-				try {
-					val result = sampleLoader.loadSample(fileNameToLoad)
+          case extension: String =>
+            val fileNameToLoad = sample.name + "." + extension
+            logger.debug(s"attempting to load file: ${fileNameToLoad}")
 
-          if (result.isDefined) {
-            logger.info(s"loaded rawdata file: ${result.get}")
-            result.get
-          }
-        } catch {
-          case e: Throwable =>
-            logger.warn(s"observed error: ${e.getMessage} => skip", e)
-        }
-    }.collectFirst { case p: Sample => p }
+            try {
+              val result = sampleLoader.loadSample(fileNameToLoad)
 
-		if (rawdata.isDefined) {
-			logger.info(s"replacing data with: ${rawdata.get}")
-			val correctedRawData: CorrectedSample = correction.doCorrection(sample.featuresUsedForCorrection, rawdata.get, sample.regressionCurve, sample)
+              if (result.isDefined) {
+                logger.info(s"loaded rawdata file: ${result.get}")
+                result.get
+              }
+            } catch {
+              case e: Throwable =>
+                logger.warn(s"observed error: ${e.getMessage} => skip", e)
+            }
+        }.collectFirst { case p: Sample => p }
+      }
 
-			logger.info(s"corrected data for: ${correctedRawData.name}")
+    if (rawdata.isDefined) {
+      //      logger.info(s"replacing data with: ${rawdata.get.name}")
+      val correctedRawData: CorrectedSample = correction.doCorrection(sample.featuresUsedForCorrection, rawdata.get, sample.regressionCurve, sample)
+
+      logger.info(s"corrected data for: ${correctedRawData.name}")
 
       val replacedSpectra: Seq[QuantifiedTarget[Double]] = sample.quantifiedTargets.map { target =>
         if (target.quantifiedValue.isDefined) {
@@ -80,30 +89,39 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
         }
         else {
           try {
-            replaceValue(target, sample, correctedRawData)
+            val replaced = replaceValue(target, sample, correctedRawData)
+            stasisClient.addTracking(TrackingData(sample.name, "replaced", sample.fileName))
+            replaced
           }
           catch {
             case e: Exception =>
-              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e)
-              e.printStackTrace()
+              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e.getMessage)
+              // commented to avoid excessive logging output.
+              // e.printStackTrace()
               target
           }
         }
       }
 
       logger.info("finished replacement")
-      new GapFilledSample[Double] {
+      val gapFilledSample = new GapFilledSample[Double] {
         override val quantifiedTargets: Seq[QuantifiedTarget[Double]] = replacedSpectra
         override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = sample.noneAnnotated
         override val correctedWith: Sample = sample.correctedWith
-        override val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]] = sample.featuresUsedForCorrection
+        override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = sample.featuresUsedForCorrection
         override val regressionCurve: Regression = sample.regressionCurve
         override val fileName: String = sample.fileName
         /**
           * which file was used for the gap filling
           */
         override val gapFilledWithFile: String = rawdata.get.fileName
+        override val properties: Option[SampleProperties] = sample.properties
+
       }
+
+      stasisClient.addTracking(TrackingData(gapFilledSample.name, "replaced", gapFilledSample.fileName))
+
+      gapFilledSample
     }
     //toss exception
     else {
@@ -117,30 +135,30 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
 @ConfigurationProperties(prefix = "zero-replacement")
 class ZeroReplacementProperties {
 
-	/**
-		* replacement is enabled
-		*/
-	var enabled: Boolean = true
+  /**
+    * replacement is enabled
+    */
+  var enabled: Boolean = true
 
   /**
     * window used for noise calculations in seconds, if 0 the whole chromatography will be used
     */
   var noiseWindowInSeconds: Int = 5
 
-	/**
-		* the defined retention index correction for the peak detection during the replacement
-		*/
-	var retentionIndexWindowForPeakDetection: Double = 12
+  /**
+    * the defined retention index correction for the peak detection during the replacement
+    */
+  var retentionIndexWindowForPeakDetection: Double = 12
 
-	/**
-		* utilized mass accuracy for searches
-		*/
-	var massAccuracy: Double = 0.005
+  /**
+    * utilized mass accuracy for searches
+    */
+  var massAccuracy: Double = 0.005
 
   /**
     * extension of our rawdata files, to be used for replacement
     */
-  var fileExtension: List[String] = "mzXML" :: List()
+  var fileExtension: List[String] = "mzml" :: "cdf" :: List() //removed .d and .d.zip since mzml and cdf ARE raw data files
 }
 
 /**
@@ -152,20 +170,37 @@ class ZeroReplacementProperties {
 class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 
   /**
-		* replaces the given value, with the best possible value
-		* based on the provided configuration settings
-		*
-		* @param needsReplacement
-		* @param sample
-		* @param rawdata
-		* @return
-		*/
-	override def replaceValue(needsReplacement: QuantifiedTarget[Double], sample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
-		val receivedTarget = needsReplacement
+    * replaces the given value, with the best possible value
+    * based on the provided configuration settings
+    *
+    * @param needsReplacement
+    * @param quantSample
+    * @param rawdata
+    * @return
+    */
+  override def replaceValue(needsReplacement: QuantifiedTarget[Double], quantSample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
+    val receivedTarget = needsReplacement
 
-    val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracy)
-    val filterByRetentionIndexNoise = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionTimeInSeconds, zeroReplacementProperties.noiseWindowInSeconds)
-    val filterByRetentionIndex = new IncludeByRetentionIndexTimeWindow(receivedTarget.retentionIndex, zeroReplacementProperties.retentionIndexWindowForPeakDetection)
+    val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracy, "replacement") with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = quantSample.fileName
+    }
+    val filterByRetentionIndexNoise = new IncludeByRetentionIndexWindow(receivedTarget.retentionTimeInSeconds, "replacement", zeroReplacementProperties.noiseWindowInSeconds) with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = quantSample.fileName
+    }
+
+    val filterByRetentionIndex = new IncludeByRetentionIndexWindow(receivedTarget.retentionIndex, "replacement", zeroReplacementProperties.retentionIndexWindowForPeakDetection) with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = quantSample.fileName
+    }
+
 
     //first calculate noise for this ion trace
     val noiseSpectra = rawdata.spectra.filter { spectra =>
@@ -174,7 +209,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
         includeMass(receivedTarget, filterByMass, spectra)
       }
       else {
-        includeMass(receivedTarget, filterByMass, spectra) && filterByRetentionIndexNoise.include(spectra)
+        includeMass(receivedTarget, filterByMass, spectra) && filterByRetentionIndexNoise.include(spectra, applicationContext)
       }
     }
 
@@ -184,11 +219,11 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
       MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
     }
 
-    val noise = if(noiseIons.isEmpty){
+    val noise = if (noiseIons.isEmpty) {
       logger.warn("no ions found for noise calculations")
-      0.0
+      0.0f
     }
-    else{
+    else {
       noiseIons.min
     }
 
@@ -201,27 +236,74 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 
     }
 
-    logger.debug(s"found ${replacementValueSpectra.size} spectra,after mass filter for target ${receivedTarget}")
+    logger.debug(s"found ${replacementValueSpectra.size} spectra, after mass filter for target ${receivedTarget}")
 
     val filteredByTime: Seq[Feature with CorrectedSpectra] = replacementValueSpectra.filter { spectra =>
-      filterByRetentionIndex.include(spectra)
+      filterByRetentionIndex.include(spectra, applicationContext)
     }
-    logger.debug(s"found ${filteredByTime.size} spectra,after mass filter for target ${receivedTarget}")
+    logger.debug(s"found ${filteredByTime.size} spectra, after retention index filter for target ${receivedTarget}")
 
-    //error here, sometime mass is not found for some reason and so things are failing
-    val value: (Feature with CorrectedSpectra) = filteredByTime.maxBy { spectra =>
-      MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
+    // error here, sometime mass is not found for some reason and so things are failing
+    //TODO: Gert should check if this makes sense. In case mass isn't there, I create a Corrected Feature using the original QuantifiedSample and RT, RI, scan# from target with 0 intensity.
+    val value: (Feature with CorrectedSpectra) = {
+      if (filteredByTime.isEmpty) {
+        logger.warn("Created failsafe [Feature with CorrectedSpectra] from target data and 0 intensity")
+        new Feature with CorrectedSpectra {
+          override val uniqueMass: Option[Double] = None
+          override val signalNoise: Option[Double] = None
+
+          /**
+            * specified ion mode for the given feature
+            */
+          override val ionMode: Option[IonMode] = Some(receivedTarget.ionMode)
+          /**
+            * how pure this spectra is
+            */
+          override val purity: Option[Double] = Some(0.0)
+          /**
+            * the associated sample
+            */
+          override val sample: String = quantSample.fileName
+          /**
+            * the retention time of this spectra. It should be provided in seconds!
+            */
+          override val retentionTimeInSeconds: Double = receivedTarget.retentionTimeInSeconds
+          /**
+            * the local scan number
+            */
+          override val scanNumber: Int = 0
+          /**
+            * the associated complete scan for this feature
+            */
+          override val associatedScan: Option[SpectrumProperties] = None
+          /**
+            * accurate mass of this feature, if applicable
+            */
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, 0.0f))
+
+          override val retentionIndex: Double = receivedTarget.retentionIndex
+        }
+      } else {
+        filteredByTime.maxBy { spectra =>
+          MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
+        }
+      }
     }
 
     val ion = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get).get
 
     logger.debug(s"found best spectra for replacement: $value")
-    val noiseCorrectedValue: Double =ion.intensity - noise
+    val noiseCorrectedValue: Float = if (noise <= ion.intensity) {
+      ion.intensity - noise
+    } else {
+      logger.warn(s"selected ion's intensity is lower than noise, replacing with 0")
+      0.0f
+    }
 
     /**
       * build target object
       */
-    new ZeroreplacedTarget(value, noiseCorrectedValue, needsReplacement, fileUsedForReplacement = rawdata.fileName,ion)
+    new ZeroreplacedTarget(value, noiseCorrectedValue, needsReplacement, fileUsedForReplacement = rawdata.fileName, ion)
   }
 
   /**
@@ -242,7 +324,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           * @return
           */
         override def accurateMass: Option[Double] = Some(ion.get.mass)
-      }
+      }, applicationContext
       )
     }
     else {
@@ -251,14 +333,16 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
   }
 }
 
-class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedValue: Double, needsReplacement: QuantifiedTarget[Double], fileUsedForReplacement: String,ion:Ion) extends GapFilledTarget[Double] {
+class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedValue: Double, needsReplacement: QuantifiedTarget[Double], fileUsedForReplacement: String, ion: Ion) extends GapFilledTarget[Double] {
 
   /**
     * which actual spectra has been used for the replacement
     */
   override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
+    override val uniqueMass: Option[Double] = None
+    override val signalNoise: Option[Double] = None
 
-    override val sample:Sample = value.sample
+    override val sample: String = value.sample
     /**
       * which sample was used for the replacement
       */
@@ -276,7 +360,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
       */
     override val massAccuracy: Option[Double] = None
     /**
-      * accyracy in ppm
+      * accuracy in ppm
       */
     override val massAccuracyPPM: Option[Double] = None
     /**
@@ -308,7 +392,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     /**
       * the associated complete scan for this feature
       */
-    override val associatedScan = value.associatedScan
+    override val associatedScan: Option[SpectrumProperties] = value.associatedScan
   }
 
   /**
@@ -351,4 +435,8 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * associated spectrum propties if applicable
     */
   override val spectrum: Option[SpectrumProperties] = needsReplacement.spectrum
+  /**
+    * unique mass for a given target
+    */
+  override val uniqueMass: Option[Double] = needsReplacement.uniqueMass
 }

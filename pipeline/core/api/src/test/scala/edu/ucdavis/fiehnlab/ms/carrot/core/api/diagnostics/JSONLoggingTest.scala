@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, Spectru
 import edu.ucdavis.fiehnlab.utilities.logging.{JSONLogging, JSONPhaseLogging}
 import org.scalatest.{FunSuite, ShouldMatchers, WordSpec}
 
-class JSONLoggingTest extends WordSpec with ShouldMatchers{
+class JSONLoggingTest extends WordSpec with ShouldMatchers {
 
   "All logging test " must {
 
@@ -50,6 +50,8 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers{
           * which target we require to log
           */
         override val targetToLog = new Target(){
+          override val uniqueMass: Option[Double] = None
+
           /**
             * a name for this spectra
             */
@@ -104,7 +106,7 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers{
         System.out.println(data)
         data.get("date").isDefined shouldBe true
         data.get("target") should not be null
-        data.get("target").get.asInstanceOf[Map[String,Any]].get("ri").isDefined shouldBe true
+        data.get("target").get.asInstanceOf[Map[String,Any]].get("retentionIndex").isDefined shouldBe true
 
       }
     }
@@ -115,6 +117,8 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers{
           * which target we require to log
           */
         override val targetToLog = new Target(){
+          override val uniqueMass: Option[Double] = None
+
           /**
             * a name for this spectra
             */
@@ -152,6 +156,10 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers{
           * which feature we require to log
           */
         override val featureToLog = new Feature(){
+          override val uniqueMass: Option[Double] = None
+
+          override val signalNoise: Option[Double] = None
+
           /**
             * the associated sample
             */
@@ -198,7 +206,7 @@ class JSONLoggingTest extends WordSpec with ShouldMatchers{
         val data = JSONLogging.objectMapper.readValue(result, classOf[Map[String, Any]])
 
         data.get("target") should not be null
-        data.get("target").get.asInstanceOf[Map[String,Any]].get("ri").isDefined shouldBe true
+        data.get("target").get.asInstanceOf[Map[String,Any]].get("retentionIndex").isDefined shouldBe true
 
       }
       "log additional feature specific data" in {

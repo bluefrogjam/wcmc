@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>apps</artifactId>
+        <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
+        <version>1.0.16-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.ucdavis.fiehnlab.wcmc.apps</groupId>
+    <artifactId>cloudrunner</artifactId>
+    <version>1.0.16-SNAPSHOT</version>
+
+
+    <properties>
+        <docker.jvm>-Xmx16186m</docker.jvm>
+        <docker.registry>702514165722.dkr.ecr.us-west-2.amazonaws.com</docker.registry>
+        <docker.imageName>carrot</docker.imageName>
+
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
+            <artifactId>bucket</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
+            <artifactId>workflow</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
+            <artifactId>config</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
+            <artifactId>api</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <executions>
+                    <execution><!-- login -->
+                        <id>aws-login</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bash
+                            </executable>
+                            <commandlineArgs>-c '$(aws ecr get-login --no-include-email --region us-west-2)'
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

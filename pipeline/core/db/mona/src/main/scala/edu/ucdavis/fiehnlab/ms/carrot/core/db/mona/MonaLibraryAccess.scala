@@ -1,21 +1,21 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
 import java.util.Date
-import java.util.concurrent.{ExecutorService, Executors, Semaphore}
-import javax.annotation.PostConstruct
+import java.util.concurrent.{ExecutorService, Executors}
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{GenericRestClient, MonaSpectrumRestClient}
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.TargetGenerationNotSupportedException
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.{InvalidIonModeDefinedException, IonModeNotDefinedException, TargetGenerationNotSupportedException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
+import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
-import org.springframework.cache.annotation.{CacheEvict, Cacheable}
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
@@ -27,9 +27,9 @@ import scala.collection.mutable
   * provides easy access to the MoNA database to query for targets and add new targets
   * Created by wohlgemuth on 8/14/17.
   */
-@Component
 @Profile(Array("carrot.targets.mona"))
-class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
+@Component
+class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging {
 
   private val executionService: ExecutorService = Executors.newFixedThreadPool(1)
 
@@ -92,7 +92,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @return
     */
-  override def load(acquistionMethod: AcquisitionMethod): Iterable[Target] = {
+  override def load(acquistionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = {
     monaSpectrumRestClient.list(query = if (query(acquistionMethod) != "") Option(query(acquistionMethod)) else None).map { x => generateTarget(x) }
 
   }
@@ -101,54 +101,51 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
 
     val buffer: mutable.Buffer[MetaData] = data.toBuffer
 
-    acquistionMethod.chromatographicMethod match {
-      case None =>
-      case Some(method) =>
-        method.column match {
-          case Some(column) =>
-            buffer +=
-              MetaData(
-                category = "none",
-                computed = false,
-                hidden = false,
-                name = "column",
-                score = null,
-                unit = null,
-                url = null,
-                value = column
-              )
-          case None => None
-
-        }
-        method.instrument match {
-          case Some(instrument) =>
-            buffer +=
-              MetaData(
-                category = "none",
-                computed = false,
-                hidden = false,
-                name = "instrument",
-                score = null,
-                unit = null,
-                url = null,
-                value = instrument
-              )
-          case None => None
-
-        }
-
+    acquistionMethod.chromatographicMethod.column match {
+      case Some(column) =>
         buffer +=
           MetaData(
             category = "none",
             computed = false,
             hidden = false,
-            name = "method",
+            name = "column",
             score = null,
             unit = null,
             url = null,
-            value = method.name
+            value = column
           )
+      case None => None
+
     }
+    acquistionMethod.chromatographicMethod.instrument match {
+      case Some(instrument) =>
+        buffer +=
+          MetaData(
+            category = "none",
+            computed = false,
+            hidden = false,
+            name = "instrument",
+            score = null,
+            unit = null,
+            url = null,
+            value = instrument
+          )
+      case None => None
+
+    }
+
+    buffer +=
+      MetaData(
+        category = "none",
+        computed = false,
+        hidden = false,
+        name = "method",
+        score = null,
+        unit = null,
+        url = null,
+        value = acquistionMethod.chromatographicMethod.name
+      )
+
 
     buffer.toArray
   }
@@ -366,33 +363,32 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param acquisitionMethod
     * @return
     */
-  private def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = acquisitionMethod.chromatographicMethod match {
+  private def generateLibraryIdentifier(acquisitionMethod: AcquisitionMethod): String = {
 
-    case Some(method) =>
-      val instrument = method.instrument match {
-        case Some(x) =>
-          x
-        case _ => noneSpecifiedValue
-      }
+    val method = acquisitionMethod.chromatographicMethod
+    val instrument = method.instrument match {
+      case Some(x) =>
+        x
+      case _ => noneSpecifiedValue
+    }
 
-      val column = method.column match {
-        case Some(x) =>
-          x
-        case _ => noneSpecifiedValue
-      }
+    val column = method.column match {
+      case Some(x) =>
+        x
+      case _ => noneSpecifiedValue
+    }
 
-      val mode = method.ionMode match {
-        case Some(x) if x.isInstanceOf[PositiveMode] =>
-          "positive"
-        case Some(x) if x.isInstanceOf[NegativeMode] =>
-          "negative"
-        case _ =>
-          noneSpecifiedValue
-      }
+    val mode = method.ionMode match {
+      case Some(x) if x.isInstanceOf[PositiveMode] =>
+        "positive"
+      case Some(x) if x.isInstanceOf[NegativeMode] =>
+        "negative"
+      case _ =>
+        noneSpecifiedValue
+    }
 
-      s"${method.name} - ${instrument} - ${column} - ${mode}"
+    s"${method.name} - ${instrument} - ${column} - ${mode}"
 
-    case _ => s"default - $noneSpecifiedValue - $noneSpecifiedValue - $noneSpecifiedValue"
   }
 
 
@@ -411,25 +407,21 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
       val values: Array[String] = tag.text.split(" - ")
 
 
+      val instrument = if (values(1) == noneSpecifiedValue || values(1) == null) None else Option(values(1))
+      val column = if (values(2) == noneSpecifiedValue || values(1) == null) None else Option(values(2))
+      val mode = if (values(3).toLowerCase == "positive") {
+        Some(PositiveMode())
+      }
+      else if (values(3).toLowerCase == "negative") {
+        Some(NegativeMode())
+      }
+      else {
+        None
+      }
+
       AcquisitionMethod(
-        values(0) match {
-          case "default" => None
-          case _ =>
-            val instrument = if (values(1) == noneSpecifiedValue) None else Option(values(1))
-            val column = if (values(2) == noneSpecifiedValue) None else Option(values(2))
-            val mode = if (values(3).toLowerCase == "positive") {
-              Some(PositiveMode())
-            }
-            else if (values(3).toLowerCase == "negative") {
-              Some(NegativeMode())
-            }
-            else {
-              None
-            }
 
-
-            Some(ChromatographicMethod(values(0), instrument, column, mode))
-        }
+        ChromatographicMethod(values(0), instrument, column, mode)
       )
     }.toSeq
 
@@ -442,7 +434,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param x
     * @return
     */
-  private def generateTarget(x: Spectrum): Target = {
+  private def generateTarget(x: Spectrum): AnnotationTarget = {
 
     val compound = x.compound.head
     val name = compound.names.head.name
@@ -451,6 +443,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     val retentionTime: Option[MetaData] = x.metaData.find(p => p.name == "retention time" && p.category == "none")
     val retentionIndex: Option[MetaData] = x.metaData.find(p => p.name == "retention index" && p.category == "none")
 
+    val uniqueMass: Option[MetaData] = x.metaData.find(p => p.name == "unique mass" && p.category == "none")
     val precursorIon: Option[MetaData] = x.metaData.find(p => p.name == "precursor m/z" && p.category == "none")
     val isRetentionIndexStandard: Option[MetaData] = x.metaData.find(p => p.name == "riStandard" && p.category == "carrot")
     val requiredForCorrection: Option[MetaData] = x.metaData.find(p => p.name == "requiredForCorrection" && p.category == "carrot")
@@ -515,12 +508,13 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
           PositiveMode()
         }
         else {
-          Unknown()
+          throw new InvalidIonModeDefinedException("the provided ion mode is not valid!")
         }
-      }
-      else {
-        Unknown()
-      }
+
+      } else {
+        throw new IonModeNotDefinedException("we require you to define an ion mode!")
+      },
+      uniqueMass = if (uniqueMass.isDefined) Option(precursorIon.get.value.toString.toDouble) else None
     )
   }
 
@@ -529,7 +523,7 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     *
     * @param targets
     */
-  override def add(targets: Iterable[Target], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
+  override def add(targets: Iterable[AnnotationTarget], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
 
     logger.info(s"adding ${targets.size} targets for method ${acquisitionMethod}")
     targets.foreach {
@@ -565,21 +559,16 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
   /**
     * deletes a specified target from the library
     *
-    * @param target
+    * @param t
     * @param acquisitionMethod
     */
   @CacheEvict(value = Array("monacache"), allEntries = true)
-  override def delete(t: Target, acquisitionMethod: AcquisitionMethod): Unit = {
+  override def delete(t: AnnotationTarget, acquisitionMethod: AcquisitionMethod): Unit = {
     t match {
       case target: Target with Idable[String] =>
         val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
-
-        logger.info("delete begin")
-        logger.info(s"use defined: ${spectrum.isDefined}")
-        logger.info(s"spectrum id: ${spectrum.get.id}")
         this.monaSpectrumRestClient.delete(spectrum.get.id)
 
-        logger.info("delete end")
         updateLibraries
       case _ =>
         logger.warn(s"${t} is not of the right type! Type is ${t.getClass}")
@@ -593,10 +582,17 @@ class MonaLibraryAccess extends LibraryAccess[Target] with LazyLogging {
     * @param acquisitionMethod
     */
   @CacheEvict(value = Array("monacache"), allEntries = true)
-  override def update(target: Target, acquisitionMethod: AcquisitionMethod) = {
+  override def update(target: AnnotationTarget, acquisitionMethod: AcquisitionMethod): Boolean = {
     val spectrum = generateSpectrum(target, acquisitionMethod, None).get
     this.monaSpectrumRestClient.update(spectrum, spectrum.id)
     true
+  }
+
+  @CacheEvict(value = Array("monacache"), allEntries = true)
+  override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
+    logger.info(s"about to delete library ${acquisitionMethod.chromatographicMethod.name}")
+
+    load(acquisitionMethod).foreach(t => delete(t, acquisitionMethod))
   }
 }
 
@@ -673,9 +669,12 @@ case class MonaLibraryTarget(
                               /**
                                 * the specified ionmode for this target. By default we should always assume that it's positive
                                 */
-                              override val ionMode: IonMode
+                              override val ionMode: IonMode,
+
+                              override val uniqueMass: Option[Double]
+
                             )
-  extends Target with Idable[String] {
+    extends AnnotationTarget with Idable[String] {
 
   /**
     * required since targets expects a spectrum, while its being optional on the carrot level

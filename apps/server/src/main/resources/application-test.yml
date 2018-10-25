@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: test
+    include:
+      - file.source.luna
+      - file.source.eclipse
+      - carrot.lcms
+      - carrot.targets.mona
+      - carrot.runner.required
+      - carrot.report.quantify.height
+      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+
+stasis:
+  baseurl: http://test-api.metabolomics.us/stasis
+
+wcmc:
+  pipeline:
+    workflow:
+      config:
+        correction:
+          regression:
+            polynom: 3

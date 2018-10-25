@@ -3,13 +3,14 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.math.similarity.{CompositeSimilarity, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSMSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexTimeWindow, IncludeBySimilarity}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexWindow, IncludeBySimilarity}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -79,6 +80,9 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
           logger.info(s"creating new target from feature: ${t}")
 
           val newTarget = new Target {
+
+            override val uniqueMass: Option[Double] = t.uniqueMass
+
             /**
               * by default we report the retention time the same as the retention index
               * unless overwritten
@@ -120,11 +124,11 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
 
           }
 
-          if (!targetAlreadyExists(newTarget, acquisitionMethod)) {
+          if (!targetAlreadyExists(newTarget, acquisitionMethod, sample)) {
             targets.add(
               newTarget
 
-              , acquisitionMethod,None
+              , acquisitionMethod, None
             )
           }
           else {
@@ -148,21 +152,37 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     * @param newTarget
     * @return
     */
-  def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod): Boolean = {
-    val riFilter = new IncludeByRetentionIndexTimeWindow(newTarget.retentionIndex,retentionIndexWindow)
-    val massFilter = new IncludeByMassRangePPM(newTarget,accurateMassWindow)
-    val similarityFilter = new IncludeBySimilarity(newTarget,minimumSimilarity)
+  def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, sample: Sample): Boolean = {
+    val riFilter = new IncludeByRetentionIndexWindow(newTarget.retentionIndex, "targetGeneration", retentionIndexWindow) with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = sample.fileName
+    }
+    val massFilter = new IncludeByMassRangePPM(newTarget, accurateMassWindow, "targetGeneration") with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = sample.fileName
+    }
+
+    val similarityFilter = new IncludeBySimilarity(newTarget, minimumSimilarity, "targetGeneration") with JSONSampleLogging {
+      /**
+        * which sample we require to log
+        */
+      override protected val sampleToLog: String = sample.fileName
+    }
+
 
     //we only accept MS2 and higher for this
     val toMatch = targets.load(acquisitionMethod).filter(_.spectrum.isDefined)
 
 
-
     //MS1+ spectra filter
     val msmsSpectra = toMatch.filter(_.spectrum.get.msLevel > 1)
-    val filteredByRi = msmsSpectra.filter(riFilter.include)
-    val filtedByMass = filteredByRi.filter(massFilter.include)
-    val filteredBySimilarity = filtedByMass.filter(similarityFilter.include)
+    val filteredByRi = msmsSpectra.filter(riFilter.include(_, applicationContext))
+    val filtedByMass = filteredByRi.filter(massFilter.include(_, applicationContext))
+    val filteredBySimilarity = filtedByMass.filter(similarityFilter.include(_, applicationContext))
 
     logger.debug(s"existing targets: ${toMatch.size}")
     logger.debug(s"after MS level filter: ${msmsSpectra.size} targets are left")

@@ -1,0 +1,15 @@
+stasis:
+  baseurl: test-api.meatabolomics.us
+
+loaders:
+  recursive:
+    basefolder: /src/test/resources
+
+wcmc:
+  api:
+    rest:
+      fserv4j:
+        host: testfserv.fiehnlab.ucdavis.edu
+      msdialrest4j:
+        host: phobos.fiehnlab.ucdavis.edu
+        port: 8080

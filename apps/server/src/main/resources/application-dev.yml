@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: dev
+    include:
+      - file.source.luna
+      - file.source.eclipse
+      - carrot.lcms
+      - carrot.targets.mona
+      - carrot.output.storage.aws
+      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+      - carrot.report.quantify.height
+      - carrot.resource.loader.bucket
+      - carrot.resource.store.bucket
+      - carrot.scheduler.aws
+
+stasis:
+  baseurl: http://dev-api.metabolomics.us/stasis

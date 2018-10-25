@@ -32,30 +32,10 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLoggin
       result shouldBe None
     }
 
-    "convert a raw data file (.d.zip) to abf" in {
+    "convert a raw data file (.d.zip) to mzml" in {
       val filename = "testA.d.zip"
 
-      val result = dfClient.convert(filename, "abf")
-
-      result.isDefined shouldBe true
-
-      result.get.getName.endsWith("abf") shouldBe true
-    }
-
-    "convert a raw data file (.d.zip) to mzXML" in {
-      val filename = "testA.d.zip"
-
-      val result = dfClient.convert(filename, "mzXML")
-
-      result.isDefined shouldBe true
-
-      result.get.getName.toLowerCase.endsWith("mzxml") shouldBe true
-    }
-
-    "convert a raw data file (.d.zip) to mzML" in {
-      val filename = "testA.d.zip"
-
-      val result = dfClient.convert(filename, "mzML")
+      val result = dfClient.convert(filename, "mzml")
 
       result.isDefined shouldBe true
 
@@ -74,7 +54,6 @@ class DataFormerClientTestConfiguration {
 
   @Value("${wcmc.api.rest.fserv4j.port:80}")
   val fservPort = 0
-
 
   @Bean
   def fserv4j: FServ4jClient = new FServ4jClient(fservHost, fservPort)

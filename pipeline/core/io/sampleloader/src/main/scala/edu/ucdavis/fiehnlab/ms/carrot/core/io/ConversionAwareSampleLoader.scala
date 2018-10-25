@@ -6,7 +6,6 @@ import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.Cacheable
 
 /**
   * this sample loader supports, the automatic conversion of data
@@ -22,7 +21,7 @@ class ConversionAwareSampleLoader @Autowired()(dataForm: DataFormerClient, resou
   /**
     * these are the extensions the data form client can convert too
     */
-  val supportOutputExtensionForDataForm: Array[String] = Array("abf", "mzML", "mzXML")
+  val supportOutputExtensionForDataForm: Array[String] = Array("mzML", "mzml")
 
   /**
     * loads a sample as an option, so that we can evaluate it we have it or not, without an exception
@@ -75,7 +74,7 @@ class ConversionAwareSampleLoader @Autowired()(dataForm: DataFormerClient, resou
       } =>
         val fileToConvert = s"${fileName}.${x}"
         logger.debug(s"found rawdata file: ${fileToConvert}")
-        dataForm.convert(fileToConvert, extension)
+        dataForm.convert(fileToConvert, "mzml")
     }
 
     logger.debug(s"conversion successful: ${result.isDefined}")

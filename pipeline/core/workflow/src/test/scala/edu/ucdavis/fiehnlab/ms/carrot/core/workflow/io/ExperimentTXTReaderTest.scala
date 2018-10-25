@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ProxySample
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +14,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt","carrot.report.quantify.height"))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.lcms", "test"))
 class ExperimentTXTReaderTest extends WordSpec with LazyLogging {
 
   @Autowired
@@ -23,7 +22,8 @@ class ExperimentTXTReaderTest extends WordSpec with LazyLogging {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "read" must {
+  //"Deprecated and unused class being tested"
+  "read" ignore {
     "convert the given file" should {
 
       "read the data" in {
@@ -51,13 +51,12 @@ class ExperimentTXTReaderTest extends WordSpec with LazyLogging {
     }
   }
 
-  "loading an experiment" should {
+  // "Deprecated and unused class being tested"
+  "loading an experiment" ignore {
     val experimentFile = "/preproc/preProcExperiment.txt"
 
     "load existing samples ignoring missing filess" in {
       val result = reader.read(getClass.getResourceAsStream(experimentFile))
-
-      assert(result.classes.head.samples.head.isInstanceOf[ProxySample])
 
       assert(result.classes.head.samples.size == 1)
     }

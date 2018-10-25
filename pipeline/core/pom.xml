@@ -16,6 +16,7 @@
 
     <modules>
         <module>api</module>
+        <module>config</module>
         <module>io</module>
         <module>msdial</module>
         <module>annotation</module>

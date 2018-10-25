@@ -1,0 +1,74 @@
+service: cdk-helper
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+
+  domains:
+    prod: api.metabolomics.international
+    test: test-api.metabolomics.international
+    dev:  dev-api.metabolomics.international
+
+  ###
+  # custom domain management
+  ###
+  customDomain:
+    basePath: "cdk"
+    domainName: ${self:custom.domains.${self:custom.stage}}
+    stage: "${self:custom.stage}"
+    createRoute53Record: true
+
+provider:
+  #define our stage variable
+
+  stage: ${opt:stage, 'dev'}
+  name: aws
+  runtime: java8
+
+  #would be nice if we can lower this somewhat
+  memorySize: 1024
+  timeout: 90
+  versionFunctions: false
+
+  #make sure you specify the right region or the groups wont match
+  region: us-west-2
+
+  deploymentBucket:
+    name: lambdas-cdk
+
+  logRetentionInDays: 3
+
+###
+# this section defines our lambda endpoint and services
+#
+
+package:
+  artifact: target/cdk-1.0-SNAPSHOT.jar
+
+functions:
+  smilesToLogP:
+    name: ${self:provider.stage}-smilesToLogP
+    description: "converts smiles to LOGP values. Please only provide a smile in the post request!"
+    handler: edu.ucdavis.fiehnlab.wcmc.aws.cdk.SmilesToXLOGP
+
+    events:
+      - http:
+          path: smiles2logp
+          method: post
+          cors: true
+
+  smilesToFingerprint:
+    name: ${self:provider.stage}-smilesToFingerprint
+    description: "converts smiles to fingerprint values. Please only provide a smile in the post request!"
+    handler: edu.ucdavis.fiehnlab.wcmc.aws.cdk.SmilesToFingerPrint
+
+    events:
+      - http:
+          path: smiles2fp
+          method: post
+          cors: true

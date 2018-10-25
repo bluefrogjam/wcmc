@@ -7,7 +7,9 @@
 		</layout>
 	</appender>
 
-	<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io" level="debug"/>
+    <logger name="edu.ucdavis.fiehnlab.loader" level="debug"/>
+    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.io" level="debug"/>
+    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent" level="debug"/>
 
 	<root level="info">
 		<appender-ref ref="STDOUT"/>

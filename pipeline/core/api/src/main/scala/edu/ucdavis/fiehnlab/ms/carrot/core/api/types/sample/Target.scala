@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 /**
   * Defines a target for a targeted based approach
   */
-trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSupport with Serializable{
+trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSupport with Serializable {
 
   /**
     * a name for this spectra
@@ -43,6 +43,11 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
   val precursorMass: Option[Double]
 
   /**
+    * unique mass for a given target
+    */
+  val uniqueMass: Option[Double]
+
+  /**
     * is this a confirmed target
     */
   var confirmed: Boolean
@@ -57,7 +62,10 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
     */
   var isRetentionIndexStandard: Boolean
 
-  override def toString = f"Target(name=${name.getOrElse("None")}, retentionTime=$retentionTimeInMinutes (min), retentionTime=$retentionIndex (s), inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${precursorMass.getOrElse("None")})"
+  override def toString: String = f"Target(name=${name.getOrElse("None")}, retentionTimeMinutes=$retentionTimeInMinutes (min), " +
+      f"retentionTimeSeconds=$retentionIndex (s), accurateMass=${accurateMass.getOrElse("NA")}, " +
+      f"inchiKey=${inchiKey.getOrElse("None")}, monoIsotopicMass=${precursorMass.getOrElse("None")}, " +
+      f"${if(isRetentionIndexStandard) "ISTD"})"
 
   override def equals(obj: scala.Any): Boolean = {
     obj match {
@@ -110,6 +118,10 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
   override def accurateMass: Option[Double] = precursorMass
 
 }
+
+trait CorrectionTarget extends Target
+
+trait AnnotationTarget extends Target
 
 /**
   * this defines an annotation for a target

@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.ConfigurationProperties

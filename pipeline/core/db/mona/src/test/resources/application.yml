@@ -1,0 +1,7 @@
+mona:
+  rest:
+    server:
+      host: localhost
+      port: 9090
+      user: admin
+      password: admin

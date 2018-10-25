@@ -17,14 +17,24 @@ package object api {
     override val spectra: List[_ <: MSSpectra] = testSpectraWith1Ion :: List()
 
     override val fileName: String = "test"
+
+    override val properties: Option[SampleProperties] = None
   }
 
   /**
     * simple test spectra with 1 ion
     */
   val testSpectraWith1Ion = new MSSpectra {
+    /**
+      * the unique mass of this spectra
+      */
+    override val uniqueMass: Option[Double] = None
+    /**
+      * the signal noise of this spectra
+      */
+    override val signalNoise: Option[Double] = None
 
-    override val sample:Sample = null
+    override val sample:String = null
 
     /**
       * associated spectrum propties if applicable
@@ -69,7 +79,11 @@ package object api {
     * test spectra with 2 ions
     */
   val testSpectraWith2Ions = new MSSpectra {
-    override val sample:Sample = null
+    override val uniqueMass: Option[Double] = None
+
+    override val signalNoise: Option[Double] = None
+
+    override val sample:String = null
 
     override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
       /**
@@ -112,8 +126,10 @@ package object api {
     * test spectra with 2 ions
     */
   val testSpectraWith3Ions = new MSSpectra {
+    override val signalNoise: Option[Double] = None
+    override val uniqueMass: Option[Double] = None
 
-    override val sample:Sample = null
+    override val sample:String = null
 
     override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
       /**
@@ -157,7 +173,10 @@ package object api {
     * test spectra with 2 ions
     */
   val testSpectraWith4Ions = new MSSpectra {
-    override val sample:Sample = null
+    override val signalNoise: Option[Double] = None
+    override val uniqueMass: Option[Double] = None
+
+    override val sample:String = null
 
     override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
@@ -198,7 +217,10 @@ package object api {
   //MSSpectraImpl(4, Ion(100, 50) :: Ion(120, 50) :: Ion(130, 100) :: Ion(140, 10) :: List(), 4000, massOfDetectedFeature = Option(Ion(100, 100)))
 
   val testAccurateMassSpectraWith4Ions = new MSSpectra {
-    override val sample:Sample = null
+    override val signalNoise: Option[Double] = None
+    override val uniqueMass: Option[Double] = None
+
+    override val sample:String = null
 
     override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 
@@ -237,7 +259,11 @@ package object api {
 
   //MSSpectraImpl(5, Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List(), 5000, massOfDetectedFeature = Option(Ion(100.3241, 50)))
   val testAccurateMassSpectraWith4Ions2 = new MSSpectra {
-    override val sample:Sample = null
+
+    override val signalNoise: Option[Double] = None
+    override val uniqueMass: Option[Double] = None
+
+    override val sample:String = null
 
     override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
 

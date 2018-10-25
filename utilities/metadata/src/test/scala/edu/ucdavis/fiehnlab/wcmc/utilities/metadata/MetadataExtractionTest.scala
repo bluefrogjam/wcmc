@@ -6,19 +6,19 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4J
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.api.MetadataExtraction
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.db.{FileMetadata, FileMetadataRepository}
-import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.impl.MzXMLMetadataExtraction
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
+@ActiveProfiles(Array("file.source.eclipse"))
 class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
@@ -38,7 +38,7 @@ class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLoggi
   }
 
 
-  "MetadataExtractor" must {
+  "MetadataExtractor" ignore {
     "be defined" in {
       metadataExtraction should not be null
     }
@@ -55,7 +55,7 @@ class MetadataExtractionTest extends WordSpec with ShouldMatchers with LazyLoggi
 
   }
 
-  "something" must {
+  "something" ignore {
     "store data in mongo" in {
       val f = fixture
       val filename = "Inj006_ExtrCtl_6.mzXML"

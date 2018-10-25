@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 
@@ -21,6 +20,11 @@ trait Sample {
   val fileName: String
 
   /**
+    * associated properties
+    */
+  val properties: Option[SampleProperties]
+
+  /**
     * provides us with the given extension of the file name
     */
   val extension: String = {
@@ -37,33 +41,26 @@ trait Sample {
     */
   lazy val name: String = if (fileName.contains(".")) fileName.substring(0, fileName.indexOf(".")) else fileName
 
-  override def toString = s"Sample(${spectra.size} spectra and file name is $fileName), unique name is $name"
+  override def toString = s"Sample file name is $fileName, unique name is $name"
 }
 
 /**
-  * defines a sample, which loads data on the fly
-  * instead of pre allocating them in the memory and should help tremendously with processing large data sets
+  * additional sample properties
   */
-class LazySample (sampleLoader: SampleLoader, override val fileName:String) extends Sample with LazyLogging {
+case class SampleProperties(
+                             sampleName: String,
 
-  /**
-    * a collection of spectra
-    * belonging to this sample
-    */
-  override lazy val spectra = {
-    logger.info(s"loading sample in memory: ${fileName}")
-    val begin = System.currentTimeMillis()
-    try {
-      sampleLoader.loadSample(fileName).get.spectra
-    }
-    finally {
-      logger.info(s"loading took ${(System.currentTimeMillis() - begin)/1000}s")
-    }
-  }
+                             /**
+                               * pre processing properties, like if other software already processed these data, run a deconvolution, etc
+                               */
+                             preprocessing: Option[SamplePreProcessing] = None) {
 
-  override def toString = s"Sample(name is $fileName), unique name is $name"
+  final def isQualityControl: Boolean = sampleName.contains("QC")
+}
 
-
+trait SamplePreProcessing {
+  val software: String
+  val version: String
 }
 
 /**
@@ -95,7 +92,7 @@ trait CorrectedSample extends ProcessedSample {
   /**
     * these are all the targets, which were used for the retention index correction
     */
-  val featuresUsedForCorrection: Seq[TargetAnnotation[Target, Feature]]
+  val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]]
 
   /**
     * the associated spectra, which are now corrected
@@ -151,6 +148,7 @@ trait GapFilledSample[T] extends QuantifiedSample[T] {
   * an annotated spectra
   */
 trait AnnotatedSpectra extends CorrectedSpectra {
+
   /**
     * associated target
     */
@@ -241,19 +239,7 @@ trait GapFilledTarget[T] extends QuantifiedTarget[T] {
 
 }
 
-class ProxySample(fName: String, loader: SampleLoader) extends Sample with LazyLogging {
-  /**
-    * load the spectra once they are needed, but not before, but don't execute this more than once
-    */
-  lazy override val spectra: Seq[_ <: Feature] = {
-    logger.debug(s"loading spectra from ${fName}...")
-    loader.getSample(fName).spectra
-  }
-
-  /**
-    * the unique file name of the sample
-    */
-  override val fileName: String = fName
-
-  override def toString = s"Sample($name)"
-}
+/**
+  * its a none processed raw data file
+  */
+trait RawData extends Sample

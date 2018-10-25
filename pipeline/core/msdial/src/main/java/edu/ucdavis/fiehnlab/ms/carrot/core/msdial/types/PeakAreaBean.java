@@ -26,8 +26,8 @@ public class PeakAreaBean {
 	public double gaussianSimilarityValue;
 	public double idealSlopeValue;
 	public double intensityAtLeftPeakEdge;
-	public double intensityAtPeakTop;
-	public double intensityAtRightPeakEdge;
+	public float intensityAtPeakTop;
+	public float intensityAtRightPeakEdge;
 	public int isotopeParentPeakID;
 	public int isotopeWeightNumber;
 //	public double isotopeSimilarityValue;
@@ -53,12 +53,13 @@ public class PeakAreaBean {
 	public int scanNumberAtLeftPeakEdge;
 	public int scanNumberAtPeakTop;
 	public int scanNumberAtRightPeakEdge;
-	public double sharpenessValue;
+	public double shapenessValue;
 	public double symmetryValue;
 //	public double totalScore;
 
 	public double rtAtPeakTop() { return rtAtPeakTop; }
 	public double accurateMass() { return accurateMass; }
+	public double scanNumberAtPeakTop() { return scanNumberAtPeakTop; }
 	public double intensityAtPeakTop() { return intensityAtPeakTop; }
 	public double peakID() { return peakID; }
 

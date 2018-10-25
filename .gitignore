@@ -2,7 +2,11 @@ target/
 .idea/
 *.iml
 .idea
+.serverless
+node_modules
 
 #data files
 !**/msdialrest4j/src/test/resources/*.abf
 !**/msdialrest4j/src/test/resources/*.d/
+.DS_Store
+*.log

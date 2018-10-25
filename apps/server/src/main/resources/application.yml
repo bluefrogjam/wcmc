@@ -1,0 +1,31 @@
+server:
+  port: 18080
+
+#which email account to use
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: fiehnlab-2018
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 2048MB
+      max-request-size: 2048MB
+
+#which rabbit mq to use
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+# mona server to run against
+mona:
+  rest:
+    server:
+      user: admin
+      password: admin
+      host: localhost
+      port: 9090
