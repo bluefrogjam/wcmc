@@ -567,13 +567,8 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging
     t match {
       case target: Target with Idable[String] =>
         val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
-
-        logger.info("delete begin")
-        logger.info(s"use defined: ${spectrum.isDefined}")
-        logger.info(s"spectrum id: ${spectrum.get.id}")
         this.monaSpectrumRestClient.delete(spectrum.get.id)
 
-        logger.info("delete end")
         updateLibraries
       case _ =>
         logger.warn(s"${t} is not of the right type! Type is ${t.getClass}")
@@ -595,7 +590,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging
 
   @CacheEvict(value = Array("monacache"), allEntries = true)
   override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
-    logger.info(s"about to delete ${acquisitionMethod.chromatographicMethod.name}")
+    logger.info(s"about to delete library ${acquisitionMethod.chromatographicMethod.name}")
 
     load(acquisitionMethod).foreach(t => delete(t, acquisitionMethod))
   }
