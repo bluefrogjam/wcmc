@@ -2,13 +2,15 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
 import java.util
 
+import com.typesafe.scalalogging.LazyLogging
+import javax.annotation.PostConstruct
 import javax.validation.Valid
 import javax.validation.constraints.{NotBlank, Pattern, Size}
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 import scala.beans.BeanProperty
 
-class LCMSLibraryConfiguration {
+class LCMSLibraryConfiguration extends LazyLogging {
 
   @BeanProperty
   @Valid
@@ -32,7 +34,7 @@ class LCMSLibraryConfiguration {
   var instrument: String = ""
 
   @BeanProperty
-  @Pattern(regexp="positive|negative")
+  @Pattern(regexp = "positive|negative")
   var ionMode: String = "positive"
 
   /**
@@ -42,5 +44,8 @@ class LCMSLibraryConfiguration {
   @BeanProperty
   var minimumPeakIntensity: Float = 0f
 
-  println(s" === creating correction library ${name} (${targets.size()} targets)=== ")
+  @PostConstruct
+  def postInit() = {
+    logger.info(s" === creating correction library ${name} (${targets.size()} targets)=== ")
+  }
 }
