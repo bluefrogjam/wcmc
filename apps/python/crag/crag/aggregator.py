@@ -101,10 +101,10 @@ def export_excel(intensity, mass, rt, curve, args):
     # saving excel file
     print("Exporting excel file")
     file, ext = os.path.splitext(args.input)
-    output_name = f'{file}.xlsx'
+    output_name = f'{file}_results.xlsx'
 
     if args.test:
-        output_name = f'{file}_test.xlsx'
+        output_name = f'{file}_testResults.xlsx'
 
     intensity.set_index('name')
     mass.set_index('name')
@@ -180,7 +180,7 @@ def aggregate(args):
     # print(files)
 
     with open(args.input) as processed:
-        files = [p.split(' ')[-1].rstrip() for p in processed.readlines() if p.strip()]
+        files = [p.strip() for p in processed.readlines() if p]
 
     if args.test:
         files = files[3:5]

@@ -121,8 +121,8 @@ class TaskRunner extends LazyLogging {
         case e: Exception =>
           logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
           emailService.send(emailSender, task.email :: List(),
-            s"Dear user, the task '${task.name}' did not execute properly!",
-            s"carrot: your result had problems.\n\n${e.getStackTrace}",
+            s"Dear user, the task '${task.name}' did not execute properly!\n\n${e.getStackTrace}",
+            s"carrot: processing of ${task.name} had problems.",
             None)
       }
     }
