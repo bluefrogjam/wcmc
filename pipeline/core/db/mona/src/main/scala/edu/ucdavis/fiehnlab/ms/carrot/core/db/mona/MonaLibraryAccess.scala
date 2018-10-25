@@ -29,8 +29,6 @@ import scala.collection.mutable
   */
 @Profile(Array("carrot.targets.mona"))
 @Component
-//@Primary
-@Qualifier("monaAnnotationLibraryAccess")
 class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging {
 
   private val executionService: ExecutorService = Executors.newFixedThreadPool(1)
@@ -515,9 +513,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging
 
       } else {
         throw new IonModeNotDefinedException("we require you to define an ion mode!")
-      }
-
-      ,
+      },
       uniqueMass = if (uniqueMass.isDefined) Option(precursorIon.get.value.toString.toDouble) else None
     )
   }
@@ -591,7 +587,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging
     * @param acquisitionMethod
     */
   @CacheEvict(value = Array("monacache"), allEntries = true)
-  override def update(target: AnnotationTarget, acquisitionMethod: AcquisitionMethod) = {
+  override def update(target: AnnotationTarget, acquisitionMethod: AcquisitionMethod): Boolean = {
     val spectrum = generateSpectrum(target, acquisitionMethod, None).get
     this.monaSpectrumRestClient.update(spectrum, spectrum.id)
     true

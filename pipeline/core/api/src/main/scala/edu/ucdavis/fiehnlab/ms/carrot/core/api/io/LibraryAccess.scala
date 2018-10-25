@@ -49,8 +49,9 @@ trait LibraryAccess[T <: Target] extends LazyLogging {
     * deletes the complete library
     */
   def deleteAll: Unit = {
+    logger.info(s"deleting all libraries")
     libraries.foreach { x =>
-      logger.info(s"deleting library ${x}")
+      logger.info(s"\t${x}")
       load(x).foreach(y => delete(y, x))
     }
   }
@@ -74,7 +75,7 @@ trait LibraryAccess[T <: Target] extends LazyLogging {
     *
     * @param acquisitionMethod
     */
-  def deleteLibrary(acquisitionMethod: AcquisitionMethod) = {}
+  def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {}
 
   override def toString = s"${getClass.getName}(\n\n${libraries.mkString("\n\t")}\n)"
 }
