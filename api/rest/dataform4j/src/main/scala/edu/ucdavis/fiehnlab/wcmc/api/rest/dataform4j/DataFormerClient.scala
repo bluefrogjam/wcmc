@@ -8,8 +8,7 @@ import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import org.apache.commons.io.IOUtils
 import org.apache.http.impl.client.HttpClientBuilder
-import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.cache.annotation.{CacheEvict, Cacheable}
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http._
@@ -23,7 +22,7 @@ import org.springframework.web.client.RestTemplate
   * sends a raw data file to DataFormer rest service to be converted into .abf and .mzml and then sends the result to fserv
   */
 class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
-  @Value("${wcmc.api.rest.dataformer.host:phobos.fiehnlab.ucdavis.edu}")
+  @Value("${wcmc.api.rest.dataformer.host:luna.fiehnlab.ucdavis.edu}")
   private val host: String = ""
 
   @Value("${wcmc.api.rest.dataformer.port:9090}")
@@ -79,7 +78,6 @@ class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
     }
   }
 
-  @CacheEvict(value = Array[String]("dataform"), key = "#filename")
   def evictCachedValue(filename: String) = {
     logger.warn(s"cache is no longer valid, evicted ${filename}")
   }
@@ -91,7 +89,6 @@ class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
     * @param extension
     * @return
     */
-  @Cacheable(value = Array[String]("dataform"), key = "#filename")
   def doConvert(filename: String, extension: String = "mzml"): Option[File] = {
 
     if (fserv4j.exists(filename)) {
@@ -104,13 +101,7 @@ class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
         try {
           val upresponse = upload(file.get, filename)
 
-          if (extension.equalsIgnoreCase("abf")) {
-            Option(download(filename, FileType.ABF))
-          }
-          else if (extension.equalsIgnoreCase("mzxml")) {
-            Option(download(filename, FileType.MZXML))
-          }
-          else if (extension.equalsIgnoreCase("mzml")) {
+          if (extension.equalsIgnoreCase("mzml")) {
             Option(download(filename, FileType.MZML))
           }
           else {
@@ -164,7 +155,7 @@ class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
   }
 
   private def download(fileName: String, format: FileType): File = {
-    val endpoint = s"$url/rest/conversion/download/${fileName}/${format.toString.toLowerCase}"
+    val endpoint = s"$url/rest/conversion/download/${fileName.replaceAll(" ", "%20")}/${format.toString.toLowerCase}"
     logger.info(s"downloading ${format} version of ${fileName}")
 
     val downloadName = storage.concat(File.separator).concat(fileName.substring(0, fileName.indexOf(".")))

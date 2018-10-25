@@ -3,28 +3,30 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, QuantifiedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, PositiveMode, QuantifiedSample, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.LCMSTargetRetentionIndexCorrection
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing.PeakDetection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
-import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
+import org.scalatest.{ShouldMatchers, WordSpec}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlg on 7/1/2016.
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt", "carrot.report.quantify.height","carrot.processing.peakdetection"))
-class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "carrot.lcms.correction", "file.source.luna", "test"))
+class QuantifyByHeightProcessTest extends WordSpec with ShouldMatchers with LazyLogging {
+  val libName = "lcms_istds"
 
   @Autowired
-  val correction: LCMSTargetRetentionIndexCorrection = null
+  val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
   @Autowired
   val loader: SampleLoader = null
@@ -38,19 +40,22 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
   @Autowired
   val deco: PeakDetection = null
 
-  new TestContextManager(this.getClass()).prepareTestInstance(this)
+  @Autowired
+  val stasis_cli: StasisService = null
+
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "QuantifyByHeightProcessTest" should {
 
-    val method = AcquisitionMethod(None)
+    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Option(PositiveMode())))
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.d.zip", "B5_SA0002_P20Lipids_Pos_1FL_1006.d.zip"))
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.mzml", "B5_SA0002_P20Lipids_Pos_1FL_1006.mzml"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)
 
     //correct the data
-    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item,method), method))
+    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method), method))
 
     val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method))
 
@@ -69,6 +74,11 @@ class QuantifyByHeightProcessTest extends WordSpec with LazyLogging {
 
         //make sure that we the same amount of annotations as spectra
         assert(annotationCount == sample.spectra.size)
+
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("deconvoluted")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("corrected")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("annotated")
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("quantified")
       }
     }
   }

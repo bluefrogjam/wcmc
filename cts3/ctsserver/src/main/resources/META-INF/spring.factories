@@ -1,1 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=edu.ucdavis.fiehnlab.cts3.Cts3AutoConfiguration

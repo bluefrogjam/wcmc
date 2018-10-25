@@ -18,7 +18,9 @@ class MassAccuracyTest extends WordSpec {
       "example 1" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
-            override val sample:Sample = null
+            override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
@@ -35,6 +37,8 @@ class MassAccuracyTest extends WordSpec {
               */
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(100.3241, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(100.3242)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -62,7 +66,9 @@ class MassAccuracyTest extends WordSpec {
       "example 2" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
-            override val sample:Sample = null
+            override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
@@ -76,6 +82,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(100.3241, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(100.3242)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -103,10 +111,12 @@ class MassAccuracyTest extends WordSpec {
       "example 3" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
-            override val sample:Sample = null
+            override val sample:String = null
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
 
             override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
@@ -119,6 +129,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(100.3241, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(100.3242)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -145,7 +157,9 @@ class MassAccuracyTest extends WordSpec {
       "example 4" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
-            override val sample:Sample = null
+            override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
@@ -160,6 +174,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(1567.6401, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(1567.59330)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -186,7 +202,9 @@ class MassAccuracyTest extends WordSpec {
       "example 5" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
-            override val sample:Sample = null
+            override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
@@ -202,6 +220,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(1567.5459, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(1567.59330)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None
@@ -229,7 +249,9 @@ class MassAccuracyTest extends WordSpec {
         val ppmError = accuracy.calculateMassErrorPPM(
 
           new MSSpectra {override val purity: Option[Double] = None
-            override val sample:Sample = null
+            override val sample:String = null
+            override val uniqueMass: Option[Double] = None
+            override val signalNoise: Option[Double] = None
 
             override val ionMode: Option[IonMode] = None
             override val scanNumber: Int = 0
@@ -245,6 +267,8 @@ class MassAccuracyTest extends WordSpec {
             override val retentionTimeInSeconds: Double = 0
             override val massOfDetectedFeature: Option[Ion] = Option(Ion(1567.5459, 100))
           }, new Target {
+            override val uniqueMass: Option[Double] = None
+
             override val precursorMass: Option[Double] = Some(1567.59330)
             override var name: Option[String] = None
             override var inchiKey: Option[String] = None

@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import org.springframework.context.annotation.{Description, Profile}
@@ -18,7 +19,7 @@ class UpdateMetaData extends PreProcessor {
     * @param item
     * @return
     */
-  override def doProcess(item: Sample, method: AcquisitionMethod): Sample = item
+  override def doProcess(item: Sample, method: AcquisitionMethod, rawSample: Option[Sample]): Sample = item
 
   override def priortiy: Int = 99
 }

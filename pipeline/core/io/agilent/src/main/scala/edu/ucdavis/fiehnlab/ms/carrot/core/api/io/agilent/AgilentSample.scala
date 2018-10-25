@@ -3,10 +3,9 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent
 import java.io.File
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial.MSDialSampleV2
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, SampleProperties}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 
 /**
@@ -19,10 +18,14 @@ class AgilentSample(override val fileName: String, file: File, dataFormerClient:
     logger.debug(s"converting ${file} to mzML representation")
     val start = System.nanoTime()
 
-    val result = dataFormerClient.convert(fileName,"mzML")
-    logger.debug(s"converting ${file} to msDialV2 representation")
+    try {
+      val result = dataFormerClient.convert(fileName, "mzml")
+      logger.debug(s"converting ${file} to msDialV2 representation")
 
-    MSDKSample(fileName, result.get).spectra
+      MSDKSample(fileName, result.get).spectra
+    } catch {
+      case e: Exception => logger.error(s" Exception creating Agilent sample: ${e.getMessage}"); Seq.empty
+    }
   }
 
   /**
@@ -30,5 +33,7 @@ class AgilentSample(override val fileName: String, file: File, dataFormerClient:
     * and only do this operation once it's required
     */
   lazy override val spectra: Seq[_ <: Feature] = deconvolute
+
+  override val properties: Option[SampleProperties] = Some(SampleProperties(fileName, None))
 }
 

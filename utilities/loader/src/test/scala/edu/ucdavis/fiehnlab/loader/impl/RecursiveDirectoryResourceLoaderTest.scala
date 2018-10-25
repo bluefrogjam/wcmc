@@ -51,14 +51,14 @@ class RecursiveDirectoryResourceLoaderTest extends WordSpec {
       assert(loader.exists("test3.txt"))
     }
 
-    "return zip imput stream" ignore {
+    "return zip imput stream" ignore { // due to commit 0a2b73f250d3d158037b228bc352b77768a88941
       val result = loader.load("testA.d")
 
       assert(result.isDefined)
       assert(result.get.isInstanceOf[ZipInputStream])
       result.get.close()
     }
-    "return zip imput stream from subfolder recursively" ignore {
+    "return zip imput stream from subfolder recursively" ignore { // due to commit 0a2b73f250d3d158037b228bc352b77768a88941
       val result = loader.load("testB.d")
 
       assert(result.isDefined)

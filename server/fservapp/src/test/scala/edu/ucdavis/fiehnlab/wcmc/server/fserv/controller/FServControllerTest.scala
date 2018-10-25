@@ -10,10 +10,10 @@ import edu.ucdavis.fiehnlab.wcmc.server.fserv.FServ
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http._
@@ -116,26 +116,6 @@ class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers 
 
 				new File("target/test.txt.result").exists() should be(true)
 			}
-
-      "download zipped agilent" in {
-        val headers = new HttpHeaders
-        headers.setAccept(java.util.Arrays.asList(MediaType.APPLICATION_OCTET_STREAM))
-
-        val entity = new HttpEntity[String](headers)
-        val response = template.exchange(s"http://testfserv.fiehnlab.ucdavis.edu/rest/file/download/B5_P20Lipids_Pos_QC000.d.zip", HttpMethod.GET, entity, classOf[Array[Byte]])
-
-        response.getStatusCode should be(HttpStatus.OK)
-      }
-
-      "download unzipped agilent" in {
-        val headers = new HttpHeaders
-        headers.setAccept(java.util.Arrays.asList(MediaType.APPLICATION_OCTET_STREAM))
-
-        val entity = new HttpEntity[String](headers)
-        val response = template.exchange(s"http://localhost:${port}/rest/file/download/B5_P20Lipids_Pos_QC000.d", HttpMethod.GET, entity, classOf[Array[Byte]])
-
-        response.getStatusCode should be(HttpStatus.NOT_FOUND)
-      }
     }
 	}
 }

@@ -1,0 +1,30 @@
+spring:
+  profiles:
+    active: prod
+    include:
+#      - file.source.luna
+#      - file.source.eclipse
+#      - carrot.gcms
+      - carrot.lcms
+      - carrot.output.storage.aws
+      - carrot.resource.loader.bucket
+      - carrot.resource.store.bucket
+      - carrot.targets.mona
+      - carrot.scheduler.aws
+      - carrot.gcms.library.binbase
+      - carrot.runner.required
+      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+      - carrot.report.quantify.height
+
+
+stasis:
+  baseurl: http://api.metabolomics.us/stasis
+
+mona:
+  rest:
+    server:
+      user: admin
+      password: admin
+      host: ipa.fiehnlab.ucdavis.edu
+      port: 9090

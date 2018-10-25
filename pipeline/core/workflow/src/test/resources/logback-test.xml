@@ -3,12 +3,13 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
-	        <Pattern>%date{ISO8601} %level --- %logger{5} - %msg%n%ex</Pattern>
+	        <Pattern>%date{ISO8601} %t %level --- %logger{5} - %msg%n%ex</Pattern>
         </layout>
     </appender>
-	<logger name="edu.ucdavis" level="info"/>
 
-    <root level="warn">
+    <logger name="StasisResultStorage" level="debug"/>
+
+    <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

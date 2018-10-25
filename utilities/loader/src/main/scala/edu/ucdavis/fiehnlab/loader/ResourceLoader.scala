@@ -1,10 +1,12 @@
 package edu.ucdavis.fiehnlab.loader
 
 import java.io._
-import java.util.zip.ZipInputStream
-import javax.annotation.PostConstruct
+import java.nio.channels.{Channels, ReadableByteChannel}
+import java.nio.file.{FileAlreadyExistsException, Files, Paths, StandardCopyOption}
 
 import com.typesafe.scalalogging.LazyLogging
+import javax.annotation.PostConstruct
+
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Primary
@@ -55,21 +57,17 @@ trait ResourceLoader extends LazyLogging {
         name
       }
 
-      val prepro = File.createTempFile("pre", "pro")
-      prepro.deleteOnExit()
-      val tempFile = new File(prepro.getParentFile, fName)
+      val tempFile = new File(System.getProperty("java.io.tmpdir"), fName)
       logger.debug(s"storing ${fName} at: ${tempFile.getAbsolutePath}")
       tempFile.deleteOnExit()
 
-      val outStream = new FileOutputStream(tempFile)
-      val stream = loaded.get
+      try {
+        Files.copy(loaded.get, Paths.get(tempFile.toURI))
+      }catch {
+        case x:FileAlreadyExistsException =>
+          logger.warn(s"reusing existing file: ${x.getMessage}")
+      }
 
-      logger.debug(s"stream size: ${stream.available()}")
-      IOUtils.copy(stream, outStream)
-
-      outStream.flush()
-      outStream.close()
-      stream.close()
       Option(tempFile)
     } else {
       logger.debug(s"File ${name} not found")
@@ -94,17 +92,19 @@ trait ResourceLoader extends LazyLogging {
 
   /**
     * check if the requested resource is a directory
+    *
     * @param name
     * @return
     */
-  def isDirectory(name:String) : Boolean = ???
+  def isDirectory(name: String): Boolean = ???
 
   /**
     * checks if the requested resource is a file
+    *
     * @param name
     * @return
     */
-  def isFile(name:String) : Boolean = ???
+  def isFile(name: String): Boolean = ???
 }
 
 /**
@@ -123,18 +123,19 @@ class DelegatingResourceLoader extends ResourceLoader {
   /**
     * sorted by priority
     */
-  lazy val sortedLoader: List[ResourceLoader] = loaders.asScala.sortBy(_.priority).reverse.toList
+  lazy val sortedLoader: Seq[ResourceLoader] = loaders.asScala.sortBy(_.priority).reverse
 
   /**
-    * trys to find the resource in any of the defined loaders or null
+    * tries to find the resource in any of the defined loaders or null
     *
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst { case loader if loader.exists(name) => {
-    logger.debug(s"loading ${name} with ${loader.getClass}")
-    loader.load(name)
-  }
+  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst {
+    case loader if loader.exists(name) => {
+      logger.debug(s"loading ${name} with ${loader.getClass}")
+      loader.load(name)
+    }
   }.getOrElse(None)
 
   override def toString = s"DelegatingResourceLoader($sortedLoader)"

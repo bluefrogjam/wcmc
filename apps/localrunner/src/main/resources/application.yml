@@ -1,0 +1,36 @@
+debug: false
+
+spring:
+  profiles:
+    active: prod
+    include:
+      - carrot.lcms
+      - file.source.luna
+      - carrot.output.storage.aws
+      - carrot.resource.loader.bucket
+      - carrot.resource.store.bucket
+#      - carrot.targets.mona
+      - carrot.runner.required
+      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+      - carrot.report.quantify.height
+  autoconfigure:
+    exclude:
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+stasis:
+  baseurl: http://api.metabolomics.us/stasis
+
+mona:
+  rest:
+    server:
+      user: admin
+      password: admin
+      port: 9090
+
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: fiehnlab-2018

@@ -1,0 +1,507 @@
+<config>
+    <!--  defines header informations -->
+    <header>
+        <!-- is used to convert different pegasus header into the correct binbase headers-->
+        <!-- never change one of the binbase header!!! they are hard coded and used as keys for internal hashmaps! -->
+        <!-- you also can map fields over this configuration, for example map  <entry binbase="R.T. (seconds)" pegasus="Retention Index"</entry> if you have an external method to calculate retention indexes. But even then there will be an internal retention index finding and calculation, except you disable this feature -->
+        <!-- version 221 -->
+        <version id="221" type="pegasus">
+            <entry binbase="UniqueMass" file="UniqueMass"/>
+            <entry binbase="S/N" file="S/N"/>
+            <entry binbase="Purity" file="Purity"/>
+            <entry binbase="R.T. (seconds)"
+                   file="R.T. (seconds)"/>
+            <entry binbase="Quant S/N" file="S/N"/>
+            <entry binbase="Spectra" file="Spectra"/>
+            <entry binbase="Quant Masses" file="Quant Masses"/>
+        </version>
+
+        <!-- version 222 -->
+        <version id="222" type="pegasus">
+            <entry binbase="UniqueMass" file="UniqueMass"/>
+            <entry binbase="S/N" file="S/N"/>
+            <entry binbase="Purity" file="Purity"/>
+            <entry binbase="R.T. (seconds)" file="R.T. (s)"/>
+            <entry binbase="Quant S/N" file="S/N"/>
+            <entry binbase="Spectra" file="Spectra"/>
+            <entry binbase="Quant Masses" file="Quant Masses"/>
+        </version>
+
+        <!-- version 302 -->
+        <version id="325" type="pegasus">
+            <entry binbase="UniqueMass" file="UniqueMass"/>
+            <entry binbase="S/N" file="S/N"/>
+            <entry binbase="Purity" file="Purity"/>
+            <entry binbase="R.T. (seconds)" file="R.T. (s)"/>
+            <entry binbase="Quant S/N" file="S/N"/>
+            <entry binbase="Spectra" file="Spectra"/>
+            <entry binbase="Quant Masses" file="Quant Masses"/>
+            <entry binbase="Dimension Time 2"
+                   file="2nd Dimension Time (s)"/>
+        </version>
+
+        <version id="401" type="pegasus">
+            <entry binbase="UniqueMass" file="UniqueMass"/>
+            <entry binbase="S/N" file="S/N"/>
+            <entry binbase="Purity" file="Purity"/>
+            <entry binbase="R.T. (seconds)" file="R.T. (s)"/>
+            <entry binbase="Quant S/N" file="S/N"/>
+            <entry binbase="Spectra" file="Spectra"/>
+            <entry binbase="Quant Masses" file="Quant Masses"/>
+            <entry binbase="Calculated Ion Ratio 1"
+                   file="Calculated Ion Ratio 1"/>
+
+        </version>
+
+        <version id="271" type="amdis">
+            <entry binbase="UniqueMass" file="UniqueMass"/>
+            <entry binbase="S/N" file="S/N"/>
+            <entry binbase="Purity" file="Purity"/>
+            <entry binbase="R.T. (minutes)" file="R.T. (minutes)"/>
+            <entry binbase="R.T. (seconds)" file="R.T. (seconds)"/>
+            <entry binbase="Spectra" file="spectra"/>
+            <entry binbase="Quant Masses" file="Quant Masses"/>
+            <entry binbase="Amdis Scan" file="Amdis Scan"/>
+            <entry binbase="Base Peak Intensity" file="Base Peak Intensity"/>
+            <entry binbase="Width" file="Width"/>
+            <entry binbase="Tailing" file="Tailing"/>
+        </version>
+    </header>
+
+
+    <!--IN JMX -->
+    <server>
+        <!--  the default database-->
+        <defaultDatabase>binbase</defaultDatabase>
+        <threads>
+            <enable>false</enable>
+        </threads>
+    </server>
+
+    <!-- configuration values -->
+    <values>
+
+        <!--  should moved to JMX -->
+        <filter>
+            <!-- ratio of the unique ion from the bin against the basepeak of the unknown massspec. it will be accepted if the calculated ratio is bigger than the given ratio here -->
+            <unique ratio="0.03"/>
+            <!-- parameter is needed if we have n massspecs at the same ri range with a similar similarty. normaly we would use the nearest to the bin ri, except if another one has an similariyt bigger than this peak + <offset>. in this case the peak with the higher similarity will be used -->
+            <similarity offset="100"/>
+            <!-- cuts all ions under <cut>% its needed for cleaning -->
+            <clean cut="5"/>
+            <!-- at which point are we switching over to the large peak anotations algorythm -->
+            <largePeakSize sn="10000"/>
+        </filter>
+
+        <!-- values for the matching
+            the override is a workaround of a deconvolution error, sometimes the massspecs are to dirty but the ri is nearly the same and the uniquemass is identical, so we want to have them
+            and dont want to generate new bins
+        -->
+
+        <matching override="true" maxRiDistance="500"
+                  similarity="500">
+
+            <!--  settings for the default version of leco -->
+            <leco version="default" maximalPurityBinGeneration="0.15"
+                  minimalSignalNoiseBinGeneration="200">
+                <purity minimal="nd" maximal="0.05">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="800" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="nd" maximal="0.3">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="0.3" maximal="nd">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="450" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+            </leco>
+
+
+            <!--  settings for the 222 version of lec -->
+            <leco version="222" maximalPurityBinGeneration="1"
+                  minimalSignalNoiseBinGeneration="25">
+                <purity minimal="nd" maximal="0.1">
+                    <signalnoise minimal="250" maximal="nd">
+                        <similarity minimal="800" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="25" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="3" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="nd" maximal="1.5">
+                    <signalnoise minimal="250" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="25" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="3" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="1.5" maximal="nd">
+                    <signalnoise minimal="250" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="3" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+            </leco>
+
+            <!--  settings for the 325 version of leco -->
+            <leco version="325" maximalPurityBinGeneration="0.15"
+                  minimalSignalNoiseBinGeneration="200">
+                <purity minimal="nd" maximal="0.05">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="800" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="nd" maximal="0.3">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="0.3" maximal="nd">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="450" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+            </leco>
+            <!--  settings for the 401 and higher version of leco -->
+            <leco version="401" maximalPurityBinGeneration="0.15"
+                  minimalSignalNoiseBinGeneration="200">
+                <purity minimal="nd" maximal="0.05">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="800" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="nd" maximal="0.3">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="0.3" maximal="nd">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="450" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+            </leco>
+
+            <!-- amdis specific configuration values -->
+            <leco version="271" maximalPurityBinGeneration="0.15"
+                  minimalSignalNoiseBinGeneration="200">
+                <purity minimal="nd" maximal="0.05">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="800" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="nd" maximal="0.3">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="700" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+                <purity minimal="0.3" maximal="nd">
+                    <signalnoise minimal="500" maximal="nd">
+                        <similarity minimal="600" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="50" maximal="nd">
+                        <similarity minimal="500" maximal="nd"/>
+                    </signalnoise>
+                    <signalnoise minimal="5" maximal="nd">
+                        <similarity minimal="450" maximal="nd"/>
+                    </signalnoise>
+                </purity>
+            </leco>
+        </matching>
+
+        <!-- is used to match large peaks with a weird unique mass or overloaded peaks -->
+        <matchingFailed signalnoise="250" similarity="800">
+        </matchingFailed>
+
+        <!-- sets special correction values when correction for this sample-->
+        <correctionFailed>
+            <!-- defines if it allowed to match samples with a failed ri-corretion-->
+            <matchSample value="true"/>
+        </correctionFailed>
+    </values>
+
+    <!--import angaben-->
+    <import>
+        <!-- defines how often we must find a bin in a class to generate a new bin from this
+        -->
+        <generation>
+            <factor>0.8</factor>
+        </generation>
+
+        <!-- how many trys we have until we give up and delete this message, so we keep the queue clean-->
+        <trys>100</trys>
+
+        <!--  when do we notify users that the correction failed in the class. Settings should be between 1 - 0.
+            1 means they have to successfull to 100% or the user gets an email.
+            0 means he gets an information when 0 correction where successfull. A good value would be 0.5 -->
+        <correctionFailedNotification>0.5</correctionFailedNotification>
+    </import>
+
+    <deconvolution>
+        <!-- diese test dienen zum valiedieren von dateien und werden beim import durchlaufen-->
+        <validate>
+            <!-- are the apexmasses included in the chrommatogramm IMPORTENT-->
+            <apexmasses>true</apexmasses>
+            <!-- is the unique great enough RELATIV IMPORTENT-->
+            <uniquemass>
+                <!-- soll der test durchgefuehrt werden -->
+                <value>true</value>
+                <!-- the ration beetween the unique abundance and the basepeak in procent IMPORTENT-->
+                <uniqueRatio>10</uniqueRatio>
+            </uniquemass>
+
+            <minMassspecs>50</minMassspecs>
+        </validate>
+
+        <!-- definiert unter welchen bedingungen die bingeneration verboten ist -->
+        <error>
+            <!-- anzahl der gefundenen deconvolution fehler -->
+            <count>100</count>
+
+            <!-- import masspecs with a deconvolution error -->
+            <import>true</import>
+        </error>
+
+        <!-- definiert unter welchen bedingungen ein spektrum ueberladen ist -->
+        <overload>
+            <!-- die groesse des peaks anhand des signalnoise-->
+            <tic>10000000</tic>
+            <!-- wie viel peaks dieser Groesse vorkommen duerfen damit das spektrum nich als ueberladen gilt-->
+            <count>15</count>
+        </overload>
+    </deconvolution>
+
+    <!--  JMX -->
+    <!--implementation, don't change anything! if you dont know what you do!-->
+    <class>
+        <!-- the matching class for the samples -->
+        <matching
+            value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.SimpleMatching"/>
+        <!-- the used matching class for the retention index correction and standardfinding -->
+        <correction
+            value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.RecrusiveCorrection"/>
+        <!-- what algorythm are we want to use -->
+        <algorythm
+            value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.StandardAlgorithmHandler"/>
+        <!-- whats the wanted setupX factory implementation -->
+        <setupx
+            value="edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.setupX.EjbSetupXFactory"/>
+
+        <!--  defines how we import the data -->
+        <import>
+            <!-- the class defines which provider to use, or better what kind of format the source delivers, the source defines the kind of datasource -->
+            <provider
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.data.provider.PegasusASCIIIProvider"
+                source="edu.ucdavis.genomics.metabolomics.binbase.algorythm.Import.data.source.FileSource"/>
+        </import>
+
+        <!-- defined filters for the import and matching. they are executed in order, so depending on the order you can reach different speeds -->
+        <filters>
+            <filter
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.RetentionIndexFilter"/>
+            <filter
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.UniqueRatioFilter"/>
+            <filter
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.UniqueIonFilter"/>
+            <filter
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.SifterFilter"/>
+            <filter
+                class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.matching.anotation.IonFilter"/>
+        </filters>
+
+        <!-- list of modifiers to modify unknown massspecs in BinBase 4.2 and newer -->
+        <modifiers>
+            <!-- you can add as many modifiers as you like and each modifier needs to take care of it's own configuration -->
+            <modifier class="edu.ucdavis.genomics.metabolomics.binbase.algorythm.filter.DoNothingModifier"/>
+        </modifiers>
+    </class>
+
+    <!--bin generation parameter-->
+    <bin>
+
+        <!-- allow new bins, are new bins allowed or we just want to mach against the library, the minimum classsize defines how much samples a class must have that bins are allowed -->
+        <allow minimumClassSize="6">true</allow>
+
+        <update>
+            <!-- shold the massspec be updated if we find a better one -->
+            <spectra>true</spectra>
+            <!-- should the apexmasses automatical extended -->
+            <apex>false</apex>
+        </update>
+
+        <!-- bins with this unique masses will not be exported -->
+        <fragment>
+            <unique>221</unique>
+            <unique>207</unique>
+            <unique>355</unique>
+            <unique>281</unique>
+        </fragment>
+
+        <!-- forbidden unqiue ions, spectra will be not imported -->
+        <forbidden>
+            <unique>93</unique>
+            <unique>95</unique>
+            <unique>111</unique>
+        </forbidden>
+
+        <!-- is a retention index correction allowed, if this is false than is also no retention index finding allowed! -->
+        <correction>
+            <allow>true</allow>
+            <!-- derivation for retention index correction, musst be beetween 2 and 20, and n must be smaller/equal count of found standards! -->
+            <polynome>5</polynome>
+            <!-- minimal found standards! -->
+            <minimal>6</minimal>
+
+            <!--  do we allow historic samples for the correction if not enough standards are found in this sample -->
+            <allowHistoric>true</allowHistoric>
+
+            <!-- defined filters for the retention index correction -->
+            <filter>
+                <!-- the base peak needs to one of these ions -->
+                <basepeak>
+                    <!-- volatile values -->
+                    <ion>43</ion>
+                    <ion>74</ion>
+                    <!-- rtx5 values -->
+                    <ion>87</ion>
+                    <ion>117</ion>
+                    <ion>147</ion>
+                    <ion>174</ion>
+                    <ion>130</ion>
+                </basepeak>
+            </filter>
+
+            <!-- automatic scaling of quantifier ions. Useful to deal with failed retention index markers due to ionsource and injector issues -->
+            <quantifier>
+                <autoScale attempts="200" factor="0.1" enable="false">
+                    <!-- ions should be fetched from database -->
+                    <ion>214</ion>
+                    <ion>242</ion>
+                    <ion>270</ion>
+                    <ion>298</ion>
+                    <ion>326</ion>
+                    <ion>354</ion>
+                    <ion>382</ion>
+                    <ion>410</ion>
+                    <ion>438</ion>
+                    <ion>466</ion>
+                </autoScale>
+            </quantifier>
+
+        </correction>
+    </bin>
+    <apex>
+        <!-- ab wieviel apexmassen die reiniegung greifen soll-->
+        <clean>50</clean>
+        <!-- die wieviel groessten sollen jeweils hinzugefuegt werden zur binapex-->
+        <count>50</count>
+
+        <!-- das verhaeltnis was das ion zum basispeaks haben muss in prozent damit es als apex ion erlaubt wird -->
+        <basePeakOffset>2</basePeakOffset>
+
+        <!-- is an automatical apex generation allowed -->
+        <generate>false</generate>
+    </apex>
+
+
+    <!--  jmx -->
+    <!--  export settings for the server -->
+    <export>
+        <!--  are we going to cache the results or calculate them all the time new -->
+        <cache allow="true"/>
+    </export>
+
+    <!--  similarity settings, basically needed for the similarity algorythm -->
+    <similarity>
+        <!-- defines the different ranges for the different columns -->
+        <range>
+            <!-- all massspec in the binbase column, this is only interressant if you have more than the default column, or your massspecs have different masses than the registered standards -->
+            <column name="binbase" beginFragment="0" endFragment="500"/>
+            <column name="rtx5" beginFragment="85" endFragment="500"/>
+            <column name="volatile" beginFragment="30" endFragment="500"/>
+            <column name="volatile2" beginFragment="30" endFragment="500"/>
+            <column name="volatiletest" beginFragment="30" endFragment="500"/>
+
+        </range>
+    </similarity>
+</config>

@@ -10,7 +10,6 @@ import org.springframework.amqp.core._
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.amqp.support.converter.AbstractMessageConverter
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.{Bean, Configuration}
@@ -37,7 +36,7 @@ class RabbitTaskScheduler extends TaskScheduler {
     */
   override protected def doSubmit(task: Task): String = {
     rabbitTemplate.convertAndSend(queueName, task)
-    "scheduled"
+    s"scheduled ${task.name}"
   }
 }
 
@@ -60,18 +59,17 @@ class RabbitTaskRunner extends MessageListener {
     * @param message
     */
   override final def onMessage(message: Message): Unit = {
+    val content: Task = objectMapper.readValue(message.getBody, classTag[Task].runtimeClass).asInstanceOf[Task]
     try {
-      val content: Task = objectMapper.readValue(message.getBody, classTag[Task].runtimeClass).asInstanceOf[Task]
       logger.info(s"received new task to process: ${content}")
       taskRunner.run(content)
       logger.info(s"processing of task is done, ${content}!")
     }
     catch {
-
-
-      case e:Exception =>
+      case e: Exception =>
         logger.error(e.getMessage,e)
-        throw e
+        taskRunner.emailService.send(taskRunner.emailSender, Seq(content.email), s"processing of task ${content.name} failed", "carrot: your result failed to complete", None)
+      //        throw e
     }
   }
 }
@@ -100,6 +98,7 @@ class RabbitTaskAutoconfiguration {
   def container(connectionFactory: ConnectionFactory): SimpleMessageListenerContainer = {
     val container = new SimpleMessageListenerContainer
     container.setConnectionFactory(connectionFactory)
+    container.setPrefetchCount(1)
     container.setQueues(queue)
     container.setMessageListener(rabbitTaskRunner)
     container.setMessageConverter(messageConverter)

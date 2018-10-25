@@ -15,7 +15,7 @@ trait JSONTargetLogging extends JSONLogging {
     */
   protected val targetToLog: Target
 
-  override def buildMessage(): Map[String, Any] = super.buildMessage() + ("target" -> Map("name" -> targetToLog.name.getOrElse("unknown"), "rt" -> targetToLog.retentionTimeInSeconds, "ri" -> targetToLog.retentionIndex, "mass" -> targetToLog.accurateMass.getOrElse(0.0)))
+  override def buildMessage(): Map[String, Any] = super.buildMessage() + ("target" -> targetToLog)
 
 }
 
@@ -51,7 +51,7 @@ trait JSONSampleLogging extends JSONLogging {
   /**
     * which sample we require to log
     */
-  protected val sampleToLog: Sample
+  protected val sampleToLog: String
 
   /**
     * adds the provided sample information
@@ -60,7 +60,7 @@ trait JSONSampleLogging extends JSONLogging {
     */
   override def buildMessage(): Map[String, Any] = {
     if(sampleToLog != null) {
-      super.buildMessage() + ("sample" -> sampleToLog.fileName)
+      super.buildMessage() + ("sample" -> sampleToLog)
     }
     else{
       super.buildMessage()

@@ -7,8 +7,11 @@ import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialProcessedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
+import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,10 +25,17 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("backend-txt", "carrot.processing.peakdetection", "quantify-by-scan"))
+@ActiveProfiles(Array("carrot.processing.peakdetection", "quantify-by-scan", "carrot.lcms", "test"))
 class PPAndDTest extends WordSpec with Matchers with LazyLogging {
+  val libName = "lcms_istds"
+
   @Autowired
   val peakDetection: PeakDetection = null
+
+  @Autowired
+  val stasis_cli: StasisService = null
+
+  val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -38,14 +48,15 @@ class PPAndDTest extends WordSpec with Matchers with LazyLogging {
       sample.spectra should not be Seq.empty
       sample.spectra should have size 18
 
-      val result = peakDetection.process(sample, AcquisitionMethod(None))
+      val result = peakDetection.process(sample, method, None)
       result should not be Seq.empty
-      result shouldBe a[MSDialProcessedSample]
+      result shouldBe a[MSDialLCMSProcessedSample]
 
-      val deconv = result.asInstanceOf[MSDialProcessedSample]
+      val deconv = result.asInstanceOf[MSDialLCMSProcessedSample]
       deconv.spectra should not be Seq.empty
       deconv.spectra should have size 125
 
+      stasis_cli.getTracking(sample.name).status.map(_.value) should contain("deconvoluted")
     }
   }
 }
