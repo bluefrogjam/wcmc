@@ -36,18 +36,24 @@ class LibraryController extends LazyLogging {
     */
   @RequestMapping(value = Array(""), method = Array(RequestMethod.POST))
   def addTarget(@RequestBody target: AddTarget): Target = {
-
     val t = target.buildTarget
     val method = target.buildMethod
+    logger.debug(s"Adding new target: ${t}")
 
-    val hasExistings = libraryAccess.load(method).filter(_.equals(t))
-    logger.debug(s"Has existing: ${hasExistings}")
+    val hasExistings = try {
+      libraryAccess.load(method).filter(_.equals(t))
+    } catch {
+      case e: NullPointerException =>
+        logger.error(s"can't load the method ${method}", e)
+        Seq.empty
+    }
 
     if (hasExistings.isEmpty) {
       libraryAccess.add(t, method, None)
-      logger.info(t.toString)
+      logger.debug(t.toString)
       t
     } else {
+      logger.debug("Target exists, skipping.")
       throw new ResourceAlreadyExistException(s"Target ${t.name} already in the library")
     }
   }
