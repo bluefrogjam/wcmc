@@ -2,14 +2,16 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.lcms
 
 import java.util
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSRetentionIndexTargetProperties
+import javax.annotation.PostConstruct
 import javax.validation.Valid
 import javax.validation.constraints.{NotBlank, Pattern, Size}
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 import scala.beans.BeanProperty
 
-class LCMSAnnotationLibraryConfiguration {
+class LCMSAnnotationLibraryConfiguration extends LazyLogging {
   @BeanProperty
   @Valid
   @Size(min = 1)
@@ -38,5 +40,8 @@ class LCMSAnnotationLibraryConfiguration {
   @BeanProperty
   var minimumPeakIntensity: Float = 0f
 
-  println(s" === creating annotation library ${name} (${targets.size()} targets)=== ")
+  @PostConstruct
+  def postInit(): Unit = {
+    logger.info(s" === creating annotation library ${name} (${targets.size()} targets) === ")
+  }
 }
