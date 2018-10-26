@@ -1,7 +1,8 @@
-import numpy
 import os
-import pandas as pd
 import re
+
+import numpy
+import pandas as pd
 import requests
 
 AVG_BR_ = 'AVG (br)'
@@ -151,21 +152,6 @@ def calculate_rsd(intensity, mass, rt, biorecs):
         rt.loc[i, RSD_BR_] = (rt.loc[i, biorecs].std() / rt.loc[i, biorecs].mean()) * 100
 
 
-def calculate_rsd_sa(intensity, mass, rt, samples):
-    print('Calculating %RDS of samples for intensity, mass and RT (ignoring missing results)')
-    size = range(len(intensity))
-    numpy.seterr(invalid='log')
-
-    for i in size:
-        try:
-            intensity.loc[i, RSD_SA_] = (intensity.loc[i, samples].std() / intensity.loc[i, samples].mean()) * 100
-        except Exception as e:
-            print(f'\tCan\'t calculate % RSD for target {intensity.loc[i, "name"]}.'
-                  f' Sum of intensities = {intensity.loc[i, samples].sum()}')
-        mass.loc[i, RSD_SA_] = (mass.loc[i, samples].std() / mass.loc[i, samples].mean()) * 100
-        rt.loc[i, RSD_SA_] = (rt.loc[i, samples].std() / rt.loc[i, samples].mean()) * 100
-
-
 def aggregate(args):
     """
     Collects information on the experiment and decides if aggregation of the full experiment is possible
@@ -198,9 +184,6 @@ def aggregate(args):
 
     # adding intensity matrix
     for file in files:
-        # commented due to missing tracking data for most files
-        # status = getSampleTracking(file)
-        # print(status)
 
         data = getFileResults(file)
         if 'error' not in data:
@@ -215,7 +198,6 @@ def aggregate(args):
             rt[file] = pd.np.nan
 
     biorecs = [br for br in intensity.columns if 'biorec' in str(br).lower()]
-    samples = [sa for sa in intensity.columns if sa.startswith('SA')]
 
     pd.set_option('display.max_rows', 100)
     pd.set_option('display.max_columns', 10)
@@ -226,6 +208,5 @@ def aggregate(args):
     calculate_average(intensity, mass, rt, biorecs)
 
     calculate_rsd(intensity, mass, rt, biorecs)
-    calculate_rsd_sa(intensity, mass, rt, samples)
 
     export_excel(intensity, mass, rt, curve, args)
