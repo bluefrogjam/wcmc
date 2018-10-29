@@ -10,8 +10,8 @@ spring:
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket
       - carrot.targets.mona
-      - carrot.scheduler.aws
       - carrot.gcms.library.binbase
+      - carrot.scheduler.aws
       - carrot.runner.required
       - carrot.processing.replacement.simple
       - carrot.processing.peakdetection

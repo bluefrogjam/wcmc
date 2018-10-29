@@ -1,0 +1,19 @@
+carrot:
+  sample: '${CARROT_SAMPLE}'
+  method: '${CARROT_METHOD}'
+  mode: '${CARROT_MODE}'
+
+#which email account to use
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: fiehnlab-2018
+
+wcmc:
+  pipeline:
+    workflow:
+      config:
+        correction:
+          peak:
+            intensity: 10000

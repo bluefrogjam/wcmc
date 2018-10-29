@@ -75,7 +75,7 @@ trait LibraryAccess[T <: Target] extends LazyLogging {
     *
     * @param acquisitionMethod
     */
-  def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {}
+  def deleteLibrary(acquisitionMethod: AcquisitionMethod)
 
   override def toString = s"${getClass.getName}(\n\n${libraries.mkString("\n\t")}\n)"
 }
@@ -102,6 +102,8 @@ trait ReadonlyLibrary[T <: Target] extends LibraryAccess[T] {
     * @param acquisitionMethod
     */
   override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = {}
+
+  override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {}
 
   /**
     * adds a list of targets
@@ -196,6 +198,13 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
 
   }
 
+  def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
+    libraries.filter(_.chromatographicMethod == acquisitionMethod.chromatographicMethod).foreach(am =>
+      if (!am.isInstanceOf[ReadonlyLibrary[T]])
+        deleteLibrary(am)
+    )
+  }
+
   /**
     * adds a list of targets
     *
@@ -281,4 +290,16 @@ final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[Co
   }
 
   override def toString = s"MergeLibraryAccess(\n\tannotation: ${annotation.toString}\n\tcorrection:${correction.toString})"
+
+  /**
+    * deletes the specified acquisition method from the list
+    *
+    * @param acquisitionMethod
+    */
+  override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
+    libraries.filter(_.chromatographicMethod == acquisitionMethod.chromatographicMethod).foreach(am =>
+      if (!am.isInstanceOf[ReadonlyLibrary[AnnotationTarget]])
+        deleteLibrary(am)
+    )
+  }
 }

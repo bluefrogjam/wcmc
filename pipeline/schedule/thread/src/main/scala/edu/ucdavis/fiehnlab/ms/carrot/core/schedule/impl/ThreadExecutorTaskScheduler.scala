@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.schedule.impl
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.{Bean, Configuration, Profile}
+import org.springframework.context.annotation.{Configuration, Profile}
 import org.springframework.core.task.TaskExecutor
 import org.springframework.stereotype.Component
 
@@ -39,8 +39,4 @@ class ThreadExecutorTaskScheduler extends TaskScheduler {
 
 @Configuration
 @Profile(Array("carrot.scheduler.local"))
-class ThreadExecutorTaskSchedulerAutoconfiguration {
-
-  @Bean
-  def scheduler: ThreadExecutorTaskScheduler = new ThreadExecutorTaskScheduler
-}
+class ThreadExecutorTaskSchedulerAutoconfiguration
