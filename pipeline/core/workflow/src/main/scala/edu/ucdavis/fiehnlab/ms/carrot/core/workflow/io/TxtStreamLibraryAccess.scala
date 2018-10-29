@@ -163,6 +163,8 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
     out.close()
   }
 
+  override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {}
+
   /**
     * this will update the existing target with the provided values
     *

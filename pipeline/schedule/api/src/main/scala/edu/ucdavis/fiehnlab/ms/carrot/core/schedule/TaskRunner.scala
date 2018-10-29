@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
-import java.io.FileNotFoundException
+import java.io.{ByteArrayOutputStream, FileNotFoundException, PrintStream}
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
@@ -120,8 +120,10 @@ class TaskRunner extends LazyLogging {
       } catch {
         case e: Exception =>
           logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
+          val os = new ByteArrayOutputStream()
+          e.printStackTrace(new PrintStream(os))
           emailService.send(emailSender, task.email :: List(),
-            s"Dear user, the task '${task.name}' did not execute properly!\n\n${e.getStackTrace}",
+            s"Dear user, the task '${task.name}' did not execute properly!\n\n${os.toString("UTF8")}",
             s"carrot: processing of ${task.name} had problems.",
             None)
       }

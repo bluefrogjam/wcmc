@@ -1,8 +1,7 @@
-import os
-import re
-
 import numpy
+import os
 import pandas as pd
+import re
 import requests
 
 AVG_BR_ = 'AVG (br)'
@@ -152,6 +151,10 @@ def calculate_rsd(intensity, mass, rt, biorecs):
         rt.loc[i, RSD_BR_] = (rt.loc[i, biorecs].std() / rt.loc[i, biorecs].mean()) * 100
 
 
+def chunker(list, size):
+    return (list[pos:pos + size] for pos in range(0, len(list), size))
+
+
 def aggregate(args):
     """
     Collects information on the experiment and decides if aggregation of the full experiment is possible
@@ -183,19 +186,19 @@ def aggregate(args):
     curve = format_metadata(first_data)
 
     # adding intensity matrix
-    for file in files:
-
-        data = getFileResults(file)
-        if 'error' not in data:
-            formatted = format_sample(data)
-            intensity[file] = pd.DataFrame.from_dict(formatted[0])
-            mass[file] = pd.DataFrame.from_dict(formatted[1])
-            rt[file] = pd.DataFrame.from_dict(formatted[2])
-            curve[file] = pd.DataFrame.from_dict(formatted[3])
-        else:
-            intensity[file] = pd.np.nan
-            mass[file] = pd.np.nan
-            rt[file] = pd.np.nan
+    for chunk in chunker(files, 1000):
+        for file in chunk:
+            data = getFileResults(file)
+            if 'error' not in data:
+                formatted = format_sample(data)
+                intensity[file] = pd.DataFrame.from_dict(formatted[0])
+                mass[file] = pd.DataFrame.from_dict(formatted[1])
+                rt[file] = pd.DataFrame.from_dict(formatted[2])
+                curve[file] = pd.DataFrame.from_dict(formatted[3])
+            else:
+                intensity[file] = pd.np.nan
+                mass[file] = pd.np.nan
+                rt[file] = pd.np.nan
 
     biorecs = [br for br in intensity.columns if 'biorec' in str(br).lower()]
 
