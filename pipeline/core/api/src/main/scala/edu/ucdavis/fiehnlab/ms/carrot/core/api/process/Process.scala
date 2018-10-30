@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.ProcessException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
@@ -32,8 +33,7 @@ abstract class Process[I <: Sample, O <: Sample]() extends LazyLogging {
       result
     }
     catch {
-      case e: Exception =>
-        logger.warn(s"discovered critical error: ${e}, updating stasis with failed status")
+      case e: ProcessException =>
         stasisClient.addTracking(TrackingData(item.name, "failed", item.fileName))
         throw e
     }

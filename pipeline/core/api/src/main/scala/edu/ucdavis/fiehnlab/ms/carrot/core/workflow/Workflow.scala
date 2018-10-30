@@ -5,6 +5,7 @@ import java.util
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.ProcessException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event._
@@ -69,6 +70,7 @@ class Workflow[T] extends LazyLogging {
       correctSample(sample, acquisitionMethod)
     }
     catch {
+      case e: ProcessException => throw e
       case e: Exception => handleFailedCorrection(sample, acquisitionMethod: AcquisitionMethod, e).getOrElse(sample)
     }
 
