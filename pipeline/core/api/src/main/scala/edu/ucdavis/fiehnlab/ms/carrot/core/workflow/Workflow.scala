@@ -5,10 +5,11 @@ import java.util
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.ProcessException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event._
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
@@ -41,6 +42,9 @@ class Workflow[T] extends LazyLogging {
   @Autowired
   val annotate: AnnotateSampleProcess = null
 
+  @Autowired
+  val stasisClient: StasisService = null
+
   /**
     * executes required pre processing steps, if applicable
     */
@@ -70,8 +74,8 @@ class Workflow[T] extends LazyLogging {
       correctSample(sample, acquisitionMethod)
     }
     catch {
-      case e: ProcessException => throw e
-      case e: Exception => handleFailedCorrection(sample, acquisitionMethod: AcquisitionMethod, e).getOrElse(sample)
+      case e: Exception =>
+        handleFailedCorrection(sample, acquisitionMethod: AcquisitionMethod, e).getOrElse(sample)
     }
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(CorrectionFinishedEvent(result)))
@@ -195,6 +199,7 @@ class Workflow[T] extends LazyLogging {
     }
     */
     logger.warn(s"Correction failed misserably with error: ${exception.getMessage}")
+    stasisClient.addTracking(TrackingData(sample.name, "failed", sample.fileName))
     None
   }
 

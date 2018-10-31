@@ -6,8 +6,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
@@ -127,7 +127,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     * @param regression
     * @return
     */
-  def doCorrection(possibleHits: Iterable[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample): CorrectedSample = {
+  def doCorrection(possibleHits: Iterable[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample, tracking: Boolean = true): CorrectedSample = {
 
 
     //make sure they are in numerical order
@@ -172,7 +172,8 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     }
 
     // update stasis tracking data
-    stasisClient.addTracking(TrackingData(correctedSample.name, "corrected", correctedSample.fileName))
+    if (tracking)
+      stasisClient.addTracking(TrackingData(correctedSample.name, "corrected", correctedSample.fileName))
 
     correctedSample
   }

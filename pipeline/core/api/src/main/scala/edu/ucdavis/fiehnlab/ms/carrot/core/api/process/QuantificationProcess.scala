@@ -4,7 +4,7 @@ import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, SpectrumProperties}
@@ -30,7 +30,7 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
     */
   final override def process(input: AnnotatedSample, targets: Iterable[Target], method: AcquisitionMethod): QuantifiedSample[T] = {
 
-    logger.debug(s"quantify sample: ${input.fileName}")
+    logger.info(s"quantify sample: ${input.fileName}")
     /**
       * merge the found and none found targets, which can be later replaced or so
       */
