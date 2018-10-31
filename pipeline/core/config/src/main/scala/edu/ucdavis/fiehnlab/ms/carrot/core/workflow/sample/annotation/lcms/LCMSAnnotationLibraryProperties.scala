@@ -14,7 +14,7 @@ import scala.beans.BeanProperty
 @Validated
 @Profile(Array("carrot.lcms"))
 @ConfigurationProperties(prefix = "carrot.lcms.annotation", ignoreUnknownFields = false, ignoreInvalidFields = false)
-case class LCMSAnnotationLibraryProperties() {
+class LCMSAnnotationLibraryProperties() {
 
   /**
     * all our targets

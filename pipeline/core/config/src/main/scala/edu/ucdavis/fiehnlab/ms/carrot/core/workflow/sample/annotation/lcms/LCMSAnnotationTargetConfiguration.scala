@@ -24,7 +24,7 @@ class LCMSAnnotationTargetConfiguration extends LazyLogging {
     */
   @Bean
   def annotationTargets(properties: LCMSAnnotationLibraryProperties): LibraryAccess[AnnotationTarget] = {
-    logger.info("loading lcms annotation targets")
+
     val methods: Map[AcquisitionMethod, Iterable[LCMSAnnotationTarget]] = properties.config.asScala.map { x =>
       (AcquisitionMethod(ChromatographicMethod(x.name, Some(x.instrument), Some(x.column), x.ionMode match {
         case "positive" => Some(PositiveMode())
@@ -35,7 +35,7 @@ class LCMSAnnotationTargetConfiguration extends LazyLogging {
 
 
     val libs = methods.keySet.map { x =>
-      logger.info(s"=== method ${x.chromatographicMethod} ===")
+      logger.info(s"==== method ${x.chromatographicMethod} ====")
 
       new ReadonlyLibrary[LCMSAnnotationTarget] {
 

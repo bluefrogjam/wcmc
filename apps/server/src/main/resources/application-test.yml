@@ -1,3 +1,5 @@
+debug: true
+
 spring:
   profiles:
     active: test
@@ -12,7 +14,7 @@ spring:
       - carrot.processing.peakdetection
 
 stasis:
-  baseurl: http://test-api.metabolomics.us/stasis
+  baseurl: https://test-api.metabolomics.us/stasis
 
 wcmc:
   pipeline:
@@ -21,3 +23,11 @@ wcmc:
         correction:
           regression:
             polynom: 3
+
+mona:
+  rest:
+    server:
+      user: admin
+      password: admin
+      host: localhost
+      port: 9090

@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.{NotEnoughStandardsFoundException, RequiredStandardNotFoundException, StandardAnnotatedTwice, StandardsNotInOrderException}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -32,7 +32,9 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     val retentionIndexMarkers = target.filter(_.isRetentionIndexStandard)
     var requiredTargets = retentionIndexMarkers.filter(_.requiredForCorrection)
 
-    assert(retentionIndexMarkers.nonEmpty, s"Method ${AcquisitionMethod.serialize(method)} doesn't have retention index targets defined! please add some.")
+    if (retentionIndexMarkers.isEmpty) {
+      throw new ProcessException(s"Method ${AcquisitionMethod.serialize(method)} doesn't have retention index targets defined! please add some.")
+    }
 
     val optimizedMatches = findCorrectionTargets(input, retentionIndexMarkers, method)
 

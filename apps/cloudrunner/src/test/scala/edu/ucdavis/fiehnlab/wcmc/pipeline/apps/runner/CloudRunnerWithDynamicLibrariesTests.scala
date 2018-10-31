@@ -15,7 +15,7 @@ import org.springframework.web.client.HttpClientErrorException
 @ActiveProfiles(Array("test", "carrot.lcms", "runner", "carrot.targets.mona"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
-  "CARROT_METHOD:jenny-tribe | null | null | positive",
+  "CARROT_METHOD:jenny-tribe | 6530 | test | positive",
   "CARROT_MODE:lcms",
   "carrot.submitter:linuxmant@gmail.com",
   "mona.rest.server.user:admin",
@@ -38,7 +38,7 @@ class CloudRunnerWithDynamicLibrariesTests extends WordSpec with ShouldMatchers 
   "a runner" should {
     "have results on aws" in {
       try {
-        val results = stasis_cli.getResults(sampleName.split('.')(0))
+        val results = stasis_cli.getResults(sampleName.split('.').head)
         logger.info(results.toString)
 
         results should not be null

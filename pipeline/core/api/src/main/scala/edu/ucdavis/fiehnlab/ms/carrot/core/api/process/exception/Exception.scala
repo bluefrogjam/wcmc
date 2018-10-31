@@ -5,3 +5,5 @@ class SampleRequiresTrackingButNotProvidedException( val message:String) extends
 
 @Deprecated
 class SampleRequiresNoTrackingButWasProvidedException( val message:String) extends Exception(message)
+
+class ProcessException(val message: String) extends Exception(message)
