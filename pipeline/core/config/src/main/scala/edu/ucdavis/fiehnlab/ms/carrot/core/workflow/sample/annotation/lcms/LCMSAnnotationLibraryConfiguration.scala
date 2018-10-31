@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
 import scala.beans.BeanProperty
 
 class LCMSAnnotationLibraryConfiguration extends LazyLogging {
+
   @BeanProperty
   @Valid
   @Size(min = 1)
@@ -34,7 +35,7 @@ class LCMSAnnotationLibraryConfiguration extends LazyLogging {
   var instrument: String = ""
 
   @BeanProperty
-  @Pattern(regexp="positive|negative")
+  @Pattern(regexp = "positive|negative")
   var ionMode: String = "positive"
 
   @BeanProperty

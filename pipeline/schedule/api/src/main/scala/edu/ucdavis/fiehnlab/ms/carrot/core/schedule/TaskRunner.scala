@@ -5,6 +5,7 @@ import java.util
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.ProcessException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
@@ -87,13 +88,16 @@ class TaskRunner extends LazyLogging {
         }
         catch {
           case e: UnsupportedSampleException =>
-            logger.warn(s"discovered a none supported sample format, ignoring it: ${x.fileName}")
+            logger.warn(s"discovered a none supported sample format, ignoring it: ${x.fileName}", e)
             null
           case e: AssertionError =>
-            logger.error(s"assertion error in sample sample '${x.fileName}' data file. skipping from process", e)
+            logger.error(s"assertion error in sample sample: ${x.fileName} data file. skipping from process", e)
             null
           case e: FileNotFoundException =>
-            logger.error(s"sorry we did not find the sample: ${x.fileName}, message was: ${e.getMessage()}")
+            logger.error(s"sorry we did not find the sample: ${x.fileName}", e)
+            null
+          case e: ProcessException =>
+            logger.error(s"The sample ${x.fileName} broke out processing", e)
             null
         }
       }.filter(x => x != null)

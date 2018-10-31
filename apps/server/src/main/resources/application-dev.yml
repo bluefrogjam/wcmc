@@ -20,12 +20,4 @@ spring:
 
 
 stasis:
-  baseurl: http://dev-api.metabolomics.us/stasis
-
-mona:
-  rest:
-    server:
-      user: admin
-      password: admin
-      host: ipa.fiehnlab.ucdavis.edu
-      port: 9090
+  baseurl: https://dev-api.metabolomics.us/stasis
