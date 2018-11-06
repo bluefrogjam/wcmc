@@ -34,7 +34,7 @@ abstract class Process[I <: Sample, O <: Sample]() extends LazyLogging {
     }
     catch {
       case e: ProcessException =>
-        stasisClient.addTracking(TrackingData(item.name, "failed", item.fileName))
+        stasisClient.addTracking(TrackingData(item.name, "failed", item.fileName, e.message))
         throw e
     }
   }

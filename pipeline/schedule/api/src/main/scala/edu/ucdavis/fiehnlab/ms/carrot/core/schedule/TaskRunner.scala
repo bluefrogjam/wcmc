@@ -14,6 +14,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
+import javax.mail.AuthenticationFailedException
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Profile
@@ -122,6 +123,7 @@ class TaskRunner extends LazyLogging {
           "carrot: your result is finished",
           None)
       } catch {
+        case e: AuthenticationFailedException => logger.warn(s"EmailService can't send email. ${e.getMessage}")
         case e: Exception =>
           logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
           val os = new ByteArrayOutputStream()

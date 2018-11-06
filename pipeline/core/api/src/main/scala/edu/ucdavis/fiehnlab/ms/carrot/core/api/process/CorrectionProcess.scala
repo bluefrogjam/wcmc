@@ -100,11 +100,16 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     */
   def verifyOrder(possibleHits: Iterable[TargetAnnotation[Target, Feature]], input: Sample): Unit = {
     possibleHits.foreach { x =>
-      logger.info(s"validating order for ${x.target.name} with ${x.target.retentionIndex} against annotation ${x.annotation.retentionTimeInSeconds}")
+      logger.info(f"validating order for ${x.target.name.get.substring(0, 15)} with ${x.target.retentionIndex}%.2f " +
+          f"against annotation ${x.annotation.retentionTimeInSeconds}%.2f " +
+          f"and intensity ${x.annotation.massOfDetectedFeature.get.intensity}%.0f")
     }
-    //brian would suggest to delete standards, which are out of order in case they are the same compound with different ionisations and come very close together
+    // brian would suggest to delete standards, which are out of order in case they are the same compound with different ionisations and come very close together
+    // brian suggests to add a small 2s window in which the order of standards doesn't matter
     if (!possibleHits.sliding(2).forall(x => x.head.annotation.retentionTimeInSeconds <= x.last.annotation.retentionTimeInSeconds)) {
-      throw new StandardsNotInOrderException(s"one or more standards in this sample  ${input.fileName} where not annotated in ascending order of their retention times! Sample was ${input.fileName}")
+      val failing = possibleHits.sliding(2).filter(x => x.head.annotation.retentionTimeInSeconds > x.last.annotation.retentionTimeInSeconds)
+      throw new StandardsNotInOrderException(s"one or more standards in sample ${input.fileName} where not annotated in ascending order of their retention times!\n" +
+          s"standards are: ${failing.flatten.mkString("\n")}")
     }
   }
 
