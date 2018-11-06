@@ -51,7 +51,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
     * and will depend on inject volume for these reasons
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:1000}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:10000}")
   val minPeakIntensity: Float = 0
 
   /**
@@ -77,6 +77,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     */
   @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:3}")
   val polynomialOrder: Int = 0
+
   /**
     * we are utilizing the setting to group close by retention targets. This is mostly required, since we can't guarantee the order
     * if markers, if they come at the same time, but have different ionization and so we rather drop them
@@ -122,7 +123,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     //     if we prefer a combination of the two
 
     val best = TargetAnnotation(standard, spectra.maxBy(x =>
-      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracySetting, rtAccuracySetting, intensityPenaltyThreshold))
+      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracyPPMSetting, rtAccuracySetting, intensityPenaltyThreshold))
     )
 
     best
@@ -209,13 +210,13 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
           }
           //otherwise let's find the best hit
           else {
-            logger.debug(s"\t=>\t${result.size} hits found for this standard")
+            logger.info(s"\t=>\t${result.size} hits found for this standard")
             findBestHit(target, result)
           }
       }.collect {
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[Target, Feature] =>
-          logger.info(s"annotated: ${hit.target.name.getOrElse("Unknown")} => ${hit.target.retentionIndex}s ${hit.target.precursorMass.getOrElse(0)}Da with ${hit.annotation.retentionTimeInSeconds}s ${hit.annotation.massOfDetectedFeature.get.mass}Da")
+          logger.info(f"annotated: ${hit.target.name.getOrElse("Unknown")} => ${hit.target.retentionIndex}%.2fs ${hit.target.precursorMass.getOrElse(0.0)}%.4fDa with ${hit.annotation.retentionTimeInSeconds}%.2fs ${hit.annotation.massOfDetectedFeature.get.mass}%.4fDa")
           hit
       }.seq
 

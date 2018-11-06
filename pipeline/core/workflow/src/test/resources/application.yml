@@ -5,17 +5,6 @@ carrot:
         password: c258083
         host: venus.fiehnlab.ucdavis.edu
 
-workflow:
-  correction:
-    massAccuracy: 150
-
-
-wcmc:
-  api:
-    rest:
-      msdialrest4j:
-        host: luna.fiehnlab.ucdavis.edu
-        port: 8080
 
 mona:
   rest:

@@ -10,12 +10,15 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager, TestPropertySource}
 import org.springframework.web.client.HttpClientErrorException
 
+/**
+  * Created by diego on 11/6/2018
+  **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "runner", "keim"))
+@ActiveProfiles(Array("test", "carrot.lcms", "runner", "jenny"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
-  "CARROT_METHOD:keim | 6550 | test | negative",
+  "CARROT_METHOD:jenny-tribe | 6530 | test | positive",
   "CARROT_MODE:lcms",
   "carrot.submitter:linuxmant@gmail.com"
 ))
