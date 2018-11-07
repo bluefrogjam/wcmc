@@ -134,7 +134,6 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     */
   def doCorrection(possibleHits: Iterable[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample, tracking: Boolean = true): CorrectedSample = {
 
-
     //make sure they are in numerical order
     verifyOrder(possibleHits, sampleUsedForCorrection)
 
