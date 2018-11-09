@@ -51,7 +51,6 @@ class Workflow[T] extends LazyLogging {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PreProcessingBeginEvent(sample)))
     val result = preProcessSample(sample, acquisitionMethod)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PreProcessingFinishedEvent(result)))
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(MemoryMonitorEvent(result, Some("preprocessing"))))
     result
   }
 
@@ -59,7 +58,6 @@ class Workflow[T] extends LazyLogging {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingBeginEvent(sample)))
     val result = postProcessSample(sample, acquisitionMethod, rawSample)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingFinishedEvent(result)))
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(MemoryMonitorEvent(result, Some("postprocessing"))))
     result
   }
 
@@ -78,7 +76,6 @@ class Workflow[T] extends LazyLogging {
     }
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(CorrectionFinishedEvent(result)))
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(MemoryMonitorEvent(result, Some("correction"))))
     result
   }
 
@@ -89,7 +86,6 @@ class Workflow[T] extends LazyLogging {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(AnnotationBeginEvent(sample)))
     val result = annotateSample(sample, acquisitionMethod)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(AnnotationFinishedEvent(result)))
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(MemoryMonitorEvent(result, Some("annotation"))))
     result
   }
 
@@ -103,7 +99,6 @@ class Workflow[T] extends LazyLogging {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationBeginEvent(sample)))
     val result = quantifySample(sample, acquisitionMethod)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationFinishedEvent(result)))
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(MemoryMonitorEvent(result, Some("quantification"))))
     result
   }
 
@@ -114,7 +109,6 @@ class Workflow[T] extends LazyLogging {
     * @return
     */
   final def process(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample] = None): Sample = {
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(MemoryMonitorEvent(sample, Some("workflow - start"))))
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(sample)))
 
     val quantified = quantify(
@@ -130,7 +124,6 @@ class Workflow[T] extends LazyLogging {
     val result = postProcessing(quantified, acquisitionMethod, rawSample)
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessFinishedEvent(sample)))
-    eventListeners.asScala.foreach(eventListener => eventListener.handle(MemoryMonitorEvent(result, Some("workflow - end"))))
     result
   }
 
