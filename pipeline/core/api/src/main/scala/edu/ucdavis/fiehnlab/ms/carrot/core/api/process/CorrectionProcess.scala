@@ -6,8 +6,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
@@ -100,11 +100,21 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     */
   def verifyOrder(possibleHits: Iterable[TargetAnnotation[Target, Feature]], input: Sample): Unit = {
     possibleHits.foreach { x =>
-      logger.info(s"validating order for ${x.target.name} with ${x.target.retentionIndex} against annotation ${x.annotation.retentionTimeInSeconds}")
+      logger.info(f"validating order for ${x.target.name.get.substring(0, 15)} with ${x.target.retentionIndex}%.2f " +
+          f"against annotation ${x.annotation.retentionTimeInSeconds}%.2f " +
+          f"and intensity ${x.annotation.massOfDetectedFeature.getOrElse(Ion(0,0)).intensity}%.0f")
     }
-    //brian would suggest to delete standards, which are out of order in case they are the same compound with different ionisations and come very close together
-    if (!possibleHits.sliding(2).forall(x => x.head.annotation.retentionTimeInSeconds <= x.last.annotation.retentionTimeInSeconds)) {
-      throw new StandardsNotInOrderException(s"one or more standards in this sample  ${input.fileName} where not annotated in ascending order of their retention times! Sample was ${input.fileName}")
+    // brian would suggest to delete standards, which are out of order in case they are the same compound with different ionisations and come very close together
+    // brian suggests to add a small 2s window in which the order of standards doesn't matter
+
+    if (!possibleHits.sliding(2).forall(x => {
+      if(x.head.target.inchiKey != x.last.target.inchiKey) {  // this prevents adducts from failing the check
+        x.head.annotation.retentionTimeInSeconds <= x.last.annotation.retentionTimeInSeconds
+      } else {
+        true
+      }
+    })) {
+      throw new StandardsNotInOrderException(s"one or more standards in sample ${input.fileName} where not annotated in ascending order of their retention times!")
     }
   }
 
@@ -127,8 +137,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     * @param regression
     * @return
     */
-  def doCorrection(possibleHits: Iterable[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample): CorrectedSample = {
-
+  def doCorrection(possibleHits: Iterable[TargetAnnotation[Target, Feature]], sampleToCorrect: Sample, regression: Regression, sampleUsedForCorrection: Sample, tracking: Boolean = true): CorrectedSample = {
 
     //make sure they are in numerical order
     verifyOrder(possibleHits, sampleUsedForCorrection)
@@ -172,7 +181,8 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     }
 
     // update stasis tracking data
-    stasisClient.addTracking(TrackingData(correctedSample.name, "corrected", correctedSample.fileName))
+    if (tracking)
+      stasisClient.addTracking(TrackingData(correctedSample.name, "corrected", correctedSample.fileName))
 
     correctedSample
   }

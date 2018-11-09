@@ -19,7 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms", "test"))
+@ActiveProfiles(Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test"))
 class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   @Autowired
@@ -40,10 +40,10 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
             override val ionMode: Option[IonMode] = None
             override val purity: Option[Double] = None
             override val sample: String = null
-            override val retentionTimeInSeconds: Double = 337.6080017089844
-            override val scanNumber: Int = -1
+          override val retentionTimeInSeconds: Double = 337.61
+          override val scanNumber: Int = 1
             override val associatedScan: Option[SpectrumProperties] = None
-            override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8283293189685, 100))
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8248, 5500))
             override val signalNoise: Option[Double] = None
             override val uniqueMass: Option[Double] = None
         }
@@ -51,10 +51,10 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
             override val ionMode: Option[IonMode] = None
             override val purity: Option[Double] = None
             override val sample: String = null
-            override val retentionTimeInSeconds: Double = 307.7190246582031
-            override val scanNumber: Int = -1
+          override val retentionTimeInSeconds: Double = 307.76
+          override val scanNumber: Int = 2
             override val associatedScan: Option[SpectrumProperties] = None
-            override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8284506827555, 100))
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8353, 4500))
             override val signalNoise: Option[Double] = None
             override val uniqueMass: Option[Double] = None
         }
@@ -62,10 +62,10 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
             override val ionMode: Option[IonMode] = None
             override val purity: Option[Double] = None
             override val sample: String = null
-            override val retentionTimeInSeconds: Double = 653.9290161132812
-            override val scanNumber: Int = -1
+          override val retentionTimeInSeconds: Double = 653.92
+          override val scanNumber: Int = 3
             override val associatedScan: Option[SpectrumProperties] = None
-            override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8420100089353, 100))
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8311, 6500))
             override val signalNoise: Option[Double] = None
             override val uniqueMass: Option[Double] = None
         }
@@ -73,10 +73,10 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
             override val ionMode: Option[IonMode] = None
             override val purity: Option[Double] = None
             override val sample: String = null
-            override val retentionTimeInSeconds: Double = 658.9100341796875
-            override val scanNumber: Int = -1
+          override val retentionTimeInSeconds: Double = 658.91
+          override val scanNumber: Int = 4
             override val associatedScan: Option[SpectrumProperties] = None
-            override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8254281944745, 100))
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8605, 6000))
             override val signalNoise: Option[Double] = None
             override val uniqueMass: Option[Double] = None
         }
@@ -85,10 +85,10 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
             override val ionMode: Option[IonMode] = None
             override val purity: Option[Double] = None
             override val sample: String = null
-            override val retentionTimeInSeconds: Double = 666.8800048828125
-            override val scanNumber: Int = -1
+          override val retentionTimeInSeconds: Double = 666.88
+          override val scanNumber: Int = 10
             override val associatedScan: Option[SpectrumProperties] = None
-            override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8318244279354, 100))
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8346, 13000))
             override val signalNoise: Option[Double] = None
             override val uniqueMass: Option[Double] = None
 
@@ -116,9 +116,9 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
         override val purity: Option[Double] = None
         override val sample: String = null
         override val retentionTimeInSeconds: Double = 612.0850219726562
-        override val scanNumber: Int = -1
+        override val scanNumber: Int = 1
         override val associatedScan: Option[SpectrumProperties] = None
-        override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.7783727260261, 100))
+        override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.7777, 100000))
         override val signalNoise: Option[Double] = None
         override val uniqueMass: Option[Double] = None
       }
@@ -127,9 +127,9 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
         override val purity: Option[Double] = None
         override val sample: String = null
         override val retentionTimeInSeconds: Double = 653.9290161132812
-        override val scanNumber: Int = -1
+        override val scanNumber: Int = 2
         override val associatedScan: Option[SpectrumProperties] = None
-        override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.7933894961609, 100))
+        override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.7889, 8550))
         override val signalNoise: Option[Double] = None
         override val uniqueMass: Option[Double] = None
       }
@@ -139,9 +139,9 @@ class Weiss66RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyL
         override val purity: Option[Double] = None
         override val sample: String = null
         override val retentionTimeInSeconds: Double = 667.3779907226562
-        override val scanNumber: Int = -1
+        override val scanNumber: Int = 10
         override val associatedScan: Option[SpectrumProperties] = None
-        override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.789048438798, 100))
+        override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.7910, 17000))
         override val signalNoise: Option[Double] = None
         override val uniqueMass: Option[Double] = None
       }

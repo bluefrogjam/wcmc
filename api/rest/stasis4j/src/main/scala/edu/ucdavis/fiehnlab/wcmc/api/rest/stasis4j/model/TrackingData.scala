@@ -5,7 +5,8 @@ import java.util.Date
 case class TrackingData(
                            sample: String,
                            status: String,
-                           fileHandle: String
+                           fileHandle: String,
+                           message: String = null
                        )
 
 case class TrackingResponse(

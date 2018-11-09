@@ -3,10 +3,11 @@ import os
 import pandas as pd
 import re
 import requests
+import time
 
 AVG_BR_ = 'AVG (br)'
 
-RSD_SA_ = '% RSD (sa)'
+# RSD_SA_ = '% RSD (sa)'
 RSD_BR_ = '% RSD (br)'
 
 stasis_url = "https://api.metabolomics.us/stasis"
@@ -19,7 +20,7 @@ def getExperimentFiles(experiment) -> [str]:
     :param experiment: name of experiment for which to get the list of files
     :return: dictionary with results or {error: msg}
     """
-    print("\tGetting experiment files")
+    print(f'{time.strftime("%H:%M:%S")} - Getting experiment files')
     response = requests.get(stasis_url + '/experiment/' + experiment)
 
     files = []
@@ -35,7 +36,7 @@ def getSampleTracking(filename):
     :param filename: name of file to get tracking info from
     :return: dictionary with tracking or {error: msg}
     """
-    print("\tGetting filename status")
+    print(f'{time.strftime("%H:%M:%S")} - Getting filename status')
     response = requests.get(stasis_url + "/tracking/" + filename)
 
     if response.status_code == 200:
@@ -53,7 +54,7 @@ def getFileResults(filename):
 
     if filename[-5:] == '.mzml': filename = filename[:-5]
 
-    print(f"\tGetting results for file '{filename}'")
+    print(f'{time.strftime("%H:%M:%S")} - Getting results for file \'{filename}\'')
     response = requests.get(stasis_url + "/result/" + filename)
 
     if response.status_code == 200:
@@ -93,13 +94,13 @@ def format_metadata(data):
     names2 = [name.rsplit('_', maxsplit=1)[0] if pattern.match(name) else name for name in names]
 
     metadata = pd.DataFrame({'name': names2, 'ri(s)': rts, 'mz': masses, 'inchikey': inchikeys,
-                             'delta': pd.np.nan, AVG_BR_: pd.np.nan, RSD_BR_: pd.np.nan, RSD_SA_: pd.np.nan})
+                             'delta': pd.np.nan, AVG_BR_: pd.np.nan, RSD_BR_: pd.np.nan})
     return metadata
 
 
 def export_excel(intensity, mass, rt, curve, args):
     # saving excel file
-    print("Exporting excel file")
+    print(f'{time.strftime("%H:%M:%S")} - Exporting excel file')
     file, ext = os.path.splitext(args.input)
     output_name = f'{file}_results.xlsx'
 
@@ -119,7 +120,7 @@ def export_excel(intensity, mass, rt, curve, args):
 
 
 def calculate_delta(intensity, mass, rt):
-    print('Calculating ranges for intensity, mass and RT (ignoring missing results)')
+    print(f'{time.strftime("%H:%M:%S")} - Calculating ranges for intensity, mass and RT (ignoring missing results)')
 
     for i in range(len(intensity)):
         intensity.loc[i, 'delta'] = intensity.iloc[i, 4:].max() - intensity.iloc[i, 4:].min()
@@ -128,7 +129,8 @@ def calculate_delta(intensity, mass, rt):
 
 
 def calculate_average(intensity, mass, rt, biorecs):
-    print('Calculating average of biorecs for intensity, mass and RT (ignoring missing results)')
+    print(
+        f'{time.strftime("%H:%M:%S")} - Calculating average of biorecs for intensity, mass and RT (ignoring missing results)')
 
     for i in range(len(intensity)):
         intensity.loc[i, AVG_BR_] = intensity.loc[i, biorecs].mean()
@@ -137,7 +139,8 @@ def calculate_average(intensity, mass, rt, biorecs):
 
 
 def calculate_rsd(intensity, mass, rt, biorecs):
-    print('Calculating %RDS of biorecs for intensity, mass and RT (ignoring missing results)')
+    print(
+        f'{time.strftime("%H:%M:%S")} - Calculating %RDS of biorecs for intensity, mass and RT (ignoring missing results)')
     size = range(len(intensity))
     numpy.seterr(invalid='log')
 
@@ -145,7 +148,7 @@ def calculate_rsd(intensity, mass, rt, biorecs):
         try:
             intensity.loc[i, RSD_BR_] = (intensity.loc[i, biorecs].std() / intensity.loc[i, biorecs].mean()) * 100
         except Exception as e:
-            print(f'\tCan\'t calculate % RSD for target {intensity.loc[i, "name"]}.'
+            print(f'{time.strftime("%H:%M:%S")} - Can\'t calculate % RSD for target {intensity.loc[i, "name"]}.'
                   f' Sum of intensities = {intensity.loc[i, biorecs].sum()}')
         mass.loc[i, RSD_BR_] = (mass.loc[i, biorecs].std() / mass.loc[i, biorecs].mean()) * 100
         rt.loc[i, RSD_BR_] = (rt.loc[i, biorecs].std() / rt.loc[i, biorecs].mean()) * 100
@@ -177,6 +180,7 @@ def aggregate(args):
     # creating target section
     first_data = ""
     for file in files:
+        if file in ['samples']: continue
         first_data = getFileResults(file)
         if 'error' not in first_data: break
 
@@ -188,6 +192,7 @@ def aggregate(args):
     # adding intensity matrix
     for chunk in chunker(files, 1000):
         for file in chunk:
+            if file in ['samples']: continue
             data = getFileResults(file)
             if 'error' not in data:
                 formatted = format_sample(data)

@@ -79,7 +79,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
 
     if (rawdata.isDefined) {
       //      logger.info(s"replacing data with: ${rawdata.get.name}")
-      val correctedRawData: CorrectedSample = correction.doCorrection(sample.featuresUsedForCorrection, rawdata.get, sample.regressionCurve, sample)
+      val correctedRawData: CorrectedSample = correction.doCorrection(sample.featuresUsedForCorrection, rawdata.get, sample.regressionCurve, sample, tracking = false)
 
       logger.info(s"corrected data for: ${correctedRawData.name}")
 
@@ -90,7 +90,6 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
         else {
           try {
             val replaced = replaceValue(target, sample, correctedRawData)
-            stasisClient.addTracking(TrackingData(sample.name, "replaced", sample.fileName))
             replaced
           }
           catch {

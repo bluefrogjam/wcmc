@@ -126,4 +126,10 @@ trait AnnotationTarget extends Target
 /**
   * this defines an annotation for a target
   */
-case class TargetAnnotation[T <: Target, A <: Feature](target: T, annotation: A)
+case class TargetAnnotation[T <: Target, A <: Feature](target: T, annotation: A) {
+  override def toString: String = {
+    f"${target.name.getOrElse("Unknown")} (${target.precursorMass.getOrElse(-1.0)}%.4f @ ${target.retentionIndex}%.2f <==> " +
+        f"(${annotation.massOfDetectedFeature.getOrElse(Ion(-1,0)).mass}%.4f @ ${annotation.retentionTimeInSeconds}%.2f) : " +
+        f"${annotation.massOfDetectedFeature.getOrElse(Ion(-1,0)).intensity}%.0f"
+  }
+}
