@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
 import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
