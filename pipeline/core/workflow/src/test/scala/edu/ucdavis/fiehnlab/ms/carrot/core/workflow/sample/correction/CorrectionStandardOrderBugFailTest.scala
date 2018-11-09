@@ -43,11 +43,11 @@ class CorrectionStandardOrderBugFailTest extends WordSpec with ShouldMatchers wi
     val sample = loader.getSample("FL95-032_Wk1_B4_posCSH_Keim_2.mzml")
     val method = AcquisitionMethod(ChromatographicMethod("keim", Some("6550"), Some("test"), Some(NegativeMode())))
 
-    "have minPeakIntensity of 5000" in {
+    "have minPeakIntensity of 5000" ignore {
       correction.minPeakIntensity shouldBe 5000
     }
 
-    "should succeed with high intensity setting for standard" in {
+    "should succeed with high intensity setting for standard" ignore {
       intercept[StandardsNotInOrderException] {
         val corrected = correction.process(deco.process(sample, method), method)
         corrected.featuresUsedForCorrection.size should be >= correction.minimumFoundStandards

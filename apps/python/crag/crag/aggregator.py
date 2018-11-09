@@ -180,6 +180,7 @@ def aggregate(args):
     # creating target section
     first_data = ""
     for file in files:
+        if file in ['samples']: continue
         first_data = getFileResults(file)
         if 'error' not in first_data: break
 
@@ -191,6 +192,7 @@ def aggregate(args):
     # adding intensity matrix
     for chunk in chunker(files, 1000):
         for file in chunk:
+            if file in ['samples']: continue
             data = getFileResults(file)
             if 'error' not in data:
                 formatted = format_sample(data)
