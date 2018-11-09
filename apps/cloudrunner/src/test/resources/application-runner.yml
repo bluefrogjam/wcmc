@@ -17,3 +17,7 @@ wcmc:
         correction:
           peak:
             intensity: 10000
+
+logging:
+  level:
+    root: INFO

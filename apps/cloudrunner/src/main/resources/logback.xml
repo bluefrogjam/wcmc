@@ -10,7 +10,7 @@
         </filter>
     </appender>
 
-    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.db.mona" level="debug"/>
+    <logger name="ch.qos.logback" level="error"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
