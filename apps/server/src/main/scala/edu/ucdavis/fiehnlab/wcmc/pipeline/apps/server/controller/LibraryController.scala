@@ -26,19 +26,27 @@ class LibraryController extends LazyLogging {
   @Autowired
   val libraryAccess: MergeLibraryAccess = null
 
+  /**
+    * Lists all acquisition methods
+    *
+    * @return a Seq[AcquisitionMethod]
+    */
   @RequestMapping(value = Array(""), method = Array(RequestMethod.GET))
   def listLibraries(): Seq[AcquisitionMethod] = {
     libraryAccess.libraries
   }
 
   /**
-    * this adds a new target to the specified library
+    * adds a new target to the specified AcquisitionMethod
+    *
+    * @param target the target [AddTarget] to be added
+    * @return the added target [Target] or a 409 (CONFLICT) response
     */
   @RequestMapping(value = Array(""), method = Array(RequestMethod.POST))
   def addTarget(@RequestBody target: AddTarget): Target = {
+    logger.info(s"Adding new target: ${target}")
     val t = target.buildTarget
     val method = target.buildMethod
-    logger.debug(s"Adding new target: ${t}")
 
     val hasExistings = try {
       libraryAccess.load(method).filter(_.equals(t))
@@ -49,11 +57,11 @@ class LibraryController extends LazyLogging {
     }
 
     if (hasExistings.isEmpty) {
+      logger.debug("\tnew target: ${t.toString}")
       libraryAccess.add(t, method, None)
-      logger.debug(t.toString)
       t
     } else {
-      logger.debug("Target exists, skipping.")
+      logger.debug("\ttarget exists, skipping.")
       throw new ResourceAlreadyExistException(s"Target ${t.name} already in the library")
     }
   }
@@ -61,7 +69,8 @@ class LibraryController extends LazyLogging {
   /**
     * updates a given target
     *
-    * @param target
+    * @param target the updated target [TargetExtended]
+    * @return the updated target or a 404 (NOT_FOUND) response
     */
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.PUT))
   def updateTarget(@PathVariable("library") id: String, @RequestBody target: TargetExtended): Target = {
@@ -80,6 +89,12 @@ class LibraryController extends LazyLogging {
 
   }
 
+  /**
+    * Lists all targets in a specific AcquisitionMethod
+    *
+    * @param id the name of the AcquisitionMethod
+    * @return a Seq[Target]
+    */
   @RequestMapping(value = Array("{library}"), method = Array(RequestMethod.GET))
   def listTargets(@PathVariable("library") id: String): Iterable[Target] = {
 
@@ -96,6 +111,11 @@ class LibraryController extends LazyLogging {
     }
   }
 
+  /**
+    * deletes the specified AcquisitionMethod
+    *
+    * @param library the name of the AcquisitionMethod to delete
+    */
   @RequestMapping(value = Array("deleteLibrary/{library}"), method = Array(RequestMethod.DELETE))
   def deleteLibrary(@PathVariable("library") library: String): Unit = {
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
@@ -107,8 +127,15 @@ class LibraryController extends LazyLogging {
     }
   }
 
+  /**
+    * deletes a target from an AcquisitionMethod
+    *
+    * @param library the name of the AcquisitionMethod to be modified
+    * @param target  the name of the target to delete
+    */
   @RequestMapping(value = Array("deleteTarget/{library}/{target}"), method = Array(RequestMethod.DELETE))
   def deleteTarget(@PathVariable("library") library: String, @PathVariable("target") target: String): Unit = {
+    logger.info(s"Deleting target: ${target} from library: ${library}")
     var acquisitionMethod = libraryAccess.libraries.collectFirst {
       case x: AcquisitionMethod if x.chromatographicMethod.name == library => x
     }
@@ -198,12 +225,9 @@ case class AddTarget(targetName: String, precursor: Double, retentionTime: Doubl
       case _ => NegativeMode()
     }
 
-    val instrument: String = target.instrument
-    val column: String = target.column
-
     AcquisitionMethod(
       ChromatographicMethod(
-        name = target.library, Some(instrument), Some(column), ionMode = Some(ionMode)
+        name = target.library, Some(target.instrument), Some(target.column), ionMode = Some(ionMode)
       )
     )
   }

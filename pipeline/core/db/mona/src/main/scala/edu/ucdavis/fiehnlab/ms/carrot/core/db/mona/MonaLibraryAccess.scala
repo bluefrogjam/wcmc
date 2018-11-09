@@ -590,7 +590,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging
 
   @CacheEvict(value = Array("monacache"), allEntries = true)
   override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
-    logger.info(s"about to delete library ${acquisitionMethod.chromatographicMethod.name}")
+    logger.info(s"about to delete library ${acquisitionMethod}")
 
     load(acquisitionMethod).foreach(t => delete(t, acquisitionMethod))
   }
