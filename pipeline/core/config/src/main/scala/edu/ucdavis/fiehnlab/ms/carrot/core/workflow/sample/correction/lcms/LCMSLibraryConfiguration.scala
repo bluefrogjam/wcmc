@@ -37,15 +37,11 @@ class LCMSLibraryConfiguration extends LazyLogging {
   @Pattern(regexp = "positive|negative")
   var ionMode: String = "positive"
 
-  /**
-    * how high do peaks have to be to be considered as targets
-    * for RI correction
-    */
   @BeanProperty
   var minimumPeakIntensity: Float = 0f
 
   @PostConstruct
-  def postInit() = {
-    logger.info(s" === creating correction library ${name} (${targets.size()} targets)=== ")
+  def postInit(): Unit = {
+    logger.info(s" === creating correction library ${name} (${targets.size()} targets) === ")
   }
 }

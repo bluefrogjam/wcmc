@@ -12,14 +12,14 @@ import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "runner"))
+@ActiveProfiles(Array("test", "carrot.lcms", "runner", "keim"))
 @TestPropertySource(properties = Array(
-  "CARROT_SAMPLE:B5_P20Lipids_Pos_NIST01.mzML",
-  "CARROT_METHOD:lcms_istds | test | test | positive",
+  "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
+  "CARROT_METHOD:keim | 6550 | test | negative",
   "CARROT_MODE:lcms",
-  "carrot.submitter:dpedrosa@ucdavis.edu"
+  "carrot.submitter:linuxmant@gmail.com"
 ))
-class RunnerLCMSTest extends WordSpec with ShouldMatchers with LazyLogging {
+class CloudRunnerWithOverridenLibrariesTests extends WordSpec with ShouldMatchers with LazyLogging {
   @Value("${carrot.sample:#{environment.CARROT_SAMPLE}}")
   val sampleName = ""
 
@@ -32,13 +32,13 @@ class RunnerLCMSTest extends WordSpec with ShouldMatchers with LazyLogging {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a runner" should {
-    "have a stasis client" in {
-      stasis_cli should not be null
-    }
 
     "have results on aws" in {
       try {
-        stasis_cli.getResults(sampleName.split('.')(0)) should not be null
+        val results = stasis_cli.getResults(sampleName.split('.')(0))
+        logger.info(results.toString)
+
+        results should not be null
       } catch {
         case ex: HttpClientErrorException =>
           fail(ex)

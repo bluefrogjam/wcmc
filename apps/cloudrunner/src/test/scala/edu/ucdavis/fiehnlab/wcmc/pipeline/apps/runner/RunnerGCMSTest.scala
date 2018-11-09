@@ -11,7 +11,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.binbase", "carrot.output.storage.aws", "test", "file.source.eclipse"))
+@ActiveProfiles(Array("test", "carrot.binbase", "runner"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:180501dngsa32_1.txt",
   "CARROT_METHOD:Gerstel | LECO-GC-TOF | rtx5recal | positive",
@@ -30,9 +30,6 @@ class RunnerGCMSTest extends WordSpec with ShouldMatchers with LazyLogging {
 
   " a runner" should {
     "load the required sample and" must {
-      "process it" in {
-        runner.run()
-      }
 
       "have results on aws" ignore {
         stasis_cli.getResults("180501dngsa32_1") should not be null

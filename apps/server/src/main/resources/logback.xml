@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!--<include resource="org/springframework/boot/logging/logback/base.xml"/>-->
-
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>%date{HH:mm:ss.SSS} - %-5level [%C{0}] : %m%n%ex{short}</Pattern>
@@ -12,20 +10,8 @@
         </filter>
     </appender>
 
-    <!-- populates the database in the backend with content -->
-    <!--<logger name="edu.ucdavis.fiehnlab.wcmc.api.rest" level="off" />-->
-    <!--<logger name="edu.ucdavis.fiehnlab.wcmc.server.fserv" level="off" />-->
-    <!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.schedule" level="off" />-->
-    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.msdial" level="debug" />
-    <logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow" level="debug" />
-
-
-    <!-- uncomment to see caching operations -->
-    <!--<logger name="org.springframework.cache" level="trace"/>-->
-
 	<root level="info">
         <appender-ref ref="STDOUT"/>
-        <!--<appender-ref ref="JSON"/>-->
     </root>
 
 </configuration>
