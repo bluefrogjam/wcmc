@@ -171,6 +171,10 @@ def aggregate(args):
     # files = getExperimentFiles(args.experiment)
     # print(files)
 
+    if not os.path.isfile(args.input):
+        print(f'Can\'t find the file {args.input}')
+        exit(-1)
+
     with open(args.input) as processed:
         files = [p.strip() for p in processed.readlines() if p]
 

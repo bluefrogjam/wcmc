@@ -18,5 +18,5 @@ trait StasisService {
 
   def deleteTracking(sample: String): HttpEntity[String]
 
-  def schedule(sample: String, method: String, mode: String, env: String): HttpEntity[String]
+  def schedule(sample: String, method: String, mode: String, env: String): HttpEntity[ScheduleData]
 }
