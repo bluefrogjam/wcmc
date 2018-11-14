@@ -57,6 +57,6 @@ class StasisClient extends StasisService with LazyLogging {
 
   override def deleteTracking(sample: String): HttpEntity[String] = restTemplate.execute[ResponseEntity[String]](s"${baseUrl}/${trackingPath}/${sample}", HttpMethod.DELETE, null, null)
 
-  override def schedule(sample: String, method: String, mode: String, env: String): ResponseEntity[String] = restTemplate.postForEntity(s"${baseUrl}/schedule", ScheduleData(sample, method, mode, env, "3"), classOf[String])
+  override def schedule(sample: String, method: String, mode: String, env: String): ResponseEntity[ScheduleData] = restTemplate.postForEntity(s"${baseUrl}/schedule", ScheduleData(sample, method, mode, env, "86"), classOf[ScheduleData])
 
 }

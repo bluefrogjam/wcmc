@@ -1,0 +1,5 @@
+logging:
+  level:
+    org.hibernate: info
+    org.springframework: info
+    org.springframework.web.client.RestTemplate: DEBUG
