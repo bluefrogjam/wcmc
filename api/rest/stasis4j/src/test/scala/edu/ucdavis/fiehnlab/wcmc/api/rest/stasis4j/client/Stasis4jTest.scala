@@ -98,6 +98,7 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging with Ev
 
       "and then schedule it" in {
         val res2 = client.schedule(name, "lcms super method", "lcms", "test")
+        logger.info(s"RESPONSE: ${res2}")
         res2.getStatusCode should be(HttpStatus.OK)
       }
     }
@@ -168,6 +169,7 @@ class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging with Ev
 
     "schedule a sample" in {
       val res2 = client.schedule("B5_P20Lipid_Pos_NIST001.mzml", "lcms_istds | test | test | positive", "carrot.lcms", "test")
+      logger.info(s"RESPONSE: ${res2}")
       res2.getStatusCode should be(HttpStatus.OK)
     }
 
