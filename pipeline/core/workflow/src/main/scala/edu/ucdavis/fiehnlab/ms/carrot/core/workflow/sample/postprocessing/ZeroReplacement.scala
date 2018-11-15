@@ -152,7 +152,7 @@ class ZeroReplacementProperties {
   /**
     * utilized mass accuracy for searches
     */
-  var massAccuracy: Double = 0.005
+  var massAccuracyInDa: Double = 0.1
 
   /**
     * extension of our rawdata files, to be used for replacement
@@ -180,7 +180,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
   override def replaceValue(needsReplacement: QuantifiedTarget[Double], quantSample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
     val receivedTarget = needsReplacement
 
-    val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracy, "replacement") with JSONSampleLogging {
+    val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracyInDa, "replacement") with JSONSampleLogging {
       /**
         * which sample we require to log
         */
