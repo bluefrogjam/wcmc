@@ -3,7 +3,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,8 +32,11 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
             case x: Double => x.toDouble
             case _ => 0.0
           },
-          //TODO I know this is bad, BUT it WORKS!!!
-          replaced = feature.getClass.getTypeName.contains("ZeroreplacedTarget") || feature.getClass.getTypeName.contains("GapFilledTarget"),
+          replaced = feature match {
+            case rep: ZeroreplacedTarget => true
+            case rep: GapFilledTarget[Any] => true
+            case _ => false
+          },
           feature.accurateMass.getOrElse(0.0),
           nonCorrectedRt = feature.retentionTimeInSeconds,
           feature.massAccuracy.getOrElse(0),
