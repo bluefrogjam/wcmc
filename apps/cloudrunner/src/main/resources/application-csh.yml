@@ -2,11 +2,11 @@ carrot:
   lcms:
     correction:
       config:
-        - name: jenny-tribe
+        - name: csh
           description: ''
           column: test
           ionMode: positive
-          instrument: '6530'
+          instrument: '6550'
           minimumPeakIntensity: 10000
           targets:
             - identifier: 1_CE(22:1) iSTD [M+Chol-head-H2O+H]+_SQHUGNAFKZZXOT-JWTURFAQSA-N
@@ -184,7 +184,7 @@ carrot:
               isInternalStandard: true
               requiredForCorrection: false
               confirmed: true
-        - name: jenny-tribe
+        - name: csh
           description: ''
           column: test
           ionMode: negative
@@ -270,12 +270,12 @@ carrot:
               confirmed: true
     annotation:
       config:
-        - name: jenny-tribe
+        - name: csh
           description: ''
           column: test
           ionMode: positive
-          instrument: '6530'
-          minimumPeakIntensity: 5000
+          instrument: '6550'
+          minimumPeakIntensity: 10000
           targets:
             - identifier: AC(10:0) [M+H]+_LZOSYCMHQXPBFU-UHFFFAOYSA-N
               accurateMass: 316.2484
@@ -6850,12 +6850,12 @@ carrot:
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-        - name: jenny-tribe
+        - name: csh
           description: ''
           column: test
           ionMode: negative
           instrument: '6550'
-          minimumPeakIntensity: 5000
+          minimumPeakIntensity: 10000
           targets:
             - identifier: Ceramide (d32:1) [M+Cl]-_ZKRPGPZHULJLKJ-JHRQRACZSA-N
               accurateMass: 544.4506
@@ -7389,16 +7389,842 @@ carrot:
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: FAHFA 19:0FAHFA 16:0/3:0[M-H]-
-              accurateMass: 327.2542
-              retentionTime: 1.3
+            - identifier: FAHFA (26:0); FAHFA (10:0/O-16:0) [M-H]-_RGCPDSZBORVAGI-UHFFFAOYNA-N
+              accurateMass: 425.3636135
+              retentionTime: 3.61
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: FAHFA 21:0FAHFA 18:0/3:0[M-H]-
-              accurateMass: 355.2857
-              retentionTime: 2.0
+            - identifier: FAHFA (26:0); FAHFA (16:0/O-10:0) [M-H]-_LHZYTJUUOMBIQG-UHFFFAOYNA-N
+              accurateMass: 425.3636135
+              retentionTime: 3.76
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (26:0); FAHFA (18:0/O-8:0) [M-H]-_YOXGIKRSLFDOKO-UHFFFAOYNA-N
+              accurateMass: 425.3636135
+              retentionTime: 3.86
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (26:1); FAHFA (10:0/O-16:1) [M-H]-_OEWNBKKAVIHVAI-SILNSSARNA-N
+              accurateMass: 423.3479635
+              retentionTime: 3.52
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (26:1); FAHFA (18:1/O-8:0) [M-H]-_LUCUQGUIQKKPRA-QXMHVHEDNA-N
+              accurateMass: 423.3479635
+              retentionTime: 3.43
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (26:2); FAHFA (18:2/O-8:0) [M-H]-_LUEFUWMHWFDLAB-MURFETPANA-N
+              accurateMass: 421.3323135
+              retentionTime: 3.08
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:0); FAHFA (12:0/O-16:0) [M-H]-_XYJRGHPUHMUHHQ-UHFFFAOYNA-N
+              accurateMass: 453.3949135
+              retentionTime: 4.11
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:0); FAHFA (18:0/O-10:0) [M-H]-_KYPLIWHOWPRWDJ-UHFFFAOYNA-N
+              accurateMass: 453.3949135
+              retentionTime: 4.3
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:1); FAHFA (10:0/O-18:1) [M-H]-_YEJRCXOPFSQTTR-PYCFMQQDNA-N
+              accurateMass: 451.3792635
+              retentionTime: 3.89
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:1); FAHFA (12:0/O-16:1) [M-H]-_SPWDTRVTUQBJBZ-PYCFMQQDNA-N
+              accurateMass: 451.3792635
+              retentionTime: 3.96
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:1); FAHFA (14:0/O-14:1) [M-H]-_YFFLAYGEWDNZHE-PYCFMQQDNA-N
+              accurateMass: 451.3792635
+              retentionTime: 4.19
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:1); FAHFA (18:1/O-10:0) [M-H]-
+              accurateMass: 451.3792635
+              retentionTime: 3.82
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:2); FAHFA (12:0/O-16:2) [M-H]-_BOSXMOBACDBXLK-MAZHIMKJNA-N
+              accurateMass: 449.3636135
+              retentionTime: 3.72
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:2); FAHFA (18:2/O-10:0) [M-H]-_GQCNNOXJJDNOOT-MURFETPANA-N
+              accurateMass: 449.3636135
+              retentionTime: 3.46
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:2); FAHFA (10:1/O-18:1) [M-H]-
+              accurateMass: 449.3636135
+              retentionTime: 3.6
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (28:2); FAHFA (12:1/O-16:1) [M-H]-
+              accurateMass: 449.3636135
+              retentionTime: 3.8
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:0); FAHFA (14:0/O-16:0) [M-H]-_WSWGTPCCNLTBHI-UHFFFAOYNA-N
+              accurateMass: 481.42621349999996
+              retentionTime: 4.69
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:1); FAHFA (12:0/O-18:1) [M-H]-_NFUMZUPRNACHCW-GFMRDNFCNA-N
+              accurateMass: 479.41056349999997
+              retentionTime: 4.43
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:1); FAHFA (14:1/O-16:0) [M-H]-_HWRWSYQWDBFCMA-LUAWRHEFNA-N
+              accurateMass: 479.41056349999997
+              retentionTime: 4.19
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:1); FAHFA (16:0/O-14:1) [M-H]-_GLIQECHJWCWGMM-GFMRDNFCNA-N
+              accurateMass: 479.41056349999997
+              retentionTime: 4.78
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:1); FAHFA (14:0/O-16:1) [M-H]-
+              accurateMass: 479.41056349999997
+              retentionTime: 4.51
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:2); FAHFA (14:0/O-16:2) [M-H]-_PYXKQFJWHMKEIL-BICCAWHINA-N
+              accurateMass: 477.3949135
+              retentionTime: 4.24
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:2); FAHFA (14:1/O-16:1) [M-H]-_IXEGPDZYWDUIHE-NZDJXQQDNA-N
+              accurateMass: 477.3949135
+              retentionTime: 4.02
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:2); FAHFA (12:1/O-18:1) [M-H]-
+              accurateMass: 477.3949135
+              retentionTime: 4.05
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:2); FAHFA (12:0/O-18:2) [M-H]-
+              accurateMass: 477.3949135
+              retentionTime: 4.13
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:2); FAHFA (16:1/O-14:1) [M-H]-
+              accurateMass: 477.3949135
+              retentionTime: 4.05
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:3); FAHFA (14:1/O-16:2) [M-H]-_LSDCLAJFNMEQJP-NRDMLMIHNA-N
+              accurateMass: 475.3792635
+              retentionTime: 3.77
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:3); FAHFA (14:2/O-16:1) [M-H]-
+              accurateMass: 475.3792635
+              retentionTime: 3.84
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:3); FAHFA (16:1/O-14:2) [M-H]-
+              accurateMass: 475.3792635
+              retentionTime: 3.84
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (30:3); FAHFA (12:2/O-18:1) [M-H]-
+              accurateMass: 475.3792635
+              retentionTime: 3.84
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (31:0); FAHFA (15:0/O-16:0) [M-H]-_SUUXPVGOTNWWIR-UHFFFAOYNA-N
+              accurateMass: 495.44186349999995
+              retentionTime: 5.01
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (31:1); FAHFA (15:0/O-16:1) [M-H]-_CJSXOPXOIAXHIJ-DAFNUICNNA-N
+              accurateMass: 493.42621349999996
+              retentionTime: 4.82
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (31:1); FAHFA (14:0/O-17:1) [M-H]-
+              accurateMass: 493.42621349999996
+              retentionTime: 4.77
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (31:1); FAHFA (13:0/O-18:1) [M-H]-
+              accurateMass: 493.42621349999996
+              retentionTime: 4.68
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:0); FAHFA (16:0/O-16:0) [M-H]-_JEOXCIJAORYAMX-UHFFFAOYNA-N
+              accurateMass: 509.4575135
+              retentionTime: 5.33
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:1); FAHFA (14:0/O-18:1) [M-H]-_KKURJVQTCDKXRR-ROMGYVFFNA-N
+              accurateMass: 507.44186349999995
+              retentionTime: 5.04
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:1); FAHFA (16:0/O-16:1) [M-H]-
+              accurateMass: 507.44186349999995
+              retentionTime: 5.12
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:1); FAHFA (16:1/O-16:0) [M-H]-_SSVXURABJQSKCH-SEYXRHQNNA-N
+              accurateMass: 507.44186349999995
+              retentionTime: 4.74
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:2); FAHFA (14:1/O-18:1) [M-H]-_SISJHZPVSPJWAA-SDUNWBGTNA-N
+              accurateMass: 505.42621349999996
+              retentionTime: 4.52
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:2); FAHFA (16:0/O-16:2) [M-H]-_IXMJQSRZVDJDBL-IRFGJHGSNA-N
+              accurateMass: 505.42621349999996
+              retentionTime: 4.82
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:2); FAHFA (16:1/O-16:1) [M-H]-_KYHCEDPZUSWMDL-NJZKSKOUNA-N
+              accurateMass: 505.42621349999996
+              retentionTime: 4.59
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:2); FAHFA (18:1/O-14:1) [M-H]-_CTYQRAFVWIYNBE-IWUWKJKRNA-N
+              accurateMass: 505.42621349999996
+              retentionTime: 4.67
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:2); FAHFA (14:0/O-18:2) [M-H]-
+              accurateMass: 505.42621349999996
+              retentionTime: 4.69
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:3); FAHFA (16:1/O-16:2) [M-H]-_YNAWOVPSCUEYES-YHNBRZGANA-N
+              accurateMass: 503.41056349999997
+              retentionTime: 4.3
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:3); FAHFA (14:2/O-18:1) [M-H]-
+              accurateMass: 503.41056349999997
+              retentionTime: 4.36
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:3); FAHFA (14:1/O-18:2) [M-H]-
+              accurateMass: 503.41056349999997
+              retentionTime: 4.19
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:3); FAHFA (18:1/O-14:2) [M-H]-
+              accurateMass: 503.41056349999997
+              retentionTime: 4.36
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:3); FAHFA (16:2/O-16:1) [M-H]-
+              accurateMass: 503.41056349999997
+              retentionTime: 4.27
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:4); FAHFA (16:3/O-16:1) [M-H]-_DLCSQTWJBGGAQX-CRCASERPNA-N
+              accurateMass: 501.3949135
+              retentionTime: 3.96
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:4); FAHFA (14:3/O-18:1) [M-H]-
+              accurateMass: 501.3949135
+              retentionTime: 3.96
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:4); FAHFA (14:2/O-18:2) [M-H]-
+              accurateMass: 501.3949135
+              retentionTime: 3.96
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:5); FAHFA (16:3/O-16:2) [M-H]-_DHQOWAPLUBVHCX-FSEUEWDXNA-N
+              accurateMass: 499.3792635
+              retentionTime: 3.71
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (32:5); FAHFA (16:4/O-16:1) [M-H]-_KHDFACDCIUKWMF-SDDLPGHANA-N
+              accurateMass: 499.3792635
+              retentionTime: 3.63
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:0); FAHFA (17:0/O-16:0) [M-H]-_SQHRYTISPBUHLK-UHFFFAOYNA-N
+              accurateMass: 523.4731634999999
+              retentionTime: 5.56
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:0); FAHFA (16:0/O-17:0) [M-H]-
+              accurateMass: 523.4731634999999
+              retentionTime: 5.66
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:0); FAHFA (15:0/O-18:0) [M-H]-
+              accurateMass: 523.4731634999999
+              retentionTime: 5.55
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:1); FAHFA (17:1/O-16:0) [M-H]-_UFQHMCFSYPAGOG-YPKPFQOONA-N
+              accurateMass: 521.4575135
+              retentionTime: 5.05
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:1); FAHFA (15:0/O-18:1) [M-H]-
+              accurateMass: 521.4575135
+              retentionTime: 5.28
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:1); FAHFA (16:0/O-17:1) [M-H]-
+              accurateMass: 521.4575135
+              retentionTime: 5.41
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:1); FAHFA (16:1/O-17:0) [M-H]-
+              accurateMass: 521.4575135
+              retentionTime: 5.41
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:2); FAHFA (18:1/O-15:1) [M-H]-_YGRQPXSRYRXXLO-PRWWZWSXNA-N
+              accurateMass: 519.4418635
+              retentionTime: 4.89
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:2); FAHFA (15:1/O-18:1) [M-H]-
+              accurateMass: 519.4418635
+              retentionTime: 4.89
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:2); FAHFA (15:0/O-18:2) [M-H]-
+              accurateMass: 519.4418635
+              retentionTime: 4.89
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:2); FAHFA (16:1/O-17:1) [M-H]-
+              accurateMass: 519.4418635
+              retentionTime: 4.89
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:2); FAHFA (17:1/O-16:1) [M-H]-
+              accurateMass: 519.4418635
+              retentionTime: 4.89
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (33:3); FAHFA (17:1/O-16:2) [M-H]-_KDJVEFQEBMMECV-JMMPKDEWNA-N
+              accurateMass: 517.4262135
+              retentionTime: 4.56
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:0); FAHFA (18:0/O-16:0) [M-H]-_RKGTXTPCRDJTLA-UHFFFAOYNA-N
+              accurateMass: 537.4888135
+              retentionTime: 6.01
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:0); FAHFA (16:0/O-18:0) [M-H]-
+              accurateMass: 537.4888135
+              retentionTime: 6.01
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:1); FAHFA (18:1/O-16:0) [M-H]-_NPWYHSOZAQDUIR-PFONDFGANA-N
+              accurateMass: 535.4731634999999
+              retentionTime: 5.365
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:1); FAHFA (14:0/O-20:1) [M-H]-
+              accurateMass: 535.4731634999999
+              retentionTime: 5.54
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:1); FAHFA (16:0/O-18:1) [M-H]-
+              accurateMass: 535.4731634999999
+              retentionTime: 5.7
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:1); FAHFA (18:0/O-16:1) [M-H]-
+              accurateMass: 535.4731634999999
+              retentionTime: 5.81
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:2); FAHFA (16:1/O-18:1) [M-H]-_WJXRBROVUKILHI-NEIAKXAXNA-N
+              accurateMass: 533.4575135
+              retentionTime: 5.1
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:2); FAHFA (18:2/O-16:0) [M-H]-_LZKUWZWNBYLKIE-HDXUUTQWNA-N
+              accurateMass: 533.4575135
+              retentionTime: 4.87
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:2); FAHFA (18:1/O-16:1) [M-H]-
+              accurateMass: 533.4575135
+              retentionTime: 5.15
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:2); FAHFA (16:0/O-18:2) [M-H]-
+              accurateMass: 533.4575135
+              retentionTime: 5.35
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:3); FAHFA (16:1/O-18:2) [M-H]-_RCIAGZCOACCFQY-QQXWOPIFNA-N
+              accurateMass: 531.4418635
+              retentionTime: 4.71
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:3); FAHFA (18:1/O-16:2) [M-H]-_NMXHKIYEJMDNAG-JAWVSDOTNA-N
+              accurateMass: 531.4418635
+              retentionTime: 4.88
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:3); FAHFA (18:3/O-16:0) [M-H]-_JULVKIPBUZLFEB-BBDKIWCZNA-N
+              accurateMass: 531.4418635
+              retentionTime: 4.46
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:3); FAHFA (18:2/O-16:1) [M-H]-
+              accurateMass: 531.4418635
+              retentionTime: 4.7
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:4); FAHFA (18:2/O-16:2) [M-H]-_YCEIVTVCMANWSW-HUZVZDNFNA-N
+              accurateMass: 529.4262135
+              retentionTime: 4.42
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:4); FAHFA (16:3/O-18:1) [M-H]-
+              accurateMass: 529.4262135
+              retentionTime: 4.34
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:5); FAHFA (18:3/O-16:2) [M-H]-_BOLHXTAEVHLLAE-OUBIXHQANA-N
+              accurateMass: 527.4105635
+              retentionTime: 4.05
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (34:5); FAHFA (16:4/O-18:1) [M-H]-
+              accurateMass: 527.4105635
+              retentionTime: 4.01
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (35:1); FAHFA (17:0/O-18:1) [M-H]-_GALPAWCZEXZAKT-GNVQSUKONA-N
+              accurateMass: 549.4888135
+              retentionTime: 5.93
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (35:1); FAHFA (18:0/O-17:1) [M-H]-
+              accurateMass: 549.4888135
+              retentionTime: 6.09
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (35:1); FAHFA (18:1/O-17:0) [M-H]-_BWBVZLJSOBLMGJ-PFONDFGANA-N
+              accurateMass: 549.4888135
+              retentionTime: 5.68
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (35:2); FAHFA (17:1/O-18:1) [M-H]-_QRCBZHHDDYGLJA-NWNRCBSWNA-N
+              accurateMass: 547.4731634999999
+              retentionTime: 5.42
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (35:2); FAHFA (18:1/O-17:1) [M-H]-_FGTTWPUJHXBQJJ-NWNRCBSWNA-N
+              accurateMass: 547.4731634999999
+              retentionTime: 5.22
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (35:2); FAHFA (17:0/O-18:2) [M-H]-
+              accurateMass: 547.4731634999999
+              retentionTime: 5.57
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (35:3); FAHFA (18:2/O-17:1) [M-H]-_UYSNDIVUYGABOI-JNZYCIONNA-N
+              accurateMass: 545.4575135
+              retentionTime: 4.94
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (35:3); FAHFA (17:1/O-18:2) [M-H]-
+              accurateMass: 545.4575135
+              retentionTime: 4.94
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:0); FAHFA (18:0/O-18:0) [M-H]-_NQJLCZWOOVLQNP-UHFFFAOYNA-N
+              accurateMass: 565.5201135
+              retentionTime: 6.68
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:1); FAHFA (18:1/O-18:0) [M-H]-_PGKKGBQMNNEIHV-PFONDFGANA-N
+              accurateMass: 563.5044634999999
+              retentionTime: 6.01
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:1); FAHFA (18:0/O-18:1) [M-H]-
+              accurateMass: 563.5044634999999
+              retentionTime: 6.41
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:1); FAHFA (16:0/O-20:1) [M-H]-
+              accurateMass: 563.5044634999999
+              retentionTime: 6.22
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:2); FAHFA (18:1/O-18:1) [M-H]-_DHOLNZBDURYVOE-SVADLMEDNA-N
+              accurateMass: 561.4888135
+              retentionTime: 5.76
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:2); FAHFA (18:0/O-18:2) [M-H]-
+              accurateMass: 561.4888135
+              retentionTime: 5.83
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:3); FAHFA (18:1/O-18:2) [M-H]-_BXKZSDVPBFDTEK-CCSKTMJNNA-N
+              accurateMass: 559.4731634999999
+              retentionTime: 5.3
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:3); FAHFA (18:2/O-18:1) [M-H]-
+              accurateMass: 559.4731634999999
+              retentionTime: 5.24
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:4); FAHFA (18:1/O-18:3) [M-H]-_HPXPZSAPDOQCKC-HKZRWABGNA-N
+              accurateMass: 557.4575135
+              retentionTime: 4.95
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:4); FAHFA (18:2/O-18:2) [M-H]-_RDDYRPUWTUWGER-JHUISAGSNA-N
+              accurateMass: 557.4575135
+              retentionTime: 4.87
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:4); FAHFA (18:3/O-18:1) [M-H]-
+              accurateMass: 557.4575135
+              retentionTime: 4.8
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:5); FAHFA (18:3/O-18:2) [M-H]-_IAOYSCCQUOMEOA-QWLHRQDMNA-N
+              accurateMass: 555.4418635
+              retentionTime: 4.38
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:6); FAHFA (18:3/O-18:3) [M-H]-_CZNKCRRUVRLVTD-DJLNZYETNA-N
+              accurateMass: 553.4262135
+              retentionTime: 4.11
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:6); FAHFA (16:0/O-20:6) [M-H]-
+              accurateMass: 553.4262135
+              retentionTime: 4.5
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (36:6); FAHFA (18:0/O-18:6) [M-H]-
+              accurateMass: 553.4262135
+              retentionTime: 4.5
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (38:2); FAHFA (18:1/O-20:1) [M-H]-_ZLOUHBGRRDPSNX-NBTONZODNA-N
+              accurateMass: 589.5201135
+              retentionTime: 6.27
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (38:2); FAHFA (20:1/O-18:1) [M-H]-
+              accurateMass: 589.5201135
+              retentionTime: 6.4
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (38:4); FAHFA (18:2/O-20:2) [M-H]-_UIYMDBYRNSDVGM-ALMGUHCDNA-N
+              accurateMass: 585.4888135
+              retentionTime: 5.3
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (38:4); FAHFA (20:3/O-18:1) [M-H]-_GVTCXROIUYYNOR-CSACILJANA-N
+              accurateMass: 585.4888135
+              retentionTime: 5.37
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (38:5); FAHFA (20:4/O-18:1) [M-H]-_QFZKIUXASBELAQ-YLEQSGHYNA-N
+              accurateMass: 583.4731634999999
+              retentionTime: 5.0
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (40:0); FAHFA (16:0/O-24:0) [M-H]-_QWSABIHXSRDBEU-UHFFFAOYNA-N
+              accurateMass: 621.5827135
+              retentionTime: 7.88
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (40:4); FAHFA (16:0/O-24:4) [M-H]-_PBIRCYQZWNDSRL-QBBWHSHRNA-N
+              accurateMass: 613.5201135
+              retentionTime: 6.23
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (40:7); FAHFA (22:6/O-18:1) [M-H]-_OCAHEGIAQAPFLP-PCCCIWOKNA-N
+              accurateMass: 607.4731634999999
+              retentionTime: 4.81
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (40:7); FAHFA (18:1/O-22:6) [M-H]-
+              accurateMass: 607.4731634999999
+              retentionTime: 4.81
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (42:1); FAHFA (18:1/O-24:0) [M-H]-_YPKGOPDLPZKSQP-ZCXUNETKNA-N
+              accurateMass: 647.5983635
+              retentionTime: 7.91
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (42:5); FAHFA (18:1/O-24:4) [M-H]-_QQRSCSFFRVPHTO-BVSYYLOWNA-N
+              accurateMass: 639.5357635
+              retentionTime: 6.23
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (42:6); FAHFA (18:2/O-24:4) [M-H]-_SYLNCDPYSKTUEH-CVHWQRRONA-N
+              accurateMass: 637.5201135
+              retentionTime: 5.68
+              retentionTimeUnit: minutes
+              isInternalStandard: false
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: FAHFA (44:1); FAHFA (26:0/O-18:1) [M-H]-_MAOGINJVARBMQB-RXJYLVDRNA-N
+              accurateMass: 675.6296635
+              retentionTime: 8.97
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false
@@ -8397,7 +9223,7 @@ carrot:
               isInternalStandard: false
               requiredForCorrection: false
               confirmed: true
-            - identifier: PE (p-40:6) or PE (o-40:7) [M-H]-_ FIJFPUAJUDAZEY-MNDXXDKYSA-N
+            - identifier: PE (p-40:6) or PE (o-40:7) [M-H]-_FIJFPUAJUDAZEY-MNDXXDKYSA-N
               accurateMass: 774.5454
               retentionTime: 5.91
               retentionTimeUnit: minutes
