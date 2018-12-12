@@ -6,7 +6,7 @@ carrot:
           description: ''
           column: test
           ionMode: positive
-          instrument: '6550'
+          instrument: '6530'
           minimumPeakIntensity: 10000
           targets:
             - identifier: 1_CE(22:1) iSTD [M+Chol-head-H2O+H]+_SQHUGNAFKZZXOT-JWTURFAQSA-N
@@ -274,8 +274,8 @@ carrot:
           description: ''
           column: test
           ionMode: positive
-          instrument: '6550'
-          minimumPeakIntensity: 10000
+          instrument: '6530'
+          minimumPeakIntensity: 5000
           targets:
             - identifier: AC(10:0) [M+H]+_LZOSYCMHQXPBFU-UHFFFAOYSA-N
               accurateMass: 316.2484
@@ -6855,7 +6855,7 @@ carrot:
           column: test
           ionMode: negative
           instrument: '6550'
-          minimumPeakIntensity: 10000
+          minimumPeakIntensity: 5000
           targets:
             - identifier: Ceramide (d32:1) [M+Cl]-_ZKRPGPZHULJLKJ-JHRQRACZSA-N
               accurateMass: 544.4506
