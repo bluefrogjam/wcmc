@@ -42,6 +42,6 @@ class LCMSLibraryConfiguration extends LazyLogging {
 
   @PostConstruct
   def postInit(): Unit = {
-    logger.info(s" === creating correction library ${name} (${targets.size()} targets) === ")
+    logger.warn(s" === creating correction library ${name} (${targets.size()} targets) === ")
   }
 }

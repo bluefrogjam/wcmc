@@ -43,6 +43,6 @@ class LCMSAnnotationLibraryConfiguration extends LazyLogging {
 
   @PostConstruct
   def postInit(): Unit = {
-    logger.info(s" === creating annotation library ${name} (${targets.size()} targets) === ")
+    logger.warn(s" === creating annotation library ${name} (${targets.size()} targets) === ")
   }
 }
