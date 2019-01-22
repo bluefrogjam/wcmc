@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.{DeserializationContext, JsonDeserializer}
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
@@ -21,7 +21,7 @@ import scala.annotation.meta.field
 @CrossOrigin
 @RestController
 @RequestMapping(path = Array("/rest/library"))
-class LibraryController extends LazyLogging {
+class LibraryController extends Logging {
 
   @Autowired
   val libraryAccess: MergeLibraryAccess = null

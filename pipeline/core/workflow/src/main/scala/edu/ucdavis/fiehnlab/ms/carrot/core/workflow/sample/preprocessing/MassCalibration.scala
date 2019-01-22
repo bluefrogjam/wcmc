@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.processing.calibration.simple"))
-class SimpleMassCalibration extends PreProcessor with LazyLogging {
+class SimpleMassCalibration extends PreProcessor with Logging {
 
   override def priortiy: Int = 100
 

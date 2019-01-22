@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.{JSONSampleLogging, JSONTargetLogging}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{Regression, Similarity}
@@ -20,7 +20,7 @@ import scala.collection.JavaConverters._
 
 @Component
 @Profile(Array("carrot.gcms"))
-class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, val config: GCMSCorrectionLibraryProperties, stasisClient: StasisService) extends CorrectionProcess(libraryAccess, stasisClient) with LazyLogging {
+class GCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, val config: GCMSCorrectionLibraryProperties, stasisClient: StasisService) extends CorrectionProcess(libraryAccess, stasisClient) with Logging {
   override lazy val regression: Regression = new CombinedRegression(2, 5)
 
   /**

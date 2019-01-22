@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.preprocessing
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialGCMSProcessedSample
@@ -18,7 +18,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.gcms", "file.source.eclipse", "test"))
-class MSDialGCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
+class MSDialGCMSProcessingTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val msdProcessing: MSDialProcessing = null

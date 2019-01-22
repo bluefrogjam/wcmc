@@ -4,7 +4,7 @@ import java.io._
 import java.nio.channels.{Channels, ReadableByteChannel}
 import java.nio.file.{FileAlreadyExistsException, Files, Paths, StandardCopyOption}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import javax.annotation.PostConstruct
 
 import org.apache.commons.io.IOUtils
@@ -17,7 +17,7 @@ import scala.collection.JavaConverters._
 /**
   * Interface for loading resources dynamically independent of actual representation
   */
-trait ResourceLoader extends LazyLogging {
+trait ResourceLoader extends Logging {
 
   /**
     * returns the related resource or none

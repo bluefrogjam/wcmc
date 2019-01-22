@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
 /**
   * Created by wohlg on 7/11/2016.
   */
-abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
+abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
 
   @Autowired
   val zeroReplacementProperties: ZeroReplacementProperties = null

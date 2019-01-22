@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sample}
@@ -23,7 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("file.source.eclipse", "file.source.luna", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms" , "test"))
-class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
+class LCMSTargetAnnotationProcessTest extends WordSpec with Logging {
   val libName = "lcms_istds"
 
   @Autowired

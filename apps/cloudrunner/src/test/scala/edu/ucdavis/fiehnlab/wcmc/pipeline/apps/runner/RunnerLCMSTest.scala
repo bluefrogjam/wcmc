@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -19,7 +19,7 @@ import org.springframework.web.client.HttpClientErrorException
   "CARROT_MODE:lcms",
   "carrot.submitter:dpedrosa@ucdavis.edu"
 ))
-class RunnerLCMSTest extends WordSpec with ShouldMatchers with LazyLogging {
+class RunnerLCMSTest extends WordSpec with ShouldMatchers with Logging {
   @Value("${carrot.sample:#{environment.CARROT_SAMPLE}}")
   val sampleName = ""
 

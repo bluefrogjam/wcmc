@@ -4,7 +4,7 @@ import java.io.{File, FileOutputStream, FileWriter}
 import java.util.zip.GZIPOutputStream
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, MetadataSupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @Profile(Array("carrot.serialization.deconvolution"))
-class SampleSerializer() extends LazyLogging {
+class SampleSerializer() extends Logging {
 
   val destination: String = System.getProperty("user.home") + "/.carrot_storage/deconvolution"
 

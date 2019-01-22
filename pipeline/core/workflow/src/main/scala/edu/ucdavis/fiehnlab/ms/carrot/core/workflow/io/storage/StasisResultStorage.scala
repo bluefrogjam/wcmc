@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target => CTarget}
@@ -16,7 +16,7 @@ import scala.collection.JavaConverters._
 
 @Component
 @Profile(Array("carrot.output.storage.aws"))
-class StasisResultStorage[T] extends ResultStorage with LazyLogging {
+class StasisResultStorage[T] extends ResultStorage with Logging {
 
   @Autowired
   val stasis_cli: StasisClient = null

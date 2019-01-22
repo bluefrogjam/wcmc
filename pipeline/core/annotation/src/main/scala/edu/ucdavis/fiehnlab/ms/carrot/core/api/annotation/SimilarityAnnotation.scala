@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.Spectrum
 import edu.ucdavis.fiehnlab.math.similarity.Similarity
 import edu.ucdavis.fiehnlab.math.spectrum.BinByRoundingMethod
@@ -13,7 +13,7 @@ import edu.ucdavis.fiehnlab.util.Utilities
   * @param simmilarityOffset minimum similarity to be considered a match
   * @param algorithm         utilized algorith for computing the spectra similarity
   */
-class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similarity, val phase: String) extends Annotate with LazyLogging {
+class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similarity, val phase: String) extends Annotate with Logging {
 
   override protected val usedSettings = Map("minSimilarity" -> simmilarityOffset, "algorithm" -> algorithm.getClass.getSimpleName)
 

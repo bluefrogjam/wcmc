@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
@@ -34,7 +34,7 @@ import scala.collection.JavaConverters._
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple",
   "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.storage.aws",
   "test"))
-class StasisResultStorageTests extends WordSpec with ShouldMatchers with BeforeAndAfterEach with MockitoSugar with LazyLogging {
+class StasisResultStorageTests extends WordSpec with ShouldMatchers with BeforeAndAfterEach with MockitoSugar with Logging {
   val libName = "lcms_istds"
 
   @Autowired

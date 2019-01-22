@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 
 import java.util.Date
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api._
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import javax.annotation.PostConstruct
@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate
 import scala.collection.JavaConverters._
 
 @Component
-class StasisClient extends StasisService with LazyLogging {
+class StasisClient extends StasisService with Logging {
   @Autowired
   private val restTemplate: RestTemplate = null
 

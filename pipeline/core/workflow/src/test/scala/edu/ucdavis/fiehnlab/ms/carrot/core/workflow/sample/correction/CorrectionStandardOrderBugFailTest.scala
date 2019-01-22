@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.StandardsNotInOrderException
@@ -23,7 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
 @TestPropertySource(properties = Array(
   "wcmc.pipeline.workflow.config.correction.peak.intensity:5000"
 ))
-class CorrectionStandardOrderBugFailTest extends WordSpec with ShouldMatchers with LazyLogging {
+class CorrectionStandardOrderBugFailTest extends WordSpec with ShouldMatchers with Logging {
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null

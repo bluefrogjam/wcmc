@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core
 
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
@@ -17,7 +17,7 @@ import org.springframework.context.annotation._
   * Test configuration of a LCMS target workflow
   */
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class TargetedWorkflowTestConfiguration extends LazyLogging {
+class TargetedWorkflowTestConfiguration extends Logging {
 
   @Autowired
   val resourceLoader: DelegatingResourceLoader = null

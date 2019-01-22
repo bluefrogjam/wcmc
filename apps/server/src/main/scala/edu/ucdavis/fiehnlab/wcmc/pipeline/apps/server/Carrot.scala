@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.{ContentNegotiationConf
   * Created by wohlgemuth on 9/7/17.
   */
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class Carrot extends LazyLogging {
+class Carrot extends Logging {
 
   @Value("${server.port}")
   val port: Integer = 0

@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.converter
 
 import java.io.{BufferedOutputStream, File, FileInputStream, FileOutputStream}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
   * converts a given file to mzML
   */
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class Converter extends ApplicationRunner with LazyLogging {
+class Converter extends ApplicationRunner with Logging {
 
   @Autowired
   val dataForm: DataFormerClient = null

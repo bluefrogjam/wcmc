@@ -1,13 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 
 /**
   * Created by wohlg_000 on 6/10/2016.
   */
-class RetentionIndexAnnotation(retentionIndexWindow: Double,val phase:String) extends Annotate with LazyLogging {
+class RetentionIndexAnnotation(retentionIndexWindow: Double,val phase:String) extends Annotate with Logging {
 
   override protected val usedSettings = Map("window" -> retentionIndexWindow)
   /**

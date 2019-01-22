@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 import java.io._
 import java.net.URL
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import org.apache.commons.io.IOUtils
@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate
   *
   * sends a raw data file to DataFormer rest service to be converted into .abf and .mzml and then sends the result to fserv
   */
-class DataFormerClient(fserv4j:ResourceLoader) extends LazyLogging {
+class DataFormerClient(fserv4j:ResourceLoader) extends Logging {
   @Value("${wcmc.api.rest.dataformer.host:luna.fiehnlab.ucdavis.edu}")
   private val host: String = ""
 
@@ -185,7 +185,7 @@ object FileType extends Enumeration {
 
 
 @Configuration
-class DataFormerAutoConfiguration extends LazyLogging {
+class DataFormerAutoConfiguration extends Logging {
 
   @Bean
   def dataform(delegatingResourceLoader: DelegatingResourceLoader): DataFormerClient = new DataFormerClient(delegatingResourceLoader)

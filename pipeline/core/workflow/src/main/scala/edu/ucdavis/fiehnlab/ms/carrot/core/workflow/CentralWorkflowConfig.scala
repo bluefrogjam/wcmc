@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ConversionAwareSampleLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
@@ -15,7 +15,7 @@ import org.springframework.context.annotation._
 @ComponentScan
 @EnableConfigurationProperties
 @EnableCaching
-class CentralWorkflowConfig extends LazyLogging {
+class CentralWorkflowConfig extends Logging {
 
   /**
     * assembles all loaders in the system and allows prioritized loading ofr the resources

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test" /*, "carrot.logging.json.enable"*/))
-class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers with LazyLogging {
+class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers with Logging {
   val libName = "lcms_istds"
 
   @Autowired

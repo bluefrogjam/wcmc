@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
@@ -18,7 +18,7 @@ import scala.collection.immutable.ListMap
   *
   * @param libraryAccess
   */
-abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibraryAccess, stasisClient: StasisService) extends AnnotationProcess[CorrectedSample, AnnotatedSample](libraryAccess, stasisClient) with LazyLogging {
+abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibraryAccess, stasisClient: StasisService) extends AnnotationProcess[CorrectedSample, AnnotatedSample](libraryAccess, stasisClient) with Logging {
 
   /**
     * are we in debug mode, adds some sorting and prettifying for debug messages

@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.apps.localrunner
 
 import java.io.FileNotFoundException
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
@@ -25,7 +25,7 @@ object LocalRunner extends App {
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class LocalRunner extends CommandLineRunner with LazyLogging {
+class LocalRunner extends CommandLineRunner with Logging {
   @Autowired
   val workflow: Workflow[Double] = null
 
@@ -86,7 +86,7 @@ class LocalRunner extends CommandLineRunner with LazyLogging {
 }
 
 @Configuration
-class LocalRunnerConfiguration extends LazyLogging {
+class LocalRunnerConfiguration extends Logging {
   @Bean
   def workflow: Workflow[Double] = new Workflow[Double]()
 

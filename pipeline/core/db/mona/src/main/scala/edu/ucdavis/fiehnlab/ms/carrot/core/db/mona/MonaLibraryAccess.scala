@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 import java.util.Date
 import java.util.concurrent.{ExecutorService, Executors}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{GenericRestClient, MonaSpectrumRestClient}
@@ -29,7 +29,7 @@ import scala.collection.mutable
   */
 @Profile(Array("carrot.targets.mona"))
 @Component
-class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with LazyLogging {
+class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
 
   private val executionService: ExecutorService = Executors.newFixedThreadPool(1)
 

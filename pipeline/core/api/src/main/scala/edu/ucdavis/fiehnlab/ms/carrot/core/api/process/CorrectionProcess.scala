@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
   *
   * @param libraryAccess
   */
-abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAccess, val stasisClient: StasisService) extends AnnotationProcess[Sample, CorrectedSample](libraryAccess, stasisClient) with LazyLogging {
+abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAccess, val stasisClient: StasisService) extends AnnotationProcess[Sample, CorrectedSample](libraryAccess, stasisClient) with Logging {
 
   val regression: Regression
 

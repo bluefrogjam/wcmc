@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, PositiveMode}
@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
 @ActiveProfiles(Array("test"))
-class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLogging {
+class SchedulingControllerTest extends WordSpec with ShouldMatchers with Logging {
 
   @LocalServerPort
   private val port: Int = 0

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONTargetLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext
 /**
   * Created by wohlgemuth on 7/12/17.
   */
-class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double, val phaseToLog: String) extends Filter[AccurateMassSupport] with LazyLogging {
+class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double, val phaseToLog: String) extends Filter[AccurateMassSupport] with Logging {
   logger.debug(s"mass window is ${windowInPPM} for ${target}")
 
   /**
@@ -44,7 +44,7 @@ class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double, val pha
   * @param target
   * @param window window value in mDa
   */
-class IncludeByMassRange(val target: Target, val window: Double, val phaseToLog: String) extends Filter[AccurateMassSupport] with LazyLogging with JSONTargetLogging{
+class IncludeByMassRange(val target: Target, val window: Double, val phaseToLog: String) extends Filter[AccurateMassSupport] with Logging with JSONTargetLogging{
   logger.debug(s"mass window is ${window} for ${target}")
 
   /**

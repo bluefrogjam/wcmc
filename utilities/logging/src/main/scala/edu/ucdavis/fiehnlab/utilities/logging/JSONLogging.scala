@@ -4,7 +4,7 @@ import java.util.{Date, UUID}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.context.annotation.{Bean, Configuration, Profile}
 
 /**
@@ -35,7 +35,7 @@ object JSONLogging {
   * this trait needs to be extended by other mixins and allows us to easily logout information
   * in an JSON compatible format, which can be picked up by the @see JSONLoggingAppender
   */
-trait JSONLogging extends LazyLogging {
+trait JSONLogging extends Logging {
 
   /**
     * based on mixins and other defined methods, this will log a json string to the console for debugging

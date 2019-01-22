@@ -1,10 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.math
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 
-object SimilarityMethods extends LazyLogging {
+object SimilarityMethods extends Logging {
   /**
     * Gaussian similarity used for mass accuracy and retention time similarity calculations
     *

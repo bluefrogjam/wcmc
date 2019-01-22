@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
 import java.io.InputStream
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{Reader, SampleLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
@@ -22,7 +22,7 @@ import scala.io.Source
   *
   */
 @Component
-class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties: ExperimentReaderTxTProperties) extends Reader[Experiment] with LazyLogging {
+class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties: ExperimentReaderTxTProperties) extends Reader[Experiment] with Logging {
 
   /**
     * reads a new sample

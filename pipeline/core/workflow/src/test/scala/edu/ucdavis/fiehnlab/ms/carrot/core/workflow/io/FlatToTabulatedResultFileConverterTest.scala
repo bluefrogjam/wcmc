@@ -1,10 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import org.scalatest.WordSpec
 import scala.collection.JavaConverters._
 
-class FlatToTabulatedResultFileConverterTest extends WordSpec with LazyLogging {
+class FlatToTabulatedResultFileConverterTest extends WordSpec with Logging {
 
   val converter = new FlatToTabulatedResultFileConverter
 

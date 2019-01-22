@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.utilities.metadata.impl
 
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.api.MetadataExtraction
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.db.{FileMetadata, FileMetadataService}
 import org.springframework.stereotype.Component
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import scala.xml._
 
 @Component
-class MzMLMetadataExtraction extends MetadataExtraction with LazyLogging {
+class MzMLMetadataExtraction extends MetadataExtraction with Logging {
 
   override def getMetadata(file: File): Option[FileMetadata] = {
     if (!isValidFormat(file)) {

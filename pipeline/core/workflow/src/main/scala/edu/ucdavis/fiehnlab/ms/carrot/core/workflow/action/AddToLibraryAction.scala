@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.math.similarity.{CompositeSimilarity, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.targets.dynamic"))
-class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extends PostAction with LazyLogging {
+class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extends PostAction with Logging {
 
   /**
     * which similarity to use in the system

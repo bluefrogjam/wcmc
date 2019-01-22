@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 
 @Component
-case class MemoryMonitorEventListener() extends WorkflowEventListener with LazyLogging {
+case class MemoryMonitorEventListener() extends WorkflowEventListener with Logging {
 
   @PostConstruct
   def printMem(): Unit = {

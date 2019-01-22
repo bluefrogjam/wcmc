@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
 import java.io.{File, PrintWriter}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
@@ -17,7 +17,7 @@ import scala.io.Source
 //@RunWith(classOf[SpringRunner])
 //@SpringBootTest
 //@ActiveProfiles(Array("jenny"))
-class JennyRunner extends WordSpec with LazyLogging with ShouldMatchers {
+class JennyRunner extends WordSpec with Logging with ShouldMatchers {
   @Autowired
   val taskRunner: TaskRunner = null
 

@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk
 import java.io.{File, FileInputStream, FileOutputStream}
 import java.util.zip.GZIPInputStream
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{SpectrumProperties, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
 /**
   * this provides us with an easy way to utilized MSDK based data classes in our simplified schema
   */
-class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLogging with RawData{
+class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Logging with RawData{
 
   override val properties: Option[SampleProperties] = Some(SampleProperties(name, None))
 
@@ -67,7 +67,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with LazyLo
 }
 
 
-object MSDKSample extends LazyLogging {
+object MSDKSample extends Logging {
   /**
     * read from a rawdata file directly
     *

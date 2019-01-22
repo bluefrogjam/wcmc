@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct
 import com.amazonaws.regions.{Region, Regions}
 import com.amazonaws.services.s3.model.CreateBucketRequest
 import com.amazonaws.services.s3.{AmazonS3, AmazonS3Client}
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
 import edu.ucdavis.fiehnlab.ms.carrot.cloud.aws.ASWConfigurationProperties
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -24,7 +24,7 @@ import scala.beans.BeanProperty
   */
 @Component
 @Profile(Array("carrot.resource.store.bucket"))
-class BucketStorage @Autowired()(client: AmazonS3, properties: BucketStorageConfigurationProperties, awsProperties: ASWConfigurationProperties) extends ResourceStorage with LazyLogging {
+class BucketStorage @Autowired()(client: AmazonS3, properties: BucketStorageConfigurationProperties, awsProperties: ASWConfigurationProperties) extends ResourceStorage with Logging {
 
   @PostConstruct
   def init() = {

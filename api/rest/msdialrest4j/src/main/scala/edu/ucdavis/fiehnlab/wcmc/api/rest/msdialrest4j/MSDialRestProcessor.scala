@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 
 import java.io._
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
@@ -17,7 +17,7 @@ import org.springframework.web.client.RestOperations
 
 @Configuration
 @ComponentScan
-class MSDialRestProcessorAutoconfiguration extends LazyLogging {
+class MSDialRestProcessorAutoconfiguration extends Logging {
 }
 
 /**
@@ -26,7 +26,7 @@ class MSDialRestProcessorAutoconfiguration extends LazyLogging {
   * connects to the MSDial rest server
   */
 @Component
-class MSDialRestProcessor extends LazyLogging {
+class MSDialRestProcessor extends Logging {
 
   @Value("${wcmc.api.rest.msdialrest4j.host:phobos.fiehnlab.ucdavis.edu}")
   val msdresthost: String = ""
