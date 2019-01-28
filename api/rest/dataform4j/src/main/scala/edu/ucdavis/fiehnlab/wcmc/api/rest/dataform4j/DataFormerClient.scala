@@ -116,6 +116,7 @@ class DataFormerClient(fserv4j:ResourceLoader) extends Logging {
         }
       }
     } else {
+      logger.warn(s"the defined filename did not exist on any fserv server ${filename}")
       None
     }
   }

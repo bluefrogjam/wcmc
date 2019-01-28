@@ -23,7 +23,7 @@ class DataFormerClientTests extends WordSpec with ShouldMatchers with Logging {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" should {
+  "edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" ignore  {
     "fail for invalid .d.zip file" in {
       val filename = "not_found.d.zip"
 
