@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 
+import java.net.URI
 import java.util.Date
 
 import org.apache.logging.log4j.scala.Logging
@@ -7,7 +8,7 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api._
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.http.{HttpEntity, HttpMethod, ResponseEntity}
+import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, ResponseEntity}
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
@@ -21,27 +22,41 @@ class StasisClient extends StasisService with Logging {
   @Value("${stasis.baseurl}")
   val baseUrl = ""
 
+  @Value("${stasis.key:#{environment.STASIS_KEY}}")
+  val apiKey = ""
+
   @PostConstruct
   def post = {
     logger.info(s"utilizing url: $baseUrl")
+
+    if (apiKey == "") {
+      throw new Exception("please specify an api key!")
+    }
+
+  }
+
+  private def headers(): HttpHeaders = {
+    val h = new HttpHeaders()
+    h.add("x-api-key", this.apiKey)
+    h
   }
 
   private val trackingPath = "tracking"
   private val resultPath = "result"
   private val acquisitionPath = "acquisition"
 
-  override def getTracking(sample: String): TrackingResponse = restTemplate.getForObject(s"${baseUrl}/${trackingPath}/${sample}", classOf[TrackingResponse])
+  override def getTracking(sample: String): TrackingResponse = restTemplate.exchange(new URI(s"${baseUrl}/${trackingPath}/${sample}"), HttpMethod.GET, new HttpEntity("", headers()), classOf[TrackingResponse]).getBody()
 
   override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = {
     logger.info(s"Adding tracking: ${data}")
-    restTemplate.postForEntity(s"${baseUrl}/${trackingPath}", data, classOf[TrackingResponse])
+    restTemplate.postForEntity(s"${baseUrl}/${trackingPath}", new HttpEntity(data, headers()), classOf[TrackingResponse])
   }
 
   override def getResults(sample: String): ResultResponse = {
     if (sample.contains('.')) {
       logger.warn("The sample name provided might contain an extension. Please provide sample name without extension!")
     }
-    val result = restTemplate.getForEntity[ResultResponse](s"${baseUrl}/${resultPath}/${sample}", classOf[ResultResponse])
+    val result = restTemplate.exchange(s"${baseUrl}/${resultPath}/${sample}", HttpMethod.GET, new HttpEntity("", headers()), classOf[ResultResponse])
 
     if (result.getStatusCodeValue == 200)
       result.getBody
@@ -49,14 +64,14 @@ class StasisClient extends StasisService with Logging {
       ResultResponse("none", "none", new Date(), Map[String, Seq[Injection]]().asJava)
   }
 
-  override def addResult(data: ResultData): ResponseEntity[ResultData] = restTemplate.postForEntity(s"${baseUrl}/${resultPath}", data, classOf[ResultData])
+  override def addResult(data: ResultData): ResponseEntity[ResultData] = restTemplate.postForEntity(s"${baseUrl}/${resultPath}", new HttpEntity(data, headers()), classOf[ResultData])
 
-  override def getAcquisition(sample: String): SampleResponse = restTemplate.getForObject(s"${baseUrl}/${acquisitionPath}/${sample}", classOf[SampleResponse])
+  override def getAcquisition(sample: String): SampleResponse = restTemplate.exchange(s"${baseUrl}/${acquisitionPath}/${sample}", HttpMethod.GET, new HttpEntity("", headers()), classOf[SampleResponse]).getBody
 
-  override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", data, classOf[SampleData])
+  override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", new HttpEntity(data, headers()), classOf[SampleData])
 
-  override def deleteTracking(sample: String): HttpEntity[String] = restTemplate.execute[ResponseEntity[String]](s"${baseUrl}/${trackingPath}/${sample}", HttpMethod.DELETE, null, null)
+  override def deleteTracking(sample: String): HttpEntity[String] = restTemplate.exchange(s"${baseUrl}/${trackingPath}/${sample}", HttpMethod.DELETE, new HttpEntity("", headers()), classOf[String])
 
-  override def schedule(sample: String, method: String, mode: String, env: String): ResponseEntity[ScheduleData] = restTemplate.postForEntity(s"${baseUrl}/schedule", ScheduleData(sample, method, mode, env, "86"), classOf[ScheduleData])
+  override def schedule(sample: String, method: String, mode: String, env: String): ResponseEntity[ScheduleData] = restTemplate.postForEntity(s"${baseUrl}/schedule", new HttpEntity(ScheduleData(sample, method, mode, env, "86"), headers()), classOf[ScheduleData])
 
 }
