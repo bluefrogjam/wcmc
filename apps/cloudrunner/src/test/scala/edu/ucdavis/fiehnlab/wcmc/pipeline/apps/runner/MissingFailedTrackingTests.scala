@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -15,10 +14,10 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "jenny"))
+@ActiveProfiles(Array("test", "carrot.lcms", "csh"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:LipidsPos_PhV1_06_160362.mzml",
-  "CARROT_METHOD:jenny-tribe | 6530 | test | positive",
+  "CARROT_METHOD:csh | 6530 | test | positive",
   "CARROT_MODE:lcms",
   "carrot.submitter:linuxmant@gmail.com"
 ))

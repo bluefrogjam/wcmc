@@ -12,10 +12,10 @@ import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "runner", "carrot.targets.mona"))
+@ActiveProfiles(Array("test", "carrot.lcms", "runner", "csh"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
-  "CARROT_METHOD:jenny-tribe | 6530 | test | positive",
+  "CARROT_METHOD:csh | 6530 | test | positive",
   "CARROT_MODE:lcms",
   "carrot.submitter:linuxmant@gmail.com",
   "mona.rest.server.user:admin",

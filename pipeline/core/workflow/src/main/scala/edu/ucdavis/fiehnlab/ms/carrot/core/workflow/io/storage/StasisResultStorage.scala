@@ -68,7 +68,6 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
   }
 
   def checkGapFilledStatus(feature: Feature): Boolean = {
-    logger.info(s"Feature type: ${feature.getClass.getSimpleName}")
     feature match {
       case x: ZeroreplacedTarget => true
       case x: GapFilledTarget[_] => true
