@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target => CTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
@@ -32,11 +33,8 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
             case x: Double => x.toDouble
             case _ => 0.0
           },
-          replaced = feature match {
-            case rep: ZeroreplacedTarget => true
-            case rep: GapFilledTarget[Any] => true
-            case _ => false
-          },
+          replaced = checkGapFilledStatus(feature),
+
           feature.accurateMass.getOrElse(0.0),
           nonCorrectedRt = feature.retentionTimeInSeconds,
           feature.massAccuracy.getOrElse(0),
@@ -66,6 +64,14 @@ class StasisResultStorage[T] extends ResultStorage with LazyLogging {
     } else {
       logger.info(response.getStatusCode.getReasonPhrase)
       data
+    }
+  }
+
+  def checkGapFilledStatus(feature: Feature): Boolean = {
+    feature match {
+      case x: ZeroreplacedTarget => true
+      case x: GapFilledTarget[_] => true
+      case _ => false
     }
   }
 
