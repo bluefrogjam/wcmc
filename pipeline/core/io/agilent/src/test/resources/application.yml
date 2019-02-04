@@ -1,6 +1,7 @@
 stasis:
   baseurl: test-api.metabolomics.us
 
+  key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
 wcmc:
   api:
     rest:

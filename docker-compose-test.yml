@@ -1,5 +1,8 @@
 version: '3'
 
+networks:
+  mona-test:
+    external: false
 
 services:
   #
@@ -8,31 +11,34 @@ services:
 
   mongodb:
     image: mongo:3.2.4
-    ports:
-      - 27017:27017
+    expose:
+      - 27017
     networks:
-      - default
+      - mona-test
 
   # Elasticsearch master and entrypoint
   elasticsearch_master:
     image: elasticsearch:2.4
     command: [ elasticsearch, -Des.cluster.name=mona-cluster, -Dnetwork.host=0.0.0.0, -Des.node.master=true ]
-    ports:
-      - 9200:9200
-      - 9300:9300
-
+    expose:
+      - 9200
+      - 9300
+    networks:
+      - mona-test
   rabbitmq:
     image: rabbitmq:3.6-management
     hostname: rabbitmq
-    ports:
-      - 15672:15672
-      - 5672:5672
-
+    expose:
+      - 15672
+      - 5672
+    networks:
+      - mona-test
   redis:
     image: redis:3
-    ports:
-      - 6379:6379
-
+    expose:
+      - 6379
+    networks:
+      - mona-test
 
   #
   # MoNA base services
@@ -42,15 +48,16 @@ services:
   # and allows for easy scaling and load balancing using our proxy at a later stage
   discovery:
     image: eros.fiehnlab.ucdavis.edu/mona-discovery:latest
-    ports:
-      - 8761:8761
+    expose:
+      - 8761
     depends_on:
       - mongodb
       - rabbitmq
     entrypoint: bash -c "./wait-for-it.sh mongodb:27017 -t 3600 --strict -- java $JAVA_OPTS -Dspring.profiles.active=docker -jar *.jar"
     environment:
       - JAVA_OPTS='-Xmx512m -XX:+UseParallelGC'
-
+    networks:
+      - mona-test
 
   #
   # Persistence server, which utilizes above services, and other dependent services
@@ -62,14 +69,16 @@ services:
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx2g -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
-
+    networks:
+      - mona-test
   # Main authentication service
   auth:
     image: eros.fiehnlab.ucdavis.edu/mona-auth-server:latest
     depends_on:
       - discovery
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xmx512m -XX:+UseParallelGC -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
-
+    networks:
+      - mona-test
   #
   # Proxy and additional standalone services
   #
@@ -79,8 +88,12 @@ services:
     image: eros.fiehnlab.ucdavis.edu/mona-proxy:latest
     ports:
       - 9090:8080
+    expose:
+      - 8080
     depends_on:
       - persistence
     environment:
       - VIRTUAL_HOST='mona.fiehnlab.ucdavis.edu'
     entrypoint: bash -c "./wait-for-it.sh discovery:8761 -t 3600 --strict -- java -Xss4m -Xmx2g -XX:+UseParallelGC -XX:+UseCompressedOops -Dspring.cloud.config.uri=http://discovery:8761/config -Dspring.profiles.active=docker -jar *.jar"
+    networks:
+      - mona-test

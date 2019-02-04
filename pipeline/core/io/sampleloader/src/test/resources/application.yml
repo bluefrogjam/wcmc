@@ -1,6 +1,7 @@
 stasis:
   baseurl: test-api.meatabolomics.us
 
+  key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
 loaders:
   recursive:
     basefolder: /src/test/resources

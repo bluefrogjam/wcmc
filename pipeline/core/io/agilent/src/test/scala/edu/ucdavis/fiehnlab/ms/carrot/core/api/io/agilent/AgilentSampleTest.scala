@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest()
-class AgilentSampleTest extends WordSpec with Logging with ShouldMatchers{
+class AgilentSampleTest extends WordSpec with Logging with ShouldMatchers {
 
 
   @Autowired
@@ -29,7 +29,7 @@ class AgilentSampleTest extends WordSpec with Logging with ShouldMatchers{
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "AgilentSampleTest" should {
+  "AgilentSampleTest" ignore {
 
     "spectra" in {
 

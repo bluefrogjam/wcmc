@@ -94,7 +94,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
           }
           catch {
             case e: Exception =>
-              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e.getMessage)
+              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e)
               // commented to avoid excessive logging output.
               // e.printStackTrace()
               target
