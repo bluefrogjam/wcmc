@@ -150,8 +150,8 @@ class ZeroReplacementProperties {
   var retentionIndexWindowForPeakDetection: Double = 12
 
   /**
-    * Use the mean of the nearest 5 ions of matching mass to the target to estimate the replacement value
-    * if no value is found within the RI window.  Takes precedence over estimateByChromatogramNoise
+    * Use the mean of the 2 nearest ions on the left and right of matching mass to the target to estimate the
+    * replacement value if no value is found within the RI window.  Takes precedence over estimateByChromatogramNoise
     */
   var estimateByNearestFourIons: Boolean = true
 
@@ -258,18 +258,26 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     val value: (Feature with CorrectedSpectra) = {
       if (filteredByTime.isEmpty) {
         val intensity: Float = {
-          if (zeroReplacementProperties.estimateByNearestFourIons && !replacementValueSpectra.isEmpty) {
+          if (zeroReplacementProperties.estimateByNearestFourIons && replacementValueSpectra.nonEmpty) {
             // estimate the replacement value using the nearest four ions of matching mass
-            val nearestIntensities = replacementValueSpectra
+            val leftIntensities = replacementValueSpectra
+              .filter(x => receivedTarget.retentionIndex > x.retentionIndex)
               .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
-              .take(5)
+              .take(2)
+
+            val rightIntensities = replacementValueSpectra
+              .filter(x => receivedTarget.retentionIndex < x.retentionIndex)
+              .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
+              .take(2)
+
+            val nearestIntensities = (leftIntensities ++ rightIntensities)
               .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get).get.intensity)
 
             val intensity = nearestIntensities.sum / nearestIntensities.length
             logger.warn(s"Created failsafe [Feature with CorrectedSpectra] from nearest ${nearestIntensities.length} "+
               "ions with ${intensity} intensity")
             intensity
-          } else if (zeroReplacementProperties.estimateByChromatogramNoise && !replacementValueSpectra.isEmpty) {
+          } else if (zeroReplacementProperties.estimateByChromatogramNoise && replacementValueSpectra.nonEmpty) {
             // estimate the replacement value by averaging the intensities of the smallest 5% of ions
             val intensities = replacementValueSpectra
               .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get).get.intensity)
