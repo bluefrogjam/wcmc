@@ -1,15 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 
 /**
   * Created by wohlg_000 on 6/10/2016.
   */
-class RetentionIndexAnnotation(retentionIndexWindow: Double,val phase:String) extends Annotate with LazyLogging {
-
-  override protected val usedSettings = Map("window" -> retentionIndexWindow)
+class RetentionIndexAnnotation(retentionIndexWindow: Double) extends Annotate with LazyLogging {
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
     *
@@ -29,9 +27,4 @@ class RetentionIndexAnnotation(retentionIndexWindow: Double,val phase:String) ex
 
     result
   }
-
-  /**
-    * which phase we require to log
-    */
-  override protected val phaseToLog = phase
 }

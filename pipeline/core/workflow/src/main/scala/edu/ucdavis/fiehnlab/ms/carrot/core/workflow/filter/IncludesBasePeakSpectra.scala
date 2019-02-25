@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.{Filter, MassFilter}
+import com.typesafe.scalalogging.LazyLogging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.MassFilter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
 import org.springframework.context.ApplicationContext
 
@@ -10,7 +11,7 @@ import org.springframework.context.ApplicationContext
   * @param basePeaks
   * @param accuracy
   */
-class IncludesBasePeakSpectra(val basePeaks: Seq[Double],val phaseToLog:String, val accuracy: Double = 0.00005) extends MassFilter[MSSpectra](accuracy) {
+class IncludesBasePeakSpectra(val basePeaks: Seq[Double], val accuracy: Double = 0.00005) extends MassFilter[MSSpectra](accuracy) with LazyLogging {
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
@@ -25,9 +26,4 @@ class IncludesBasePeakSpectra(val basePeaks: Seq[Double],val phaseToLog:String, 
       result
     }
   }
-
-  /**
-    * references to all used settings
-    */
-  override protected val usedSettings: Map[String, Any] = Map("basePeaks" -> basePeaks,"massAccuracyInDalton" -> accuracy,"nominal" -> isNominal)
 }

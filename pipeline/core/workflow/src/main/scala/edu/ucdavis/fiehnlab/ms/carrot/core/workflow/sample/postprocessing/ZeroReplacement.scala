@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
@@ -72,7 +71,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
               }
             } catch {
               case e: Throwable =>
-                logger.warn(s"observed error: ${e.getMessage} => skip", e)
+                logger.error(s"observed error: ${e.getMessage} => skip", e)
             }
         }.collectFirst { case p: Sample => p }
       }
@@ -88,6 +87,8 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
           target
         }
         else {
+          // TODO this is the block that takes FOR-EVER
+          print(".")
           try {
             val replaced = replaceValue(target, sample, correctedRawData)
             replaced
@@ -193,25 +194,11 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
   override def replaceValue(needsReplacement: QuantifiedTarget[Double], quantSample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
     val receivedTarget = needsReplacement
 
-    val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracyInDa, "replacement") with JSONSampleLogging {
-      /**
-        * which sample we require to log
-        */
-      override protected val sampleToLog: String = quantSample.fileName
-    }
-    val filterByRetentionIndexNoise = new IncludeByRetentionIndexWindow(receivedTarget.retentionTimeInSeconds, "replacement", zeroReplacementProperties.noiseWindowInSeconds) with JSONSampleLogging {
-      /**
-        * which sample we require to log
-        */
-      override protected val sampleToLog: String = quantSample.fileName
-    }
+    val filterByMass = new IncludeByMassRange(receivedTarget, zeroReplacementProperties.massAccuracyInDa)
 
-    val filterByRetentionIndex = new IncludeByRetentionIndexWindow(receivedTarget.retentionIndex, "replacement", zeroReplacementProperties.retentionIndexWindowForPeakDetection) with JSONSampleLogging {
-      /**
-        * which sample we require to log
-        */
-      override protected val sampleToLog: String = quantSample.fileName
-    }
+    val filterByRetentionIndexNoise = new IncludeByRetentionIndexWindow(receivedTarget.retentionTimeInSeconds, zeroReplacementProperties.noiseWindowInSeconds)
+
+    val filterByRetentionIndex = new IncludeByRetentionIndexWindow(receivedTarget.retentionIndex, zeroReplacementProperties.retentionIndexWindowForPeakDetection)
 
 
     //first calculate noise for this ion trace
@@ -232,7 +219,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     }
 
     val noise = if (noiseIons.isEmpty) {
-      logger.warn("no ions found for noise calculations")
+      logger.debug("no ions found for noise calculations")
       0.0f
     }
     else {

@@ -12,14 +12,14 @@ class IncludeByRetentionTimeWindowTest extends WordSpec {
 
 
     "include this spectra" in{
-      val filter = new IncludeByRetentionTimeWindow(996,"test",5)
+      val filter = new IncludeByRetentionTimeWindow(996, 5)
 
       assert(filter.include(testSpectraWith1Ion,null))
 
     }
 
     "but not this spectra" in {
-      val filter = new IncludeByRetentionTimeWindow(991,"test",5)
+      val filter = new IncludeByRetentionTimeWindow(991, 5)
 
       assert(!filter.include(testSpectraWith1Ion,null))
 

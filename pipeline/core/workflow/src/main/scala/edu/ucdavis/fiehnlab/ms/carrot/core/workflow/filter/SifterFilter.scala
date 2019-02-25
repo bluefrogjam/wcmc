@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONTargetLogging
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Similarity
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
@@ -13,16 +13,10 @@ import scala.collection.JavaConverters._
 /**
   * evaluates if the given spectra matches one of the properties
   *
-  * @param phaseToLog
   * @param properties
   * @param target
   */
-class SifterFilter(override val phaseToLog: String, val properties: GCMSAnnotationLibraryProperties, val target: Target) extends Filter[MSSpectra] with JSONTargetLogging {
-  /**
-    * references to all used settings
-    */
-  override protected val usedSettings: Map[String, Any] = Map("properties" -> properties)
-
+class SifterFilter(val properties: GCMSAnnotationLibraryProperties, val target: Target) extends Filter[MSSpectra] with LazyLogging {
   /**
     *
     * @param spectra
@@ -66,9 +60,4 @@ class SifterFilter(override val phaseToLog: String, val properties: GCMSAnnotati
       "no details available"
     )
   }
-
-  /**
-    * which target we require to log
-    */
-  override protected val targetToLog: Target = target
 }

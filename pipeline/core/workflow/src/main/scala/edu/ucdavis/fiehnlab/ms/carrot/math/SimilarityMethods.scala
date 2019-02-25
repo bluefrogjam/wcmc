@@ -65,7 +65,7 @@ object SimilarityMethods extends LazyLogging {
   def featureTargetSimilarity(feature: Feature, target: Target, mzTolerance: Double, rtTolerance: Double, intensityThreshold: Double): Double = {
     if (feature.massOfDetectedFeature.isDefined) {
       val intensityPenalty = penaltyFactor(feature.massOfDetectedFeature.get.intensity, intensityThreshold)
-      logger.info(f"Feature (${feature.massOfDetectedFeature.get.mass}%.4f@${feature.retentionTimeInSeconds}%.2f)'s intensity: ${feature.massOfDetectedFeature.get.intensity}%.0f -- threshold: ${intensityThreshold}%.0f -- penalty factor: ${intensityPenalty}%.4f")
+      logger.debug(f"Feature (${feature.massOfDetectedFeature.get.mass}%.4f@${feature.retentionTimeInSeconds}%.2f)'s intensity: ${feature.massOfDetectedFeature.get.intensity}%.0f -- threshold: ${intensityThreshold}%.0f -- penalty factor: ${intensityPenalty}%.4f")
 
       intensityPenalty * featureTargetSimilarity(feature, target, mzTolerance, rtTolerance)
     } else {

@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext
   * @param timeInSeconds
   * @param window
   */
-class IncludeByRetentionTimeWindow(val timeInSeconds: Double, val phaseToLog: String, val window: Double = 5) extends Filter[Feature] {
+class IncludeByRetentionTimeWindow(val timeInSeconds: Double, val window: Double = 5) extends Filter[Feature] {
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
     */
@@ -20,9 +20,4 @@ class IncludeByRetentionTimeWindow(val timeInSeconds: Double, val phaseToLog: St
 
     spectra.retentionTimeInSeconds > min && spectra.retentionTimeInSeconds < max
   }
-
-  /**
-    * references to all used settings
-    */
-  override protected val usedSettings: Map[String, Any] = Map("retentionTime" -> timeInSeconds, "window" -> window)
 }

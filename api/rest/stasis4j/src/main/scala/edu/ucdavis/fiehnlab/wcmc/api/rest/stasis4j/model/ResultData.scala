@@ -80,9 +80,10 @@ case class Annotation(
                          mass: Double,
                          nonCorrectedRt: Double = 0,
                          massError: Double = 0,
-                         massErrorPPM: Double = 0,
-                         rtDistance: Double = 0
-                     )
+                         massErrorPPM: Double = 0
+                     ) {
+  def rtDistance: Double = Math.abs(nonCorrectedRt - retentionIndex)
+}
 
 /**
   *

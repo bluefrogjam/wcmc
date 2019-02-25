@@ -1,12 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONTargetLogging
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import org.springframework.context.ApplicationContext
 
-class IncludeByDistanceRatio(val targetBest: Target, val annotationBest: Feature, val targetToTest: Target, val minRatio: Double, val maxRatio: Double, val phaseToLog: String) extends Filter[Feature] with JSONTargetLogging {
+class IncludeByDistanceRatio(val targetBest: Target, val annotationBest: Feature, val targetToTest: Target, val minRatio: Double, val maxRatio: Double) extends Filter[Feature] with LazyLogging {
   logger.info(s"using ${targetBest} as reference target vs ${targetToTest}")
 
   /**
@@ -17,7 +17,7 @@ class IncludeByDistanceRatio(val targetBest: Target, val annotationBest: Feature
     val distanceAnnotation = Math.abs(annotationBest.retentionTimeInSeconds - spectra.retentionTimeInSeconds)
     val ratio = distanceTargets / distanceAnnotation
 
-    //logger.info(s"distance ratio is ${ratio} and needs to be between ${minRatio} and ${maxRatio}")
+    //logger.debug(s"distance ratio is ${ratio} and needs to be between ${minRatio} and ${maxRatio}")
 
     if (targetToTest.eq(targetBest)) {
       (true, "validation target is the same target as the target to test")
@@ -26,16 +26,4 @@ class IncludeByDistanceRatio(val targetBest: Target, val annotationBest: Feature
       (ratio >= minRatio && ratio <= maxRatio, Map("ratio" -> ratio, "distanceTargets" -> distanceTargets, "distanceAnnotations" -> distanceAnnotation))
     }
   }
-
-  /**
-    * references to all used settings
-    */
-  override protected val usedSettings: Map[String, Any] = Map(
-    "targetValidation" -> targetBest,
-    "annotationValidation" -> annotationBest
-  )
-  /**
-    * which target we require to log
-    */
-  override protected val targetToLog: Target = targetToTest
 }
