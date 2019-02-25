@@ -151,6 +151,19 @@ class ZeroReplacementProperties {
   var retentionIndexWindowForPeakDetection: Double = 12
 
   /**
+    * Use the mean of the 2 nearest ions on the left and right of matching mass to the target to estimate the
+    * replacement value if no value is found within the RI window.  Takes precedence over estimateByChromatogramNoise
+    */
+  var estimateByNearestFourIons: Boolean = true
+
+  /**
+    * Estimate noise as the mean of the lowest 5% of ions for the given mass in the entire chromatogram
+    * if no value is found within the RI window and estimateByNearestFourIons is disabled
+    * Likely more expensive, but a statistically reasonable estimate
+    */
+  var estimateByChromatogramNoise: Boolean = false
+
+  /**
     * utilized mass accuracy for searches
     */
   var massAccuracyInDa: Double = 0.1
@@ -162,7 +175,7 @@ class ZeroReplacementProperties {
 }
 
 /**
-  * Finds the noise value for a peak and substract it from the local maximum for the provided ion and mass
+  * Finds the noise value for a peak and subtract it from the local maximum for the provided ion and mass
   *
   */
 @Component
@@ -216,10 +229,8 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     logger.debug(s"noise is: ${noise} for target: ${receivedTarget}")
 
     val replacementValueSpectra = rawdata.spectra.filter { spectra =>
-
-      //find the closes possible mass
+      //find the closest possible mass
       includeMass(receivedTarget, filterByMass, spectra)
-
     }
 
     logger.debug(s"found ${replacementValueSpectra.size} spectra, after mass filter for target ${receivedTarget}")
@@ -233,7 +244,43 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     //TODO: Gert should check if this makes sense. In case mass isn't there, I create a Corrected Feature using the original QuantifiedSample and RT, RI, scan# from target with 0 intensity.
     val value: (Feature with CorrectedSpectra) = {
       if (filteredByTime.isEmpty) {
-        logger.warn("Created failsafe [Feature with CorrectedSpectra] from target data and 0 intensity")
+        val intensity: Float = {
+          if (zeroReplacementProperties.estimateByNearestFourIons && replacementValueSpectra.nonEmpty) {
+            // estimate the replacement value using the nearest four ions of matching mass
+            val leftIntensities = replacementValueSpectra
+              .filter(x => receivedTarget.retentionIndex > x.retentionIndex)
+              .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
+              .take(2)
+
+            val rightIntensities = replacementValueSpectra
+              .filter(x => receivedTarget.retentionIndex < x.retentionIndex)
+              .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
+              .take(2)
+
+            val nearestIntensities = (leftIntensities ++ rightIntensities)
+              .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get).get.intensity)
+
+            val intensity = nearestIntensities.sum / nearestIntensities.length
+            logger.warn(s"Created failsafe [Feature with CorrectedSpectra] from nearest ${nearestIntensities.length} "+
+              "ions with ${intensity} intensity")
+            intensity
+          } else if (zeroReplacementProperties.estimateByChromatogramNoise && replacementValueSpectra.nonEmpty) {
+            // estimate the replacement value by averaging the intensities of the smallest 5% of ions
+            val intensities = replacementValueSpectra
+              .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get).get.intensity)
+              .sorted
+              .take((replacementValueSpectra.length / 20.0 + 1).toInt)
+
+            val intensity = intensities.sum / intensities.length
+            logger.warn(s"Created failsafe [Feature with CorrectedSpectra] from smallest ${intensities.length} "+
+              "ions with ${intensity} intensity")
+            intensity
+          } else {
+            logger.warn("Created failsafe [Feature with CorrectedSpectra] from target data and 0 intensity")
+            0.0f
+          }
+        }
+
         new Feature with CorrectedSpectra {
           override val uniqueMass: Option[Double] = None
           override val signalNoise: Option[Double] = None
@@ -265,7 +312,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           /**
             * accurate mass of this feature, if applicable
             */
-          override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, 0.0f))
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, intensity))
 
           override val retentionIndex: Double = receivedTarget.retentionIndex
         }
