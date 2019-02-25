@@ -14,8 +14,8 @@ import org.springframework.web.client.HttpClientErrorException
 @SpringBootTest
 @ActiveProfiles(Array("test", "carrot.lcms", "runner"))
 @TestPropertySource(properties = Array(
-  "CARROT_SAMPLE:B5_P20Lipids_Pos_NIST01.mzML",
-  "CARROT_METHOD:lcms_istds | test | test | positive",
+  "CARROT_SAMPLE:B5_P20Lipids_Pos_NIST01.mzml",
+  "CARROT_METHOD:csh | 6530 | test | positive",
   "CARROT_MODE:lcms",
   "carrot.submitter:dpedrosa@ucdavis.edu"
 ))

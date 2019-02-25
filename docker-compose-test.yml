@@ -11,6 +11,8 @@ services:
 
   mongodb:
     image: mongo:3.2.4
+    ports:
+      - 27027:27017
     expose:
       - 27017
     networks:
