@@ -64,6 +64,7 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with ShouldMatcher
     "replaceValue" should {
 
       "replace the null values in the file" in {
+        simpleZeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = false
         val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
 
         replaced.quantifiedTargets.foreach { x =>
@@ -76,7 +77,22 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with ShouldMatcher
 
         stasis_cli.getTracking(sample.name).status.map(_.value) should contain("replaced")
       }
-    }
 
+      "replace the null values in the file using nearest ion estimation" in {
+        simpleZeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = true
+        val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
+
+        // All target must be nonzero
+        replaced.quantifiedTargets.foreach { x =>
+          logger.info(s"target: ${x.name.get} = ${x.quantifiedValue}")
+          x.quantifiedValue.getOrElse(-1.0) should be > 0.0
+        }
+
+        //all spectra should be the same count as the targets
+        replaced.spectra.size should be(replaced.quantifiedTargets.size)
+
+        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("replaced")
+      }
+    }
   }
 }
