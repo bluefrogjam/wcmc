@@ -8,7 +8,7 @@ class IncludeByIonRatioTest extends WordSpec {
   "IncludeByIonRatioTest" should {
 
     "support accurate mass " must {
-      val filter = new IncludeByIonRatio(100.0,0.45,0.55,"test",0.005)
+      val filter = new IncludeByIonRatio(100.0, 0.45, 0.55, 0.005)
 
       "spectra not included since it has no 140" in {
         assert(!filter.include(testSpectraWith1Ion,null))

@@ -1,13 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONTargetLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.RetentionIndexDifference
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotateSampleProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectedSample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByRetentionIndexWindow, SifterFilter}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.gcms.GCMSAnnotationProperties
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
@@ -43,18 +42,10 @@ class GCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
       throw new Exception(s"please ensure you are provided a valid method for this process! ${method} vs ${gcmsPropterties}")
     }
 
-    trait TargetToLog extends JSONTargetLogging {
-      /**
-        * which target we require to log
-        */
-      override protected val targetToLog: Target = target
-    }
-
-    val retentionIndexFiler = new IncludeByRetentionIndexWindow(target.retentionIndex, "annotation", configuration.get.retentionIndexWindow) with TargetToLog
-    val sifterFilter = new SifterFilter("annotation", configuration.get, target)
+    val retentionIndexFiler = new IncludeByRetentionIndexWindow(target.retentionIndex, configuration.get.retentionIndexWindow)
+    val sifterFilter = new SifterFilter(configuration.get, target)
 
     //filter spectra
-
     //logger.info(s"${input.spectra.size} to annotate vs ${target}")
 
     //by unique mass

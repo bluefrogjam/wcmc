@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation.Test._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
 import org.scalatest.WordSpec
 
 object Test {
@@ -124,13 +124,13 @@ class AccurateMassAnnotationPPMTest extends WordSpec {
 
 
     "match this spectra" in {
-      val test = new AccurateMassAnnotationPPM(5,"")
+      val test = new AccurateMassAnnotationPPM(5)
 
       assert(test.isMatch(testAccurateMassSpectraWith4Ions, testAccurateLibraryMassSpectraWith4Ions))
     }
 
     "doesn't match this spectra" in {
-      val test = new AccurateMassAnnotationPPM(5,"")
+      val test = new AccurateMassAnnotationPPM(5)
 
       assert(!test.isMatch(testAccurateMassSpectraWith4Ions, testAccurateLibraryMassSpectra2With4Ions))
     }
@@ -144,13 +144,13 @@ class AccurateMassAnnotationTest extends WordSpec {
 
 
     "match this spectra" in {
-      val test = new AccurateMassAnnotation(0.005,0,"")
+      val test = new AccurateMassAnnotation(0.005, 0)
 
       assert(test.isMatch(testAccurateMassSpectraWith4Ions, testAccurateLibraryMassSpectraWith4Ions))
     }
 
     "doesn't match this spectra" in {
-      val test = new AccurateMassAnnotation(0.005,0,"")
+      val test = new AccurateMassAnnotation(0.005, 0)
 
       assert(!test.isMatch(testAccurateMassSpectraWith4Ions, testAccurateLibraryMassSpectra2With4Ions))
     }

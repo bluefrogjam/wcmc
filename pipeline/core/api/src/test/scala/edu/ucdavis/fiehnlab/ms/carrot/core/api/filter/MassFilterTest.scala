@@ -12,11 +12,11 @@ class MassFilterTest extends WordSpec with ShouldMatchers {
         /**
           * references to all used settings
           */
-        override protected val usedSettings: Map[String, Any] = Map()
+        //        override protected val usedSettings: Map[String, Any] = Map()
         /**
           * which phase we require to log
           */
-        override protected val phaseToLog: String = "test"
+        //        override protected val phaseToLog: String = "test"
       }.isNominal shouldBe true
     }
 
@@ -25,11 +25,11 @@ class MassFilterTest extends WordSpec with ShouldMatchers {
         /**
           * references to all used settings
           */
-        override protected val usedSettings: Map[String, Any] = Map()
+        //        override protected val usedSettings: Map[String, Any] = Map()
         /**
           * which phase we require to log
           */
-        override protected val phaseToLog: String = "test"
+        //        override protected val phaseToLog: String = "test"
       }.isNominal shouldBe false
     }
 
@@ -39,11 +39,11 @@ class MassFilterTest extends WordSpec with ShouldMatchers {
         /**
           * references to all used settings
           */
-        override protected val usedSettings: Map[String, Any] = Map()
+        //        override protected val usedSettings: Map[String, Any] = Map()
         /**
           * which phase we require to log
           */
-        override protected val phaseToLog: String = "test"
+        //        override protected val phaseToLog: String = "test"
       }.sameMass(100.0,100.0) shouldBe true
 
     }
@@ -52,11 +52,11 @@ class MassFilterTest extends WordSpec with ShouldMatchers {
         /**
           * references to all used settings
           */
-        override protected val usedSettings: Map[String, Any] = Map()
+        //        override protected val usedSettings: Map[String, Any] = Map()
         /**
           * which phase we require to log
           */
-        override protected val phaseToLog: String = "test"
+        //        override protected val phaseToLog: String = "test"
       }.sameMass(100.0,100.0) shouldBe true
 
     }
@@ -66,11 +66,11 @@ class MassFilterTest extends WordSpec with ShouldMatchers {
         /**
           * references to all used settings
           */
-        override protected val usedSettings: Map[String, Any] = Map()
+        //        override protected val usedSettings: Map[String, Any] = Map()
         /**
           * which phase we require to log
           */
-        override protected val phaseToLog: String = "test"
+        //        override protected val phaseToLog: String = "test"
       }.sameMass(100.0,101.0) shouldBe false
 
     }
@@ -80,11 +80,11 @@ class MassFilterTest extends WordSpec with ShouldMatchers {
         /**
           * references to all used settings
           */
-        override protected val usedSettings: Map[String, Any] = Map()
+        //        override protected val usedSettings: Map[String, Any] = Map()
         /**
           * which phase we require to log
           */
-        override protected val phaseToLog: String = "test"
+        //        override protected val phaseToLog: String = "test"
       }.sameMass(100.0,101.0) shouldBe false
 
     }

@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.{JSONSampleLogging, JSONTargetLogging}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, RetentionIndexDifference}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotateSampleProcess
@@ -34,23 +33,8 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
     */
   override protected def findMatches(target: Target, spectra: Seq[_ <: Feature with CorrectedSpectra], sample: CorrectedSample, method: AcquisitionMethod): Seq[_ <: Feature with CorrectedSpectra] = {
     val filters: SequentialAnnotate = new SequentialAnnotate(
-      new MassAccuracyPPMorMD(lcmsProperties.massAccuracySettingPpm, lcmsProperties.massAccuracySetting, "annotation", lcmsProperties.massIntensity) with JSONSampleLogging {
-        /**
-          * which sample we require to log
-          */
-        override protected val sampleToLog: String = sample.fileName
-      } ::
-        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow, "annotation") with JSONSampleLogging with JSONTargetLogging {
-          /**
-            * which sample we require to log
-            */
-          override protected val sampleToLog: String = sample.fileName
-          /**
-            * which target we require to log
-            */
-          override protected val targetToLog: Target = target
-        } ::
-        List()
+      new MassAccuracyPPMorMD(lcmsProperties.massAccuracySettingPpm, lcmsProperties.massAccuracySetting, lcmsProperties.massIntensity) ::
+          new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow) :: List()
     )
 
 
@@ -59,12 +43,10 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
         spectra
     }
 
-    if (debug) {
-      logger.debug(s"discovered matches for ${target}")
-      result.seq.sortBy(_.retentionIndex).foreach { ms =>
-        logger.debug(s"\t=> ${ms}")
-      }
-    }
+    //      logger.debug(s"discovered matches for ${target}")
+    //      result.seq.sortBy(_.retentionIndex).foreach { ms =>
+    //        logger.debug(s"\t=> ${ms}")
+    //      }
     result.seq
   }
 
@@ -81,25 +63,23 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
 
       val resultList =
         if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
-          logger.info("preferring gaussian similarity over mass accuracy and rt distance")
+          logger.debug("preferring gaussian similarity over mass accuracy and rt distance")
           matches.sortBy { r => SimilarityMethods.featureTargetSimilarity(r, target, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold) }
         } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
-          logger.info("preferring accuracy over retention time distance")
+          logger.debug("preferring accuracy over retention time distance")
           matches.sortBy { r => (MassAccuracy.calculateMassErrorPPM(r, target).get, RetentionIndexDifference.diff(target, r)) }
         } else {
-          logger.info("preferring retention time over mass accuracy")
+          logger.debug("preferring retention time over mass accuracy")
           matches.sortBy { r => (RetentionIndexDifference.diff(target, r), MassAccuracy.calculateMassErrorPPM(r, target).get) }
         }
 
       val best = resultList.head
 
-      if (debug) {
-        logger.debug("result list:")
-        resultList.zipWithIndex.foreach { p =>
-          logger.debug(s"\t\t=> ${p._1}")
-          logger.debug(f"\t\t\t=> rank: ${p._2 + 1}, ri distance was: ${RetentionIndexDifference.diff(target, p._1)}%1.3f, mass accuracy: ${MassAccuracy.calculateMassErrorPPM(p._1, target).get}%1.5f ")
-        }
-      }
+      //        logger.debug("result list:")
+      //        resultList.zipWithIndex.foreach { p =>
+      //          logger.debug(s"\t\t=> ${p._1}")
+      //          logger.debug(f"\t\t\t=> rank: ${p._2 + 1}, ri distance was: ${RetentionIndexDifference.diff(target, p._1)}%1.3f, mass accuracy: ${MassAccuracy.calculateMassErrorPPM(p._1, target).get}%1.5f ")
+      //        }
 
       if (resultList.size == 1 || lcmsProperties.closePeakDetection == 0.0) {
         logger.debug(s"\t\t\t\t=>accepting ${best}")
@@ -113,15 +93,15 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
 
         logger.debug(s"discovered close peaks after filtering: ${closePeaks}")
         if (closePeaks.nonEmpty) {
-          if (debug) {
-            logger.debug("close peaks:")
-            closePeaks.zipWithIndex.foreach { p =>
-              logger.debug(s"\t\t=> ${p._1}")
-              logger.debug(f"\t\t\t=> rank: ${p._2 + 1}, intensity was: ${p._1.massOfDetectedFeature.get.intensity}")
-            }
-
-            logger.debug(s"chosen: ${closePeaks.head}")
-          }
+          //          if (debug) {
+          //            logger.debug("close peaks:")
+          //            closePeaks.zipWithIndex.foreach { p =>
+          //              logger.debug(s"\t\t=> ${p._1}")
+          //              logger.debug(f"\t\t\t=> rank: ${p._2 + 1}, intensity was: ${p._1.massOfDetectedFeature.get.intensity}")
+          //            }
+          //
+          //            logger.debug(s"chosen: ${closePeaks.head}")
+          //          }
 
           Some(closePeaks.head)
         }
@@ -143,7 +123,6 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
     * @param possibleHits
     */
   protected override def removeDuplicatedAnnotations(possibleHits: Seq[(Target, _ <: Feature with CorrectedSpectra)], method: AcquisitionMethod): Map[Target, _ <: Feature with CorrectedSpectra] = {
-    logger.debug(s"analyzing ${possibleHits.size} possible hits")
     //map all targets as list, indexed by it's corrected spectra
     val annotationsToTargets: Map[_ <: Feature with CorrectedSpectra, Seq[Target]] = possibleHits.groupBy(_._2).mapValues(_.map(_._1))
 
@@ -154,17 +133,15 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
 
         //only 1 annotation, so move forward
         if (x._2.size == 1) {
-          logger.debug(s"only 1 target found for spectra: ${x._1}")
           (x._2.head, x._1)
         }
         //several annotations found, optimizing association
         else {
-          logger.debug(s"\nfound ${x._2.size} targets for spectra ${x._1}")
 
           //find the target, which has the closest mass accuracy, followed by the closes retention time
           val optimizedTargetList =
             if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
-              logger.info("preferring gaussian similarity over mass accuracy and rt distance")
+              logger.debug("preferring gaussian similarity over mass accuracy and rt distance")
               x._2.sortBy { r => SimilarityMethods.featureTargetSimilarity(x._1, r, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold) }
             } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
               logger.debug("preferring accuracy over retention time distance")
@@ -176,52 +153,51 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
 
           val hit = optimizedTargetList.head
 
-          if (debug) {
-            optimizedTargetList.zipWithIndex.foreach { y =>
-              logger.debug(s"\t=>\t${y._1}")
-              logger.debug(f"\t\t=> rank:                ${y._2}")
-              logger.debug(f"\t\t=> ri distance:         ${RetentionIndexDifference.diff(y._1, x._1)}%1.2f seconds")
-              logger.debug(f"\t\t=> mass error:          ${MassAccuracy.calculateMassError(x._1, y._1).get}%1.5f dalton")
-              //              logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.mass)}%1.5f dalton")
-              logger.debug(f"\t\t=> mass error (ppm):    ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get}%1.5f ppm")
-              logger.debug(f"\t\t=> mass error * ri dis: ${MassAccuracy.calculateMassError(x._1, y._1).get * RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
-              logger.debug(f"\t\t=> mass error / ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get / RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
-              logger.debug(f"\t\t=> mass intensity:      ${x._1.massOfDetectedFeature.get.intensity}%1.0f")
-              //              logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.intensity}%1.0f")
-
-
-              logger.debug("")
-            }
-
-            logger.debug(s"best match: ${hit}")
-          }
+          //          if (debug) {
+          //            optimizedTargetList.zipWithIndex.foreach { y =>
+          //              logger.debug(s"\t=>\t${y._1}")
+          //              logger.debug(f"\t\t=> rank:                ${y._2}")
+          //              logger.debug(f"\t\t=> ri distance:         ${RetentionIndexDifference.diff(y._1, x._1)}%1.2f seconds")
+          //              logger.debug(f"\t\t=> mass error:          ${MassAccuracy.calculateMassError(x._1, y._1).get}%1.5f dalton")
+          //              //              logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.mass)}%1.5f dalton")
+          //              logger.debug(f"\t\t=> mass error (ppm):    ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get}%1.5f ppm")
+          //              logger.debug(f"\t\t=> mass error * ri dis: ${MassAccuracy.calculateMassError(x._1, y._1).get * RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
+          //              logger.debug(f"\t\t=> mass error / ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get / RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
+          //              logger.debug(f"\t\t=> mass intensity:      ${x._1.massOfDetectedFeature.get.intensity}%1.0f")
+          //              //              logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.intensity}%1.0f")
+          //
+          //
+          //              logger.debug("")
+          //            }
+          //
+          //            logger.debug(s"best match: ${hit}")
+          //          }
 
           if (lcmsProperties.closePeakDetection > 0.0) {
-            logger.debug("utilizing close peak detection mode")
 
             val closePeaks = optimizedTargetList.filter { p => RetentionIndexDifference.diff(p, x._1) < lcmsProperties.closePeakDetection }.sortBy(p => RetentionIndexDifference.diff(p, x._1)).reverse
 
             if (closePeaks.nonEmpty) {
 
-              logger.debug(s"analyzing close peaks, which are in a ${lcmsProperties.closePeakDetection}s window")
-              closePeaks.zipWithIndex.foreach { y =>
-                logger.debug(s"\t=>\t${y._1}")
-                logger.debug(f"\t\t=> rank:                ${y._2}")
-                logger.debug(f"\t\t=> ri distance:         ${RetentionIndexDifference.diff(y._1, x._1)}%1.2f seconds")
-                logger.debug(f"\t\t=> mass error:          ${MassAccuracy.calculateMassError(x._1, y._1).get}%1.5f dalton")
+              //              logger.debug(s"analyzing close peaks, which are in a ${lcmsProperties.closePeakDetection}s window")
+              //              closePeaks.zipWithIndex.foreach { y =>
+              //                logger.debug(s"\t=>\t${y._1}")
+              //                logger.debug(f"\t\t=> rank:                ${y._2}")
+              //                logger.debug(f"\t\t=> ri distance:         ${RetentionIndexDifference.diff(y._1, x._1)}%1.2f seconds")
+              //                logger.debug(f"\t\t=> mass error:          ${MassAccuracy.calculateMassError(x._1, y._1).get}%1.5f dalton")
                 // logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.mass)}%1.5f dalton")
-                logger.debug(f"\t\t=> mass error (ppm):    ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get}%1.5f ppm")
-                logger.debug(f"\t\t=> mass error * ri dis: ${MassAccuracy.calculateMassError(x._1, y._1).get * RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
-                logger.debug(f"\t\t=> mass error / ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get / RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
-                logger.debug(f"\t\t=> mass intensity:      ${x._1.massOfDetectedFeature.get.intensity}%1.0f")
+              //                logger.debug(f"\t\t=> mass error (ppm):    ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get}%1.5f ppm")
+              //                logger.debug(f"\t\t=> mass error * ri dis: ${MassAccuracy.calculateMassError(x._1, y._1).get * RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
+              //                logger.debug(f"\t\t=> mass error / ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get / RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
+              //                logger.debug(f"\t\t=> mass intensity:      ${x._1.massOfDetectedFeature.get.intensity}%1.0f")
                 // logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.intensity}%1.0f")
 
 
-                logger.debug("")
-              }
+              //                logger.debug("")
+              //              }
 
               val chosen = closePeaks.head
-              logger.debug(s"chose target: ${chosen}")
+              //              logger.debug(s"chose target: ${chosen}")
               (chosen, x._1)
             }
             else {

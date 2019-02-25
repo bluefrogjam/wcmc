@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext
   * @param timeInSeconds
   * @param window
   */
-class IncludeByRetentionIndexWindow(val timeInSeconds: Double, val phaseToLog: String, val window: Double = 5) extends Filter[CorrectedSpectra] {
+class IncludeByRetentionIndexWindow(val timeInSeconds: Double, val window: Double = 5) extends Filter[CorrectedSpectra] {
   /**
     * a method which should be overwritten, if the filter can provide details why it failed
     *
@@ -26,9 +26,4 @@ class IncludeByRetentionIndexWindow(val timeInSeconds: Double, val phaseToLog: S
 
     (result, Map("min" -> min, "max" -> max, "retentionIndex" -> spectra.retentionIndex))
   }
-
-  /**
-    * references to all used settings
-    */
-  override protected val usedSettings: Map[String, Any] = Map("retentionIndex" -> timeInSeconds, "window" -> 5)
 }

@@ -15,7 +15,7 @@ import edu.ucdavis.fiehnlab.util.Utilities
   */
 class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similarity, val phase: String) extends Annotate with LazyLogging {
 
-  override protected val usedSettings = Map("minSimilarity" -> simmilarityOffset, "algorithm" -> algorithm.getClass.getSimpleName)
+  //  override protected val usedSettings = Map("minSimilarity" -> simmilarityOffset, "algorithm" -> algorithm.getClass.getSimpleName)
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -66,5 +66,5 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
   /**
     * which phase we require to log
     */
-  override protected val phaseToLog = phase
+  //  override protected val phaseToLog = phase
 }

@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.math.similarity.{CompositeSimilarity, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
@@ -153,26 +152,11 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     * @return
     */
   def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, sample: Sample): Boolean = {
-    val riFilter = new IncludeByRetentionIndexWindow(newTarget.retentionIndex, "targetGeneration", retentionIndexWindow) with JSONSampleLogging {
-      /**
-        * which sample we require to log
-        */
-      override protected val sampleToLog: String = sample.fileName
-    }
-    val massFilter = new IncludeByMassRangePPM(newTarget, accurateMassWindow, "targetGeneration") with JSONSampleLogging {
-      /**
-        * which sample we require to log
-        */
-      override protected val sampleToLog: String = sample.fileName
-    }
+    val riFilter = new IncludeByRetentionIndexWindow(newTarget.retentionIndex, retentionIndexWindow)
 
-    val similarityFilter = new IncludeBySimilarity(newTarget, minimumSimilarity, "targetGeneration") with JSONSampleLogging {
-      /**
-        * which sample we require to log
-        */
-      override protected val sampleToLog: String = sample.fileName
-    }
+    val massFilter = new IncludeByMassRangePPM(newTarget, accurateMassWindow)
 
+    val similarityFilter = new IncludeBySimilarity(newTarget, minimumSimilarity)
 
     //we only accept MS2 and higher for this
     val toMatch = targets.load(acquisitionMethod).filter(_.spectrum.isDefined)

@@ -1,10 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.adductjoiner
 
-import joinery.DataFrame
-import org.springframework.stereotype.Component
-
-import scala.collection.JavaConverters._
-
 /**
   * Created by diego on 2/26/2018
   **/
@@ -24,17 +19,17 @@ class Joiner {
   def filterAnnotations(annots: Seq[Annotation]): Annotation = {
     if (annots.lengthCompare(1) > 0) {
       println("+++++++++")
-      annots.sortBy(_.adduct).groupBy(_.name).map(x => Map(x._1 ->
-        Annotation("",
-          x._2.map(_.mass).min,
-          x._2.head.rt_min,
-          x._2.map(_.intensity).sum,
-          x._2.head.sample,
-          x._1,
-          x._2.map(_.adduct).aggregate((a: String, b: String) => s"${a}_${b}"),
-          x._2.head.inchikey)
-      )
-      ).foreach(println)
+      //      annots.sortBy(_.adduct).groupBy(_.name).map(x => Map(x._1 -> new
+      //        Annotation("",
+      //          x._2.map(_.mass).min,
+      //          x._2.head.rt_min,
+      //          x._2.map(_.intensity).sum,
+      //          x._2.head.sample,
+      //          x._1,
+      //          x._2.map(_.adduct).aggregate((a: String, b: String) => s"${a}_${b}"),
+      //          x._2.head.inchikey)
+      //      )
+      //      ).foreach(println)
       println("=========")
       Annotation("", 0, 0, 0, "")
     } else {

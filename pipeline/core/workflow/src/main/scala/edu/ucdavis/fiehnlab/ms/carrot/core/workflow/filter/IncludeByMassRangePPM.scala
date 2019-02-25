@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
 import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONTargetLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
@@ -11,7 +10,7 @@ import org.springframework.context.ApplicationContext
 /**
   * Created by wohlgemuth on 7/12/17.
   */
-class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double, val phaseToLog: String) extends Filter[AccurateMassSupport] with LazyLogging {
+class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double) extends Filter[AccurateMassSupport] with LazyLogging {
   logger.debug(s"mass window is ${windowInPPM} for ${target}")
 
   /**
@@ -31,11 +30,6 @@ class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double, val pha
       false
     }
   }
-
-  /**
-    * references to all used settings
-    */
-  override protected val usedSettings: Map[String, Any] = Map("target" -> target, "massAccuracyWindowInPPM" -> windowInPPM)
 }
 
 /**
@@ -44,7 +38,7 @@ class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double, val pha
   * @param target
   * @param window window value in mDa
   */
-class IncludeByMassRange(val target: Target, val window: Double, val phaseToLog: String) extends Filter[AccurateMassSupport] with LazyLogging with JSONTargetLogging{
+class IncludeByMassRange(val target: Target, val window: Double) extends Filter[AccurateMassSupport] with LazyLogging {
   logger.debug(s"mass window is ${window} for ${target}")
 
   /**
@@ -64,13 +58,4 @@ class IncludeByMassRange(val target: Target, val window: Double, val phaseToLog:
       false
     }
   }
-
-  /**
-    * references to all used settings
-    */
-  override protected val usedSettings: Map[String, Any] = Map("massAccuracyWindowInDalton" -> window)
-  /**
-    * which target we require to log
-    */
-  override protected val targetToLog: Target =target
 }

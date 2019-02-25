@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.diagnostics.JSONSampleLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
@@ -147,7 +146,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     }.toSeq.sortBy(_.target.retentionIndex)
 
     logger.info(s"after optimization, we kept ${result.size} ri standards out of ${matches.size}")
-    logger.info(s"\tStandards used: ${
+    logger.info(s"\nStandards used: ${
       result.map {
         _.target.name
       }.mkString("\n")
@@ -169,21 +168,11 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     /**
       * allows us to filter the data by the height of the ion
       */
-    val massIntensity = new MassAccuracyPPMorMD(massAccuracyPPMSetting, massAccuracySetting, "correction", minIntensity = minPeakIntensity) with JSONSampleLogging {
-      /**
-        * which sample we require to log
-        */
-      override protected val sampleToLog: String = input.fileName
-    }
+    val massIntensity = new MassAccuracyPPMorMD(massAccuracyPPMSetting, massAccuracySetting, minIntensity = minPeakIntensity)
 
 
     //our defined filters to find possible matches are registered in here
-    val filters: SequentialAnnotate = new SequentialAnnotate(massIntensity :: List()) with JSONSampleLogging {
-      /**
-        * which sample we require to log
-        */
-      override protected val sampleToLog: String = input.fileName
-    }
+    val filters: SequentialAnnotate = new SequentialAnnotate(massIntensity :: List())
 
     /**
       * find possible matches for our specified standards

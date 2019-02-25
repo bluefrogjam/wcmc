@@ -14,6 +14,7 @@
     <modules>
         <module>mona</module>
         <module>binbase</module>
+        <module>dynamo</module>
     </modules>
 
 </project>

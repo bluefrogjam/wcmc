@@ -152,7 +152,7 @@ class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLoggin
       }
       library.add(testTarget2, acquisitionMethod1, None)
       eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod1).size shouldBe 2
+        library.load(acquisitionMethod1).size should be >= 2
         Thread.sleep(1000)
       }
 
