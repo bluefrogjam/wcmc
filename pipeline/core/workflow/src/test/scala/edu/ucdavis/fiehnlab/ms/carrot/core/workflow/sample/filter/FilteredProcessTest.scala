@@ -19,15 +19,6 @@ class FilteredProcessTest extends WordSpec {
       val filteredProcess = new FilteredProcess(
         List(new Filter[Feature]() {
           protected override def doInclude(spectra: Feature,applicationContext:ApplicationContext): Boolean = true
-
-          /**
-            * which phase we require to log
-            */
-          override protected val phaseToLog: String = "test"
-          /**
-            * references to all used settings
-            */
-          override protected val usedSettings: Map[String, Any] = Map()
         })
       )
 
@@ -40,15 +31,6 @@ class FilteredProcessTest extends WordSpec {
       val filteredProcess = new FilteredProcess(
         List(new Filter[Feature]() {
           protected override def doInclude(spectra: Feature,applicationContext:ApplicationContext): Boolean = false
-
-          /**
-            * which phase we require to log
-            */
-          override protected val phaseToLog: String = "test"
-          /**
-            * references to all used settings
-            */
-          override protected val usedSettings: Map[String, Any] = Map()
         })
       )
 
@@ -63,27 +45,9 @@ class FilteredProcessTest extends WordSpec {
 
           new Filter[Feature]() {
             protected override def doInclude(spectra: Feature,applicationContext:ApplicationContext): Boolean = false
-
-            /**
-              * which phase we require to log
-              */
-            override protected val phaseToLog: String = "test"
-            /**
-              * references to all used settings
-              */
-            override protected val usedSettings: Map[String, Any] = Map()
           },
           new Filter[Feature]() {
             protected override def doInclude(spectra: Feature,applicationContext:ApplicationContext): Boolean = true
-
-            /**
-              * which phase we require to log
-              */
-            override protected val phaseToLog: String = "test"
-            /**
-              * references to all used settings
-              */
-            override protected val usedSettings: Map[String, Any] = Map()
           }
         )
       )

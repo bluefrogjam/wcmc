@@ -23,10 +23,8 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
   val stasis_cli: StasisClient = null
 
   def save(sample: QuantifiedSample[T]): ResultData = {
-    logger.info(s"Storing '${sample.name}' on AWS")
 
     val results = sample.spectra.map(feature => {
-      logger.debug(s"\tType of feature: ${feature.getClass.getName}")
       Result(CarrotToStasisConverter.asStasisTarget(feature.target),
         Annotation(feature.retentionIndex,
           feature.quantifiedValue.get match {
@@ -38,8 +36,7 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
           feature.accurateMass.getOrElse(0.0),
           nonCorrectedRt = feature.retentionTimeInSeconds,
           feature.massAccuracy.getOrElse(0),
-          feature.massAccuracyPPM.getOrElse(0),
-          feature.retentionIndexDistance.getOrElse(0)
+          feature.massAccuracyPPM.getOrElse(0)
         )
       )
     })
@@ -56,13 +53,12 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
     val data: ResultData = ResultData(sample.name, injections)
 
     val response = stasis_cli.addResult(data)
-    logger.trace(s"stasis response: ${response}")
 
     if (response.getStatusCode == HttpStatus.OK) {
       stasis_cli.addTracking(TrackingData(sample.name, "exported", sample.fileName))
       response.getBody
     } else {
-      logger.info(response.getStatusCode.getReasonPhrase)
+      logger.warn(response.getStatusCode.getReasonPhrase)
       data
     }
   }

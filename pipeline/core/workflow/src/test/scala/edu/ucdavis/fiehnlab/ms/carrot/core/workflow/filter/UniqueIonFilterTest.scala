@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
 import org.scalatest.{ShouldMatchers, WordSpec}
 
 class UniqueIonFilterTest extends WordSpec with ShouldMatchers {
@@ -242,29 +242,29 @@ class UniqueIonFilterTest extends WordSpec with ShouldMatchers {
   "UniqueIonFilterTest" should {
 
     "must include the first spectra - accurate mode" in {
-      new UniqueIonFilter(testTargetAccurate, "test", 0.005).include(accurateMassFeature, null) shouldBe true
+      new UniqueIonFilter(testTargetAccurate, 0.005).include(accurateMassFeature, null) shouldBe true
     }
 
     "must include the first spectra - nominal mode" in {
-      new UniqueIonFilter(testTargetNonAccurate, "test", 0.0).include(nominalFeature, null) shouldBe true
+      new UniqueIonFilter(testTargetNonAccurate, 0.0).include(nominalFeature, null) shouldBe true
     }
 
 
     "must exclude the first spectra - nominal mode" in {
-      new UniqueIonFilter(testTargetNonAccurate, "test", 0.0).include(accurateMassFeature, null) shouldBe false
+      new UniqueIonFilter(testTargetNonAccurate, 0.0).include(accurateMassFeature, null) shouldBe false
     }
 
     "must exclude the first spectra - accurate mode" in {
-      new UniqueIonFilter(testTargetNonAccurate, "test", 0.005).include(accurateMassFeature, null) shouldBe false
+      new UniqueIonFilter(testTargetNonAccurate, 0.005).include(accurateMassFeature, null) shouldBe false
     }
     "must exclude the the spectrra do to no mass for spectra" in {
-      new UniqueIonFilter(testTargetNonAccurate, "test", 0.005).include(featureNoMass, null) shouldBe false
+      new UniqueIonFilter(testTargetNonAccurate, 0.005).include(featureNoMass, null) shouldBe false
     }
     "must exclude the the spectra do to no mass for target" in {
-      new UniqueIonFilter(testTargetNoMass, "test", 0.005).include(accurateMassFeature, null) shouldBe false
+      new UniqueIonFilter(testTargetNoMass, 0.005).include(accurateMassFeature, null) shouldBe false
     }
     "must exclude the the spectra do to no mass for target and spectra" in {
-      new UniqueIonFilter(testTargetNoMass, "test", 0.005).include(featureNoMass, null) shouldBe false
+      new UniqueIonFilter(testTargetNoMass, 0.005).include(featureNoMass, null) shouldBe false
     }
 
 

@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, MSSpectra}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.CorrectedSpectra
 import org.scalatest.WordSpec
 
 /**
@@ -11,7 +10,7 @@ class IncludeByRetentionIndexTimeWindowTest extends WordSpec {
 
   "IncludeByRetentionIndexTimeWindowTest" should {
 
-    val filter = new IncludeByRetentionIndexWindow(100,"test",5)
+    val filter = new IncludeByRetentionIndexWindow(100, 5)
     "include" in {
 
       assert(filter.include(new  CorrectedSpectra{

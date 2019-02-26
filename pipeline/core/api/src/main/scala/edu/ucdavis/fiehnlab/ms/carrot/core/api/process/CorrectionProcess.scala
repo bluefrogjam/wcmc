@@ -99,11 +99,11 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     * @param possibleHits
     */
   def verifyOrder(possibleHits: Iterable[TargetAnnotation[Target, Feature]], input: Sample): Unit = {
-    possibleHits.foreach { x =>
-      logger.info(f"validating order for ${x.target.name.get.substring(0, 15)} with ${x.target.retentionIndex}%.2f " +
-          f"against annotation ${x.annotation.retentionTimeInSeconds}%.2f " +
-          f"and intensity ${x.annotation.massOfDetectedFeature.getOrElse(Ion(0,0)).intensity}%.0f")
-    }
+    //    possibleHits.foreach { x =>
+    //      logger.debug(f"validating order for ${x.target.name.get.substring(0, 15)} with ${x.target.retentionIndex}%.2f " +
+    //          f"against annotation ${x.annotation.retentionTimeInSeconds}%.2f " +
+    //          f"and intensity ${x.annotation.massOfDetectedFeature.getOrElse(Ion(0,0)).intensity}%.0f")
+    //    }
     // brian would suggest to delete standards, which are out of order in case they are the same compound with different ionisations and come very close together
     // brian suggests to add a small 2s window in which the order of standards doesn't matter
 
@@ -156,7 +156,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
 
     regression.calibration(x, y)
 
-    logger.info(s"${regression.toString}\n")
+    logger.debug(s"${regression.toString}\n")
 
     val correctedSpectra: Seq[_ <: Feature with CorrectedSpectra] = sampleToCorrect.spectra.map(x => SpectraHelper.addCorrection(x, regression.computeY(x.retentionTimeInSeconds)))
 

@@ -36,7 +36,7 @@ class IncludeByMassRangePPMTest extends WordSpec {
           * associated spectrum propties if applicable
           */
         override val spectrum: Option[SpectrumProperties] = None
-      },5,"test")
+      }, 5)
       assert(filter.include(testAccurateMassSpectraWith4Ions2,null))
     }
 
@@ -62,7 +62,7 @@ class IncludeByMassRangePPMTest extends WordSpec {
         override var isRetentionIndexStandard: Boolean = false
 
         override val spectrum: Option[SpectrumProperties] = None
-      },5,"test")
+      }, 5)
       assert(!filter.include(testAccurateMassSpectraWith4Ions2,null))
     }
 
