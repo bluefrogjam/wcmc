@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -21,7 +21,7 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[SpringRunner])
 @ActiveProfiles(Array("test"))
 @SpringBootTest(classes = Array(classOf[StasisTestConfiguration]))
-class Stasis4jTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually {
+class Stasis4jTest extends WordSpec with Matchers with LazyLogging with Eventually {
 
   @Autowired
   val client: StasisClient = null

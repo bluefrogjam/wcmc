@@ -1,12 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 
 /**
   * Created by wohlgemuth on 11/2/17.
   */
-class TargetTest extends WordSpec with ShouldMatchers {
+class TargetTest extends WordSpec with Matchers {
 
   "TargetTest" must {
 

@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -21,8 +21,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test" /*, "carrot.logging.json.enable"*/))
-class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatchers with LazyLogging {
+@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test"))
+class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with Matchers with LazyLogging {
   val libName = "lcms_istds"
 
   @Autowired
@@ -50,7 +50,7 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatche
 
       correction.asInstanceOf[LCMSTargetRetentionIndexCorrectionProcess].minimumFoundStandards = 20
       val error = intercept[NotEnoughStandardsFoundException] {
-        correction.process(deco.process(sample3, method), method)
+        correction.process(deco.process(sample3, method, None), method, None)
       }
 
       assert(error != null)
@@ -59,7 +59,7 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with ShouldMatche
     s"should pass, because we have enough standards for us to continue ${sample2}" in {
       correction.asInstanceOf[LCMSTargetRetentionIndexCorrectionProcess].minimumFoundStandards = 10
 
-      val corrected = correction.process(deco.process(sample2, method), method)
+      val corrected = correction.process(deco.process(sample2, method, None), method, None)
 
       for (x <- corrected.featuresUsedForCorrection) {
         logger.info(s"used for correction: ${x.annotation.massOfDetectedFeature}")

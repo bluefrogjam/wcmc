@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
@@ -11,7 +11,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @ActiveProfiles(Array("file.source.luna"))
 @SpringBootTest(classes = Array(classOf[SampleLoaderTestConfig]))
-class ConversionAwareSampleLoaderTest extends WordSpec with ShouldMatchers {
+class ConversionAwareSampleLoaderTest extends WordSpec with Matchers {
 
   @Autowired
   val loader: SampleLoader = null

@@ -99,7 +99,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
       ))
 
     //correct the data
-    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method), method))
+    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method, None), method, None))
 
     correctedSample.foreach { sample =>
       s"process ${sample} without recursive annotation and with preferring mass accuracy over retention index distance" ignore { // ignored cause we'r using jenny's sample RTs
@@ -176,7 +176,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with LazyLogging {
 
           logger.debug("")
         }
-        val quantified = quantify.process(result, method)
+        val quantified = quantify.process(result, method, None)
 
         //these are our ISD
         targetValues(sample.name).foreach(tgt =>

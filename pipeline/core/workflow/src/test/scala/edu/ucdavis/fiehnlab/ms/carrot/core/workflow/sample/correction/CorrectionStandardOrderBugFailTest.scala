@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
@@ -23,7 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
 @TestPropertySource(properties = Array(
   "wcmc.pipeline.workflow.config.correction.peak.intensity:5000"
 ))
-class CorrectionStandardOrderBugFailTest extends WordSpec with ShouldMatchers with LazyLogging {
+class CorrectionStandardOrderBugFailTest extends WordSpec with Matchers with LazyLogging {
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
@@ -43,15 +43,13 @@ class CorrectionStandardOrderBugFailTest extends WordSpec with ShouldMatchers wi
     val sample = loader.getSample("FL95-032_Wk1_B4_posCSH_Keim_2.mzml")
     val method = AcquisitionMethod(ChromatographicMethod("keim", Some("6550"), Some("test"), Some(NegativeMode())))
 
-    "have minPeakIntensity of 5000" ignore {
+    "have minPeakIntensity of 5000" in {
       correction.minPeakIntensity shouldBe 5000
     }
 
-    "should succeed with high intensity setting for standard" ignore {
-      intercept[StandardsNotInOrderException] {
-        val corrected = correction.process(deco.process(sample, method), method)
-        corrected.featuresUsedForCorrection.size should be >= correction.minimumFoundStandards
-      }
+    "should succeed with high intensity setting for standard" in {
+      val corrected = correction.process(deco.process(sample, method, None), method, None)
+      corrected.featuresUsedForCorrection.size should be >= correction.minimumFoundStandards
     }
   }
 }

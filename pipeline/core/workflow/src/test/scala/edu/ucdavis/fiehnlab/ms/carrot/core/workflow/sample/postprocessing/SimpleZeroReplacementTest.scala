@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMST
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -23,7 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test"))
-class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMatchers {
+class SimpleZeroReplacementTest extends WordSpec with LazyLogging with Matchers {
   val libName = "lcms_istds"
 
   @Autowired
@@ -56,10 +56,10 @@ class SimpleZeroReplacementTest extends WordSpec with LazyLogging with ShouldMat
       annotation.process(
         correction.process(
           deco.process(
-            rawSample, method),
-          method),
-        method),
-      method)
+            rawSample, method, None),
+          method, None),
+        method, None),
+      method, None)
 
     "replaceValue" should {
 

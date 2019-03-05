@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.FServ
 import org.junit.runner.RunWith
-import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
@@ -33,7 +33,7 @@ class FServ4JClientTestConfiguration{
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ4jClientConfiguration],classOf[FServ]))
-class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {
+class FServ4jClientTest extends WordSpec with Matchers with BeforeAndAfterEach with LazyLogging {
 
   override protected def beforeEach(): Unit = {
     val f = new File(s"$directory/test.txt")

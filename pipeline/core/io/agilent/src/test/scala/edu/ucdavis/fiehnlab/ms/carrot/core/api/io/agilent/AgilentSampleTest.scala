@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4JAutoConfiguration
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest()
-class AgilentSampleTest extends WordSpec with LazyLogging with ShouldMatchers{
+class AgilentSampleTest extends WordSpec with LazyLogging with Matchers{
 
 
   @Autowired

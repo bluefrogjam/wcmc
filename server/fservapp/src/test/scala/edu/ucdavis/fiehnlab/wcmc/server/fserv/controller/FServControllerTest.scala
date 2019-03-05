@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.FServ
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
@@ -28,7 +28,7 @@ import scala.io.Source
 	*/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes=Array(classOf[FServ]))
-class FServControllerTest extends WordSpec with LazyLogging with ShouldMatchers {
+class FServControllerTest extends WordSpec with LazyLogging with Matchers {
   @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null
 

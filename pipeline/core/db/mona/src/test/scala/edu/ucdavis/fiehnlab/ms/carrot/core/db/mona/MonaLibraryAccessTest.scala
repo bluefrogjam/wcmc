@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, I
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
-import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest
 @ActiveProfiles(Array("carrot.targets.mona", "test"))
-class MonaLibraryAccessTest extends WordSpec with ShouldMatchers with LazyLogging with Eventually with BeforeAndAfterEach {
+class MonaLibraryAccessTest extends WordSpec with Matchers with LazyLogging with Eventually with BeforeAndAfterEach {
 
   @Autowired
   val library: MonaLibraryAccess = null

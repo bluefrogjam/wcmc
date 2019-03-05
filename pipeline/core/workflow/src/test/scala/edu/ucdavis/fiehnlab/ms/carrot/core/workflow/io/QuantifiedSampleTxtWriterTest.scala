@@ -43,10 +43,10 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
   val quantification: QuantifyByHeightProcess = null
 
   @Autowired
-  val replacement:ZeroReplacement = null
+  val replacement: ZeroReplacement = null
 
   @Autowired
-  val loader: SampleLoader = null
+  val sampleLoader: SampleLoader = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -54,18 +54,18 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with LazyLogging{
 
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzML", "B5_P20Lipids_Pos_NIST02.mzML"))
+    val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
 
-    val deconvoluted = samples.map((item: Sample) => deconv.process(item, method))
+    val deconvoluted = samples.map((item: Sample) => deconv.process(item, method, Some(item)))
 
     //correct the data
-    val correctedSample = deconvoluted.map((item: Sample) => correction.process(item, method))
+    val correctedSample = deconvoluted.map((item: Sample) => correction.process(item, method, Some(item)))
 
-    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method))
+    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method, Some(item)))
 
-    val quantified = annotated.map((item: AnnotatedSample) => quantification.process(item,method ))
+    val quantified = annotated.map((item: AnnotatedSample) => quantification.process(item, method, Some(item)))
 
-    val results = quantified.map((item: QuantifiedSample[Double]) => replacement.process(item, method))
+    val results = quantified.map((item: QuantifiedSample[Double]) => replacement.process(item, method, Some(item)))
 
     "write" in {
 

@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Chromat
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.AdvancedTaskScheduler
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
 @ActiveProfiles(Array("test"))
-class SchedulingControllerTest extends WordSpec with ShouldMatchers with LazyLogging {
+class SchedulingControllerTest extends WordSpec with Matchers with LazyLogging {
 
   @LocalServerPort
   private val port: Int = 0

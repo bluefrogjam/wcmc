@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.db.binbase.{BinBaseLibraryAccess, Bin
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,7 +17,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
 @ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase" , "test"/*, "carrot.logging.json.enable"*/))
-class GCMSTargetAnnotationProcessTest extends WordSpec with ShouldMatchers {
+class GCMSTargetAnnotationProcessTest extends WordSpec with Matchers {
 
 
   @Autowired
@@ -66,7 +66,7 @@ class GCMSTargetAnnotationProcessTest extends WordSpec with ShouldMatchers {
               |and b.group_id is null
             """.stripMargin
 
-          val result = correction.process(prepareSample(sampleLoader.getSample("180507dZKsa09_1." + filexExtension)), method)
+          val result = correction.process(prepareSample(sampleLoader.getSample("180507dZKsa09_1." + filexExtension)), method, None)
 
           result.featuresUsedForCorrection.foreach { x =>
             logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
@@ -74,7 +74,7 @@ class GCMSTargetAnnotationProcessTest extends WordSpec with ShouldMatchers {
 
           assert(result.featuresUsedForCorrection.size >= 13)
 
-          var annotationResult = annotation.process(result, method)
+          var annotationResult = annotation.process(result, method, None)
 
           logger.info(s"annotated: ${annotationResult.spectra.size}")
           logger.info(s"missing: ${annotationResult.noneAnnotated.size}")
@@ -175,7 +175,7 @@ class GCMSTargetAnnotationProcessTest extends WordSpec with ShouldMatchers {
               |and b.group_id is null
             """.stripMargin
 
-          val result = correction.process(prepareSample(sampleLoader.getSample("180419bCSsa12_1." + filexExtension)), method)
+          val result = correction.process(prepareSample(sampleLoader.getSample("180419bCSsa12_1." + filexExtension)), method, None)
 
           result.featuresUsedForCorrection.foreach { x =>
             logger.info(s"${x.target.name} = ${x.annotation.retentionTimeInSeconds}")
@@ -183,7 +183,7 @@ class GCMSTargetAnnotationProcessTest extends WordSpec with ShouldMatchers {
 
           assert(result.featuresUsedForCorrection.size >= 13)
 
-          var annotationResult = annotation.process(result, method)
+          var annotationResult = annotation.process(result, method, None)
 
           logger.info(s"annotated: ${annotationResult.spectra.size}")
           logger.info(s"missing: ${annotationResult.noneAnnotated.size}")

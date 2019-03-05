@@ -4,7 +4,7 @@ import java.io.{File, RandomAccessFile}
 
 import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -18,7 +18,7 @@ class BucketStorageTestApplication
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
 @ActiveProfiles(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket"))
-class BucketStorageTest extends WordSpec with ShouldMatchers{
+class BucketStorageTest extends WordSpec with Matchers{
 
   @Autowired
   val storage: ResourceStorage = null

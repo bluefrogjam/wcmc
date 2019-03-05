@@ -12,33 +12,18 @@
 	<groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core.io</groupId>
 	<artifactId>msdk</artifactId>
 
-	<description>This provides a wrapper around the MSDK software packages, so that we can easily read there different
-		file formats
+	<description>This provides a wrapper around the MSDK software packages, so that we can easily read there different file formats
 	</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>cpdetector</groupId>
 			<artifactId>cpdetector</artifactId>
-			<version>1.0.7</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.github.msdk</groupId>
 			<artifactId>msdk-all</artifactId>
-			<version>0.0.11</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>cpdetector</artifactId>
-					<groupId>net.sourceforge.cpdetector</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
-			<artifactId>api</artifactId>
-			<version>1.0.16-SNAPSHOT</version>
 		</dependency>
 
         <dependency>
@@ -46,7 +31,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+
+    </dependencies>
 
 	<repositories>
 		<repository>

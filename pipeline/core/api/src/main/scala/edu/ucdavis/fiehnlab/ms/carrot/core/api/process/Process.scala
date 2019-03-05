@@ -27,8 +27,9 @@ abstract class Process[I <: Sample, O <: Sample]() extends LazyLogging {
     * @param item
     * @return
     */
-  final def process(item: I, method: AcquisitionMethod, rawSample: Option[Sample] = None): O = {
+  final def process(item: I, method: AcquisitionMethod, rawSample: Option[Sample]): O = {
     try {
+      logger.info(s"raw data defined: ${rawSample.isDefined}")
       val result: O = doProcess(item, method, rawSample)
       result
     }

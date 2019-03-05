@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 import java.io.{ByteArrayOutputStream, FileNotFoundException, PrintStream}
 import java.util
 
+import com.sun.mail.util.MailConnectException
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.ProcessException
@@ -18,6 +19,7 @@ import javax.mail.AuthenticationFailedException
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Profile
+import org.springframework.mail.MailException
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
@@ -63,7 +65,7 @@ class TaskRunner extends LazyLogging {
     *
     * @param task
     */
-  final def run(task: Task) = {
+  final def run(task: Task): Unit = {
 
     assert(task.acquisitionMethod != null)
     assert(task.email != null)
@@ -85,7 +87,7 @@ class TaskRunner extends LazyLogging {
           //processes the actual sample
           val value = sampleLoader.loadSample(x.fileName)
           assert(value.isDefined, "please ensure that specified file name is defined!")
-          workflow.process(value.get, task.acquisitionMethod)
+          workflow.process(value.get, task.acquisitionMethod, value)
         }
         catch {
           case e: UnsupportedSampleException =>
@@ -123,15 +125,24 @@ class TaskRunner extends LazyLogging {
           "carrot: your result is finished",
           None)
       } catch {
-        case e: AuthenticationFailedException => logger.warn(s"EmailService can't send email. ${e.getMessage}")
+        case e: MailException =>
+          logger.warn(s"Can't send email... ${e.getMessage}")
+        case e: AuthenticationFailedException =>
+          logger.warn(s"EmailService can't send email. ${e.getMessage}")
         case e: Exception =>
           logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
           val os = new ByteArrayOutputStream()
-          e.printStackTrace(new PrintStream(os))
-          emailService.send(emailSender, task.email :: List(),
-            s"Dear user, the task '${task.name}' did not execute properly!\n\n${os.toString("UTF8")}",
-            s"carrot: processing of ${task.name} had problems.",
-            None)
+          val content = s"Dear user, the task '${task.name}' did not execute properly!\n\n${os.toString("UTF8")}"
+//          e.printStackTrace(new PrintStream(os))
+          try {
+            emailService.send(emailSender, task.email :: List(),
+              content,
+              s"carrot: processing of ${task.name} had problems.",
+              None)
+          } catch {
+            case ex: MailException =>
+              logger.warn(s"EmailService can't send email. ${e.getMessage}\n\nPrevious error: $content")
+          }
       }
     }
   }

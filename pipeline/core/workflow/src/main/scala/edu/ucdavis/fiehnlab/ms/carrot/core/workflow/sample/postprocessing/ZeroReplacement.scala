@@ -51,11 +51,12 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
     * @return
     */
   final override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
+    logger.info(s"raw data defined: ${rawSample.isDefined}")
 
     val rawdata: Option[Sample] =
       if (rawSample.isDefined) {
         rawSample
-      } else {
+      } else {  //TODO: this block fails when rawSample not defined
         zeroReplacementProperties.fileExtension.collect {
 
           case extension: String =>
@@ -87,8 +88,6 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
           target
         }
         else {
-          // TODO this is the block that takes FOR-EVER
-          print(".")
           try {
             val replaced = replaceValue(target, sample, correctedRawData)
             replaced
@@ -240,8 +239,6 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     }
     logger.debug(s"found ${filteredByTime.size} spectra, after retention index filter for target ${receivedTarget}")
 
-    // error here, sometime mass is not found for some reason and so things are failing
-    //TODO: Gert should check if this makes sense. In case mass isn't there, I create a Corrected Feature using the original QuantifiedSample and RT, RI, scan# from target with 0 intensity.
     val value: (Feature with CorrectedSpectra) = {
       if (filteredByTime.isEmpty) {
         val intensity: Float = {

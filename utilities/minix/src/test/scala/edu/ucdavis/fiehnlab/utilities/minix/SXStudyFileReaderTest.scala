@@ -4,14 +4,14 @@ import java.io.File
 import java.util
 
 import edu.ucdavis.fiehnlab.utilities.minix.types.BinBaseResult
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
 
 @SpringBootTest
-class SXStudyFileReaderTest extends WordSpec with ShouldMatchers {
+class SXStudyFileReaderTest extends WordSpec with Matchers {
 
   @Autowired
   val sXStudyFilesTransformer: SXStudyFileReader = null

@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.correction
 import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSCorrectionLibraryProperties
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
@@ -12,7 +12,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @ActiveProfiles(Array("test", "carrot.lcms"))
 @SpringBootTest
-class LCMSCorrectionLibraryConfigurationTest extends WordSpec with ShouldMatchers with LazyLogging {
+class LCMSCorrectionLibraryConfigurationTest extends WordSpec with Matchers with LazyLogging {
   @Autowired
   val properties: LCMSCorrectionLibraryProperties = null
 

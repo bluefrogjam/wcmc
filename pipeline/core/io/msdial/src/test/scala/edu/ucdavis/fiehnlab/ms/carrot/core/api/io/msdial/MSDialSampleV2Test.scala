@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSMSSpectra
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 
-class MSDialSampleV2Test extends WordSpec with ShouldMatchers {
+class MSDialSampleV2Test extends WordSpec with Matchers {
 
   val sample = new MSDialSampleV2(getClass.getResourceAsStream("/msms.msdial"), "msms.msdial")
 

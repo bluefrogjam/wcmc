@@ -15,11 +15,11 @@
     <description>This provides an essential domain mapper configuration to allow JSON serialization of scala case classes</description>
 
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
+
         <dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
             <groupId>org.springframework</groupId>
