@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -17,13 +17,13 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[DataFormerClientTestConfiguration]))
-class DataFormerClientTests extends WordSpec with ShouldMatchers with LazyLogging {
+class DataFormerClientTests extends WordSpec with ShouldMatchers with Logging {
   @Autowired
   val dfClient: DataFormerClient = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" should {
+  "edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" ignore  {
     "fail for invalid .d.zip file" in {
       val filename = "not_found.d.zip"
 

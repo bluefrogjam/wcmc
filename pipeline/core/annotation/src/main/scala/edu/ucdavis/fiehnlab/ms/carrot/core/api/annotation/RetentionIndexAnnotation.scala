@@ -1,13 +1,15 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 
 /**
   * Created by wohlg_000 on 6/10/2016.
   */
-class RetentionIndexAnnotation(retentionIndexWindow: Double) extends Annotate with LazyLogging {
+class RetentionIndexAnnotation(retentionIndexWindow: Double) extends Annotate with Logging {
+
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
     *

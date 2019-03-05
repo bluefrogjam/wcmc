@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent
 
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, SampleProperties}
@@ -12,7 +12,7 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
   * supports loading of .d files and compressed .d files as carrot samples. Please be aware that this includes a lot of network transfers
   * due to the utilization of the dataform client
   */
-class AgilentSample(override val fileName: String, file: File, dataFormerClient: DataFormerClient) extends Sample with LazyLogging {
+class AgilentSample(override val fileName: String, file: File, dataFormerClient: DataFormerClient) extends Sample with Logging {
 
   def deconvolute: Seq[_ <: Feature] = {
     logger.debug(s"converting ${file} to mzML representation")

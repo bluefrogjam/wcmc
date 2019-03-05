@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.loader.impl
 import java.io.File
 import java.util.zip.ZipInputStream
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.TestConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
   */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TestConfiguration]))
-class DirectoryResourceLoaderTest extends WordSpec with LazyLogging {
+class DirectoryResourceLoaderTest extends WordSpec with Logging {
 
   @Autowired
   val loader: DirectoryResourceLoader = null

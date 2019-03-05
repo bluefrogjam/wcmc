@@ -4,7 +4,7 @@ import java.io._
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletResponse
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.{LocalLoader, RemoteLoader, ResourceLoader}
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -22,7 +22,7 @@ import scala.collection.JavaConverters._
 @CrossOrigin
 @RestController
 @RequestMapping(value = Array("/rest/file"))
-class FServController extends LazyLogging {
+class FServController extends Logging {
 
   @Value("${wcmc.server.fserv.directory:#{systemProperties['user.home']}/.carrot_storage}")
   val directory: String = null

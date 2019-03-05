@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 
@@ -120,7 +120,7 @@ trait AnnotatedSample extends CorrectedSample {
 /**
   * provides a quantified sample, which has value information's, etc associated
   */
-trait QuantifiedSample[T] extends AnnotatedSample with LazyLogging {
+trait QuantifiedSample[T] extends AnnotatedSample with Logging {
 
   /**
     * associated spectra, which have been quantified with the associated target

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -18,7 +18,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
   "CARROT_MODE:gcms",
   "carrot.submitter:dpedrosa@ucdavis.edu"
 ))
-class RunnerGCMSTest extends WordSpec with ShouldMatchers with LazyLogging {
+class RunnerGCMSTest extends WordSpec with ShouldMatchers with Logging {
 
   @Autowired
   val runner: Runner = null

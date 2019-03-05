@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, PositiveMode}
@@ -52,7 +52,7 @@ class TaskRunnerTest extends WordSpec {
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class TestConfiguration extends LazyLogging {
+class TestConfiguration extends Logging {
   @Bean
   def annotationLibrary(@Autowired(required = false) targets: java.util.List[LibraryAccess[AnnotationTarget]]): DelegateLibraryAccess[AnnotationTarget] = {
     if (targets == null) {

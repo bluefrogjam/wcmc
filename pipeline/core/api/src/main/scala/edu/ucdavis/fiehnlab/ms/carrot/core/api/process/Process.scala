@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.ProcessException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext
   * @tparam I
   * @tparam O
   */
-abstract class Process[I <: Sample, O <: Sample]() extends LazyLogging {
+abstract class Process[I <: Sample, O <: Sample]() extends Logging {
 
   @Autowired
   protected val applicationContext: ApplicationContext = null

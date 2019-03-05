@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Sample, Target}
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +10,7 @@ import scala.collection.JavaConverters._
 /**
   * Created by wohlg_000 on 4/22/2016.
   */
-trait LibraryAccess[T <: Target] extends LazyLogging {
+trait LibraryAccess[T <: Target] extends Logging {
 
   /**
     * loads all the spectra from the library
@@ -144,7 +144,7 @@ trait ReadWriteLibrary[T <: Target] extends LibraryAccess[T] {
 
 }
 
-final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with LazyLogging {
+final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with Logging {
   logger.debug("==== creating delegate library ====")
   /**
     * loads all the spectra from the library
@@ -234,7 +234,7 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
   override def toString = s"DelegateLibraryAccess(\n\t${this.delegates}\n)"
 }
 
-final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with LazyLogging {
+final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with Logging {
   logger.debug("==== creating merged library ====")
   /**
     * loads all the spectra from the library

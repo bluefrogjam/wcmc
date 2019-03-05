@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.utilities.logging
 
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
@@ -16,7 +16,7 @@ object JSONLoggingAppender {
   var mongoTemplate: MongoTemplate = null
 }
 
-class JSONLoggingAppender extends LazyLogging {
+class JSONLoggingAppender extends Logging {
 
   @Autowired
   var mongoTemplate: MongoTemplate = null

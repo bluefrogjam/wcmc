@@ -109,11 +109,10 @@
                 <version>1.0-SNAPSHOT</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/com.typesafe.scala-logging/scala-logging_2.11 -->
             <dependency>
-                <groupId>com.typesafe.scala-logging</groupId>
-                <artifactId>scala-logging_${scala.version}</artifactId>
-                <version>3.5.0</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api-scala_2.11</artifactId>
+                <version>11.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

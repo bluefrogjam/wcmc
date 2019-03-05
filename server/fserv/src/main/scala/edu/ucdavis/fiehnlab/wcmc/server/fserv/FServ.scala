@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.server.fserv
 
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.controller.FServController
@@ -34,7 +34,7 @@ class FServ extends WebMvcConfigurerAdapter{
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackageClasses= Array(classOf[FServController]))
-class FServConfig extends WebSecurityConfigurerAdapter with LazyLogging {
+class FServConfig extends WebSecurityConfigurerAdapter with Logging {
 
   @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null

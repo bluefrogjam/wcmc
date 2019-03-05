@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, val config: LCMSCorrectionLibraryProperties, stasisClient: StasisService) extends CorrectionProcess(libraryAccess, stasisClient) with LazyLogging {
+class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, val config: LCMSCorrectionLibraryProperties, stasisClient: StasisService) extends CorrectionProcess(libraryAccess, stasisClient) with Logging {
   /**
     * Mass accuracy (in Dalton) used in target filtering and similarity calculation
     */

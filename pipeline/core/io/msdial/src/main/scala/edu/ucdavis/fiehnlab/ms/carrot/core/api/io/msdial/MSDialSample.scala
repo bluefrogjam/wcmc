@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdial
 import java.io.{File, FileInputStream, IOException, InputStream}
 import java.util.zip.GZIPInputStream
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, Unknown}
 
@@ -26,7 +26,7 @@ object MSDialSampleV2 {
   * @param inputStream
   * @param fileName
   */
-class MSDialSampleV2(inputStream: InputStream, override val fileName: String) extends Sample with LazyLogging {
+class MSDialSampleV2(inputStream: InputStream, override val fileName: String) extends Sample with Logging {
 
 
   protected val retentionTimeMinutesIdentifier: String = "rt(min)"

@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
 import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import org.springframework.beans.factory.annotation.Value
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.output.writer.txt"))
-class QuantifiedSampleTxtWriter[T] extends Writer[Sample] with LazyLogging {
+class QuantifiedSampleTxtWriter[T] extends Writer[Sample] with Logging {
 
   @Value("${carrot.output.writer.txt.separator:,}")
   val seperator: String = ","

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, RetentionIndexDifference}
@@ -22,7 +22,7 @@ import scala.collection.immutable.ListMap
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, val lcmsProperties: LCMSAnnotationProcessProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with LazyLogging {
+class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, val lcmsProperties: LCMSAnnotationProcessProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with Logging {
 
   /**
     * finds a match between the target and the sequence of spectra

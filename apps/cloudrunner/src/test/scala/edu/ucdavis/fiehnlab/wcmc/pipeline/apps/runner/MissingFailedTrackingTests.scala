@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
   "CARROT_MODE:lcms",
   "carrot.submitter:linuxmant@gmail.com"
 ))
-class MissingFailedTrackingTests extends WordSpec with Matchers with LazyLogging {
+class MissingFailedTrackingTests extends WordSpec with Matchers with Logging {
   @Value("#{environment.CARROT_SAMPLE}")
   val sample = ""
 

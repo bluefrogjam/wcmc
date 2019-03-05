@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
   *
   * @param massAccuracyInDalton
   */
-class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float = 0) extends Annotate with LazyLogging {
+class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float = 0) extends Annotate with Logging {
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -49,14 +49,6 @@ class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float =
     }
   }
 
-  /**
-    * which phase we require to log
-    */
-  //  override protected val phaseToLog = phase
-  /**
-    * references to all used settings
-    */
-  //  override protected val usedSettings = Map("minIntensity" -> minIntensity, "massAccuracyInDalton" -> massAccuracyInDalton)
 }
 
 /**
@@ -64,12 +56,11 @@ class AccurateMassAnnotation(massAccuracyInDalton: Double, minIntensity: Float =
   *
   * @param massAccuracyInDalton
   */
-class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Float) extends Annotate with LazyLogging {
+class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Float) extends Annotate with Logging {
 
   /**
     * references to all used settings
     */
-  //  override protected val usedSettings = Map("minIntensity" -> minIntensity, "massAccuracyInDalton" -> massAccuracyInDalton)
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -108,7 +99,6 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
     }
   }
 
-  //  override protected val phaseToLog = phase
 
 }
 
@@ -118,7 +108,7 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
   * @param massAccuracyInPPM
   * @param massAccuracyInmDa
   */
-class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, minIntensity: Double = 0.0) extends Annotate with LazyLogging {
+class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, minIntensity: Double = 0.0) extends Annotate with Logging {
   override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
@@ -149,7 +139,8 @@ class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, 
   }
 }
 
-class MassIsHighEnoughAnnotationPPM(massAccuracyInPPM: Double, minIntensity: Float) extends Annotate with LazyLogging {
+class MassIsHighEnoughAnnotationPPM(massAccuracyInPPM: Double, minIntensity: Float) extends Annotate with Logging {
+
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
     *
@@ -201,14 +192,9 @@ class AccurateMassBasePeakAnnotation(massAccuracyInDalton: Double) extends Accur
   *
   * @param massAccuracyInPPM
   */
-class AccurateMassAnnotationPPM(massAccuracyInPPM: Double) extends Annotate with LazyLogging {
+class AccurateMassAnnotationPPM(massAccuracyInPPM: Double) extends Annotate with Logging {
 
   logger.debug(s"mass accuracy: ${massAccuracyInPPM} ppm")
-
-  /**
-    * references to all used settings
-    */
-  //  override protected val usedSettings = Map("massAccuracyInPPM" -> massAccuracyInPPM)
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -242,10 +228,6 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Double) extends Annotate with
   }
 
 
-  /**
-    * which phase we require to log
-    */
-  //  override protected val phaseToLog = phase
 }
 
 
@@ -254,12 +236,7 @@ class AccurateMassAnnotationPPM(massAccuracyInPPM: Double) extends Annotate with
   *
   * @param massAccuracyInDalton
   */
-class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity: Float = 0) extends Annotate with LazyLogging {
-
-  /**
-    * references to all used settings
-    */
-  //  override protected val usedSettings = Map("minIntensity" -> minIntensity, "massAccuracyInDalton" -> massAccuracyInDalton)
+class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity: Float = 0) extends Annotate with Logging {
 
   logger.info(s"utilizing accuracy of ${massAccuracyInDalton}")
 
@@ -301,10 +278,6 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
   }
 
 
-  /**
-    * which phase we require to log
-    */
-  //  override protected val phaseToLog = phase
 }
 
 /**
@@ -312,14 +285,9 @@ class AccurateMassInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity
   *
   * @param massAccuracyInDalton
   */
-class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity: Float) extends Annotate with LazyLogging {
+class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minIntensity: Float) extends Annotate with Logging {
 
   logger.info(s"utilizing accuracy of ${massAccuracyInDalton}")
-
-  /**
-    * references to all used settings
-    */
-  //  override protected val usedSettings = Map("minIntensity" -> minIntensity, "massAccuracyInDalton" -> massAccuracyInDalton)
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -371,12 +339,8 @@ class MassIsHighEnoughInSpectraAnnotation(massAccuracyInDalton: Double, minInten
   *
   * @param massAccuracyInPPM
   */
-class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with LazyLogging {
+class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int) extends Annotate with Logging {
 
-  /**
-    * references to all used settings
-    */
-  //  override protected val usedSettings = Map("massAccuracyInPPM" -> massAccuracyInPPM)
 
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
@@ -410,10 +374,4 @@ class AccurateMassInSpectraAnnotationPPM(massAccuracyInPPM: Int) extends Annotat
         false
     }
   }
-
-
-  /**
-    * which phase we require to log
-    */
-  //  override protected val phaseToLog = phase
 }

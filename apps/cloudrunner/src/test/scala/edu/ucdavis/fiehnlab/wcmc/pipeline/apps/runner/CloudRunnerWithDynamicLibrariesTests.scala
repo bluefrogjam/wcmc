@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
 import org.scalatest.{ShouldMatchers, WordSpec}
@@ -23,7 +23,7 @@ import org.springframework.web.client.HttpClientErrorException
   "mona.rest.server.host:ipa.fiehnlab.ucdavis.edu",
   "mona.rest.server.port:9090"
 ))
-class CloudRunnerWithDynamicLibrariesTests extends WordSpec with ShouldMatchers with LazyLogging {
+class CloudRunnerWithDynamicLibrariesTests extends WordSpec with ShouldMatchers with Logging {
   @Value("${carrot.sample:#{environment.CARROT_SAMPLE}}")
   val sampleName = ""
 

@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("file.source.luna","file.source.eclipse", "carrot.processing.peakdetection", "carrot.lcms", "test"))
-class RICorrectionBugTest extends WordSpec with ShouldMatchers with LazyLogging {
+class RICorrectionBugTest extends WordSpec with ShouldMatchers with Logging {
   val libName = "lcms_istds"
 
   @Autowired

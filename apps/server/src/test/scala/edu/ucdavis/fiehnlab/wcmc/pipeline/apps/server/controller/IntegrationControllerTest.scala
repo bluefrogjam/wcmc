@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.utilities.minix.types.SampleInformationResult
 import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
 @ActiveProfiles(Array("test"))
-class IntegrationControllerTest extends WordSpec with Matchers with LazyLogging {
+class IntegrationControllerTest extends WordSpec with Matchers with Logging {
 
 
   @LocalServerPort

@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j
 
 import java.io.{File, FileWriter}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.FServ
@@ -33,7 +33,7 @@ class FServ4JClientTestConfiguration{
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ4jClientConfiguration],classOf[FServ]))
-class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with LazyLogging {
+class FServ4jClientTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with Logging {
 
   override protected def beforeEach(): Unit = {
     val f = new File(s"$directory/test.txt")

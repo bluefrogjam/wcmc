@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RawData, Sample}
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component
 @Component
 @Description("this sends a sample to be processed by peak detection and deconvolution algorithms translated from msdial")
 @Profile(Array("carrot.processing.peakdetection"))
-class PeakDetection extends PreProcessor with LazyLogging {
+class PeakDetection extends PreProcessor with Logging {
 
   @Autowired
   private val msdialProcessor: MSDialProcessing = null

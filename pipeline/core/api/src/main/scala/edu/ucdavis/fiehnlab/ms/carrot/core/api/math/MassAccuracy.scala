@@ -1,13 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.math
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{AccurateMassSupport, Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
 
 /**
   * Created by wohlgemuth on 6/22/16.
   */
-object MassAccuracy extends LazyLogging {
+object MassAccuracy extends Logging {
 
   /**
     * returns the ion in this spectrum, which is closest mass to the target mass, in the defined window

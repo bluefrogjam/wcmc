@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{AdvancedTaskScheduler, TaskScheduler}
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +18,7 @@ import scala.collection.JavaConverters._
 @CrossOrigin
 @RestController
 @RequestMapping(value = Array("/rest/schedule"))
-class SchedulingController extends LazyLogging {
+class SchedulingController extends Logging {
 
   /**
     * the actual used implementation of the scheduler

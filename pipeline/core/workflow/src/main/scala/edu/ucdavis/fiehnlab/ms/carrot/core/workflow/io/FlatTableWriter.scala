@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
 import java.io._
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.output.writer.flat"))
-class FlatTableWriter[T] extends Writer[Sample] with LazyLogging {
+class FlatTableWriter[T] extends Writer[Sample] with Logging {
 
   @Value("${carrot.output.writer.flat.separator:,}")
   val seperator: String = ","

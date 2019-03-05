@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
 /**
   * Created by wohlg on 7/11/2016.
   */
-abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
+abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
 
   @Autowired
   val zeroReplacementProperties: ZeroReplacementProperties = null
@@ -87,15 +87,13 @@ abstract class ZeroReplacement extends PostProcessing[Double] with LazyLogging {
           target
         }
         else {
-          // TODO this is the block that takes FOR-EVER
-          print(".")
           try {
             val replaced = replaceValue(target, sample, correctedRawData)
             replaced
           }
           catch {
             case e: Exception =>
-              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e.getMessage)
+              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e)
               // commented to avoid excessive logging output.
               // e.printStackTrace()
               target

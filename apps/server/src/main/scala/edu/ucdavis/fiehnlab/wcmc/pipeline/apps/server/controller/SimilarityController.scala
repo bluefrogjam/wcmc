@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation._
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestOperations
 
 @RestController
 @RequestMapping(path = Array("/rest/similarity"))
-class SimilarityController extends LazyLogging {
+class SimilarityController extends Logging {
 
   @Autowired
   val restOperations:RestOperations = null
