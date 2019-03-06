@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.leco
 import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4J
 import org.junit.runner.RunWith
-import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -17,7 +17,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
 @ActiveProfiles(Array("file.source.eclipse"))
-class LecoSampleTest extends WordSpec with ShouldMatchers with BeforeAndAfterEach with Logging {
+class LecoSampleTest extends WordSpec with Matchers with BeforeAndAfterEach with Logging {
 
   @Autowired
   val client: Everything4J = null

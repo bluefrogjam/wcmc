@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatest.time.{Seconds, Span}
-import org.scalatest.{BeforeAndAfterAll, ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -26,7 +26,7 @@ import scala.collection.mutable.ArrayBuffer
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[MonitorTestConfig]))
 @ActiveProfiles(Array("test"))
-class MonitorTest extends WordSpec with Logging with ShouldMatchers with BeforeAndAfterAll with Eventually with IntegrationPatience {
+class MonitorTest extends WordSpec with Logging with Matchers with BeforeAndAfterAll with Eventually with IntegrationPatience {
   @Value("${wcmc.monitor.sourceFolder:target/tmp}")
   val sourceFolder: Array[String] = null
 

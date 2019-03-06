@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("file.source.luna", "quantify-by-scan", "carrot.processing.peakdetection", "carrot.lcms", "test", "keim"))
-class CorrectionStandardOrderBugSuccessTest extends WordSpec with ShouldMatchers with Logging {
+class CorrectionStandardOrderBugSuccessTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
@@ -47,7 +47,7 @@ class CorrectionStandardOrderBugSuccessTest extends WordSpec with ShouldMatchers
     }
 
     "should succeed with high intensity setting for standard" in {
-      val corrected = correction.process(deco.process(sample, method), method)
+      val corrected = correction.process(deco.process(sample, method, None), method, None)
       corrected.featuresUsedForCorrection.size should be >= correction.minimumFoundStandards
     }
   }

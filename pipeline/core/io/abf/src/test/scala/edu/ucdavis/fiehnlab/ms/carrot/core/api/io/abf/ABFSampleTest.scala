@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4JAutoConfigura
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j.MSDialRestProcessor
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest()
-class ABFSampleTest extends WordSpec with ShouldMatchers with Logging{
+class ABFSampleTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val client: MSDialRestProcessor = null

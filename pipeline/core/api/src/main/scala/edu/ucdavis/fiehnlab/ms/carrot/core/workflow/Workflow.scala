@@ -47,14 +47,15 @@ class Workflow[T] extends Logging {
   /**
     * executes required pre processing steps, if applicable
     */
-  protected final def preprocessing(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+  protected final def preprocessing(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PreProcessingBeginEvent(sample)))
-    val result = preProcessSample(sample, acquisitionMethod)
+    val result = preProcessSample(sample, acquisitionMethod, rawSample)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PreProcessingFinishedEvent(result)))
     result
   }
 
   protected final def postProcessing(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
+    logger.info(s"raw data defined: ${rawSample.isDefined}")
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingBeginEvent(sample)))
     val result = postProcessSample(sample, acquisitionMethod, rawSample)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingFinishedEvent(result)))
@@ -64,11 +65,11 @@ class Workflow[T] extends Logging {
   /**
     * executes the retention index correction, if applicable
     */
-  protected final def correction(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+  protected final def correction(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(CorrectionBeginEvent(sample)))
 
     val result: Sample = try {
-      correctSample(sample, acquisitionMethod)
+      correctSample(sample, acquisitionMethod, rawSample)
     }
     catch {
       case e: Exception =>
@@ -82,9 +83,9 @@ class Workflow[T] extends Logging {
   /**
     * executes the annotation, if applicable
     */
-  protected final def annotation(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+  protected final def annotation(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(AnnotationBeginEvent(sample)))
-    val result = annotateSample(sample, acquisitionMethod)
+    val result = annotateSample(sample, acquisitionMethod, rawSample)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(AnnotationFinishedEvent(result)))
     result
   }
@@ -95,9 +96,9 @@ class Workflow[T] extends Logging {
     * @param sample
     * @return
     */
-  protected final def quantify(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+  protected final def quantify(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
     eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationBeginEvent(sample)))
-    val result = quantifySample(sample, acquisitionMethod)
+    val result = quantifySample(sample, acquisitionMethod, rawSample)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(QuantificationFinishedEvent(result)))
     result
   }
@@ -108,34 +109,39 @@ class Workflow[T] extends Logging {
     * @param sample
     * @return
     */
-  final def process(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample] = None): Sample = {
+  final def process(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
+    logger.info(s"raw data defined: ${rawSample.isDefined}")
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(sample)))
 
-    val quantified = quantify(
-      annotation(
-        correction(
-          preprocessing(
-            sample, acquisitionMethod
-          ), acquisitionMethod
-        ), acquisitionMethod
-      ), acquisitionMethod
-    )
+//    val quantified = quantify(
+//      annotation(
+//        correction(
+//          preprocessing(
+//            sample, acquisitionMethod
+//          ), acquisitionMethod
+//        ), acquisitionMethod
+//      ), acquisitionMethod
+//    )
 
+    val preprocessed = preprocessing(sample, acquisitionMethod, rawSample)
+    val corrected = correction(preprocessed, acquisitionMethod, rawSample)
+    val annotated = annotation(corrected, acquisitionMethod, rawSample)
+    val quantified = quantify(annotated, acquisitionMethod, rawSample)
     val result = postProcessing(quantified, acquisitionMethod, rawSample)
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessFinishedEvent(sample)))
     result
   }
 
-  protected def quantifySample(sample: Sample, acquisitionMethod: AcquisitionMethod): QuantifiedSample[T] = sample match {
+  protected def quantifySample(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[T] = sample match {
     case s: AnnotatedSample =>
       logger.info(s"quantify sample: $s")
-      var temp = quantificationProcess.process(s, acquisitionMethod, None)
+      var temp = quantificationProcess.process(s, acquisitionMethod, rawSample)
 
       logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen data type: $s")
       quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
         logger.info(s"executing: $x")
-        temp = x.process(temp, acquisitionMethod, None)
+        temp = x.process(temp, acquisitionMethod, rawSample)
       }
 
       temp
@@ -206,7 +212,7 @@ class Workflow[T] extends Logging {
     * @param sample
     * @return
     */
-  protected def preProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod): Sample = {
+  protected def preProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
     if (preProcessor.isEmpty) {
       logger.info(s"PreProcessors: None")
       sample
@@ -216,10 +222,10 @@ class Workflow[T] extends Logging {
 
       //TODO could be done more elegant with a fold, but no time to play with it
       val iterator = preProcessor.asScala.sortBy(_.priortiy).reverseIterator
-      var temp = iterator.next().process(sample, acquisitionMethod)
+      var temp = iterator.next().process(sample, acquisitionMethod, rawSample)
 
       while (iterator.hasNext) {
-        temp = iterator.next().process(temp, acquisitionMethod)
+        temp = iterator.next().process(temp, acquisitionMethod, rawSample)
       }
 
       temp
@@ -232,7 +238,7 @@ class Workflow[T] extends Logging {
     * @param sample
     * @return
     */
-  protected def correctSample(sample: Sample, acquisitionMethod: AcquisitionMethod): CorrectedSample = correction.process(sample, acquisitionMethod)
+  protected def correctSample(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): CorrectedSample = correction.process(sample, acquisitionMethod, rawSample)
 
   /**
     * annotate the given sample
@@ -240,8 +246,8 @@ class Workflow[T] extends Logging {
     * @param sample
     * @return
     */
-  protected def annotateSample(sample: Sample, acquisitionMethod: AcquisitionMethod): AnnotatedSample = sample match {
-    case c: CorrectedSample => annotate.process(c, acquisitionMethod)
+  protected def annotateSample(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): AnnotatedSample = sample match {
+    case c: CorrectedSample => annotate.process(c, acquisitionMethod, rawSample)
   }
 
   /**
@@ -252,10 +258,13 @@ class Workflow[T] extends Logging {
     */
   protected def postProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): AnnotatedSample = sample match {
     case s: QuantifiedSample[T] =>
+      logger.info(s"raw data defined: ${rawSample.isDefined}")
       if (postProcessor.isEmpty) {
         s
       }
       else {
+        logger.info(s"raw data defined: ${rawSample.isDefined}")
+
         //TODO could be done more elegant with a fold, but no time to play with it
         val iterator = postProcessor.asScala.sortBy(_.priortiy).reverseIterator
         var temp = iterator.next().process(s, acquisitionMethod, rawSample)

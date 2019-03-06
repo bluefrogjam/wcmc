@@ -37,13 +37,11 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
             <artifactId>bucket</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
             <artifactId>workflow</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -55,19 +53,18 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
             <artifactId>config</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
             <artifactId>api</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api-scala_2.11</artifactId>
-            <version>11.0</version>
         </dependency>
+
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

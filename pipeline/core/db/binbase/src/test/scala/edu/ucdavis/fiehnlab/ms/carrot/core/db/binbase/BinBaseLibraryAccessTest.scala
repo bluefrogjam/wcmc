@@ -4,7 +4,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSCorrectionTarget
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -13,7 +13,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest
 @ActiveProfiles(Array("carrot.gcms.library.binbase","carrot.gcms"))
-class BinBaseLibraryAccessTest extends WordSpec with ShouldMatchers {
+class BinBaseLibraryAccessTest extends WordSpec with Matchers {
 
   @Autowired
   val  correction:LibraryAccess[CorrectionTarget] = null

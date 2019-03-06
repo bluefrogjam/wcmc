@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTarget
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "carrot.lcms.correction", "file.source.luna", "test"))
-class QuantifyByHeightProcessTest extends WordSpec with ShouldMatchers with Logging {
+class QuantifyByHeightProcessTest extends WordSpec with Matchers with Logging {
   val libName = "lcms_istds"
 
   @Autowired
@@ -55,15 +55,15 @@ class QuantifyByHeightProcessTest extends WordSpec with ShouldMatchers with Logg
     val purityComputed = samples //.map(purity.process)
 
     //correct the data
-    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method), method))
+    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method, None), method, None))
 
-    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method))
+    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method, None))
 
     annotated.foreach { sample =>
 
       s"process ${sample}" in {
 
-        val result: QuantifiedSample[Double] = quantification.process(sample, method)
+        val result: QuantifiedSample[Double] = quantification.process(sample, method, None)
 
         var annotationCount = 0
         result.quantifiedTargets.foreach { a =>

@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.wcmc.aws.cdk
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 
 import scala.collection.JavaConverters._
 
-class SmilesToFingerPrintTest extends WordSpec with ShouldMatchers {
+class SmilesToFingerPrintTest extends WordSpec with Matchers {
 
   "SmilesToFingerPrintTest" should {
 

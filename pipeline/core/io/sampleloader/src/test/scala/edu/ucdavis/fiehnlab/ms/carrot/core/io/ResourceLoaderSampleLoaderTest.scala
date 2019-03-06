@@ -6,7 +6,7 @@ import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @ActiveProfiles(Array("file.source.eclipse", "file.source.luna"))
 @SpringBootTest
-class ResourceLoaderSampleLoaderTest extends WordSpec with ShouldMatchers with Logging {
+class ResourceLoaderSampleLoaderTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val loader: ResourceLoaderSampleLoader = null
@@ -48,14 +48,4 @@ class ResourceLoaderSampleLoaderTest extends WordSpec with ShouldMatchers with L
     }
 
   }
-}
-
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class SampleLoaderTestConfig {
-
-  @Bean
-  def resourceLoader: ResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
-
-  @Bean
-  def loader(delegatingResourceLoader: DelegatingResourceLoader): ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(delegatingResourceLoader)
 }

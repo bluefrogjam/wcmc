@@ -28,7 +28,7 @@ class TaskRunnerTest extends WordSpec {
 
   "TaskRunnerTest" should {
 
-    "run - should fail since no samples are provided" in {
+    "run - should throw exception since no samples are provided" in {
 
       intercept[AssertionError] {
         taskRunner.run(Task("test", "dpedrosa@ucdavis.edu",
@@ -43,7 +43,7 @@ class TaskRunnerTest extends WordSpec {
     "run - should pass" in {
       taskRunner.run(Task("test", "dpedrosa@ucdavis.edu",
         acquisitionMethod = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode()))),
-        samples = SampleToProcess("B5_P20Lipids_Pos_QC000.mzML") +: Seq.empty,
+        samples = SampleToProcess("B5_P20Lipids_Pos_NIST02.mzml") +: Seq.empty,
         mode = "lcms",
         env = "test"
       ))

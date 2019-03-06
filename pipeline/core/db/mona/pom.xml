@@ -14,32 +14,39 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core</groupId>
             <artifactId>client</artifactId>
-            <version>1.5-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.mona.backend.core.auth</groupId>
             <artifactId>jwt</artifactId>
             <scope>test</scope>
-            <version>1.5-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
             <artifactId>api</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
         </dependency>
     </dependencies>
 </project>

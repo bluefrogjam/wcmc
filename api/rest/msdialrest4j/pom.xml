@@ -19,13 +19,11 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
             <artifactId>fserv4j</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
             <artifactId>dataform4j</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -33,10 +31,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api-scala_2.11</artifactId>
-            <version>11.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
         <dependency>
@@ -71,13 +69,11 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
             <artifactId>compress</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
             <artifactId>casetojson</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

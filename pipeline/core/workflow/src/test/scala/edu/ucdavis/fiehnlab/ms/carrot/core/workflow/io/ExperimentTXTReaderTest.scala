@@ -51,14 +51,4 @@ class ExperimentTXTReaderTest extends WordSpec with Logging {
     }
   }
 
-  // "Deprecated and unused class being tested"
-  "loading an experiment" ignore {
-    val experimentFile = "/preproc/preProcExperiment.txt"
-
-    "load existing samples ignoring missing filess" in {
-      val result = reader.read(getClass.getResourceAsStream(experimentFile))
-
-      assert(result.classes.head.samples.size == 1)
-    }
-  }
 }

@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
@@ -23,7 +23,7 @@ import org.springframework.web.client.HttpClientErrorException
   "mona.rest.server.host:ipa.fiehnlab.ucdavis.edu",
   "mona.rest.server.port:9090"
 ))
-class CloudRunnerWithDynamicLibrariesTests extends WordSpec with ShouldMatchers with Logging {
+class CloudRunnerWithDynamicLibrariesTests extends WordSpec with Matchers with Logging {
   @Value("${carrot.sample:#{environment.CARROT_SAMPLE}}")
   val sampleName = ""
 

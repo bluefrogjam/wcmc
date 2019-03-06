@@ -5,7 +5,7 @@ import java.util.Properties
 
 import ch.qos.logback.core.util.FileUtil
 import org.junit.runner.RunWith
-import org.scalatest.{BeforeAndAfter, ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -18,7 +18,7 @@ import com.icegreen.greenmail.util.ServerSetupTest
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-class EmailServiceTest extends WordSpec with BeforeAndAfter with ShouldMatchers {
+class EmailServiceTest extends WordSpec with BeforeAndAfter with Matchers {
 
   @Autowired
   val emailService: EmailService = null
@@ -81,11 +81,11 @@ class EmailServiceTest extends WordSpec with BeforeAndAfter with ShouldMatchers 
 
   }
 
-  override protected def before(fun: => Any): Unit = {
+  protected def before(fun: => Any): Unit = {
     testSmtp.start()
   }
 
-  override protected def after(fun: => Any): Unit = {
+  protected def after(fun: => Any): Unit = {
     testSmtp.stop()
   }
 }

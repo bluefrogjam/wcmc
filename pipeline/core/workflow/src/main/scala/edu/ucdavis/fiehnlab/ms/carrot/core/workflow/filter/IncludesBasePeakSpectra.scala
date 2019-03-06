@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.MassFilter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra
 import org.springframework.context.ApplicationContext
@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext
   * @param basePeaks
   * @param accuracy
   */
-class IncludesBasePeakSpectra(val basePeaks: Seq[Double], val accuracy: Double = 0.00005) extends MassFilter[MSSpectra](accuracy) with LazyLogging {
+class IncludesBasePeakSpectra(val basePeaks: Seq[Double], val accuracy: Double = 0.00005) extends MassFilter[MSSpectra](accuracy) with Logging {
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded

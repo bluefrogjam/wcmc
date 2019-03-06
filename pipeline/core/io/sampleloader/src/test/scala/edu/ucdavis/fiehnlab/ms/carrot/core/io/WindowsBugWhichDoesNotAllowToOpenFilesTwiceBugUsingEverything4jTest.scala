@@ -9,17 +9,16 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest(classes = Array(classOf[SampleLoaderTestConfig]))
 @ActiveProfiles(Array("file.source.eclipse", "file.source.luna"))
-class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugTest extends WordSpec {
+class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugUsingEverything4jTest extends WordSpec {
 
   @Autowired
   val sampleLoader: SampleLoader = null
 
-  val context = new TestContextManager(this.getClass)
-  context.prepareTestInstance(this)
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugTest" must {
 
-    "support mzml" should {
+    "support everything4j loaded mzml" should {
 
       1 to 10 foreach { run =>
 
@@ -27,8 +26,8 @@ class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugTest extends WordSpec {
           if (System.getProperties.getProperty("os.name").toLowerCase() == "linux")
             true
           else {
-            val delegate: Sample = sampleLoader.loadSample("test.mzXML").get
-            assert(delegate.spectra.size == 1)
+            val delegate: Sample = sampleLoader.loadSample("Pos_QC029.mzXML").get
+            assert(delegate.spectra.nonEmpty)
           }
         }
       }

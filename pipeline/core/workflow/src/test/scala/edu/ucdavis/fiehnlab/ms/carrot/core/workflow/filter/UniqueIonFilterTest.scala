@@ -2,9 +2,9 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 
-class UniqueIonFilterTest extends WordSpec with ShouldMatchers {
+class UniqueIonFilterTest extends WordSpec with Matchers {
 
   val accurateMassFeature = new Feature {
     /**

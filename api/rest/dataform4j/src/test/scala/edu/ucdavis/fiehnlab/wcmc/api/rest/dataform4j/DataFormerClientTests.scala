@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -17,13 +17,13 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[DataFormerClientTestConfiguration]))
-class DataFormerClientTests extends WordSpec with ShouldMatchers with Logging {
+class DataFormerClientTests extends WordSpec with Matchers with Logging {
   @Autowired
   val dfClient: DataFormerClient = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" ignore  {
+  "edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient" should {
     "fail for invalid .d.zip file" in {
       val filename = "not_found.d.zip"
 

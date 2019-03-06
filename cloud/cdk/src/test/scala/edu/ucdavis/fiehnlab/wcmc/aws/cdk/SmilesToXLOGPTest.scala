@@ -5,9 +5,9 @@ import java.util
 import com.fasterxml.jackson.databind.ObjectMapper
 
 import scala.collection.JavaConverters._
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 
-class SmilesToXLOGPTest extends WordSpec with ShouldMatchers{
+class SmilesToXLOGPTest extends WordSpec with Matchers{
 
   "SmilesToXLOGPTest" should {
 

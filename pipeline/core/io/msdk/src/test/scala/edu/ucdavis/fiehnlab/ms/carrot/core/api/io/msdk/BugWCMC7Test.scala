@@ -6,7 +6,7 @@ import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-class BugWCMC7Test extends WordSpec with ShouldMatchers with Logging {
+class BugWCMC7Test extends WordSpec with Matchers with Logging {
 
   @Autowired
   val resourceLoader: ResourceLoader = null

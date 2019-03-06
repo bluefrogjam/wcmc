@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.filter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 
-class MassFilterTest extends WordSpec with ShouldMatchers {
+class MassFilterTest extends WordSpec with Matchers {
 
   "MassFilterTest" should {
 

@@ -9,15 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.wcmc.utilities</groupId>
+    <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
     <artifactId>metadata</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>io.github.msdk</groupId>
             <artifactId>msdk-all</artifactId>
-            <version>0.0.11</version>
             <exclusions>
                 <exclusion>
                     <artifactId>cpdetector</artifactId>
@@ -29,7 +27,6 @@
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
             <artifactId>scala-xml_2.11</artifactId>
-            <version>1.0.5</version>
         </dependency>
 
         <dependency>
@@ -53,22 +50,21 @@
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api-scala_2.11</artifactId>
-            <version>11.0</version>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
             <artifactId>everything4j</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
             <artifactId>fserv4j</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
+
     </dependencies>
 </project>

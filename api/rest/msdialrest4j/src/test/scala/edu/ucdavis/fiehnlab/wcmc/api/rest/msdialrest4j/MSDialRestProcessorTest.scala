@@ -4,7 +4,7 @@ import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -21,7 +21,7 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[MSDialRestProcessorConfig]))
-class MSDialRestProcessorTest extends WordSpec with Logging with ShouldMatchers with Eventually {
+class MSDialRestProcessorTest extends WordSpec with Logging with Matchers with Eventually {
 
   @Autowired
   val mSDialRestProcessor: MSDialRestProcessor = null

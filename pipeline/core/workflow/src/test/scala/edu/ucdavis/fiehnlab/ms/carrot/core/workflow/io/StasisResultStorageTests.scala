@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito._
 import org.mockito.{InjectMocks, Mock, MockitoAnnotations}
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, ShouldMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration, Import}
@@ -34,7 +34,7 @@ import scala.collection.JavaConverters._
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple",
   "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.storage.aws",
   "test"))
-class StasisResultStorageTests extends WordSpec with ShouldMatchers with BeforeAndAfterEach with MockitoSugar with Logging {
+class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfterEach with MockitoSugar with Logging {
   val libName = "lcms_istds"
 
   @Autowired
@@ -79,10 +79,10 @@ class StasisResultStorageTests extends WordSpec with ShouldMatchers with BeforeA
     val result = quantification.process(
       annotation.process(
         correction.process(
-          deconv.process(sample, method),
-          method),
-        method),
-      method)
+          deconv.process(sample, method, None),
+          method, None),
+        method, None),
+      method, None)
 
     "have quantified data" in {
       logger.info(s"QUANTIFIED: ${result.quantifiedTargets.size}")

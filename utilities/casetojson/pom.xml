@@ -17,11 +17,11 @@
     </description>
 
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
+
         <dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
             <groupId>org.springframework</groupId>
@@ -52,7 +52,6 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api-scala_2.11</artifactId>
-            <version>11.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-scala_2.11 -->
         <dependency>

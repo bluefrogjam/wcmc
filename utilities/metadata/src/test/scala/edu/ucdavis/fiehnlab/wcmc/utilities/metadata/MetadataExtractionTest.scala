@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4J
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.api.MetadataExtraction
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.db.{FileMetadata, FileMetadataRepository}
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -19,7 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
 @ActiveProfiles(Array("file.source.eclipse"))
-class MetadataExtractionTest extends WordSpec with ShouldMatchers with Logging {
+class MetadataExtractionTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val metadataExtraction: MetadataExtraction = null

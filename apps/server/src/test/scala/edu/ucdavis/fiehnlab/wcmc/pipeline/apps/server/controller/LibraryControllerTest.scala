@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.Carrot
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
@@ -23,7 +23,7 @@ import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
 @ActiveProfiles(Array("carrot.lcms", "test"))
-class LibraryControllerTest extends WordSpec with ShouldMatchers with Logging with Eventually {
+class LibraryControllerTest extends WordSpec with Matchers with Logging with Eventually {
 
 
   @LocalServerPort

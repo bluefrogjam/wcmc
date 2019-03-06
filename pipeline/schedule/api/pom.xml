@@ -16,32 +16,31 @@
 
     <dependencies>
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
-            <artifactId>api</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
-            <artifactId>email</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
-            <artifactId>workflow</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>me.tongfei</groupId>
             <artifactId>progressbar</artifactId>
-            <version>0.5.5</version>
         </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
+            <artifactId>email</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
+            <artifactId>workflow</artifactId>
+            <!--<scope>test</scope>-->
+        </dependency>
+
     </dependencies>
 </project>

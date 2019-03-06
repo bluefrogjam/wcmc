@@ -5,6 +5,7 @@ spring:
       - prod
       - carrot.lcms
       - file.source.luna
+      - carrot.lcms.correction
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket

@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTarget
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import org.junit.runner.RunWith
-import org.scalatest.{ShouldMatchers, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "file.source.eclipse", "test"))
-class NegativeIntensitiesTest extends WordSpec with Logging with ShouldMatchers {
+class NegativeIntensitiesTest extends WordSpec with Logging with Matchers {
   val libName = "lcms_istds"
 
   @Autowired
@@ -47,7 +47,8 @@ class NegativeIntensitiesTest extends WordSpec with Logging with ShouldMatchers 
 
   "ZeroReplacement" should {
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
-    val rawSample = loader.getSample("Weiss003_posHILIC_59602960_068.mzml")
+    val rawSample = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
+//    val rawSample = loader.getSample("Weiss003_posHILIC_59602960_068.mzml")
     val sample: QuantifiedSample[Double] = quantify.process(
       annotation.process(
         correction.process(

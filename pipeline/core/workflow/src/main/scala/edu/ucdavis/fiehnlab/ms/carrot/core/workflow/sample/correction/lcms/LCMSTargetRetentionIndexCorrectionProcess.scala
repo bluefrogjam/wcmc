@@ -199,13 +199,13 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
           }
           //otherwise let's find the best hit
           else {
-            logger.info(s"\t=>\t${result.size} hits found for this standard")
+            logger.debug(s"\t=>\t${result.size} hits found for this standard")
             findBestHit(target, result)
           }
       }.collect {
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[Target, Feature] =>
-          logger.info(f"annotated: ${hit.target.name.getOrElse("Unknown")} => ${hit.target.retentionIndex}%.2fs ${hit.target.precursorMass.getOrElse(0.0)}%.4fDa with ${hit.annotation.retentionTimeInSeconds}%.2fs ${hit.annotation.massOfDetectedFeature.get.mass}%.4fDa")
+          logger.debug(f"annotated: ${hit.target.name.getOrElse("Unknown")} => ${hit.target.retentionIndex}%.2fs ${hit.target.precursorMass.getOrElse(0.0)}%.4fDa with ${hit.annotation.retentionTimeInSeconds}%.2fs ${hit.annotation.massOfDetectedFeature.get.mass}%.4fDa")
           hit
       }.seq
 
