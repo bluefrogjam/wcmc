@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.server.fserv.controller
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.FServ
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[FServ]))
-class FailingTests extends WordSpec with LazyLogging with Matchers {
+class FailingTests extends WordSpec with Logging with Matchers {
 
   @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null

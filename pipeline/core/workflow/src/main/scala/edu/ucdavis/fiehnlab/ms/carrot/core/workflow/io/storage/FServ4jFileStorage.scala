@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
 import java.io.{File, FileOutputStream}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.store.result.fserv4j"))
-class FServ4jFileStorage extends ResultStorage with LazyLogging {
+class FServ4jFileStorage extends ResultStorage with Logging {
 
   @Autowired
   val writer: Writer[Sample] = null

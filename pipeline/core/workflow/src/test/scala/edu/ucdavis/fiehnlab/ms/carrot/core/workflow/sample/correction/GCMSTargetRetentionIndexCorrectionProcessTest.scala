@@ -23,7 +23,7 @@ class GCMSTargetRetentionIndexCorrectionProcessWithBinBaseTest extends GCMSTarge
 
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "file.source.eclipse", "carrot.gcms"))
+@ActiveProfiles(Array("test", "file.source.eclipse", "carrot.gcms", "carrot.processing.peakdetection"))
 class GCMSTargetRetentionIndexCorrectionProcessWithDeconvoulutionTest extends GCMSTargetRetentionIndexCorrectionProcessTest with Matchers {
 
   @Autowired

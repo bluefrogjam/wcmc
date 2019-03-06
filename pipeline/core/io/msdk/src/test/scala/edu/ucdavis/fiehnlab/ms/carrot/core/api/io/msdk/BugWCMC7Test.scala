@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk
 
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import org.junit.runner.RunWith
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-class BugWCMC7Test extends WordSpec with Matchers with LazyLogging {
+class BugWCMC7Test extends WordSpec with Matchers with Logging {
 
   @Autowired
   val resourceLoader: ResourceLoader = null

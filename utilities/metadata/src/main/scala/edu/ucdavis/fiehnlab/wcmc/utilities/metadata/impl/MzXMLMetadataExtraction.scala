@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.utilities.metadata.impl
 
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.api.MetadataExtraction
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.db.{FileMetadata, FileMetadataRepository, FileMetadataService}
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,7 +12,7 @@ import scala.xml.XML
 
 
 @Component
-class MzXMLMetadataExtraction extends MetadataExtraction with LazyLogging {
+class MzXMLMetadataExtraction extends MetadataExtraction with Logging {
 
   @Autowired
   val mdRepo: FileMetadataRepository = null

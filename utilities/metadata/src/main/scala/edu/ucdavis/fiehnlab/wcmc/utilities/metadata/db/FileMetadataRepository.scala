@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.utilities.metadata.db
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.repository.MongoRepository
@@ -27,7 +27,7 @@ case class FileMetadata(
                            software: String) {}
 
 @Component
-class FileMetadataService() extends LazyLogging {
+class FileMetadataService() extends Logging {
   def getFileMetadata(filename: String, data: Elem): FileMetadata = {
     val manufacturer: NodeSeq = data \ "msRun" \ "msInstrument" \ "msManufacturer" \ "@value"
     val model: NodeSeq = data \ "msRun" \ "msInstrument" \ "msModel" \ "@value"

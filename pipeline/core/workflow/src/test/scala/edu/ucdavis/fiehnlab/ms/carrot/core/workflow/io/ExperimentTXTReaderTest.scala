@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -15,7 +15,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.lcms", "test"))
-class ExperimentTXTReaderTest extends WordSpec with LazyLogging {
+class ExperimentTXTReaderTest extends WordSpec with Logging {
 
   @Autowired
   val reader: ExperimentTXTReader = null

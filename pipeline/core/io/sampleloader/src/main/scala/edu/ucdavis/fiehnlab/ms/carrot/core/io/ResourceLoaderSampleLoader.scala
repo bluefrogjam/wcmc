@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
 import java.io.{File, FileInputStream}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent.AgilentSample
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
   * which allows us to load files remotely
   * or from other locations
   */
-class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) extends SampleLoader with LazyLogging {
+class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) extends SampleLoader with Logging {
 
 
   @Autowired

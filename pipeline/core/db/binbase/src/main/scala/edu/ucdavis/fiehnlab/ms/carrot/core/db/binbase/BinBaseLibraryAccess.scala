@@ -4,7 +4,7 @@ import java.sql.{Connection, DriverManager}
 import java.util
 import java.util.Properties
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
@@ -31,7 +31,7 @@ class BinBaseGCMSConfiguration
   */
 @Component
 @Profile(Array("carrot.gcms.library.binbase"))
-class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) extends ReadonlyLibrary[AnnotationTarget] with LazyLogging {
+class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) extends ReadonlyLibrary[AnnotationTarget] with Logging {
 
   /**
     * internal query to be executed

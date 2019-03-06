@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
 import java.util
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import javax.annotation.PostConstruct
 import javax.validation.Valid
 import javax.validation.constraints.{NotBlank, Pattern, Size}
@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 import scala.beans.BeanProperty
 
-class LCMSLibraryConfiguration extends LazyLogging {
+class LCMSLibraryConfiguration extends Logging {
 
   @BeanProperty
   @Valid

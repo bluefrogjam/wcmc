@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.msdialrest4j
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
@@ -21,7 +21,7 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[MSDialRestProcessorConfig]))
-class MSDialRestProcessorTest extends WordSpec with LazyLogging with Matchers with Eventually {
+class MSDialRestProcessorTest extends WordSpec with Logging with Matchers with Eventually {
 
   @Autowired
   val mSDialRestProcessor: MSDialRestProcessor = null

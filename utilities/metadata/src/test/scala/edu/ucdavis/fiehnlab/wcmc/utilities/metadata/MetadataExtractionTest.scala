@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.utilities.metadata
 
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4J
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.api.MetadataExtraction
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.db.{FileMetadata, FileMetadataRepository}
@@ -19,7 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
 @ActiveProfiles(Array("file.source.eclipse"))
-class MetadataExtractionTest extends WordSpec with Matchers with LazyLogging {
+class MetadataExtractionTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val metadataExtraction: MetadataExtraction = null

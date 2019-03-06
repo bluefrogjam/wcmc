@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 
 import java.util.Date
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
@@ -21,7 +21,7 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[SpringRunner])
 @ActiveProfiles(Array("test"))
 @SpringBootTest(classes = Array(classOf[StasisTestConfiguration]))
-class Stasis4jTest extends WordSpec with Matchers with LazyLogging with Eventually {
+class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
 
   @Autowired
   val client: StasisClient = null

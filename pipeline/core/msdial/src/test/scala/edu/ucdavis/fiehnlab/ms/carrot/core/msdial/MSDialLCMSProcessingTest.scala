@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest()
 @ActiveProfiles(Array("carrot.lcms"))
-class MSDialLCMSProcessingTest extends WordSpec with Matchers with LazyLogging {
+class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val msdProcessing: MSDialLCMSProcessing = null

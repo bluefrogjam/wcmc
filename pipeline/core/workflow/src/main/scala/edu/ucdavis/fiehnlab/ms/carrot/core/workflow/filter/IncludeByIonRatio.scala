@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.MassFilter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SimilaritySupport}
 import org.springframework.context.ApplicationContext
@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext
   * @param maxRatio
   * @param massAccuracy
   */
-class IncludeByIonRatio(val ion: Double, val minRatio: Double, val maxRatio: Double, val massAccuracy: Double = 0.0) extends MassFilter[MSSpectra](massAccuracy) with LazyLogging {
+class IncludeByIonRatio(val ion: Double, val minRatio: Double, val maxRatio: Double, val massAccuracy: Double = 0.0) extends MassFilter[MSSpectra](massAccuracy) with Logging {
 
   logger.info(s"searching for ratio against ion ${ion}")
 

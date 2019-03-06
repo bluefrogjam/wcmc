@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[DataFormerClientTestConfiguration]))
-class DataFormerClientTests extends WordSpec with Matchers with LazyLogging {
+class DataFormerClientTests extends WordSpec with Matchers with Logging {
   @Autowired
   val dfClient: DataFormerClient = null
 

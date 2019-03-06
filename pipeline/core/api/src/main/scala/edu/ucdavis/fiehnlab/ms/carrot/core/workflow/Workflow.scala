@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow
 
 import java.util
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -17,7 +17,7 @@ import scala.collection.JavaConverters._
 /**
   * Implementations of this class, will provide us with detailed workflows how to process and annotate data, depending on platform, etc
   */
-class Workflow[T] extends LazyLogging {
+class Workflow[T] extends Logging {
 
   @Autowired(required = false)
   val postActions: java.util.Collection[PostAction] = new util.ArrayList()
@@ -124,15 +124,9 @@ class Workflow[T] extends LazyLogging {
 //    )
 
     val preprocessed = preprocessing(sample, acquisitionMethod, rawSample)
-    logger.info(s"raw data before correction defined: ${rawSample.isDefined}")
     val corrected = correction(preprocessed, acquisitionMethod, rawSample)
-    logger.info(s"raw data before annotation defined: ${rawSample.isDefined}")
     val annotated = annotation(corrected, acquisitionMethod, rawSample)
-    logger.info(s"raw data before quantification defined: ${rawSample.isDefined}")
     val quantified = quantify(annotated, acquisitionMethod, rawSample)
-
-
-    logger.info(s"raw data before postproc defined: ${rawSample.isDefined}")
     val result = postProcessing(quantified, acquisitionMethod, rawSample)
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessFinishedEvent(sample)))

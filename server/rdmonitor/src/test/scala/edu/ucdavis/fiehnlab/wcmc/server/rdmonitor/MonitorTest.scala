@@ -3,13 +3,13 @@ package edu.ucdavis.fiehnlab.wcmc.server.rdmonitor
 import java.io.File
 import java.util.Date
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.server.rdmonitor.api.FileEventListener
 import org.apache.commons.io.FileUtils
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatest.time.{Seconds, Span}
-import org.scalatest.{BeforeAndAfterAll, Matchers, Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -26,7 +26,7 @@ import scala.collection.mutable.ArrayBuffer
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[MonitorTestConfig]))
 @ActiveProfiles(Array("test"))
-class MonitorTest extends WordSpec with LazyLogging with Matchers with BeforeAndAfterAll with Eventually with IntegrationPatience {
+class MonitorTest extends WordSpec with Logging with Matchers with BeforeAndAfterAll with Eventually with IntegrationPatience {
   @Value("${wcmc.monitor.sourceFolder:target/tmp}")
   val sourceFolder: Array[String] = null
 
@@ -132,7 +132,7 @@ class MonitorTestConfig {
 
 @Component
 @Profile(Array("test"))
-class TestEventListener extends FileEventListener with LazyLogging {
+class TestEventListener extends FileEventListener with Logging {
   val files: ArrayBuffer[String] = ArrayBuffer.empty
 
   def recieveMessage(message: FileMessage): Unit = {

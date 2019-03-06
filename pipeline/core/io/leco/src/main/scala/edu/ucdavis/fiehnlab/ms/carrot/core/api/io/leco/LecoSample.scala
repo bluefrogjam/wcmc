@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.leco
 
 import java.io.{IOException, InputStream}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample, SampleProperties}
 import org.apache.commons.io.IOUtils
@@ -12,7 +12,7 @@ import scala.io.Source
 /**
   * presents a LECO ChromatTof processed sample
   */
-class LecoSample(inputStream: InputStream, override val fileName: String) extends Sample with LazyLogging {
+class LecoSample(inputStream: InputStream, override val fileName: String) extends Sample with Logging {
 
   val uniquemassIdentifier: String = "uniquemass"
 

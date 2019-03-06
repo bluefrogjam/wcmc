@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.adductjoiner
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import joinery.DataFrame
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.test.context.TestContextManager
@@ -10,7 +10,7 @@ import scala.collection.JavaConverters._
 /**
   * Created by diego on 2/26/2018
   **/
-class JoinerTest extends WordSpec with Matchers with LazyLogging {
+class JoinerTest extends WordSpec with Matchers with Logging {
 
   val joiner: Joiner = new Joiner
 

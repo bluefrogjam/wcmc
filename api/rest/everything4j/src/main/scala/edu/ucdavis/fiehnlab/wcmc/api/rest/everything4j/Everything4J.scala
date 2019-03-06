@@ -4,7 +4,7 @@ import java.io._
 import java.net.{URI, URL, URLEncoder}
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.RemoteLoader
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +14,7 @@ import org.zeroturnaround.zip.ZipUtil
 /**
   * Created by wohlgemuth on 10/10/17.
   */
-class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, enableLookup: Boolean = true) extends RemoteLoader with LazyLogging {
+class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, enableLookup: Boolean = true) extends RemoteLoader with Logging {
 
   /**
     * is a server allowed to use this one for lookup

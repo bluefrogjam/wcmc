@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
@@ -18,12 +18,12 @@ import scala.collection.immutable.ListMap
   *
   * @param libraryAccess
   */
-abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibraryAccess, stasisClient: StasisService) extends AnnotationProcess[CorrectedSample, AnnotatedSample](libraryAccess, stasisClient) with LazyLogging {
+abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibraryAccess, stasisClient: StasisService) extends AnnotationProcess[CorrectedSample, AnnotatedSample](libraryAccess, stasisClient) with Logging {
 
   /**
     * are we in debug mode, adds some sorting and prettifying for debug messages
     */
-  lazy val debug: Boolean = logger.underlying.isDebugEnabled()
+  lazy val debug: Boolean = false
 
   /**
     * should a recruce annotation mode be used
@@ -39,7 +39,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
   final override def process(input: CorrectedSample, targetsRaw: Iterable[Target], method: AcquisitionMethod): AnnotatedSample = {
     logger.info(s"Annotating sample: ${input.name}")
 
-    val targets =  targetsRaw.filterNot(_.isRetentionIndexStandard).filter(_.confirmed)
+    val targets = targetsRaw.filterNot(_.isRetentionIndexStandard).filter(_.confirmed)
 
     /**
       * internal recursive function to find all possible annotations in the sample
@@ -51,10 +51,10 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
       logger.info(s"spectra requiring annotation: ${spectra.size}")
       val annotatedTargets: Map[Target, _ <: Feature with CorrectedSpectra] = if (debug) {
         //if debugging is enable, we sort by name
-        ListMap(findMatchesForTargets(input, targets, spectra,method).toSeq.sortBy(_._1.name): _*)
+        ListMap(findMatchesForTargets(input, targets, spectra, method).toSeq.sortBy(_._1.name): _*)
       } else {
         //it's a bit faster this way
-        findMatchesForTargets(input, targets, spectra,method)
+        findMatchesForTargets(input, targets, spectra, method)
       }
 
       //get all the targets, without an annotation
@@ -144,7 +144,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
     * @param sample
     * @return
     */
-  protected def findMatches(target: Target, spectra: Seq[_ <: Feature with CorrectedSpectra], sample: CorrectedSample,method: AcquisitionMethod): Seq[_ <: Feature with CorrectedSpectra]
+  protected def findMatches(target: Target, spectra: Seq[_ <: Feature with CorrectedSpectra], sample: CorrectedSample, method: AcquisitionMethod): Seq[_ <: Feature with CorrectedSpectra]
 
   /**
     * this removes duplicated target annotations
@@ -154,7 +154,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
     * @param matches
     * @return
     */
-  protected def removeDuplicatedTargets(sample: CorrectedSample, target: Target, matches: Seq[_ <: Feature with CorrectedSpectra],method: AcquisitionMethod): Option[Feature with CorrectedSpectra]
+  protected def removeDuplicatedTargets(sample: CorrectedSample, target: Target, matches: Seq[_ <: Feature with CorrectedSpectra], method: AcquisitionMethod): Option[Feature with CorrectedSpectra]
 
 
   /**
@@ -163,7 +163,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
     * @param possibleHits
     * @return
     */
-  protected def removeDuplicatedAnnotations(possibleHits: Seq[(Target, _ <: Feature with CorrectedSpectra)],method: AcquisitionMethod): Map[Target, _ <: Feature with CorrectedSpectra]
+  protected def removeDuplicatedAnnotations(possibleHits: Seq[(Target, _ <: Feature with CorrectedSpectra)], method: AcquisitionMethod): Map[Target, _ <: Feature with CorrectedSpectra]
 
   /**
     * tries to discover all the unique matches for the given target list for the given spectra
@@ -172,16 +172,16 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
     * @param spectra
     * @return
     */
-  private def findMatchesForTargets(sample: CorrectedSample, targets: Iterable[Target], spectra: Seq[_ <: Feature with CorrectedSpectra],method: AcquisitionMethod): Map[Target, _ <: Feature with CorrectedSpectra] = {
+  private def findMatchesForTargets(sample: CorrectedSample, targets: Iterable[Target], spectra: Seq[_ <: Feature with CorrectedSpectra], method: AcquisitionMethod): Map[Target, _ <: Feature with CorrectedSpectra] = {
     logger.debug(s"defined targets: ${targets.size}")
     val possibleHits: Seq[(Target, _ <: Feature with CorrectedSpectra)] = targets.toList.sortBy(_.retentionTimeInMinutes).par.collect {
       case target: Target =>
-        val matches = findMatches(target, spectra, sample,method)
+        val matches = findMatches(target, spectra, sample, method)
 
         logger.debug(s"found ${matches.size} matches for $target")
 
 
-        removeDuplicatedTargets(sample, target, matches,method) match {
+        removeDuplicatedTargets(sample, target, matches, method) match {
           case x: Some[Feature with CorrectedSpectra] =>
             logger.debug(s"accepting")
             logger.debug(s"\t=>${x.get} as")
@@ -198,7 +198,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
     logger.debug(s"found possible annotations: ${possibleHits.size}")
     //remove duplicates
 
-    removeDuplicatedAnnotations(possibleHits,method)
+    removeDuplicatedAnnotations(possibleHits, method)
 
   }
 }

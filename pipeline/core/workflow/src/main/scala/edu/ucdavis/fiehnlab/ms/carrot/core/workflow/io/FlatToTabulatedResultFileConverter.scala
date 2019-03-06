@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 import java.io.{File, InputStream}
 import java.nio.file.Files
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import joinery.DataFrame
 import org.springframework.stereotype.Component
 
@@ -16,7 +16,7 @@ import scala.collection.mutable.ArrayBuffer
   * Created by sajjan on 1/22/2018.
   */
 @Component
-class FlatToTabulatedResultFileConverter extends LazyLogging {
+class FlatToTabulatedResultFileConverter extends Logging {
 
   private def format(x: Double, precision: Int, format: Boolean): String = {
     if (format) {

@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.wcmc.server.fserv.controller
 import java.io.File
 import java.nio.file.{Files, Paths}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.wcmc.server.fserv.FServ
@@ -28,7 +28,7 @@ import scala.io.Source
 	*/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes=Array(classOf[FServ]))
-class FServControllerTest extends WordSpec with LazyLogging with Matchers {
+class FServControllerTest extends WordSpec with Logging with Matchers {
   @Value("${wcmc.server.fserv.directory:storage}")
   val directory: String = null
 

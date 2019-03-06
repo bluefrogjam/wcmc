@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j
 
 import java.io.{File, InputStream}
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +20,7 @@ import scala.reflect.io.Path
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TestConfig]))
 @ActiveProfiles(Array("file.source.eclipse"))
-class Everything4JTest extends WordSpec with Matchers with BeforeAndAfter with LazyLogging {
+class Everything4JTest extends WordSpec with Matchers with BeforeAndAfter with Logging {
 
   @Autowired
   val everything4J: Everything4J = null

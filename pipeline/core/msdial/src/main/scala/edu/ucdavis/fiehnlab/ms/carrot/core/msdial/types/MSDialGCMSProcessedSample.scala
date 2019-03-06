@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types
 
 import java.util
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, SimilaritySupport, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.gcms.MS1DeconvolutionResult
@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.gcms.MS1DeconvolutionRes
 import scala.collection.JavaConverters._
 
 
-class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult], mode: IonMode, override val fileName: String) extends ProcessedSample with LazyLogging {
+class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult], mode: IonMode, override val fileName: String) extends ProcessedSample with Logging {
 
   override val properties: Option[SampleProperties] = None
 

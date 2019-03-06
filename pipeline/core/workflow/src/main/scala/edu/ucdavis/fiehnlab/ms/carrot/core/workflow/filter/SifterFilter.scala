@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Similarity
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
@@ -16,7 +16,7 @@ import scala.collection.JavaConverters._
   * @param properties
   * @param target
   */
-class SifterFilter(val properties: GCMSAnnotationLibraryProperties, val target: Target) extends Filter[MSSpectra] with LazyLogging {
+class SifterFilter(val properties: GCMSAnnotationLibraryProperties, val target: Target) extends Filter[MSSpectra] with Logging {
   /**
     *
     * @param spectra

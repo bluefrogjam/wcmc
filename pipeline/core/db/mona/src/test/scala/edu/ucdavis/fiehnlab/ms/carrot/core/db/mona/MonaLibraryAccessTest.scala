@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest
 @ActiveProfiles(Array("carrot.targets.mona", "test"))
-class MonaLibraryAccessTest extends WordSpec with Matchers with LazyLogging with Eventually with BeforeAndAfterEach {
+class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eventually with BeforeAndAfterEach {
 
   @Autowired
   val library: MonaLibraryAccess = null

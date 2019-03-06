@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.ossa4j
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
@@ -9,7 +9,7 @@ import org.springframework.web.client.RestOperations
   * Created by wohlgemuth on 6/29/17.
   */
 @Component
-class Ossa4JClient extends LazyLogging{
+class Ossa4JClient extends Logging{
 
   @Value("${wcmc.api.rest.ossa4j.host:127.0.0.1}")
   val host: String = ""

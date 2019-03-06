@@ -52,8 +52,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.typesafe.scala-logging</groupId>
-            <artifactId>scala-logging_2.11</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api-scala_2.11</artifactId>
         </dependency>
 
         <dependency>
@@ -65,5 +65,6 @@
             <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
             <artifactId>fserv4j</artifactId>
         </dependency>
+
     </dependencies>
 </project>

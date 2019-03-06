@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, PositiveMode, Target}
@@ -14,7 +14,7 @@ import scala.collection.JavaConverters._
 @Configuration
 @Profile(Array("carrot.gcms"))
 @ComponentScan
-class GCMSCorrectionTargetConfiguration extends LazyLogging{
+class GCMSCorrectionTargetConfiguration extends Logging{
 
   /**
     * defines a library access method, based on all methods

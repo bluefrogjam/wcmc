@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
 import java.util
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
   * quantifies a sample, so it's ready to be exported
   */
 
-abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasisClient: StasisService) extends AnnotationProcess[AnnotatedSample, QuantifiedSample[T]](libraryAccess, stasisClient) with LazyLogging {
+abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasisClient: StasisService) extends AnnotationProcess[AnnotatedSample, QuantifiedSample[T]](libraryAccess, stasisClient) with Logging {
 
   @Autowired(required = false)
   val postprocessingInstructions: java.util.List[PostProcessing[T]] = new util.ArrayList[PostProcessing[T]]()

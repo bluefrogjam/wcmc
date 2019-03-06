@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.server.controller
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.AnnotationTarget
@@ -23,7 +23,7 @@ import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Array(classOf[Carrot]))
 @ActiveProfiles(Array("carrot.lcms", "test"))
-class LibraryControllerTest extends WordSpec with Matchers with LazyLogging with Eventually {
+class LibraryControllerTest extends WordSpec with Matchers with Logging with Eventually {
 
 
   @LocalServerPort

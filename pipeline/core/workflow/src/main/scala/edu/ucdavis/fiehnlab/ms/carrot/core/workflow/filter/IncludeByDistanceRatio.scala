@@ -1,12 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import org.springframework.context.ApplicationContext
 
-class IncludeByDistanceRatio(val targetBest: Target, val annotationBest: Feature, val targetToTest: Target, val minRatio: Double, val maxRatio: Double) extends Filter[Feature] with LazyLogging {
+class IncludeByDistanceRatio(val targetBest: Target, val annotationBest: Feature, val targetToTest: Target, val minRatio: Double, val maxRatio: Double) extends Filter[Feature] with Logging {
   logger.info(s"using ${targetBest} as reference target vs ${targetToTest}")
 
   /**

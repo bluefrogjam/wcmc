@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, ReadonlyLibrary}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
@@ -13,7 +13,7 @@ import scala.collection.JavaConverters._
 @Configuration
 @Profile(Array("carrot.lcms"))
 @ComponentScan
-class LCMSCorrectionTargetConfiguration extends LazyLogging {
+class LCMSCorrectionTargetConfiguration extends Logging {
 
   /**
     * defines a library access method, based on all methods

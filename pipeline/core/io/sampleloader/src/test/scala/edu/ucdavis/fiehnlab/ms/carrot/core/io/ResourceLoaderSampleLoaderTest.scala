@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import org.junit.runner.RunWith
@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @ActiveProfiles(Array("file.source.eclipse", "file.source.luna"))
 @SpringBootTest
-class ResourceLoaderSampleLoaderTest extends WordSpec with Matchers with LazyLogging {
+class ResourceLoaderSampleLoaderTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val loader: ResourceLoaderSampleLoader = null

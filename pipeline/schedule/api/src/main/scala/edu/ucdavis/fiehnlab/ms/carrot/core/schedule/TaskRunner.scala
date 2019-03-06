@@ -4,7 +4,7 @@ import java.io.{ByteArrayOutputStream, FileNotFoundException, PrintStream}
 import java.util
 
 import com.sun.mail.util.MailConnectException
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.ProcessException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
@@ -32,7 +32,7 @@ import scala.collection.JavaConverters._
   */
 @Component
 @Profile(Array("carrot.runner.required"))
-class TaskRunner extends LazyLogging {
+class TaskRunner extends Logging {
 
 
   @Value("${wcmc.pipeline.workflow.config.email.sender:binbase@gmail.com}")

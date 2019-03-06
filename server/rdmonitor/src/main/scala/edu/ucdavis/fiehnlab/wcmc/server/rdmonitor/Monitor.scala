@@ -4,7 +4,7 @@ import java.io._
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 
-import com.typesafe.scalalogging.LazyLogging
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.server.rdmonitor.api.FileEventListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 import scala.collection.JavaConverters._
 
 @Component
-class Monitor extends CommandLineRunner with LazyLogging {
+class Monitor extends CommandLineRunner with Logging {
   @Value("${wcmc.monitor.rabbit.queue:monitor-newFile-queue}")
   val queueName: String = ""
 

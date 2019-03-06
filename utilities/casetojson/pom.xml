@@ -4,15 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>utilities</artifactId>
-	    <groupId>edu.ucdavis.fiehnlab</groupId>
+        <groupId>edu.ucdavis.fiehnlab</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-	<groupId>edu.ucdavis.fiehnlab.utilities</groupId>
+    <groupId>edu.ucdavis.fiehnlab.utilities</groupId>
     <artifactId>casetojson</artifactId>
 
-    <description>This provides an essential domain mapper configuration to allow JSON serialization of scala case classes</description>
+    <description>This provides an essential domain mapper configuration to allow JSON serialization of scala case
+        classes
+    </description>
 
     <dependencies>
         <dependency>
@@ -26,11 +28,6 @@
             <artifactId>spring-web</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.typesafe.scala-logging/scala-logging_2.11 -->
-        <dependency>
-            <groupId>com.typesafe.scala-logging</groupId>
-            <artifactId>scala-logging_2.11</artifactId>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
         <dependency>
@@ -52,6 +49,10 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api-scala_2.11</artifactId>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-scala_2.11 -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>

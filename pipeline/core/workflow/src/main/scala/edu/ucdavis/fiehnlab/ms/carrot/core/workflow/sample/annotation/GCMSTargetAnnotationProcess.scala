@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
-import com.typesafe.scalalogging.LazyLogging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
+import org.apache.logging.log4j.scala.Logging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.RetentionIndexDifference
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.AnnotateSampleProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -19,7 +19,7 @@ import scala.collection.immutable.ListMap
 
 @Component
 @Profile(Array("carrot.gcms"))
-class GCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, val gcmsPropterties: GCMSAnnotationProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with LazyLogging {
+class GCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, val gcmsPropterties: GCMSAnnotationProperties, stasisClient: StasisService) extends AnnotateSampleProcess(targets, stasisClient) with Logging {
 
   /**
     * should a recruce annotation mode be used
