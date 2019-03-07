@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,8 +50,9 @@ public class MSDialLCMSProcessing implements MSDialProcessing {
         // DataSummary bean does not appear to be used, so skipping that translation
         logger.info("\tdeconvoluting ms2 spectra...");
         List<MS2DeconvolutionResult> deconvolutionResults = new SpectralDeconvolution().getMS2Deconvolution(spectra, detectedPeaks, properties);
-
-        logger.info("Found " + deconvolutionResults.size() + " deconvoluted features");
+        logger.info("Found " + deconvolutionResults.size() + " total deconvoluted features");
+        logger.info("Found " + deconvolutionResults.stream().filter(d -> d.peak.ms2LevelDataPointNumber < 0).count() + " MS1 spectra");
+        logger.info("Found " + deconvolutionResults.stream().filter(d -> d.peak.ms2LevelDataPointNumber > 0).count() + " MS2 spectra");
 
         MSDialLCMSProcessedSample processed = new MSDialLCMSProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
 

@@ -113,20 +113,16 @@ class Workflow[T] extends Logging {
     logger.info(s"raw data defined: ${rawSample.isDefined}")
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(sample)))
 
-//    val quantified = quantify(
-//      annotation(
-//        correction(
-//          preprocessing(
-//            sample, acquisitionMethod
-//          ), acquisitionMethod
-//        ), acquisitionMethod
-//      ), acquisitionMethod
-//    )
+    val quantified = quantify(
+      annotation(
+        correction(
+          preprocessing(
+            sample, acquisitionMethod, rawSample
+          ), acquisitionMethod, rawSample
+        ), acquisitionMethod, rawSample
+      ), acquisitionMethod, rawSample
+    )
 
-    val preprocessed = preprocessing(sample, acquisitionMethod, rawSample)
-    val corrected = correction(preprocessed, acquisitionMethod, rawSample)
-    val annotated = annotation(corrected, acquisitionMethod, rawSample)
-    val quantified = quantify(annotated, acquisitionMethod, rawSample)
     val result = postProcessing(quantified, acquisitionMethod, rawSample)
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessFinishedEvent(sample)))

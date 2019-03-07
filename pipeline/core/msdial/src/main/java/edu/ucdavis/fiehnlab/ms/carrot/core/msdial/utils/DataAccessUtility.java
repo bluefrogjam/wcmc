@@ -87,21 +87,23 @@ public class DataAccessUtility {
         }
 
         spectrumList.stream()
-              .filter(item -> item.scanNumber() == 1 && item.ionMode().isDefined() && item.ionMode().get().mode().equals(ionMode.mode()))
+              .filter(item -> item.associatedScan().get().msLevel() == 1 && item.ionMode().isDefined() && item.ionMode().get().mode().equals(ionMode.mode()))
               .forEach(spectrum -> {
                   TypeConverter.getJavaIonList(spectrum).forEach(ion -> {
-                      if(ion.mass() < minMz.get()) {
+                      if (ion.mass() < minMz.get()) {
                           minMz.getAndSet(ion.mass());
-                      } else if(ion.mass() > maxMz.get()) {
+                      } else if (ion.mass() > maxMz.get()) {
                           maxMz.getAndSet(ion.mass());
                       }
                   });
               });
 
-        logger.info(String.format("new (%f, %f)", minMz.doubleValue(), maxMz.doubleValue()));
+        return new double[]{minMz.doubleValue(), maxMz.doubleValue()};
+    }
 
-        double ominMz = Double.MAX_VALUE;
-        double omaxMz = Double.MIN_VALUE;
+    public static double[] old_getMS1ScanRange(List<? extends Feature> spectrumList, IonMode ionMode) {
+        double minMz = Double.MAX_VALUE;
+        double maxMz = Double.MIN_VALUE;
         for (Feature spectrum : spectrumList) {
             // Filter by msLevel and ion mode
             if (spectrum.associatedScan().get().msLevel() != 1 || !spectrum.ionMode().get().mode().equals(ionMode.mode())) {
@@ -109,16 +111,15 @@ public class DataAccessUtility {
             }
 
             for (Ion ion : TypeConverter.getJavaIonList(spectrum)) {
-                if (ion.mass() < ominMz) {
-                    ominMz = ion.mass();
-                } else if (ion.mass() > omaxMz) {
-                    omaxMz = ion.mass();
+                if (ion.mass() < minMz) {
+                    minMz = ion.mass();
+                } else if (ion.mass() > maxMz) {
+                    maxMz = ion.mass();
                 }
             }
         }
-        logger.info(String.format("old (%f, %f)", ominMz, omaxMz));
 
-        return new double[] {minMz.doubleValue(), maxMz.doubleValue()};
+        return new double[]{minMz, maxMz};
     }
 
 
@@ -191,7 +192,6 @@ public class DataAccessUtility {
     }
 
     /**
-     *
      * @param peaklist
      * @param smoothingMethod
      * @param smoothingLevel
@@ -200,7 +200,6 @@ public class DataAccessUtility {
     public static List<Peak> getSmoothedPeaks(List<Peak> peaklist, String smoothingMethod, int smoothingLevel) {
         return Smoothing.smoothPeaks(peaklist, SmoothingMethod.valueOf(smoothingMethod.toUpperCase()), smoothingLevel);
     }
-
 
 
     public static PeakAreaBean getPeakAreaBean(PeakDetectionResult peakResult) {

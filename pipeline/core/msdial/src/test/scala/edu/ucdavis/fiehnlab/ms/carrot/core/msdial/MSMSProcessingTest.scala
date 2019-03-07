@@ -41,7 +41,7 @@ class MSMSProcessingTest extends WordSpec with Logging with Matchers {
 
       val deconvoluted = msdProcessing.process(sample.get, properties)
 
-      deconvoluted.spectra.count(_.associatedScan.get.msLevel == 2) should not be empty
+      deconvoluted.spectra.count(_.associatedScan.get.msLevel == 2) should be > 0
     }
   }
 }

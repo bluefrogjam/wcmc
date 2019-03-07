@@ -56,7 +56,6 @@ class MSDialLCMSProcessedSample(ms2DecResults: util.List[MS2DeconvolutionResult]
       }
     } else {
       new MSMSSpectra {
-        logger.info(s"creating MSMS peak")
         override val uniqueMass: Option[Double] = None
         override val signalNoise: Option[Double] = None
         override val precursorIon: Double = x.ms1AccurateMass
