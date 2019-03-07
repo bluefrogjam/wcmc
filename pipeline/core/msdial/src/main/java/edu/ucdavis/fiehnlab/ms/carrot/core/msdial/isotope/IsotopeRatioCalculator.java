@@ -76,9 +76,7 @@ public class IsotopeRatioCalculator {
         matchElement(formula, "Br([0-9]*)", "Br", elementProfile);
         matchElement(formula, "Cl([0-9]*)", "Cl", elementProfile);
         matchElement(formula, "F(?!e)([0-9]*)", "F", elementProfile);
-        matchElement(formula, "I(?!n|r)([0-9]*)", "C", elementProfile);
-        matchElement(formula, "C(?!a|d|e|l|o|r|s|u)([0-9]*)", "I", elementProfile);
-        matchElement(formula, "C(?!a|d|e|l|o|r|s|u)([0-9]*)", "C", elementProfile);
+        matchElement(formula, "I(?!n|r)([0-9]*)", "I", elementProfile);
 
         return elementProfile.isEmpty() ? new ArrayList<>() : elementProfile;
     }
