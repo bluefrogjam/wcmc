@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
 /**
   * this provides us with an easy way to utilized MSDK based data classes in our simplified schema
   */
-class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Logging with RawData{
+class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Logging with RawData {
 
   override val properties: Option[SampleProperties] = Some(SampleProperties(name, None))
 
@@ -27,7 +27,9 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Loggin
     * a collection of spectra
     * belonging to this sample
     */
+    //TODO Watch for race conditions if reading samples in parallel
   override lazy val spectra: Seq[_ <: Feature] = try {
+    var precursor: MSDKMSSpectra = null
     delegate.getScans.asScala.filter(_.getIntensityValues.nonEmpty).map {
 
       //test all ms scans
@@ -39,7 +41,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Loggin
         } else if (spectra.getMsLevel == 1 || spectra.getIsolations.isEmpty) {
 
           //discover which mixins we need
-          spectra.getSpectrumType match {
+          precursor = spectra.getSpectrumType match {
             case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Centroided
             case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Profiled
             case _ => {
@@ -47,8 +49,10 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Loggin
               new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Profiled
             }
           }
+
+          precursor
         } else {
-          new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName)
+          new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan)
         }
 
     }
@@ -190,10 +194,9 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) 
   *
   * @param spectra
   */
-class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) extends MSMSSpectra {
+class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String, val precursor: Option[SpectrumProperties]) extends MSMSSpectra {
   override val precursorIon: Double = if (spectra.getIsolations.isEmpty) {
-    //this is just bad, but seems to be a real value in some files
-    0.0
+    0.0 //this is just bad, but seems to be a real value in some files
   } else {
     spectra.getIsolations.get(0).getPrecursorMz
   }
@@ -212,32 +215,12 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String
       x.mass == spectra.getIsolations.get(0).getPrecursorMz
     }
   }
-  /**
-    * associated spectrum propties if applicable
-    */
+
   override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
-    /**
-      * a list of model ions used during the deconvolution
-      */
     override val modelIons: Option[List[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
     override lazy val ions: Seq[Ion] = MSDKSample.build(spectra)
-
     override val msLevel: Short = 2
   })
 
-  override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
-    /**
-      * a list of model ions used during the deconvolution
-      */
-    override val modelIons: Option[List[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override lazy val ions: Seq[Ion] = MSDKSample.build(spectra)
-
-    override val msLevel: Short = 2
-  })
+  override val precursorScan: Option[SpectrumProperties] = precursor
 }

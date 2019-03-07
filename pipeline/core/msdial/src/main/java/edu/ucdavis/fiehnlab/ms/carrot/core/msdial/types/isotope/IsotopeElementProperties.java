@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.isotope;
 public class IsotopeElementProperties {
 
     public double relativeAbundance;
-    public double massDifferenceFromMonoisotopicIon;
+    private double massDifferenceFromMonoisotopicIon;
     public String comment;
 
     public IsotopeElementProperties(double relativeAbundance, double massDifferenceFromMonoisotopicIon) {
@@ -13,5 +13,9 @@ public class IsotopeElementProperties {
 
     public double massDifferenceFromMonoisotopicIon() {
         return massDifferenceFromMonoisotopicIon;
+    }
+
+    public void setMassDifferenceFromMonoisotopicIon(double val) {
+        this.massDifferenceFromMonoisotopicIon = val;
     }
 }

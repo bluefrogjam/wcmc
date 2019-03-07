@@ -14,7 +14,8 @@ public class BasicMathematics {
      * @param k
      * @return
      */
-    public static long binomialCoefficient(int n, int k) {
+    public static long old_binomialCoefficient(int n, int k) {
+//        System.out.print("n="+n+", k="+k);
         if (k < 0 || k > n) {
             return 0;
         } else {
@@ -26,8 +27,46 @@ public class BasicMathematics {
                 n -= 1;
             }
 
-            return p / q;
+            // print and try block added by me to compare values with other binomial coeff.
+//            System.out.println("  (p="+p+",q="+q+") => " + p/q);
+            try {
+                return p / q;
+            } catch (ArithmeticException e) {
+                return 0;
+            }
         }
+    }
+
+    /**
+     * Alternative binomial coefficient, doesn't seem to break on C57H114
+     * from https://www.geeksforgeeks.org/binomial-coefficient-dp-9
+     *
+     * @param n
+     * @param k
+     * @return
+     */
+    public static long binomialCoefficient(int n, int k) {
+//        System.out.print("n="+n+", k="+k);
+        int C[][] = new int[n+1][k+1];
+        int i, j;
+
+        // Calculate  value of Binomial Coefficient in bottom up manner
+        for (i = 0; i <= n; i++)
+        {
+            for (j = 0; j <= Math.min(i, k); j++)
+            {
+                // Base Cases
+                if (j == 0 || j == i)
+                    C[i][j] = 1;
+
+                    // Calculate value using previously stored values
+                else
+                    C[i][j] = C[i-1][j-1] + C[i-1][j];
+            }
+        }
+
+//        System.out.println("  C[n][k] => " + C[n][k]);
+        return C[n][k];
     }
 
 	public static double median(List<Double> list) {

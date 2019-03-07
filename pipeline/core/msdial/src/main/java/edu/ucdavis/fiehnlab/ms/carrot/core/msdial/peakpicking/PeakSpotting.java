@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import org.slf4j.Logger;
@@ -218,7 +219,7 @@ public abstract class PeakSpotting {
      * @param properties
      * @return
      */
-    public List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<Feature> spectrumList, MSDialProcessingProperties properties) {
+    public List<PeakAreaBean> getPeakAreaBeanProperties(List<PeakAreaBean> peakAreaBeanList, List<? extends Feature> spectrumList, MSDialProcessingProperties properties) {
 
         peakAreaBeanList = peakAreaBeanList.stream()
                 .sorted(Comparator.comparing(PeakAreaBean::rtAtPeakTop)
@@ -251,5 +252,5 @@ public abstract class PeakSpotting {
      * @param spectrumList
      * @param properties
      */
-    public abstract void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialProcessingProperties properties);
+    public abstract void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<? extends Feature> spectrumList, MSDialProcessingProperties properties);
 }

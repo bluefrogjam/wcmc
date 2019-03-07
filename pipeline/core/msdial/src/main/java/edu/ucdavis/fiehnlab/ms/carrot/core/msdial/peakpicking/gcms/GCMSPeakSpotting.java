@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.gcms;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.peakpicking.PeakSpotting;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
@@ -42,7 +43,7 @@ public class GCMSPeakSpotting extends PeakSpotting {
      *                     amplitudeCutoff       minimum fragment intensity for centroiding
      * @return detected peak areas
      */
-    public List<PeakAreaBean> getPeakSpots(List<Feature> spectrumList, MSDialProcessingProperties properties) {
+    public List<PeakAreaBean> getPeakSpots(List<? extends Feature> spectrumList, MSDialProcessingProperties properties) {
         logger.info("Starting peak spotting...");
 
         List<double[]> peakList;
@@ -169,7 +170,7 @@ public class GCMSPeakSpotting extends PeakSpotting {
      * @param spectrumList
      * @param properties
      */
-    public void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<Feature> spectrumList, MSDialProcessingProperties properties) {
+    public void setIsotopicIonInformation(PeakAreaBean peakAreaBean, List<? extends Feature> spectrumList, MSDialProcessingProperties properties) {
 
         int specID = peakAreaBean.ms1LevelDataPointNumber;
         double massTolerance = properties.accuracyType == AccuracyType.NOMINAL ? 0.5 : properties.massAccuracy;

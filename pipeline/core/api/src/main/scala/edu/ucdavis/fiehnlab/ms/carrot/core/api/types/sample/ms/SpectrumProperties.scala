@@ -58,7 +58,7 @@ trait Feature extends AccurateMassSupport {
     */
   val massOfDetectedFeature: Option[Ion]
 
-  override def toString = s"Feature($scanNumber, $retentionTimeInMinutes, ${massOfDetectedFeature.get.mass}, ${associatedScan})"
+  override def toString = s"Feature($scanNumber, MS${associatedScan.get.msLevel}, $retentionTimeInMinutes, ${massOfDetectedFeature.get.mass}, $associatedScan)"
 
   /**
     * returns the accurate mass, of this trait
@@ -145,12 +145,19 @@ trait MSSpectra extends Feature  {
 /**
   * this defines an MSMS spectra
   */
-trait MSMSSpectra extends MSSpectra with SimilaritySupport{
+trait MSMSSpectra extends MSSpectra with PrecursorSupport {
 
   /**
     * the observed pre cursor ion
     */
   val precursorIon: Double
+}
+
+trait PrecursorSupport {
+  /**
+    * the precursor scan info for the current MSMS spectrum
+    */
+  val precursorScan: Option[SpectrumProperties]
 }
 
 /**

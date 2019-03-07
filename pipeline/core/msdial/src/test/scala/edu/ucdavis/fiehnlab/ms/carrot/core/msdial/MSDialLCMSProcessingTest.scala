@@ -57,7 +57,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
         serializer.saveFile(outSample)
     }
 
-    "check peakpicking in RT range (1.45 - 1.60)" in {
+    "check peakpicking in RT range (1.45 - 1.60)" ignore {
       val sample: MSDKSample = MSDKSample("testSmall0.mzml", new File(getClass.getResource("/testSmall0.mzml").getFile))
 
       val outSample = msdProcessing.process(sample, properties)
@@ -70,7 +70,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
       }
     }
 
-    "check peakpicking in RT range (10.00 - 10.44)" in {
+    "check peakpicking in RT range (10.00 - 10.44)" ignore {
       val sample: MSDKSample = MSDKSample("testSmall1.mzml", new File(getClass.getResource("/testSmall1.mzml").getFile))
 
       val outSample = msdProcessing.process(sample, properties)
@@ -83,7 +83,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
       }
     }
 
-    "check peakpicking in RT range (4.74 - 5.50)" in {
+    "check peakpicking in RT range (4.74 - 5.50)" ignore {
       val sample: MSDKSample = MSDKSample("testSmall2.mzml", new File(getClass.getResource("/testSmall2.mzml").getFile))
 
       val outSample = msdProcessing.process(sample, properties)
@@ -99,9 +99,4 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
       }
     }
   }
-}
-
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class LCTestConfig {
-
 }

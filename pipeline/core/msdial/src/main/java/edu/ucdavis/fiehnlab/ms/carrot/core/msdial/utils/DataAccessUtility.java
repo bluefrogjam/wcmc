@@ -1,16 +1,21 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.PeakDetectionResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class DataAccessUtility {
+    private static Logger logger = Logger.getLogger("DataAccessUtility");
 
     /**
      * Get a simple EIC from a given list of spectra
@@ -23,7 +28,7 @@ public class DataAccessUtility {
      * @param ionMode
      * @return
      */
-    public static List<double[]> getMS1PeakList(List<Feature> spectrumList, double focusedMass, double massSliceWidth, double rtBegin, double rtEnd, IonMode ionMode) {
+    public static List<double[]> getMS1PeakList(List<? extends Feature> spectrumList, double focusedMass, double massSliceWidth, double rtBegin, double rtEnd, IonMode ionMode) {
 
         List<double[]> peakList = new ArrayList<>();
 
@@ -73,14 +78,30 @@ public class DataAccessUtility {
      * @param ionMode
      * @return
      */
-    public static double[] getMS1ScanRange(List<Feature> spectrumList, IonMode ionMode) {
-        double minMz = Double.MAX_VALUE;
-        double maxMz = Double.MIN_VALUE;
+    public static double[] getMS1ScanRange(List<? extends Feature> spectrumList, IonMode ionMode) {
+        final AtomicDouble minMz = new AtomicDouble(Double.MAX_VALUE);
+        final AtomicDouble maxMz = new AtomicDouble(Double.MIN_VALUE);
 
         if (spectrumList.size() <= 0) {
             return new double[]{0, 0};
         }
 
+        spectrumList.stream()
+              .filter(item -> item.scanNumber() == 1 && item.ionMode().isDefined() && item.ionMode().get().mode().equals(ionMode.mode()))
+              .forEach(spectrum -> {
+                  TypeConverter.getJavaIonList(spectrum).forEach(ion -> {
+                      if(ion.mass() < minMz.get()) {
+                          minMz.getAndSet(ion.mass());
+                      } else if(ion.mass() > maxMz.get()) {
+                          maxMz.getAndSet(ion.mass());
+                      }
+                  });
+              });
+
+        logger.info(String.format("new (%f, %f)", minMz.doubleValue(), maxMz.doubleValue()));
+
+        double ominMz = Double.MAX_VALUE;
+        double omaxMz = Double.MIN_VALUE;
         for (Feature spectrum : spectrumList) {
             // Filter by msLevel and ion mode
             if (spectrum.associatedScan().get().msLevel() != 1 || !spectrum.ionMode().get().mode().equals(ionMode.mode())) {
@@ -88,15 +109,16 @@ public class DataAccessUtility {
             }
 
             for (Ion ion : TypeConverter.getJavaIonList(spectrum)) {
-                if (ion.mass() < minMz) {
-                    minMz = ion.mass();
-                } else if (ion.mass() > maxMz) {
-                    maxMz = ion.mass();
+                if (ion.mass() < ominMz) {
+                    ominMz = ion.mass();
+                } else if (ion.mass() > omaxMz) {
+                    omaxMz = ion.mass();
                 }
             }
         }
+        logger.info(String.format("old (%f, %f)", ominMz, omaxMz));
 
-        return new double[] {minMz, maxMz};
+        return new double[] {minMz.doubleValue(), maxMz.doubleValue()};
     }
 
 

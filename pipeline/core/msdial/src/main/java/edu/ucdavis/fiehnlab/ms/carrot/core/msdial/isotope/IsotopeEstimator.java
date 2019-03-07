@@ -37,6 +37,7 @@ public class IsotopeEstimator {
             double focusedMass = peak.accurateMass;
             double focusedRt = peak.rtAtPeakTop;
 
+            if(focusedMass - 0.0001 < 0) logger.warn("StartScanIndex is < 0");
             int startScanIndex = getStartIndexForTargetMass(focusedMass - 0.0001, detectedPeakAreas);
             List<PeakAreaBean> isotopeCandidates = new ArrayList<>();
             isotopeCandidates.add(peak);
@@ -305,7 +306,7 @@ public class IsotopeEstimator {
      * @param maxChargeNumber
      * @param tolerance
      */
-    public void msmsIsotopeRecognition(List<Peak> peaks, int maxTraceNumber, int maxChargeNumber, double tolerance) {
+    public void msmsIsotopeRecognition(List<Peak> peaks, int maxChargeNumber, MSDialProcessingProperties properties) {
 
         for (int i = 0; i < peaks.size(); i++) {
             Peak peak = peaks.get(i);
@@ -322,7 +323,7 @@ public class IsotopeEstimator {
             for (int j = i + 1; j < peaks.size(); j++) {
                 Peak isotopePeak = peaks.get(j);
 
-                if (isotopePeak.mz > peak.mz + MassDiffDictionary.C13_C12 + tolerance)
+                if (isotopePeak.mz > peak.mz + MassDiffDictionary.C13_C12 + properties.centroidMS2Tolerance)
                     break;
                 if (!isotopePeak.comment.equals("NA"))
                     continue;
@@ -331,7 +332,7 @@ public class IsotopeEstimator {
                     double predIsotopeMass = peak.mz + MassDiffDictionary.C13_C12 / k;
                     double diff = Math.abs(predIsotopeMass - isotopePeak.mz);
 
-                    if (diff < tolerance) {
+                    if (diff < properties.centroidMS2Tolerance) {
                         predChargeNumber = k;
 
                         if (k <= 3) {
@@ -374,13 +375,13 @@ public class IsotopeEstimator {
 
 
             // Isotope grouping till M + 8
-            IsotopePeak[] isotopeTemps = new IsotopePeak[maxTraceNumber + 1];
+            IsotopePeak[] isotopeTemps = new IsotopePeak[properties.maxTraceNumber + 1];
             isotopeTemps[0] = new IsotopePeak(0, peak.mz, peak.intensity, i);
 
             int reminderIndex = i + 1;
             boolean isFinished = false;
 
-            for (int j = 1; j <= maxTraceNumber; j++) {
+            for (int j = 1; j <= properties.maxTraceNumber; j++) {
                 double predIsotopicMass = peak.mz + j * MassDiffDictionary.C13_C12 / (double)predChargeNumber;
 
                 for (int k = reminderIndex; k < peaks.size(); k++) {
@@ -389,7 +390,7 @@ public class IsotopeEstimator {
                     if (!isotopePeak.comment.equals("NA"))
                         continue;
 
-                    if (predIsotopicMass - tolerance < isotopePeak.mz && isotopePeak.mz < predIsotopicMass + tolerance) {
+                    if (predIsotopicMass - properties.centroidMS2Tolerance < isotopePeak.mz && isotopePeak.mz < predIsotopicMass + properties.centroidMS2Tolerance) {
                         if (isotopeTemps[j] == null) {
                             isotopeTemps[j] = new IsotopePeak(j, isotopePeak.mz, isotopePeak.intensity, k);
                         } else {
@@ -399,7 +400,7 @@ public class IsotopeEstimator {
                                 isotopeTemps[j].peakID = k;
                             }
                         }
-                    } else if (isotopePeak.mz >= predIsotopicMass + tolerance) {
+                    } else if (isotopePeak.mz >= predIsotopicMass + properties.centroidMS2Tolerance) {
                         reminderIndex = k;
 
                         if (isotopeTemps[j] == null)
@@ -426,7 +427,7 @@ public class IsotopeEstimator {
             if (monoisotopicMass > 800)
                 simulatedIsotopicPeaks = new IsotopeRatioCalculator().getNominalIsotopeProperty(simulatedFormulaByAlkane, 9);
 
-            for (int j = 1; j <= maxTraceNumber; j++) {
+            for (int j = 1; j <= properties.maxTraceNumber; j++) {
                 if (isotopeTemps[j] == null) break;
                 if (isotopeTemps[j].intensity <= 0) break;
 
