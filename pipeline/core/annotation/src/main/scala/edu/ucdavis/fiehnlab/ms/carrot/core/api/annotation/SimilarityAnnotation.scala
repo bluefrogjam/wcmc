@@ -15,8 +15,6 @@ import edu.ucdavis.fiehnlab.util.Utilities
   */
 class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similarity, val phase: String) extends Annotate with Logging {
 
-  //  override protected val usedSettings = Map("minSimilarity" -> simmilarityOffset, "algorithm" -> algorithm.getClass.getSimpleName)
-
   /**
     * returns true, if the corrected spectra is considered to be a match for the library spectra
     *
@@ -30,7 +28,7 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
       case x: Target =>
         correctedSpectra match {
           case y: MSMSSpectra if y.associatedScan.isDefined =>
-            val value = algorithm.compute(convertSpectra(y.spectrum.get.spectraString), convertSpectra(x.spectrum.get.spectraString))
+            val value = algorithm.compute(convertSpectra(y.associatedScan.get.spectraString), convertSpectra(x.spectrum.get.spectraString))
             logger.trace(s"computed match is: ${value}")
             val result = value > simmilarityOffset
             logger.trace(s"\t=> matches: ${result}")
@@ -63,8 +61,4 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
     new BinByRoundingMethod().binSpectrum(Utilities.convertStringToSpectrum(spectra))
   }
 
-  /**
-    * which phase we require to log
-    */
-  //  override protected val phaseToLog = phase
 }

@@ -55,7 +55,6 @@ class Workflow[T] extends Logging {
   }
 
   protected final def postProcessing(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
-    logger.info(s"raw data defined: ${rawSample.isDefined}")
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingBeginEvent(sample)))
     val result = postProcessSample(sample, acquisitionMethod, rawSample)
     eventListeners.asScala.foreach(eventListener => eventListener.handle(PostProcessingFinishedEvent(result)))
@@ -110,23 +109,18 @@ class Workflow[T] extends Logging {
     * @return
     */
   final def process(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): Sample = {
-    logger.info(s"raw data defined: ${rawSample.isDefined}")
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessBeginEvent(sample)))
 
-//    val quantified = quantify(
-//      annotation(
-//        correction(
-//          preprocessing(
-//            sample, acquisitionMethod
-//          ), acquisitionMethod
-//        ), acquisitionMethod
-//      ), acquisitionMethod
-//    )
+    val quantified = quantify(
+      annotation(
+        correction(
+          preprocessing(
+            sample, acquisitionMethod, rawSample
+          ), acquisitionMethod, rawSample
+        ), acquisitionMethod, rawSample
+      ), acquisitionMethod, rawSample
+    )
 
-    val preprocessed = preprocessing(sample, acquisitionMethod, rawSample)
-    val corrected = correction(preprocessed, acquisitionMethod, rawSample)
-    val annotated = annotation(corrected, acquisitionMethod, rawSample)
-    val quantified = quantify(annotated, acquisitionMethod, rawSample)
     val result = postProcessing(quantified, acquisitionMethod, rawSample)
 
     eventListeners.asScala.foreach(eventListener => eventListener.handle(ProcessFinishedEvent(sample)))
@@ -258,12 +252,10 @@ class Workflow[T] extends Logging {
     */
   protected def postProcessSample(sample: Sample, acquisitionMethod: AcquisitionMethod, rawSample: Option[Sample]): AnnotatedSample = sample match {
     case s: QuantifiedSample[T] =>
-      logger.info(s"raw data defined: ${rawSample.isDefined}")
       if (postProcessor.isEmpty) {
         s
       }
       else {
-        logger.info(s"raw data defined: ${rawSample.isDefined}")
 
         //TODO could be done more elegant with a fold, but no time to play with it
         val iterator = postProcessor.asScala.sortBy(_.priortiy).reverseIterator

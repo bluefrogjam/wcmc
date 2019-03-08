@@ -4,6 +4,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSMSSpectra;
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class LCMSDataAccessUtility {
      * @param spectrumList
      * @return
      */
-    private static int getRtStartIndex(double targetRt, List<Feature> spectrumList) {
+    private static int getRtStartIndex(double targetRt, List<? extends Feature> spectrumList) {
 
         int startIndex = 0, endIndex = spectrumList.size() - 1;
         int counter = 0;
@@ -52,7 +53,7 @@ public class LCMSDataAccessUtility {
      * @param centroidMS2Tolerance
      * @return
      */
-    public static List<double[]> getMS2Peaklist(List<Feature> spectrumList, double precursorMz, double productMz, double startRt,
+    public static List<double[]> getMS2Peaklist(List<? extends Feature> spectrumList, double precursorMz, double productMz, double startRt,
                                                 double endRt, IonMode ionMode, double centroidedMS1Tolerance, double centroidMS2Tolerance) {
 
         List<double[]> peakList = new ArrayList<>();
@@ -101,7 +102,7 @@ public class LCMSDataAccessUtility {
      * @param ionMode
      * @return
      */
-    public static int getMS2DatapointNumber(int startPoint, int endPoint, float accurateMass, double tolerance, List<Feature> spectrumList, IonMode ionMode) {
+    public static int getMS2DatapointNumber(int startPoint, int endPoint, float accurateMass, double tolerance, List<? extends Feature> spectrumList, IonMode ionMode) {
         double maxIntensity = Double.MIN_VALUE;
         int maxID = -1;
 

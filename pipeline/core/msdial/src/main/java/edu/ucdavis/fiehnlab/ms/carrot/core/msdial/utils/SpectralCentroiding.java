@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.math.BasicMathematics;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
 
@@ -26,7 +27,7 @@ public class SpectralCentroiding {
      * @param peakDetectionBasedCentroid
      * @return
      */
-    public static List<Ion> getLCMSCentroidedSpectrum(List<Feature> spectrumList, MSDataType dataType, int msScanPoint, double massBin, boolean peakDetectionBasedCentroid) {
+    public static List<Ion> getLCMSCentroidedSpectrum(List<? extends Feature> spectrumList, MSDataType dataType, int msScanPoint, double massBin, boolean peakDetectionBasedCentroid) {
 
         if (msScanPoint < 0) {
             return new ArrayList<>();
@@ -56,7 +57,7 @@ public class SpectralCentroiding {
      * @param mzEnd
      * @return
      */
-    public static List<Ion> getGCMSCentroidedSpectrum(List<Feature> spectrumList, MSDataType dataType, int msScanPoint,
+    public static List<Ion> getGCMSCentroidedSpectrum(List<? extends Feature> spectrumList, MSDataType dataType, int msScanPoint,
                                                       double massBin, double amplitudeThreshold, double mzStart, double mzEnd) {
 
         if (msScanPoint < 0) {

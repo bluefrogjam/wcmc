@@ -21,7 +21,7 @@ class ABFSample(override val fileName: String, file: File, client: MSDialRestPro
     * @return
     */
 
-  def deconvolute:Seq[_ <:Feature] = {
+  def deconvolute:Seq[_ <: Feature] = {
     logger.debug(s"converting ${file} to MSDial representation")
 	  val start = System.nanoTime()
 

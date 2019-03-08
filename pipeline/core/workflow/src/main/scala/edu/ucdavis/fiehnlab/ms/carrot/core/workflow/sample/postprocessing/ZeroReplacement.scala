@@ -51,7 +51,6 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
     * @return
     */
   final override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
-    logger.info(s"raw data defined: ${rawSample.isDefined}")
 
     val rawdata: Option[Sample] =
       if (rawSample.isDefined) {
@@ -199,7 +198,6 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
 
     val filterByRetentionIndex = new IncludeByRetentionIndexWindow(receivedTarget.retentionIndex, zeroReplacementProperties.retentionIndexWindowForPeakDetection)
 
-
     //first calculate noise for this ion trace
     val noiseSpectra = rawdata.spectra.filter { spectra =>
 
@@ -232,7 +230,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
       includeMass(receivedTarget, filterByMass, spectra)
     }
 
-    logger.debug(s"found ${replacementValueSpectra.size} spectra, after mass filter for target ${receivedTarget}")
+    logger.debug(s"found ${replacementValueSpectra.size} spectra, after mass filter for target ${receivedTarget.name.getOrElse("--")}")
 
     val filteredByTime: Seq[Feature with CorrectedSpectra] = replacementValueSpectra.filter { spectra =>
       filterByRetentionIndex.include(spectra, applicationContext)
@@ -314,6 +312,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           override val retentionIndex: Double = receivedTarget.retentionIndex
         }
       } else {
+        logger.info("Filter by time is not empty")
         filteredByTime.maxBy { spectra =>
           MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
         }

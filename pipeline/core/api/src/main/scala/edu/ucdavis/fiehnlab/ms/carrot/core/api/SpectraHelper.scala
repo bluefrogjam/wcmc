@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 object SpectraHelper {
 
 
-  def addMassCalibration(feature: Feature, spectrumProperties: SpectrumProperties,correctedMassOfDetectedFeature: Ion): Feature = {
+  def addMassCalibration(feature: Feature, spectrumProperties: SpectrumProperties, correctedMassOfDetectedFeature: Ion): Feature = {
 
     feature match {
       case feat: MSMSSpectra =>
@@ -36,7 +36,7 @@ object SpectraHelper {
             */
           override val massOfDetectedFeature: Option[Ion] = Some(correctedMassOfDetectedFeature)
 
-          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
 
           /**
             * the local scan number
@@ -47,7 +47,7 @@ object SpectraHelper {
             */
           override val retentionTimeInSeconds: Double = feat.retentionTimeInSeconds
 
-          override val associatedScan: Option[SpectrumProperties] = Some(spectrumProperties)
+          override val precursorScan: Option[SpectrumProperties] = feat.precursorScan
           /**
             * the signal noise of this spectra
             */
@@ -165,7 +165,7 @@ object SpectraHelper {
             */
           override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
 
-          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
 
           /**
             * the local scan number
@@ -178,7 +178,7 @@ object SpectraHelper {
 
           override val retentionIndex: Double = _retentionIndex
 
-          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
+          override val precursorScan: Option[SpectrumProperties] = feat.precursorScan
           /**
             * the signal noise of this spectra
             */
@@ -292,6 +292,9 @@ object SpectraHelper {
             * the observed pre cursor ion
             */
           override val precursorIon: Double = feat.precursorIon
+
+          override val precursorScan: Option[SpectrumProperties] = feat.precursorScan
+
           /**
             * how pure this spectra is
             */
@@ -299,7 +302,7 @@ object SpectraHelper {
           /**
             * a list of model ions used during the deconvolution
             */
-          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
 
           /**
             * the local scan number
@@ -336,9 +339,6 @@ object SpectraHelper {
             * accurate mass of this feature, if applicable
             */
           override val massOfDetectedFeature: Option[Ion] = feat.massOfDetectedFeature
-
-          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
-
         }
       case feat: MSSpectra with CorrectedSpectra =>
         new MSSpectra with AnnotatedSpectra {
@@ -468,11 +468,14 @@ object SpectraHelper {
             * the observed pre cursor ion
             */
           override val precursorIon: Double = feat.precursorIon
+
+          override val precursorScan: Option[SpectrumProperties] = feat.precursorScan
+
           /**
             * how pure this spectra is
             */
           override val purity: Option[Double] = feat.purity
-          override val spectrum: Option[SpectrumProperties] = feat.spectrum
+          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
 
           /**
             * the local scan number
@@ -513,8 +516,6 @@ object SpectraHelper {
             * value for this target
             */
           override val quantifiedValue: Option[T] = quantified.quantifiedValue
-
-          override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
         }
       case feat: MSSpectra with AnnotatedSpectra =>
         new MSSpectra with QuantifiedSpectra[T] {

@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class IsotopeRatioCalculator {
 
@@ -130,7 +131,7 @@ public class IsotopeRatioCalculator {
 
         for (IsotopeElementProperties isotopeA : isotopeProfileA) {
             for (IsotopeElementProperties isotopeB : isotopeProfileB) {
-                int massDiff = (int)(isotopeA.massDifferenceFromMonoisotopicIon + isotopeB.massDifferenceFromMonoisotopicIon);
+                int massDiff = (int)(isotopeA.massDifferenceFromMonoisotopicIon() + isotopeB.massDifferenceFromMonoisotopicIon());
 
                 if (massDiff <= filterMass - 1) {
                     multipliedIsotopeProfile.get(massDiff).relativeAbundance += isotopeA.relativeAbundance * isotopeB.relativeAbundance;
@@ -148,7 +149,7 @@ public class IsotopeRatioCalculator {
             multipliedIsotopeProfile.add(new IsotopeElementProperties(0,  0));
 
         for (IsotopeElementProperties isotope : isotopeProfile) {
-            double massDifference = Math.round(massDiff + isotope.massDifferenceFromMonoisotopicIon);
+            double massDifference = Math.round(massDiff + isotope.massDifferenceFromMonoisotopicIon());
 
             if (Math.abs(massDifference) <= filterMass - 1) {
                 multipliedIsotopeProfile.get((int)massDifference).relativeAbundance += relativeAbund * isotope.relativeAbundance;
@@ -168,7 +169,7 @@ public class IsotopeRatioCalculator {
         compoundProperties.isotopeProfile = combinedIsotopeProfile;
 
         for (IsotopeElementProperties isotopeProperties : compoundProperties.isotopeProfile) {
-            isotopeProperties.massDifferenceFromMonoisotopicIon += compoundProperties.accurateMass;
+            isotopeProperties.setMassDifferenceFromMonoisotopicIon(isotopeProperties.massDifferenceFromMonoisotopicIon() + compoundProperties.accurateMass);
             isotopeProperties.relativeAbundance *= 100;
         }
     }
@@ -181,6 +182,10 @@ public class IsotopeRatioCalculator {
     private List<IsotopeElementProperties> getNominalIsotopeElementProperty(List<IsotopeElementProperties> isotopeProfile, int n, int k, int filterMass) {
         List<IsotopeElementProperties> combinedIsotopeProfile = new ArrayList<>();
 
+        if(isotopeProfile.size() == 1) {
+            return isotopeProfile;
+        }
+
         for (int i = 0; i < filterMass; i++)
             combinedIsotopeProfile.add(new IsotopeElementProperties(0,  0));
 
@@ -188,10 +193,10 @@ public class IsotopeRatioCalculator {
 
         if (k == 0) {
             relativeAbundance = isotopeProfile.get(1).relativeAbundance;
-            massDifference = isotopeProfile.get(1).massDifferenceFromMonoisotopicIon;
+            massDifference = isotopeProfile.get(1).massDifferenceFromMonoisotopicIon();
         } else {
             relativeAbundance = isotopeProfile.get(k + 1).relativeAbundance / isotopeProfile.get(k).relativeAbundance;
-            massDifference = isotopeProfile.get(k + 1).massDifferenceFromMonoisotopicIon - isotopeProfile.get(k).massDifferenceFromMonoisotopicIon;
+            massDifference = isotopeProfile.get(k + 1).massDifferenceFromMonoisotopicIon() - isotopeProfile.get(k).massDifferenceFromMonoisotopicIon();
         }
 
         for (int i = 0; i <= n; i++) {
@@ -208,7 +213,7 @@ public class IsotopeRatioCalculator {
                 combinedIsotopeProfile = getNominalMergedIsotopeElement(combinedIsotopeProfile, subIsotopeProfile);
             } else {
                 combinedIsotopeProfile.get((int)massDifference).relativeAbundance += relativeAbundance;
-                combinedIsotopeProfile.get((int)massDifference).massDifferenceFromMonoisotopicIon = (int) massDifference;
+                combinedIsotopeProfile.get((int)massDifference).setMassDifferenceFromMonoisotopicIon((int) massDifference);
             }
         }
 
@@ -221,7 +226,7 @@ public class IsotopeRatioCalculator {
 
         for (int i = 0; i < isotopeProfileA.size(); i++) {
             isotopeProfileA.get(i).relativeAbundance += isotopeProfileB.get(i).relativeAbundance;
-            isotopeProfileA.get(i).massDifferenceFromMonoisotopicIon = i;
+            isotopeProfileA.get(i).setMassDifferenceFromMonoisotopicIon(i);
         }
 
         return isotopeProfileA;

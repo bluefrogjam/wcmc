@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.deconvolution.gcms;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.IonMode;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.MSDialProcessingProperties;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.AccuracyType;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
@@ -26,7 +27,7 @@ public class GCMSDeconvolution {
 
     private static Logger logger = LoggerFactory.getLogger(GCMSDeconvolution.class);
 
-    public List<MS1DeconvolutionResult> gcmsMS1Deconvolution(List<Feature> spectrumList, List<PeakAreaBean> peakAreaList, MSDialProcessingProperties properties) {
+    public List<MS1DeconvolutionResult> gcmsMS1Deconvolution(List<? extends Feature> spectrumList, List<PeakAreaBean> peakAreaList, MSDialProcessingProperties properties) {
         peakAreaList = peakAreaList.stream()
                 .sorted(Comparator.comparing(PeakAreaBean::scanNumberAtPeakTop)
                         .thenComparing(PeakAreaBean::accurateMass))
@@ -101,7 +102,7 @@ public class GCMSDeconvolution {
      * @param ionMode
      * @return
      */
-    private Map<Integer, Integer> getRawScanNumberMap(List<Feature> spectrumList, IonMode ionMode) {
+    private Map<Integer, Integer> getRawScanNumberMap(List<? extends Feature> spectrumList, IonMode ionMode) {
         Map<Integer, Integer> scanNumberMap = new HashMap<>();
         int counter = 0;
 
@@ -128,7 +129,7 @@ public class GCMSDeconvolution {
      * @param ionMode
      * @return
      */
-    private DeconvolutionBin[] getDeconvolutionBinArray(List<Feature> spectrumList, List<PeakAreaBean> peakAreaList, Map<Integer, Integer> scanNumberMap, IonMode ionMode) {
+    private DeconvolutionBin[] getDeconvolutionBinArray(List<? extends Feature> spectrumList, List<PeakAreaBean> peakAreaList, Map<Integer, Integer> scanNumberMap, IonMode ionMode) {
         List<Feature> ms1SpectrumList = getMS1SpectrumList(spectrumList, ionMode);
         DeconvolutionBin[] gcmsDecBins = new DeconvolutionBin[ms1SpectrumList.size()];
 
@@ -173,7 +174,7 @@ public class GCMSDeconvolution {
      * @param ionMode desired scan polarity
      * @return a list of filtered raw ms1 scans
      */
-    private List<Feature> getMS1SpectrumList(List<Feature> spectrumList, IonMode ionMode) {
+    private List<Feature> getMS1SpectrumList(List<? extends Feature> spectrumList, IonMode ionMode) {
         return spectrumList.stream()
                 .filter(s -> s.associatedScan().get().msLevel() == 1)
                 .filter(s -> s.ionMode().get().mode().equals(ionMode.mode()))
@@ -224,7 +225,7 @@ public class GCMSDeconvolution {
      * @param scanNumberMap
      * @return
      */
-    private List<ModelChromatogram> getModelChromatograms(List<Feature> spectra, List<PeakAreaBean> detectedPeaks,
+    private List<ModelChromatogram> getModelChromatograms(List<? extends Feature> spectra, List<PeakAreaBean> detectedPeaks,
                                                           DeconvolutionBin[] gcmsDecBins, double[] matchedFilterArray,
                                                           Map<Integer, Integer> scanNumberMap,
                                                           MSDialProcessingProperties properties) {
@@ -301,7 +302,7 @@ public class GCMSDeconvolution {
      * @param scanNumberMap
      * @return
      */
-    private ModelChromatogram getModelChromatogram(List<Feature> spectra, List<PeakAreaBean> detectedPeaks,
+    private ModelChromatogram getModelChromatogram(List<? extends Feature> spectra, List<PeakAreaBean> detectedPeaks,
                                                    DeconvolutionBin[] deconvolutionBins, Map<Integer, Integer> scanNumberMap,
                                                    MSDialProcessingProperties properties) {
         if (detectedPeaks.isEmpty())
@@ -437,7 +438,7 @@ public class GCMSDeconvolution {
      * @param properties
      * @return
      */
-    private List<Peak> getTrimedAndSmoothedPeaklist(List<Feature> spectrumList, int chromScanOfPeakLeft, int chromScanOfPeakRight,
+    private List<Peak> getTrimedAndSmoothedPeaklist(List<? extends Feature> spectrumList, int chromScanOfPeakLeft, int chromScanOfPeakRight,
                                                     DeconvolutionBin[] deconvolutionBins, double focusedMass,
                                                     MSDialProcessingProperties properties) {
         List<Peak> peakList = new ArrayList<>();
@@ -694,7 +695,7 @@ public class GCMSDeconvolution {
      * @param properties
      * @return
      */
-    private List<List<Peak>> getMS1Chromatograms(List<Feature> spectrumList, ModelChromatogramVector modelChromVector,
+    private List<List<Peak>> getMS1Chromatograms(List<? extends Feature> spectrumList, ModelChromatogramVector modelChromVector,
                                                  DeconvolutionBin[] deconvolutionBins, int chromScanOfPeakTop,
                                                  MSDialProcessingProperties properties) {
 

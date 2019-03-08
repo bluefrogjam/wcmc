@@ -17,7 +17,7 @@ import java.util.List;
 
 public class SpectralDeconvolution {
 
-    public List<MS2DeconvolutionResult> getMS2Deconvolution(List<Feature> spectrumList, List<PeakAreaBean> detectedPeaks, MSDialProcessingProperties properties) {
+    public List<MS2DeconvolutionResult> getMS2Deconvolution(List<? extends Feature> spectrumList, List<PeakAreaBean> detectedPeaks, MSDialProcessingProperties properties) {
 
         List<MS2DeconvolutionResult> deconvolutionResults = new ArrayList<>();
 
@@ -26,7 +26,7 @@ public class SpectralDeconvolution {
             MS2DeconvolutionResult ms2DeconvolutionResult = dataDependentMS2Deconvolution(spectrumList, detectedPeak, properties);
 
             // Replaces deisotopingForMSMSSpectra call
-            new IsotopeEstimator().msmsIsotopeRecognition(ms2DeconvolutionResult.ms2Spectrum, properties.maxTraceNumber, detectedPeak.chargeNumber, properties.centroidMS2Tolerance);
+            new IsotopeEstimator().msmsIsotopeRecognition(ms2DeconvolutionResult.ms2Spectrum, detectedPeak.chargeNumber, properties);
 
             deconvolutionResults.add(ms2DeconvolutionResult);
         }
@@ -40,7 +40,7 @@ public class SpectralDeconvolution {
      * @param detectedPeak
      * @param properties
      */
-    private MS2DeconvolutionResult dataDependentMS2Deconvolution(List<Feature> spectrumList, PeakAreaBean detectedPeak, MSDialProcessingProperties properties) {
+    private MS2DeconvolutionResult dataDependentMS2Deconvolution(List<? extends Feature> spectrumList, PeakAreaBean detectedPeak, MSDialProcessingProperties properties) {
 
         MS2DeconvolutionResult ms2DeconvolutionResult = new MS2DeconvolutionResult(detectedPeak);
 

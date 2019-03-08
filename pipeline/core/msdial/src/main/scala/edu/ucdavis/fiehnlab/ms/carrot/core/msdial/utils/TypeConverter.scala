@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils
 
 import java.util
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
 
 import scala.collection.JavaConverters._
@@ -15,8 +15,15 @@ object TypeConverter {
     * @param sample
     * @return
     */
-  def getJavaSpectrumList(sample: Sample): util.List[Feature] = {
-    sample.spectra.collect { case spectrum: Feature => spectrum }.asJava
+  def getJavaSpectrumList(sample: Sample): util.List[_ <: Feature] = {
+    sample.spectra.collect {
+      case spectrum: Feature =>
+        if(spectrum.associatedScan.get.msLevel == 1) {
+          spectrum
+        } else {
+          spectrum.asInstanceOf[MSMSSpectra]
+        }
+    }.asJava
   }
 
   /**
