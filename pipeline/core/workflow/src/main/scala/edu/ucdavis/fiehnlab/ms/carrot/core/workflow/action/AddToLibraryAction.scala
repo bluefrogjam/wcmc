@@ -9,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
+import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryTarget
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexWindow, IncludeBySimilarity}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
@@ -33,14 +34,20 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
   @Value("${carrot.msms.generate.library.similarity.min:0.7}")
   val minimumSimilarity: Double = 0.7
 
+  /**
+    * library inclusion time window in seconds
+    */
   @Value("${carrot.msms.generate.library.retentionIndex.window:6}")
   val retentionIndexWindow: Double = 1
 
-  @Value("${carrot.msms.generate.library.accurateMass.window:5}")
-  val accurateMassWindow: Double = 700
+  /**
+    * mass window in PPM
+    */
+  @Value("${carrot.msms.generate.library.accurateMass.window:10}")
+  val accurateMassWindow: Double = 10
 
-  @Value("${carrot.msms.generate.library.intensity.min:0}")
-  val minimumRequiredIntensity: Double = 700
+  @Value("${carrot.msms.generate.library.intensity.min:1000}")
+  val minimumRequiredIntensity: Double = 1000
 
   /**
     * executes this action
@@ -53,7 +60,7 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     val method = experiment.acquisitionMethod
     sample match {
       case data: AnnotatedSample =>
-
+        logger.info(s"adding ${data.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])} unannotated msms from ${sample.name} to mona")
         data.noneAnnotated.foreach { x =>
           addTargetToLibrary(x, data, method)
         }
@@ -76,7 +83,6 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
       case target: MSMSSpectra =>
 
         if (target.massOfDetectedFeature.isDefined) {
-          logger.info(s"creating new target from feature: ${t}")
 
           val newTarget = new Target with PrecursorSupport {
 
@@ -95,20 +101,14 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
           }
 
           if (!targetAlreadyExists(newTarget, acquisitionMethod, sample)) {
-            targets.add(
-              newTarget
-
-              , acquisitionMethod, None
-            )
+            targets.add(target2mona(newTarget), acquisitionMethod, Some(sample))
           }
           else {
             logger.warn(s"the target you attempted to generate already exists! ${newTarget}")
           }
         }
         else {
-          logger.info(s"target has no mass associated, so it's not valid: ${
-            target
-          }")
+          logger.warn(s"target has no mass associated, so it's not valid: ${target}")
         }
 
       case _ =>
@@ -146,5 +146,22 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     logger.debug(s"after similarity filter: ${filteredBySimilarity.size} targets are left")
 
     filteredBySimilarity.nonEmpty
+  }
+
+
+  private def target2mona(target: Target with PrecursorSupport): MonaLibraryTarget = {
+    MonaLibraryTarget(target.spectrum.get.splash,
+      target.spectrum.get,
+      target.name,
+      target.retentionIndex,
+      target.retentionTimeInSeconds,
+      target.inchiKey,
+      target.precursorMass,
+      confirmed = false,
+      requiredForCorrection = false,
+      isRetentionIndexStandard = false,
+      target.ionMode,
+      target.uniqueMass
+    )
   }
 }
