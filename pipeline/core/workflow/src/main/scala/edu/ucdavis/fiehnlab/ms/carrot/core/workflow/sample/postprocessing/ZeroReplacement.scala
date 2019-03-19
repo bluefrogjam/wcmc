@@ -312,7 +312,6 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           override val retentionIndex: Double = receivedTarget.retentionIndex
         }
       } else {
-        logger.info("Filter by time is not empty")
         filteredByTime.maxBy { spectra =>
           MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
         }
