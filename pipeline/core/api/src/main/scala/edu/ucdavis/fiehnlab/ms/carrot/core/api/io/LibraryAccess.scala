@@ -146,6 +146,7 @@ trait ReadWriteLibrary[T <: Target] extends LibraryAccess[T] {
 
 final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with Logging {
   logger.debug("==== creating delegate library ====")
+
   /**
     * loads all the spectra from the library
     * applicable for the given acquistion method
@@ -216,7 +217,7 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
         .filterNot(_.isInstanceOf[ReadonlyLibrary[T]])
         .filterNot(_.isInstanceOf[DelegateLibraryAccess[T]])
         .foreach { lib => {
-          logger.info(s"adding target to ${lib}")
+          logger.info(s"adding target to ${lib.getClass.getSimpleName}")
           lib.add(targets, acquisitionMethod, sample)
         }
         }
@@ -236,6 +237,7 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
 
 final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with Logging {
   logger.debug("==== creating merged library ====")
+
   /**
     * loads all the spectra from the library
     * applicable for the given acquistion method

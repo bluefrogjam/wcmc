@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext
   */
 class IncludeBySimilarity(val origin: SimilaritySupport, val cutoff: Double) extends Filter[SimilaritySupport] {
 
-  assert(cutoff <= 1)
+  val fix_cutoff: Double = cutoff - cutoff % 0.0001
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
@@ -21,9 +21,7 @@ class IncludeBySimilarity(val origin: SimilaritySupport, val cutoff: Double) ext
   protected override def doIncludeWithDetails(spectra: SimilaritySupport, applicationContext: ApplicationContext): (Boolean,Any) = {
     val result = Similarity.compute(spectra, origin)
 
-    assert(result <= 1.0)
-
-    (result >= cutoff,result)
+    (result >= fix_cutoff, result - result % 0.0001)
 
   }
 }

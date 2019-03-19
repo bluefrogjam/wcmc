@@ -1,10 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
-import java.io.{ByteArrayOutputStream, FileNotFoundException, PrintStream}
+import java.io.{ByteArrayOutputStream, FileNotFoundException}
 import java.util
 
-import com.sun.mail.util.MailConnectException
-import org.apache.logging.log4j.scala.Logging
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.ProcessException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
@@ -12,10 +11,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action.AddToLibraryAction
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import javax.mail.AuthenticationFailedException
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Profile
@@ -56,6 +57,9 @@ class TaskRunner extends Logging {
     */
   @Autowired(required = false)
   val storage: java.util.Collection[ResultStorage] = new util.ArrayList[ResultStorage]()
+
+  @Autowired
+  val msmsUpload: java.util.Collection[PostAction] = new util.ArrayList[PostAction]()
 
   @Autowired
   val context: ApplicationContext = null
@@ -115,6 +119,16 @@ class TaskRunner extends Logging {
     )
 
 
+    //send the MSMSSpectra to mona
+    msmsUpload.asScala.foreach {
+      case action: AddToLibraryAction =>
+        logger.info("Uploading msms to mona")
+        classes.foreach { x =>
+          x.samples.foreach { smp =>
+            action.run(smp, x, experiment)
+          }
+        }
+    }
 
     //send the processed result to the storage engine.
     storage.asScala.par.foreach { x: ResultStorage =>
