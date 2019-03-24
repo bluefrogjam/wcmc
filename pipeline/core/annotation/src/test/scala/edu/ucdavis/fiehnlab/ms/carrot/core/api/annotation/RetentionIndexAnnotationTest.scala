@@ -27,7 +27,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
 
           override val retentionTimeInSeconds: Double = 200
           override val retentionIndex: Double = retentionTimeInSeconds
-          override val massOfDetectedFeature: Option[Ion] = None
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(122.2, 123f))
 
           override val associatedScan = Option(new SpectrumProperties {
             override val ions: Seq[Ion] = Seq.empty
@@ -96,7 +96,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
           })
           override val retentionTimeInSeconds: Double = 200
           override val retentionIndex: Double = retentionTimeInSeconds
-          override val massOfDetectedFeature: Option[Ion] = None
+          override val massOfDetectedFeature: Option[Ion] = Some(Ion(122.2, 123f))
 
 
         },

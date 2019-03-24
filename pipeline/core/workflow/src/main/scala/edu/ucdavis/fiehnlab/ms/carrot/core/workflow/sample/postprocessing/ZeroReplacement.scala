@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
@@ -11,6 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -55,7 +55,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
     val rawdata: Option[Sample] =
       if (rawSample.isDefined) {
         rawSample
-      } else {  //TODO: this block fails when rawSample not defined
+      } else { //TODO: this block fails when rawSample not defined
         zeroReplacementProperties.fileExtension.collect {
 
           case extension: String =>
@@ -77,10 +77,8 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
       }
 
     if (rawdata.isDefined) {
-      //      logger.info(s"replacing data with: ${rawdata.get.name}")
+      logger.info(s"corrected data for replacement from: ${rawdata.get.name}")
       val correctedRawData: CorrectedSample = correction.doCorrection(sample.featuresUsedForCorrection, rawdata.get, sample.regressionCurve, sample, tracking = false)
-
-      logger.info(s"corrected data for: ${correctedRawData.name}")
 
       val replacedSpectra: Seq[QuantifiedTarget[Double]] = sample.quantifiedTargets.map { target =>
         if (target.quantifiedValue.isDefined) {
@@ -89,6 +87,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
         else {
           try {
             val replaced = replaceValue(target, sample, correctedRawData)
+            logger.debug(f"replacing ${target.name.get} with ${replaced}")
             replaced
           }
           catch {
@@ -109,12 +108,8 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
         override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = sample.featuresUsedForCorrection
         override val regressionCurve: Regression = sample.regressionCurve
         override val fileName: String = sample.fileName
-        /**
-          * which file was used for the gap filling
-          */
         override val gapFilledWithFile: String = rawdata.get.fileName
         override val properties: Option[SampleProperties] = sample.properties
-
       }
 
       stasisClient.addTracking(TrackingData(gapFilledSample.name, "replaced", gapFilledSample.fileName))
@@ -145,8 +140,9 @@ class ZeroReplacementProperties {
 
   /**
     * the defined retention index correction for the peak detection during the replacement
+    * should be half of intended window
     */
-  var retentionIndexWindowForPeakDetection: Double = 12
+  var retentionIndexWindowForPeakDetection: Double = 6
 
   /**
     * Use the mean of the 2 nearest ions on the left and right of matching mass to the target to estimate the
@@ -209,10 +205,10 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
       }
     }
 
-    logger.debug(s"found ${noiseSpectra.size} spectra, to utilize for noise calculation")
+    logger.debug(s"\tfound ${noiseSpectra.size} spectra (${noiseSpectra.map(p => p.massOfDetectedFeature.get.intensity).sum / noiseSpectra.size} avg int), to utilize for noise calculation")
 
     val noiseIons = noiseSpectra.map { spectra =>
-      MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
+      MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get, receivedTarget).get.intensity
     }
 
     val noise = if (noiseIons.isEmpty) {
@@ -243,35 +239,35 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           if (zeroReplacementProperties.estimateByNearestFourIons && replacementValueSpectra.nonEmpty) {
             // estimate the replacement value using the nearest four ions of matching mass
             val leftIntensities = replacementValueSpectra
-              .filter(x => receivedTarget.retentionIndex > x.retentionIndex)
-              .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
-              .take(2)
+                .filter(x => receivedTarget.retentionIndex > x.retentionIndex)
+                .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
+                .take(2)
 
             val rightIntensities = replacementValueSpectra
-              .filter(x => receivedTarget.retentionIndex < x.retentionIndex)
-              .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
-              .take(2)
+                .filter(x => receivedTarget.retentionIndex < x.retentionIndex)
+                .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
+                .take(2)
 
             val nearestIntensities = (leftIntensities ++ rightIntensities)
-              .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get).get.intensity)
+                .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get, receivedTarget).get.intensity)
 
             val intensity = nearestIntensities.sum / nearestIntensities.length
-            logger.warn(s"Created failsafe [Feature with CorrectedSpectra] from nearest ${nearestIntensities.length} "+
-              "ions with ${intensity} intensity")
+            logger.warn(s"\tCreated failsafe [Feature with CorrectedSpectra] from nearest ${nearestIntensities.length} " +
+                s"ions with ${intensity} intensity")
             intensity
           } else if (zeroReplacementProperties.estimateByChromatogramNoise && replacementValueSpectra.nonEmpty) {
             // estimate the replacement value by averaging the intensities of the smallest 5% of ions
             val intensities = replacementValueSpectra
-              .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get).get.intensity)
-              .sorted
-              .take((replacementValueSpectra.length / 20.0 + 1).toInt)
+                .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get, receivedTarget).get.intensity)
+                .sorted
+                .take((replacementValueSpectra.length / 20.0 + 1).toInt)
 
             val intensity = intensities.sum / intensities.length
-            logger.warn(s"Created failsafe [Feature with CorrectedSpectra] from smallest ${intensities.length} "+
-              "ions with ${intensity} intensity")
+            logger.warn(s"\tCreated failsafe [Feature with CorrectedSpectra] from smallest ${intensities.length} " +
+                s"ions with ${intensity} intensity")
             intensity
           } else {
-            logger.warn("Created failsafe [Feature with CorrectedSpectra] from target data and 0 intensity")
+            logger.warn("\tCreated failsafe [Feature with CorrectedSpectra] from target data and 0 intensity")
             0.0f
           }
         }
@@ -279,49 +275,26 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
         new Feature with CorrectedSpectra {
           override val uniqueMass: Option[Double] = None
           override val signalNoise: Option[Double] = None
-
-          /**
-            * specified ion mode for the given feature
-            */
           override val ionMode: Option[IonMode] = Some(receivedTarget.ionMode)
-          /**
-            * how pure this spectra is
-            */
           override val purity: Option[Double] = Some(0.0)
-          /**
-            * the associated sample
-            */
           override val sample: String = quantSample.fileName
-          /**
-            * the retention time of this spectra. It should be provided in seconds!
-            */
           override val retentionTimeInSeconds: Double = receivedTarget.retentionTimeInSeconds
-          /**
-            * the local scan number
-            */
           override val scanNumber: Int = 0
-          /**
-            * the associated complete scan for this feature
-            */
           override val associatedScan: Option[SpectrumProperties] = None
-          /**
-            * accurate mass of this feature, if applicable
-            */
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, intensity))
-
           override val retentionIndex: Double = receivedTarget.retentionIndex
         }
       } else {
-        logger.info("Filter by time is not empty")
         filteredByTime.maxBy { spectra =>
-          MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get).get.intensity
+          MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get, receivedTarget).get.intensity
         }
       }
     }
 
-    val ion = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get).get
+    val ion = MassAccuracy.findClosestIon(value, receivedTarget.precursorMass.get, receivedTarget).get
 
     logger.debug(s"found best spectra for replacement: $value")
+
     val noiseCorrectedValue: Float = if (noise <= ion.intensity) {
       ion.intensity - noise
     } else {
@@ -343,18 +316,12 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
     * @return
     */
   private def includeMass(receivedTarget: QuantifiedTarget[Double], filterByMass: Filter[AccurateMassSupport], spectra: Feature with CorrectedSpectra) = {
-    val ion = MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get)
+    val ion = MassAccuracy.findClosestIon(spectra, receivedTarget.precursorMass.get, receivedTarget)
 
     if (ion.isDefined) {
       filterByMass.include(new AccurateMassSupport {
-        /**
-          * returns the accurate mass, of this trait
-          *
-          * @return
-          */
         override def accurateMass: Option[Double] = Some(ion.get.mass)
-      }, applicationContext
-      )
+      }, applicationContext)
     }
     else {
       false

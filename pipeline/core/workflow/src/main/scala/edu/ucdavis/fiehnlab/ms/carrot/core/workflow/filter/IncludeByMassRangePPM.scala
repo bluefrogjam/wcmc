@@ -1,10 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.AccurateMassSupport
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.context.ApplicationContext
 
 /**
@@ -18,12 +18,14 @@ class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double) extends
     */
   protected override def doInclude(spectra: AccurateMassSupport, applicationContext: ApplicationContext): Boolean = {
     val error = MassAccuracy.calculateMassErrorPPM(spectra, target)
-    logger.debug(s"mass error is: ${error} for ${spectra} and ${target}")
+    logger.debug(f"mass error is: ${error.get}%1.5f for ${spectra} and ${target} - window: ${windowInPPM} ppm")
 
     if (error.isDefined) {
       val result = error.get <= windowInPPM
 
-      logger.debug(s"\t=> accepted $result")
+      if (!result)
+        logger.error(s"\thigh mass error (PPM): ${error.get} for a window max: ${windowInPPM}")
+
       result
     }
     else {
@@ -36,10 +38,10 @@ class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double) extends
   * includes by mass range
   *
   * @param target
-  * @param window window value in mDa
+  * @param windowInDa window value in mDa
   */
-class IncludeByMassRange(val target: Target, val window: Double) extends Filter[AccurateMassSupport] with Logging{
-  logger.debug(s"mass window is ${window} for ${target}")
+class IncludeByMassRange(val target: Target, val windowInDa: Double) extends Filter[AccurateMassSupport] with Logging {
+  logger.debug(s"mass window is ${windowInDa} for ${target}")
 
   /**
     * this returns true, if the spectra should be included, false if it should be excluded
@@ -49,7 +51,7 @@ class IncludeByMassRange(val target: Target, val window: Double) extends Filter[
     logger.debug(s"mass error is: ${error} for ${spectra} and ${target}")
 
     if (error.isDefined) {
-      val result = error.get <= window
+      val result = error.get <= windowInDa
 
       logger.debug(s"\t=> accepted $result")
       result

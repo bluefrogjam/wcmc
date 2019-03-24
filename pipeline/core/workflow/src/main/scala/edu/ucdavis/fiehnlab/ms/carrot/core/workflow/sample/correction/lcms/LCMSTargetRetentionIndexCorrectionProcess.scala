@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
@@ -11,6 +10,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.math.{CombinedRegression, SimilarityMethods}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import javax.annotation.PostConstruct
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -89,6 +90,11 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
   @Value("${wcmc.pipeline.workflow.config.correction.groupStandard:25}")
   var groupCloseByRetentionIndexStandardDifference: Int = 0
 
+  @PostConstruct
+  def printConfig(): Unit = {
+    logger.info(s"Config: ${config}")
+  }
+
   /**
     * this defines our regression curve, which is supposed to be utilized during the correction. Lazy loading is required to avoid null pointer exception of the configuration settings
     */
@@ -147,8 +153,8 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
 
     logger.info(s"after optimization, we kept ${result.size} ri standards out of ${matches.size}")
     logger.info(s"\nStandards used: ${
-      result.map {
-        _.target.name
+      result.map { t =>
+        f"${t.target.name.getOrElse("---")} - ${t.annotation.retentionTimeInSeconds}%1.4f seconds"
       }.mkString("\n")
     }")
 
