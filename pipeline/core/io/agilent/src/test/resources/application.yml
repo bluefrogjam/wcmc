@@ -1,11 +1,9 @@
 stasis:
   baseurl: "https://test-api.metabolomics.us/stasis"
   key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
-
-  key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
 wcmc:
   api:
     rest:
       msdialrest4j:
         host: luna.fiehnlab.ucdavis.edu
-        port: 8080
+        port: 9090

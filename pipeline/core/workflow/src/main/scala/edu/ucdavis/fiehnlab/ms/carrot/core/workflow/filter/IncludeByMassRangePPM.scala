@@ -23,8 +23,10 @@ class IncludeByMassRangePPM(val target: Target, val windowInPPM: Double) extends
     if (error.isDefined) {
       val result = error.get <= windowInPPM
 
-      if (!result)
-        logger.error(s"\thigh mass error (PPM): ${error.get} for a window max: ${windowInPPM}")
+      if (!result) {
+        logger.debug(s"\thigh mass error (PPM): ${error.get} for a window max: ${windowInPPM}")
+        logger.debug(s"\t\ttarget mz: ${target.accurateMass.get} - feature mz: ${spectra.accurateMass.get}")
+      }
 
       result
     }

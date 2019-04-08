@@ -2,13 +2,13 @@ package edu.ucdavis.fiehnlab.wcmc.apps.localrunner
 
 import java.io.FileNotFoundException
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot._
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -64,7 +64,7 @@ class LocalRunner extends CommandLineRunner with Logging {
     fileList.foreach { sample =>
       logger.info(s"Processing sample: ${sample}")
       val task = Task(s"${sample} processing",
-        "linuxmant@gmail.com",
+        "dpedrosa@ucdavis.edu",
         method,
         Seq(SampleToProcess(sample, "", "", sample,
           Matrix(System.currentTimeMillis().toString, "human", "plasma", Seq.empty)

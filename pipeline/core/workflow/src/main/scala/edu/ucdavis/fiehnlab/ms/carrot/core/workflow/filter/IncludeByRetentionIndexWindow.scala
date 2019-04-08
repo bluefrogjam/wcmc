@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContext
   * includes by retention index time window
   *
   * @param timeInSeconds
-  * @param window
+  * @param window also in seconds
   */
 class IncludeByRetentionIndexWindow(val timeInSeconds: Double, val window: Double = 5) extends Filter[CorrectedSpectra] {
   /**

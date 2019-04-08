@@ -2,11 +2,11 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent
 
 import java.io.File
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, SampleProperties}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
+import org.apache.logging.log4j.scala.Logging
 
 /**
   * supports loading of .d files and compressed .d files as carrot samples. Please be aware that this includes a lot of network transfers
@@ -15,12 +15,12 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 class AgilentSample(override val fileName: String, file: File, dataFormerClient: DataFormerClient) extends Sample with Logging {
 
   def deconvolute: Seq[_ <: Feature] = {
-    logger.debug(s"converting ${file} to mzML representation")
+    logger.info(s"converting ${file} to mzML representation")
     val start = System.nanoTime()
 
     try {
       val result = dataFormerClient.convert(fileName, "mzml")
-      logger.debug(s"converting ${file} to msDialV2 representation")
+      logger.info(s"converting ${file} to msDialV2 representation")
 
       MSDKSample(fileName, result.get).spectra
     } catch {

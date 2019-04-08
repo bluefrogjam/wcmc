@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -12,7 +12,7 @@ import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "runner"))
+@ActiveProfiles(Array("test", "carrot.lcms", "runner", "carrot.targets.dummy"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:B5_P20Lipids_Pos_NIST01.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",
