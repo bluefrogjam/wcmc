@@ -13,7 +13,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "teddy"))
+@ActiveProfiles(Array("test", "teddy", "carrot.targets.dummy"))
 class TaskRunnerWithMSMSTest extends WordSpec {
   val libName = "teddy"
 
@@ -52,7 +52,7 @@ class TaskRunnerWithMSMSTest extends WordSpec {
       ))
 
       mona.load(method).count(_.spectrum.get.msLevel == 2) > 0
-}
+    }
   }
 }
 

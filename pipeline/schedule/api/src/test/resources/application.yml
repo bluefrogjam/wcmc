@@ -11,7 +11,6 @@ spring:
       - carrot.processing.replacement.simple
       - carrot.processing.peakdetection
       - carrot.runner.required
-      - carrot.targets.dynamic
       - carrot.targets.mona
 
 email:

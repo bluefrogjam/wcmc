@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 
 /**

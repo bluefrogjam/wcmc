@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, RetentionIndexDifference}
@@ -10,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.math.SimilarityMethods
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -220,7 +220,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
   }
 
   /**
-    * should a recruce annotation mode be used
+    * should a recursive annotation mode be used
     */
   lazy override protected val recursiveAnnotationMode: Boolean = lcmsProperties.recursiveAnnotationMode
 }
@@ -231,25 +231,24 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
 class LCMSAnnotationProcessProperties {
 
   /**
-    * defined mass accuracy
+    * minimum intensity in absolute counts the mass needs to have to be considered
     */
-  //  @Value("${workflow.lcms.annotation.detection.massAccuracy:0.01}")
-  //  var massAccuracy: Double = _
-
-  /**
-    * minimum intensity in percent the mass needs to have to be considered
-    */
-  var massIntensity: Float = 0f
+  @Value("${workflow.lcms.annotation.peak.minIntensity:0}")
+  var massIntensity: Float = 0
 
   /**
     * the defined retention index window to use for it's given targets. It's considered in seconds
+    * should be half of the intended window
     */
   @Value("${workflow.lcms.annotation.detection.riWindow:5}")
-  var retentionIndexWindow: Double = _
+  var retentionIndexWindow: Double = 0
 
   /**
-    * are we utilizing the recursive annotation mode. This means after an annotation run, we will utilize the left over targets and spectra and try to annotate these, until we have no hits left. This can be expensive computational wise and depending on settings
-    * can annotate peaks wrongly
+    * are we utilizing the recursive annotation mode.
+    * This means after an annotation run, we will utilize the left over targets and spectra and try to annotate these,
+    * until we have no hits left.
+    * This can be expensive computational wise and depending on settings
+    * Can annotate peaks wrongly
     */
   var recursiveAnnotationMode: Boolean = false
 
@@ -270,10 +269,11 @@ class LCMSAnnotationProcessProperties {
   var preferGaussianSimilarityForAnnotation: Boolean = true
 
   /**
-    * this enables the close peak detection system, if two possible targets are closer than n seconds, than the larger peak will be accepted as default annotation. Set to 0 to disable this feature
+    * this enables the close peak detection system, if two possible targets are closer than n seconds,
+    * then the larger peak will be accepted as default annotation. Set to 0 to disable this feature
     */
   @Value("${workflow.lcms.annotation.detection.closePeak:3}")
-  var closePeakDetection: Double = 3
+  var closePeakDetection: Double = 0
 
 
   /**

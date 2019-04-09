@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
+import org.apache.logging.log4j.scala.Logging
 
 /**
   * Defines a basic sample, which needs to be processed
@@ -235,7 +235,7 @@ trait GapFilledTarget[T] extends QuantifiedTarget[T] {
     */
   lazy final override val spectra: Option[_ <: Feature with GapFilledSpectra[T]] = Some(spectraUsedForReplacement)
 
-  override def toString = s"GapFilledTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
+  override def toString = s"GapFilledTarget(quantifiedValue=${quantifiedValue.get}, accurateMass=${accurateMass.get}, name=$name, rt=$retentionIndex, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
 
 }
 

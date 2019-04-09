@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.math.similarity.{CompositeSimilarity, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
@@ -11,6 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryTarget
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexWindow, IncludeBySimilarity}
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -32,22 +32,22 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     * minimum required similarity
     */
   @Value("${carrot.msms.generate.library.similarity.min:0.7}")
-  val minimumSimilarity: Double = 0.7
+  val minimumSimilarity: Double = 0
 
   /**
     * library inclusion time window in seconds
     */
   @Value("${carrot.msms.generate.library.retentionIndex.window:6}")
-  val retentionIndexWindow: Double = 1
+  val retentionIndexWindow: Double = 0
 
   /**
     * mass window in PPM
     */
   @Value("${carrot.msms.generate.library.accurateMass.window:10}")
-  val accurateMassWindow: Double = 10
+  val accurateMassWindow: Double = 0
 
-  @Value("${carrot.msms.generate.library.intensity.min:1000}")
-  val minimumRequiredIntensity: Double = 1000
+  @Value("${carrot.msms.generate.library.intensity.min: 1000}")
+  val minimumRequiredIntensity: Double = 0
 
   /**
     * executes this action

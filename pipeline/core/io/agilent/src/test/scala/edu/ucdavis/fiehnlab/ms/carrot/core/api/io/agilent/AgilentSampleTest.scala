@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.everything4j.Everything4JAutoConfiguration
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,7 +29,7 @@ class AgilentSampleTest extends WordSpec with Logging with Matchers{
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "AgilentSampleTest" should {
+  "AgilentSampleTest" ignore { //deprecated - not using abf anymore.
 
     "spectra" in {
 

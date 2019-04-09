@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -15,12 +15,12 @@ import org.springframework.web.client.HttpClientErrorException
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "runner", "csh"))
+@ActiveProfiles(Array("test", "carrot.lcms", "runner", "csh", "carrot.targets.dummy"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:B2a_TEDDYLipids_Neg_NIST001.mzml",
   "CARROT_METHOD:csh | 6550 | test | negative",
   "CARROT_MODE:lcms",
-  "carrot.submitter:linuxmant@gmail.com"
+  "carrot.submitter:dpedrosa@ucdavis.edu"
 ))
 class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with Logging {
   @Value("${carrot.sample:#{environment.CARROT_SAMPLE}}")

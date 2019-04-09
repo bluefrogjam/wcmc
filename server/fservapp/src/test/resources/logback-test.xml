@@ -9,7 +9,7 @@
 	<logger name="org.springframework" level="info"/>
 	<logger name="edu.ucdavis.fiehnlab" level="debug"/>
 
-	<root level="debug">
+    <root level="info">
 		<appender-ref ref="STDOUT"/>
 	</root>
 </configuration>

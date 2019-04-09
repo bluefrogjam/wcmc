@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.math
 
-import org.apache.logging.log4j.scala.Logging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{AccurateMassSupport, Feature, MSSpectra}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{AccurateMassSupport, Feature}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
+import org.apache.logging.log4j.scala.Logging
 
 /**
   * Created by wohlgemuth on 6/22/16.
@@ -16,7 +16,7 @@ object MassAccuracy extends Logging {
     * @param targetMass
     * @return
     */
-  def findClosestIon(spectra: Feature, targetMass: Double): Option[Ion] = {
+  def findClosestIon(spectra: Feature, targetMass: Double, target: Target): Option[Ion] = {
     spectra match {
       case x: Feature if x.associatedScan.isDefined =>
           if(x.associatedScan.get.ions.isEmpty){
@@ -24,7 +24,15 @@ object MassAccuracy extends Logging {
             None
           }
           else {
-            Some(x.associatedScan.get.ions.minBy(p => Math.abs(p.mass - targetMass)))
+            val closest = x.associatedScan.get.ions.minBy(p => Math.abs(p.mass - targetMass))
+            val refMass = new AccurateMassSupport {
+              override def accurateMass: Option[Double] = Some(closest.mass)
+            }
+            if (calculateMassErrorPPM(refMass, target).get <= 10) {
+              Some(closest)
+            } else {
+              None
+            }
           }
 
       case x: Feature =>

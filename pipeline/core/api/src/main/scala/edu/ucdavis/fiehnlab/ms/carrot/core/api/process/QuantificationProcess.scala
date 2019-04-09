@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
 import java.util
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
@@ -11,6 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Sample, Target, _}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -30,7 +30,7 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
     */
   final override def process(input: AnnotatedSample, targets: Iterable[Target], method: AcquisitionMethod): QuantifiedSample[T] = {
 
-    logger.info(s"quantify sample: ${input.fileName}")
+    logger.info(s"quantifying sample: ${input.fileName}")
     /**
       * merge the found and none found targets, which can be later replaced or so
       */

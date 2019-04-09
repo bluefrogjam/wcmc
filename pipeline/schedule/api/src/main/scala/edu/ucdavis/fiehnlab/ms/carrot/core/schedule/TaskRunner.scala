@@ -128,6 +128,7 @@ class TaskRunner extends Logging {
             action.run(smp, x, experiment)
           }
         }
+      case _ => None
     }
 
     //send the processed result to the storage engine.
@@ -147,7 +148,6 @@ class TaskRunner extends Logging {
           logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
           val os = new ByteArrayOutputStream()
           val content = s"Dear user, the task '${task.name}' did not execute properly!\n\n${os.toString("UTF8")}"
-//          e.printStackTrace(new PrintStream(os))
           try {
             emailService.send(emailSender, task.email :: List(),
               content,

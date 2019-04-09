@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -12,12 +12,12 @@ import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "runner", "csh"))
+@ActiveProfiles(Array("test", "carrot.lcms", "runner", "csh", "carrot.targets.dummy"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",
   "CARROT_MODE:lcms",
-  "carrot.submitter:linuxmant@gmail.com",
+  "carrot.submitter:dpedrosa@ucdavis.edu",
   "mona.rest.server.user:admin",
   "mona.rest.server.password:admin",
   "mona.rest.server.host:ipa.fiehnlab.ucdavis.edu",

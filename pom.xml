@@ -905,6 +905,7 @@
                             <imageTags>
                                 <imageTag>${project.version}</imageTag>
                                 <imageTag>latest</imageTag>
+                                <!--<imageTag>nomsms</imageTag>-->
                             </imageTags>
 
                             <runs>

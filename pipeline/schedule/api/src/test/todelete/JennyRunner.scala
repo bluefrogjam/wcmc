@@ -7,7 +7,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
-import org.scalatest.Matchers
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
@@ -17,7 +16,7 @@ import scala.io.Source
 
 //@RunWith(classOf[SpringRunner])
 //@SpringBootTest
-//@ActiveProfiles(Array("jenny"))
+//@ActiveProfiles(Array("jenny", "carrot.targets.dummy"))
 class JennyRunner extends WordSpec with LazyLogging with Matchers {
   @Autowired
   val taskRunner: TaskRunner = null
@@ -44,7 +43,7 @@ class JennyRunner extends WordSpec with LazyLogging with Matchers {
       fileList.foreach { sample =>
         logger.info(sample)
         val task = Task(s"${sample} processing",
-          "linuxmant@gmail.com",
+          "dpedrosa@ucdavis.edu",
           AcquisitionMethod(
             ChromatographicMethod("jenny-tribe", Some("6530"), Some("test"), Some(PositiveMode()))
           ),
@@ -71,7 +70,7 @@ class JennyRunner extends WordSpec with LazyLogging with Matchers {
     "process single file n times" ignore {
       fileList.foreach { sample =>
         val task = Task(s"${sample} processing",
-          "linuxmant@gmail.com",
+          "dpedrosa@ucdavis.edu",
           AcquisitionMethod(
             ChromatographicMethod("jenny-tribe", Some("6530"), Some("test"), Some(PositiveMode()))
           ),
