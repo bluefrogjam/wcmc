@@ -33,7 +33,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
     */
   override protected def findMatches(target: Target, spectra: Seq[_ <: Feature with CorrectedSpectra], sample: CorrectedSample, method: AcquisitionMethod): Seq[_ <: Feature with CorrectedSpectra] = {
     val filters: SequentialAnnotate = new SequentialAnnotate(
-      new MassAccuracyPPMorMD(lcmsProperties.massAccuracySettingPpm, lcmsProperties.massAccuracySetting, lcmsProperties.massIntensity) ::
+      new MassAccuracyPPMorDalton(lcmsProperties.massAccuracySettingPpm, lcmsProperties.massAccuracySetting, lcmsProperties.massIntensity) ::
           new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow) :: List()
     )
 

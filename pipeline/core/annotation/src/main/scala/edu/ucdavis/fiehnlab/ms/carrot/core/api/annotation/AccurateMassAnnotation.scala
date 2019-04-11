@@ -106,9 +106,13 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
   * we accept if either the mass accuracy is in the correct window for ppm or mDa
   *
   * @param massAccuracyInPPM
-  * @param massAccuracyInmDa
+  * @param massAccuracyInDalton
   */
-class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, minIntensity: Double = 0.0) extends Annotate with Logging {
+class MassAccuracyPPMorDalton(massAccuracyInPPM: Double, massAccuracyInDa: Double, minIntensity: Double = 0.0) extends Annotate with Logging {
+  assert(massAccuracyInDa < 1, "needs to be below 1, no sense in checking for 1 dalton precession in 2019")
+  assert(massAccuracyInPPM >= 1, "ppm needs to be larger/equal 1")
+  assert(minIntensity >= 0, "min intensity needs to be >= 0")
+
   override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
@@ -123,7 +127,7 @@ class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, 
             if (ppmError.isDefined && ppmError.get <= massAccuracyInPPM && x.massOfDetectedFeature.get.intensity > minIntensity) {
               true
             }
-            else if (massError.isDefined && massError.get <= massAccuracyInmDa && x.massOfDetectedFeature.get.intensity > minIntensity) {
+            else if (massError.isDefined && massError.get <= massAccuracyInDa && x.massOfDetectedFeature.get.intensity > minIntensity) {
               true
             }
             else {

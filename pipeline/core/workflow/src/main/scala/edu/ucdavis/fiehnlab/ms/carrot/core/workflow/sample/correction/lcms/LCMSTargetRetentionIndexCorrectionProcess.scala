@@ -52,7 +52,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     * and will depend on inject volume for these reasons
     */
   @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:10000}")
-  val minPeakIntensity: Float = 0
+  var minPeakIntensity: Float = 0
 
   /**
     * minimum amount of standards, which have to be defined for this method to work
@@ -174,7 +174,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     /**
       * allows us to filter the data by the height of the ion
       */
-    val massIntensity = new MassAccuracyPPMorMD(massAccuracyPPMSetting, massAccuracySetting, minIntensity = minPeakIntensity)
+    val massIntensity = new MassAccuracyPPMorDalton(massAccuracyPPMSetting, massAccuracySetting, minIntensity = minPeakIntensity)
 
 
     //our defined filters to find possible matches are registered in here
