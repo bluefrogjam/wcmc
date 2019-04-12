@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -35,7 +35,7 @@ class DataFormerClientTests extends WordSpec with Matchers with Logging {
     "convert a raw data file (.d.zip) to mzml" in {
       val filename = "testA.d.zip"
 
-      val result = dfClient.convert(filename, "mzml")
+      val result = dfClient.convert(filename)
 
       result.isDefined shouldBe true
 
