@@ -33,3 +33,6 @@ trait Action {
   * actions which are supposed to run after the annotation process
   */
 trait PostAction extends Action
+
+//only for java code ease of mind
+abstract class PostActionWrapper extends PostAction

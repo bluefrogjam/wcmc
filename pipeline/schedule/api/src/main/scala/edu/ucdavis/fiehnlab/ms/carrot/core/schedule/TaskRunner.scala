@@ -11,7 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action.AddToLibraryAction
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action.{AddToLibraryAction, ChartingAction}
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
@@ -123,6 +123,12 @@ class TaskRunner extends Logging {
     msmsUpload.asScala.foreach {
       case action: AddToLibraryAction =>
         logger.info("Uploading msms to mona")
+        classes.foreach { x =>
+          x.samples.foreach { smp =>
+            action.run(smp, x, experiment)
+          }
+        }
+      case action: ChartingAction[Double] =>
         classes.foreach { x =>
           x.samples.foreach { smp =>
             action.run(smp, x, experiment)

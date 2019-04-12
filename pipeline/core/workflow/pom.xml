@@ -142,6 +142,11 @@
             <artifactId>poi</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

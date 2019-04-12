@@ -148,7 +148,7 @@ class ZeroReplacementProperties {
     * Use the mean of the 2 nearest ions on the left and right of matching mass to the target to estimate the
     * replacement value if no value is found within the RI window.  Takes precedence over estimateByChromatogramNoise
     */
-  var estimateByNearestFourIons: Boolean = true
+  var estimateByNearestFourIons: Boolean = false
 
   /**
     * Estimate noise as the mean of the lowest 5% of ions for the given mass in the entire chromatogram
