@@ -128,7 +128,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     //     if we prefer a combination of the two
 
     val best = TargetAnnotation(standard, spectra.maxBy(x =>
-      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracyPPMSetting, rtAccuracySetting, intensityPenaltyThreshold))
+      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracySetting, rtAccuracySetting, intensityPenaltyThreshold))
     )
 
     best
