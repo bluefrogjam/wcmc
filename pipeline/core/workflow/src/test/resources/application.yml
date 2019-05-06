@@ -4,7 +4,10 @@ carrot:
       binbase:
         password: c258083
         host: venus.fiehnlab.ucdavis.edu
-
+  output:
+    storage:
+      local:
+        folder: "./target/results"
 
 mona:
   rest:
@@ -13,6 +16,7 @@ mona:
       port: 9090
       user: admin
       password: admin
+
 stasis:
   baseurl: test-api.metabolomics.us
   key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"

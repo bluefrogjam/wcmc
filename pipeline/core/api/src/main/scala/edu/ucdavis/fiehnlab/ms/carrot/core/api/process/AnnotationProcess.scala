@@ -17,7 +17,7 @@ abstract class AnnotationProcess[I <: Sample, O <: Sample](targets: MergeLibrary
     * @return
     */
   final override def doProcess(input: I, method: AcquisitionMethod, rawSample: Option[Sample]): O = {
-    process(input, targets.load(method).filter(_.confirmed), method)
+    process(input, targets.load(method).filter(_.confirmed), method, rawSample)
   }
 
   /**
@@ -26,6 +26,6 @@ abstract class AnnotationProcess[I <: Sample, O <: Sample](targets: MergeLibrary
     * @param input
     * @return
     */
-  def process(input: I, targets: Iterable[Target], method: AcquisitionMethod): O
+  def process(input: I, targets: Iterable[Target], method: AcquisitionMethod, rawSample: Option[Sample]): O
 }
 

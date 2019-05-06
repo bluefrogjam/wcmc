@@ -28,7 +28,7 @@ object MassAccuracy extends Logging {
             val refMass = new AccurateMassSupport {
               override def accurateMass: Option[Double] = Some(closest.mass)
             }
-            if (calculateMassErrorPPM(refMass, target).get <= 10) {
+            if (calculateMassError(refMass, target).get <= 0.01) {
               Some(closest)
             } else {
               None

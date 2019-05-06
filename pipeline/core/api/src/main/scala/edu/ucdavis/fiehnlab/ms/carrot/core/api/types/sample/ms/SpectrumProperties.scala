@@ -58,7 +58,13 @@ trait Feature extends AccurateMassSupport {
     */
   val massOfDetectedFeature: Option[Ion]
 
-  override def toString = s"Feature($scanNumber, MS${associatedScan.get.msLevel}, $retentionTimeInMinutes, ${massOfDetectedFeature.get.mass}, $associatedScan)"
+  override def toString = s"Feature($scanNumber, $retentionTimeInMinutes, ${
+    if (massOfDetectedFeature.isDefined) {
+      massOfDetectedFeature.get.mass
+    } else {
+      -1.0
+    }
+  }, $associatedScan)"
 
   /**
     * returns the accurate mass, of this trait

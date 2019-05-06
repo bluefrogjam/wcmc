@@ -1,143 +1,15 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action;
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action.charting;
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostActionWrapper;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedTarget;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
-import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.AbstractXYDataset;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.data.xy.XYDataset;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-import scala.Option;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
-@Profile("charting")
-@Component
-public class ChartingAction<T> extends PostActionWrapper {
-
-    private SampleLoader loader;
-
-    @Override
-    public ApplicationContext applicationContext() {
-        return null;
-    }
-
-    @Override
-    public int priority() {
-        return 0;
-    }
-
-    @Autowired
-    public ChartingAction(SampleLoader loader) {
-        this.loader = loader;
-    }
-
-    @Override
-    public void run(Sample ssample, ExperimentClass experimentClass, Experiment experiment) {
-        int halfDelta = 8;
-        File folder = new File("./charts");
-
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-        if (ssample instanceof QuantifiedSample) {
-            List<QuantifiedTarget<T>> targets = scala.collection.JavaConversions.seqAsJavaList(((QuantifiedSample) ssample).quantifiedTargets());
-
-            Sample rawData = this.loader.loadSample(ssample.fileName()).get();
-            List<? extends Feature> rawSpectra = scala.collection.JavaConversions.seqAsJavaList(rawData.spectra());
-
-
-            targets.forEach(target -> {
-                BinBaseXYDataSet dataset = new BinBaseXYDataSet();
-                String tgtId = cleanName(target.name().get()).concat(String.format("_%.4f", (double) target.accurateMass().get()));
-                System.out.println(tgtId);
-
-                double start = target.retentionIndex() - halfDelta;
-                double end = target.retentionIndex() + halfDelta;
-
-                List<Double> rts = new ArrayList<>();
-                List<Double> ints = new ArrayList<>();
-
-                rawSpectra.forEach(it -> {
-                    if (it.retentionTimeInSeconds() >= start && it.retentionTimeInSeconds() < end) {
-                        Option<Ion> ion = MassAccuracy.findClosestIon(it, (Double) target.accurateMass().get(), target);
-                        if (ion.isDefined()) {
-                            rts.add(it.retentionTimeInMinutes());
-                            ints.add((double) ion.get().intensity());
-                        }
-                    }
-                });
-
-                double[] xs = new double[rts.size()];
-                double[] ys = new double[ints.size()];
-                assert rts.size() == ints.size();
-
-                for (int i = 0; i < rts.size(); i++) {
-                    xs[i] = rts.get(i);
-                    ys[i] = ints.get(i);
-                }
-                dataset.addDataSet(xs, ys, tgtId);
-
-
-                // create images -- preferably pdf (iText or PdfBox)
-                File png = new File(String.format("./charts/%s.png", tgtId));
-                try {
-                    ChartUtilities.saveChartAsPNG(png, createLineChart(dataset, tgtId), 1024, 768);
-                    System.out.println(String.format("%s saved", png.getAbsolutePath()));
-                } catch (IOException ex) {
-                    System.err.println(String.format("Error saving chart %s: %s", png.getAbsolutePath(), ex.getMessage()));
-                }
-            });
-        }
-
-    }
-
-    private String cleanName(String dirty) {
-        return dirty.replaceAll("_[A-Z]{14}-[A-Z]{10}-[A-Z]|/|\\*\\\\|\\|", "")
-              .replaceAll("\\(", "[")
-              .replaceAll("\\)", "]")
-              .replaceAll(":", "_");
-    }
-
-    public static JFreeChart createLineChart(BinBaseXYDataSet data, String title) {
-        XYLineAndShapeRenderer rendererShift = new XYLineAndShapeRenderer(true, false);
-
-        NumberAxis x = new NumberAxis("retention time");
-        x.setAutoRangeIncludesZero(false);
-
-        ValueAxis y = new NumberAxis("intensity");
-        XYPlot plot = new XYPlot(data, x, y, rendererShift);
-
-        JFreeChart chart = new JFreeChart(title, plot);
-
-        chart.setAntiAlias(false);
-
-        return chart;
-    }
-}
-
-
-class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalXYDataset, AbstractDataset {
+public class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalXYDataset, AbstractDataset {
     private static final long serialVersionUID = 2L;
 
     List<Map> dataset = new Vector<>();
@@ -150,12 +22,6 @@ class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalX
         return this.getYValue(arg0, arg1);
     }
 
-    /**
-     * gibt den namen f?r dieses wert zur?ck oder schmeisst eine nullpointerexception
-     *
-     * @param name
-     * @return
-     */
     public int getIndex(String name) {
         for (int i = 0; i < this.dataset.size(); i++) {
             if (getName(i).equals(name)) {
@@ -172,12 +38,6 @@ class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalX
         return d.length;
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param i DOCUMENT ME!
-     * @return DOCUMENT ME!
-     */
     public double getMaxY(int i) {
         try {
             return (Double) this.dataset.get(i).get("yMax");
@@ -188,14 +48,8 @@ class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalX
         }
     }
 
-    /**
-     * gibt den namen f?r dieses wert zur?ck oder schmeisst eine nullpointerexception
-     *
-     * @param i
-     * @return
-     */
     public String getName(int i) {
-        return (String) this.dataset.get(i).get("name");
+        return this.dataset.get(i).get("name").toString();
     }
 
     public int getSeriesCount() {
@@ -203,7 +57,7 @@ class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalX
     }
 
     public String getSeriesName(int arg0) {
-        return (String) this.getDataSet(arg0).get("name");
+        return this.getDataSet(arg0).get("name").toString();
     }
 
     public Number getStartX(int arg0, int arg1) {
@@ -214,12 +68,6 @@ class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalX
         return this.getYValue(arg0, arg1);
     }
 
-    /**
-     * DOCUMENT ME!
-     *
-     * @param i DOCUMENT ME!
-     * @return DOCUMENT ME!
-     */
     public double[] getX(int i) {
         return (double[]) this.dataset.get(i).get("x");
     }
@@ -244,8 +92,8 @@ class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalX
         this.addDataSet(x, y, name, true);
     }
 
-    public void addDataSet(double[] x, double[] y, String name,
-                           boolean fireEvent) {
+    private void addDataSet(double[] x, double[] y, String name,
+                            boolean fireEvent) {
         if (x.length == y.length) {
             Map<String, Object> map = new HashMap<>();
             map.put("x", x);
@@ -338,8 +186,8 @@ class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalX
         this.replaceDataSet(x, y, name, true);
     }
 
-    public void replaceDataSet(double[] x, double[] y, String name,
-                               boolean fireEvent) {
+    private void replaceDataSet(double[] x, double[] y, String name,
+                                boolean fireEvent) {
         if (x.length == y.length) {
             Map map = this.dataset.get(this.getIndex(name));
             map.put("x", x);
@@ -440,16 +288,4 @@ class BinBaseXYDataSet extends AbstractXYDataset implements XYDataset, IntervalX
     public Comparable getSeriesKey(int arg0) {
         return arg0;
     }
-}
-
-
-/**
- * @author wohlgemuth
- */
-interface AbstractDataset extends Dataset {
-    public abstract void clear();
-
-    public abstract void refresh();
-
-    public abstract void update();
 }

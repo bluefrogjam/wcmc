@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow
 
 import java.util
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -10,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.event._
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
@@ -132,11 +132,11 @@ class Workflow[T] extends Logging {
       logger.info(s"quantify sample: $s")
       var temp = quantificationProcess.process(s, acquisitionMethod, rawSample)
 
-      logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen data type: $s")
-      quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
-        logger.info(s"executing: $x")
-        temp = x.process(temp, acquisitionMethod, rawSample)
-      }
+      //      logger.info(s"running ${quantificationProcess.postprocessingInstructions.size()} applicable postprocessing for chosen data type: $s")
+      //      quantificationProcess.postprocessingInstructions.asScala.foreach { x =>
+      //        logger.info(s"executing: $x")
+      //        temp = x.process(temp, acquisitionMethod, rawSample)
+      //      }
 
       temp
   }

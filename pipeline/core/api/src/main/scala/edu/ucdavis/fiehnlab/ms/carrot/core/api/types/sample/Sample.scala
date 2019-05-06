@@ -235,7 +235,7 @@ trait GapFilledTarget[T] extends QuantifiedTarget[T] {
     */
   lazy final override val spectra: Option[_ <: Feature with GapFilledSpectra[T]] = Some(spectraUsedForReplacement)
 
-  override def toString = s"GapFilledTarget(quantifiedValue=${quantifiedValue.get}, accurateMass=${accurateMass.get}, name=$name, rt=$retentionIndex, orgin=${spectraUsedForReplacement.sampleUsedForReplacement}"
+  override def toString = s"GapFilledTarget(quantifiedValue=${quantifiedValue.get}, accurateMass=${accurateMass.get}, name=$name, ri=$retentionIndex, rt=$retentionTimeInSeconds, origin=${spectraUsedForReplacement.sampleUsedForReplacement}"
 
 }
 
