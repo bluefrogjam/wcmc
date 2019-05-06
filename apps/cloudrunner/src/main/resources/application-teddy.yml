@@ -189,7 +189,7 @@ carrot:
           column: test
           ionMode: negative
           instrument: '6550'
-          minimumPeakIntensity: 10000
+          minimumPeakIntensity: 5544
           targets:
             - identifier: 1_Ceramide (d18:1/17:0) iSTD [M+Cl]-_ICWGMOFDULMCFL-QKSCFGQVSA-N
               accurateMass: 586.4979
@@ -207,7 +207,7 @@ carrot:
               confirmed: true
             - identifier: 1_CUDA iSTD [M-H]-_HPTJABJPZMULFH-UHFFFAOYSA-N
               accurateMass: 339.2653
-              retentionTime: 0.57
+              retentionTime: 0.75
               retentionTimeUnit: minutes
               isInternalStandard: true
               requiredForCorrection: false
@@ -256,7 +256,7 @@ carrot:
               confirmed: true
             - identifier: 1_PG (17:0/17:0) iSTD [M-H]-_ZBVHXVKEMAIWQQ-QPPIDDCLSA-N
               accurateMass: 749.5352
-              retentionTime: 5.13
+              retentionTime: 5.61
               retentionTimeUnit: minutes
               isInternalStandard: true
               requiredForCorrection: false
@@ -6999,7 +6999,7 @@ carrot:
               confirmed: true
             - identifier: Ceramide (d40:2) [M+FA-H]-_HILTUFAERVOALR-MQXYEJFFSA-N
               accurateMass: 664.58885
-              retentionTime: 7.09
+              retentionTime: 7.2
               retentionTimeUnit: minutes
               isInternalStandard: false
               requiredForCorrection: false

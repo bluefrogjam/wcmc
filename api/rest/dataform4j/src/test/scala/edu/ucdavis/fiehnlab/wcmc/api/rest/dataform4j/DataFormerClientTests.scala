@@ -27,7 +27,7 @@ class DataFormerClientTests extends WordSpec with Matchers with Logging {
     "fail for invalid .d.zip file" in {
       val filename = "not_found.d.zip"
 
-      val result = dfClient.convert(filename, "abf")
+      val result = dfClient.convert(filename)
 
       result shouldBe None
     }
