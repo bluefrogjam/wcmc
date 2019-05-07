@@ -41,7 +41,8 @@ import java.util.stream.Collectors;
 public class ChartingAction2<T> extends PostActionWrapper {
 
     private SampleLoader loader;
-    private int halfDelta = 10;
+    private Double halfDelta;
+
 
     @Override
     public ApplicationContext applicationContext() {
@@ -54,13 +55,9 @@ public class ChartingAction2<T> extends PostActionWrapper {
     }
 
     @Autowired
-    public ChartingAction2(SampleLoader loader) {
+    public ChartingAction2(SampleLoader loader, ZeroReplacementProperties props) {
         this.loader = loader;
-    }
-
-    @Autowired
-    public ZeroReplacementProperties zrProps() {
-        return null;
+        this.halfDelta = props.retentionIndexWindowForPeakDetection();
     }
 
     @Override
@@ -160,8 +157,8 @@ public class ChartingAction2<T> extends PostActionWrapper {
             XYSeries rtZone = new XYSeries("rt zone");
 
             // define rt window for EIC from the target's RI point of view
-            double start = target.retentionIndex() - this.halfDelta;
-            double end = target.retentionIndex() + this.halfDelta;
+            double start = target.retentionIndex() - halfDelta;
+            double end = target.retentionIndex() + halfDelta;
 
             double maxint = points.stream().map(it -> it.y).max(Comparator.comparing(it -> it)).orElse(10.0);
             rtZone.add(start, maxint / 2);
@@ -207,8 +204,8 @@ public class ChartingAction2<T> extends PostActionWrapper {
     }
 
     private List<Point2D.Double> extractCloseIonsPoints(List<? extends Feature> rawSpectra, QuantifiedTarget<T> target) {
-        double start = target.retentionIndex() - halfDelta * 1.5;
-        double end = target.retentionIndex() + halfDelta * 1.5;
+        double start = target.retentionIndex() - halfDelta;
+        double end = target.retentionIndex() + halfDelta;
 
         List<Point2D.Double> points = new ArrayList<>();
 

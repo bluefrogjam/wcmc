@@ -21,7 +21,13 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "teddy"))
+@ActiveProfiles(Array("file.source.luna",
+  "carrot.report.quantify.height",
+  "carrot.processing.peakdetection",
+  "carrot.processing.replacement.mzrt",
+  "carrot.lcms",
+  "test",
+  "teddy"))
 class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with Logging {
 
   @Autowired
@@ -47,7 +53,7 @@ class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "LCMSTargetAnnotationProcessTest" should {
+  "LCMSTargetAnnotationNegModeProcessTest" should {
 
     "ensure it's variables are defined" in {
       assert(annotation.targets != null)
@@ -68,7 +74,7 @@ class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with
       "1_PE (17:0/17:0) iSTD [M-H]-_YSFFAUPDXKTJMR-DIPNUNPCSA-N" -> 380.4,
       "1_PG (17:0/17:0) iSTD [M-H]-_ZBVHXVKEMAIWQQ-QPPIDDCLSA-N" -> 336.60,
       "1_SM (d18:1/17:0) iSTD [M+FA-H]-_YMQZQHIESOAPQH-JXGHDCMNSA-N" -> 309.6,
-      "Ceramide (d42:2) B [M+FA-H]-_VJSBNBBOSZJDKB-KPEYJIHVSA-N" -> 465.5
+      "Ceramide (d42:2) B [M+FA-H]-_VJSBNBBOSZJDKB-KPEYJIHVSA-N" -> 471.6
     )
 
     //correct the data

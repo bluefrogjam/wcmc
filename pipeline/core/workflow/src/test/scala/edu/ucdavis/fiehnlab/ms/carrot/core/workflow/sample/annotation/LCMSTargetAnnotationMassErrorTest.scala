@@ -54,7 +54,7 @@ class LCMSTargetAnnotationMassErrorTest extends WordSpec with Matchers with Logg
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "LCMSTargetAnnotationProcessTest" should {
+  "LCMSTargetAnnotationMassErrorTest" should {
 
     val sample = loader.loadSample("B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml")
     val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Some(NegativeMode())))
