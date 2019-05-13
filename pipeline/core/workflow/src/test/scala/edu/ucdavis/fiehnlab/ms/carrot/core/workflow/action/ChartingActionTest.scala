@@ -72,7 +72,7 @@ class ChartingActionTest extends WordSpec with Matchers with Logging {
       chartingAction.run(qsample, expClass, experiment)
     }
 
-    "create EIC charts positive mode" ignore {
+    "create EIC charts positive mode" in {
 
       val sample = loader.getSample("B2a_TEDDYLipids_Pos_QC006.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Some(PositiveMode())))

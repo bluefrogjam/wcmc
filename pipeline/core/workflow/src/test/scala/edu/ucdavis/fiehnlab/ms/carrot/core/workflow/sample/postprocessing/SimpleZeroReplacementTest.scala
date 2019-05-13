@@ -1,15 +1,15 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, QuantifiedSample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, PositiveMode, QuantifiedSample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -57,9 +57,9 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
         correction.process(
           deco.process(
             rawSample, method, None),
-          method, None),
-        method, None),
-      method, None)
+          method, Some(rawSample)),
+        method, Some(rawSample)),
+      method, Some(rawSample))
 
     "replaceValue" should {
 
@@ -75,6 +75,12 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
         //all spectra should be the same count as the targets
         replaced.spectra.size should be(replaced.quantifiedTargets.size)
 
+        //should have GapFilledTargets
+        replaced.spectra.collect {
+          case s: GapFilledTarget[Double] => s
+        } should not be empty
+
+        // tracking status should be updated
         stasis_cli.getTracking(sample.name).status.map(_.value) should contain("replaced")
       }
 
@@ -91,6 +97,12 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
         //all spectra should be the same count as the targets
         replaced.spectra.size should be(replaced.quantifiedTargets.size)
 
+        //should have GapFilledTargets
+        replaced.spectra.collect {
+          case s: GapFilledTarget[Double] => s
+        } should not be empty
+
+        // tracking status should be updated
         stasis_cli.getTracking(sample.name).status.map(_.value) should contain("replaced")
       }
     }

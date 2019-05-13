@@ -56,9 +56,6 @@ class LCMSTargetAnnotationMassErrorTest extends WordSpec with Matchers with Logg
 
   "LCMSTargetAnnotationMassErrorTest" should {
 
-    val sample = loader.loadSample("B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml")
-    val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Some(NegativeMode())))
-
     "ensure it's variables are defined" in {
       assert(annotation.targets != null)
     }
@@ -73,10 +70,14 @@ class LCMSTargetAnnotationMassErrorTest extends WordSpec with Matchers with Logg
       "FAHFA (36:3); FAHFA (18:1/O-18:2) [M-H]-_BXKZSDVPBFDTEK-CCSKTMJNNA-N" -> Map[String, Double]("mz" -> 559.4732, "int" -> 10, "rt" -> 318.0),
       "FAHFA (32:2); FAHFA (14:1/O-18:1) [M-H]-_SISJHZPVSPJWAA-SDUNWBGTNA-N" -> Map[String, Double]("mz" -> 505.4262, "int" -> 10, "rt" -> 271.2))
 
-    //correct the data
-    val correctedSample = correction.process(deco.process(sample.get, method, None), method, sample)
+    val name = "B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml"
 
-    s"process $correctedSample without recursive annotation and using gaussian similarity" in {
+    s"process $name without recursive annotation and using gaussian similarity" in {
+      val sample = loader.loadSample("B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml")
+      val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Some(NegativeMode())))
+      //correct the data
+      val correctedSample = correction.process(deco.process(sample.get, method, None), method, sample)
+
 
       annotation.lcmsProperties.recursiveAnnotationMode = false
       annotation.lcmsProperties.preferGaussianSimilarityForAnnotation = true

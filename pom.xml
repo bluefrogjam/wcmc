@@ -102,9 +102,9 @@
             </dependency>
 
             <!--<dependency>-->
-                <!--<groupId>com.typesafe.scala-logging</groupId>-->
-                <!--<artifactId>scala-logging_${scala.version}</artifactId>-->
-                <!--<version>3.8.0</version>-->
+            <!--<groupId>com.typesafe.scala-logging</groupId>-->
+            <!--<artifactId>scala-logging_${scala.version}</artifactId>-->
+            <!--<version>3.8.0</version>-->
             <!--</dependency>-->
 
             <dependency>
@@ -558,7 +558,7 @@
                             <scalaVersion>${scala.version}.${scala.minor.version}</scalaVersion>
                             <jvmArgs>
                                 <jvmArg>-Xms64m</jvmArg>
-                                <jvmArg>-Xmx1024m</jvmArg>
+                                <jvmArg>-Xmx8192m</jvmArg>
                             </jvmArgs>
                         </configuration>
                     </plugin>
@@ -774,6 +774,34 @@
                                 <jvmArg>-Xmx1024m</jvmArg>
                             </jvmArgs>
                         </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.7</version>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.scalatest</groupId>
+                        <artifactId>scalatest-maven-plugin</artifactId>
+                        <version>1.0</version>
+                        <configuration>
+                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                            <junitxml>.</junitxml>
+                            <filereports>TestSuite.txt</filereports>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -998,9 +1026,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>2.22.2</version>
                 <configuration>
-                    <showSuccess>true</showSuccess>
+                    <showSuccess>false</showSuccess>
                 </configuration>
             </plugin>
         </plugins>
@@ -1016,6 +1044,18 @@
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.0.0</version>
             </plugin>
         </plugins>
     </build>

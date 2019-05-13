@@ -37,11 +37,11 @@ class LCMSRetentionIndexCorrectionMassErrorTest extends WordSpec with Matchers w
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "LCMSRetentionIndexCorrectionTest" should {
-    val sample = loader.getSample("B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml")
-    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
+    val name = "B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml"
 
-    s"should pass, because we have enough standards for us to continue ${sample}" in {
-
+    s"should pass, because we have enough standards for us to continue ${name}" in {
+      val sample = loader.getSample(name)
+      val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
       val corrected = correction.process(deco.process(sample, method, None), method, None)
 
       corrected.featuresUsedForCorrection.foreach { x =>

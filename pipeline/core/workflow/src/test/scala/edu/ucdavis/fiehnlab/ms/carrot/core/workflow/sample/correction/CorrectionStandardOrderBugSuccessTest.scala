@@ -38,15 +38,14 @@ class CorrectionStandardOrderBugSuccessTest extends WordSpec with Matchers with 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "Correction process" should {
-    val sample = loader.getSample("FL95-032_Wk1_B4_posCSH_Keim_2.mzml")
-    val method = AcquisitionMethod(ChromatographicMethod("keim", Some("6550"), Some("test"), Some(NegativeMode())))
-
 
     "have minPeakIntensity of 10000" in {
-      correction.minPeakIntensity shouldBe 10000
+      correction.minPeakIntensity shouldBe 1000
     }
 
     "should succeed with high intensity setting for standard" in {
+      val sample = loader.getSample("FL95-032_Wk1_B4_posCSH_Keim_2.mzml")
+      val method = AcquisitionMethod(ChromatographicMethod("keim", Some("6550"), Some("test"), Some(NegativeMode())))
       val corrected = correction.process(deco.process(sample, method, None), method, None)
       corrected.featuresUsedForCorrection.size should be >= correction.minimumFoundStandards
     }

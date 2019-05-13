@@ -45,18 +45,17 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "The process" should {
-    val samples = loader.loadSamples(Seq("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml", "B1_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml"))
-    val method = Map("neg" -> AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode()))),
-      "pos" -> AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode()))))
-
     "return some negative mode MSMS spectra" in {
+      val sample = loader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
+      val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode())))
+
       val neg_result = quantification.process(
         annotation.process(
           correction.process(
-            deco.process(samples.head.get, method("neg"), None),
-            method("neg"), samples.head),
-          method("neg"), None),
-        method("neg"), None)
+            deco.process(sample.get, method, None),
+            method, sample),
+          method, None),
+        method, sample)
 
       val msms = neg_result.spectra.count(_.isInstanceOf[MSMSSpectra])
       logger.info(s"# of   annotated MSMS: $msms")
@@ -65,13 +64,16 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
     }
 
     "return some positive mode MSMS spectra" in {
+      val sample = loader.loadSample("B1_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
+      val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode())))
+
       val pos_result = quantification.process(
         annotation.process(
           correction.process(
-            deco.process(samples.reverse.head.get, method("pos"), None),
-            method("pos"), samples.reverse.head),
-          method("pos"), None),
-        method("pos"), None)
+            deco.process(sample.get, method, None),
+            method, sample),
+          method, None),
+        method, sample)
 
       val msms = pos_result.spectra.count(_.isInstanceOf[MSMSSpectra])
       logger.info(s"# of   annotated MSMS: $msms")
