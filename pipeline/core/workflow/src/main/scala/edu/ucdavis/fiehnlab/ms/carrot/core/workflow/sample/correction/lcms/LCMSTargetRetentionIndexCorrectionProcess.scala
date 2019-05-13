@@ -25,7 +25,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
   /**
     * Mass accuracy (in Dalton) used in target filtering and similarity calculation
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.010}")
   val massAccuracySetting: Double = 0.0
 
   /**
@@ -44,7 +44,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     * Intensity used for penalty calculation - the peak similarity score for targets below this
     * intensity will be scaled down by the ratio of the intensity to this threshold
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensityPenaltyThreshold:1000}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensityPenaltyThreshold:10000}")
   val intensityPenaltyThreshold: Float = 0
 
   /**

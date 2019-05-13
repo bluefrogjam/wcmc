@@ -11,9 +11,10 @@ spring:
       - carrot.resource.store.bucket
 #      - carrot.targets.mona
       - carrot.runner.required
-      - carrot.processing.replacement.simple
+      - carrot.processing.replacement.rtmz
       - carrot.processing.peakdetection
       - carrot.report.quantify.height
+      - carrot.targets.dummy
   autoconfigure:
     exclude:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
