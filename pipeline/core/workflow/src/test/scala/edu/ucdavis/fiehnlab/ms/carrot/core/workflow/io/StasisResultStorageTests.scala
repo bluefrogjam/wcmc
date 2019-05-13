@@ -1,5 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
+import java.io.{FileOutputStream, OutputStream}
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
@@ -31,9 +35,14 @@ import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple",
-  "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.storage.aws",
-  "test", "teddy"))
+@ActiveProfiles(Array("carrot.report.quantify.height",
+  "carrot.processing.replacement.mzrt",
+  "carrot.lcms",
+  "carrot.processing.peakdetection",
+  "file.source.luna",
+  "carrot.output.storage.aws",
+  "test",
+  "teddy"))
 class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfterEach with MockitoSugar with Logging {
   val libName = "teddy"
 
@@ -64,6 +73,9 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
   @Autowired
   @InjectMocks
   val writer: StasisResultStorage[Double] = null
+
+  @Autowired
+  val objectMapper: ObjectMapper = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -101,7 +113,11 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
       when(mockStasis.addResult(mock[ResultData])).thenReturn(ResponseEntity.ok(mock[ResultData]))
 
       val data = writer.save(result)
+      saveData(data)
+
       data.injections should have size 1
+
+      logger.info(data.injections.keySet())
 
       val injections = data.injections.asScala
       injections(sample.name) shouldBe an[Injection]
@@ -122,6 +138,16 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
       )
 
     }
+  }
+
+  def saveData(data: ResultData): Unit = {
+    val sout: OutputStream = new FileOutputStream(s"${System.getProperty("user.home")}/.carrot_storage/${data.sample}.json")
+    objectMapper.registerModule(DefaultScalaModule)
+    objectMapper.writeValue(sout, data)
+
+    sout.flush()
+    sout.close()
+    logger.info("Data saved")
   }
 }
 

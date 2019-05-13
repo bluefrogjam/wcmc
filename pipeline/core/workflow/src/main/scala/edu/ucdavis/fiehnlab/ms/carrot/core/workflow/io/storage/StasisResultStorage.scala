@@ -2,8 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, GapFilledTarget, QuantifiedSample, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, Target => CTarget}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
 import org.apache.logging.log4j.scala.Logging
@@ -30,7 +29,10 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
             case x: Double => x.toDouble
             case _ => 0.0
           },
-          replaced = checkGapFilledStatus(feature),
+          replaced = feature match {
+            case f: GapFilledSpectra[T] => true
+            case _ => false
+          },
 
           feature.accurateMass.getOrElse(0.0),
           nonCorrectedRt = feature.retentionTimeInSeconds,
@@ -59,13 +61,6 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
     } else {
       logger.warn(response.getStatusCode.getReasonPhrase)
       data
-    }
-  }
-
-  def checkGapFilledStatus(feature: Feature): Boolean = {
-    feature match {
-      case x@(_: GapFilledSpectra[T] | _: GapFilledTarget[T]) => true
-      case _ => false
     }
   }
 
