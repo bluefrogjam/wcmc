@@ -1,13 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target => CTarget}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, GapFilledTarget, QuantifiedSample, Target => CTarget}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
@@ -65,8 +64,7 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
 
   def checkGapFilledStatus(feature: Feature): Boolean = {
     feature match {
-      case x: ZeroreplacedTarget => true
-      case x: GapFilledTarget[_] => true
+      case x@(_: GapFilledSpectra[T] | _: GapFilledTarget[T]) => true
       case _ => false
     }
   }

@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
@@ -15,6 +14,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.mockito.Mockito._
 import org.mockito.{InjectMocks, Mock, MockitoAnnotations}
@@ -33,9 +33,9 @@ import scala.collection.JavaConverters._
 @SpringBootTest
 @ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple",
   "carrot.lcms", "carrot.processing.peakdetection", "file.source.luna", "carrot.output.storage.aws",
-  "test"))
+  "test", "teddy"))
 class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfterEach with MockitoSugar with Logging {
-  val libName = "lcms_istds"
+  val libName = "teddy"
 
   @Autowired
   val deconv: PeakDetection = null
@@ -73,16 +73,16 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
   }
 
   "StasisResultStorage" should {
-    val sample = sampleLoader.loadSample("B5_P20Lipids_Pos_NIST01.mzml").get
-    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
+    val sample = sampleLoader.loadSample("B2a_TEDDYLipids_Neg_QC006.mzml").get
+    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
 
     val result = quantification.process(
       annotation.process(
         correction.process(
-          deconv.process(sample, method, None),
-          method, None),
-        method, None),
-      method, None)
+          deconv.process(sample, method, Some(sample)),
+          method, Some(sample)),
+        method, Some(sample)),
+      method, Some(sample))
 
     "have quantified data" in {
       logger.info(s"QUANTIFIED: ${result.quantifiedTargets.size}")
