@@ -22,9 +22,8 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
 
   def save(sample: QuantifiedSample[T]): ResultData = {
 
-    //    val results = sample.spectra.map(feature => {
-    val results = sample.quantifiedTargets.map(feature => {
-      Result(CarrotToStasisConverter.asStasisTarget(feature),
+    val results = sample.spectra.map(feature => {
+      Result(CarrotToStasisConverter.asStasisTarget(feature.target),
         Annotation(feature.retentionIndex,
           feature.quantifiedValue.get match {
             case x: Double => x.toDouble
@@ -37,8 +36,8 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
 
           feature.accurateMass.getOrElse(0.0),
           nonCorrectedRt = feature.retentionTimeInSeconds,
-          massError = feature.spectra.get.massAccuracy.getOrElse(-1.0),
-          massErrorPPM = feature.spectra.get.massAccuracyPPM.getOrElse(-1.0)
+          massError = feature.massAccuracy.getOrElse(-1.0),
+          massErrorPPM = feature.massAccuracyPPM.getOrElse(-1.0)
         )
       )
     })
