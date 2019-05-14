@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisService
 import org.springframework.beans.factory.annotation.Autowired
 
 import scala.collection.JavaConverters._
@@ -22,7 +22,7 @@ class JennyRunner extends WordSpec with LazyLogging with Matchers {
   val taskRunner: TaskRunner = null
 
   @Autowired
-  val stasis: StasisClient = null
+  val stasis: StasisService = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

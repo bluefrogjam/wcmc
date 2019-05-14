@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate
 
 import scala.collection.JavaConverters._
 
-@Profile(Array("!no-stasis"))
+@Profile(Array("!carrot.nostasis"))
 @Component
 class StasisClient extends StasisService with Logging {
   @Autowired
@@ -79,8 +79,8 @@ class StasisClient extends StasisService with Logging {
 }
 
 @Component
-@Profile(Array("no-stasis"))
-class NoOpStasisClient() extends StasisClient {
+@Profile(Array("carrot.nostasis"))
+class NoOpStasisService() extends StasisService {
   val id = System.currentTimeMillis().toString
 
   override def getTracking(sample: String): TrackingResponse = TrackingResponse(id, sample, Seq.empty)

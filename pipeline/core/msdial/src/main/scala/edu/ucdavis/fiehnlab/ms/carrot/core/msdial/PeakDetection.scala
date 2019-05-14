@@ -4,7 +4,7 @@ import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PreProcessor
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RawData, Sample}
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation._
@@ -25,7 +25,7 @@ class PeakDetection extends PreProcessor with Logging {
   private val processingProperties: MSDialProcessingProperties = null
 
   @Autowired
-  val stasisClient: StasisClient = null
+  val stasisClient: StasisService = null
 
   override def priortiy: Int = 50
 

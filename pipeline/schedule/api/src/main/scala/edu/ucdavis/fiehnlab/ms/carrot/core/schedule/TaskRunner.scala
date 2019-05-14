@@ -58,7 +58,10 @@ class TaskRunner extends Logging {
   @Autowired(required = false)
   val storage: java.util.Collection[ResultStorage] = new util.ArrayList[ResultStorage]()
 
-  @Autowired
+  /**
+    * TODO this needs to be in the workflow not in the task runner
+    */
+  @Autowired(required = false)
   val msmsUpload: java.util.Collection[PostAction] = new util.ArrayList[PostAction]()
 
   @Autowired
@@ -121,14 +124,7 @@ class TaskRunner extends Logging {
 
     //send the MSMSSpectra to mona
     msmsUpload.asScala.foreach {
-      case action: AddToLibraryAction =>
-        logger.info("Uploading msms to mona")
-        classes.foreach { x =>
-          x.samples.foreach { smp =>
-            action.run(smp, x, experiment)
-          }
-        }
-      case action: ChartingAction2[Double] =>
+      case action: PostAction =>
         classes.foreach { x =>
           x.samples.foreach { smp =>
             action.run(smp, x, experiment)

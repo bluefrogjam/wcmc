@@ -4,8 +4,10 @@ spring:
   profiles:
     active: prod
     include:
+      - carrot.nostasis
       - carrot.lcms
       - file.source.luna
+      - file.source.eclipse
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket
@@ -17,16 +19,6 @@ spring:
     exclude:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
     - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-
-stasis:
-  baseurl: http://api.metabolomics.us/stasis
-
-mona:
-  rest:
-    server:
-      user: admin
-      password: admin
-      port: 9090
 
 email:
   host: smtp.gmail.com

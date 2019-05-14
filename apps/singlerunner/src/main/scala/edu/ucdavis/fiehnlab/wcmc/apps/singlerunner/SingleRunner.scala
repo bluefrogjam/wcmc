@@ -34,7 +34,7 @@ class SingleRunner extends CommandLineRunner with Logging {
 
   override def run(args: String*): Unit = {
     if (args.size != 2) {
-      logger.error("\nPlease provide a sample list file and an acquisition method name.\n")
+      logger.error("\nPlease provide a sample file to process and an acquisition method name.\n")
       System.exit(0)
     } else {
       logger.info(s"Arguments: ${args.mkString("\n")}")
@@ -42,14 +42,7 @@ class SingleRunner extends CommandLineRunner with Logging {
 
     val method = args(1)
     try {
-      val fileList = Source.fromFile(args(0)).getLines().filterNot(_.isEmpty).map(line =>
-        if (line.toLowerCase().endsWith(".mzml"))
-          line
-        else
-          s"${line}.mzml"
-      ).toSeq
-
-      process(fileList, AcquisitionMethod.deserialize(method))
+      process(List(args(0)), AcquisitionMethod.deserialize(method))
     } catch {
       case ex: FileNotFoundException =>
         logger.error(s"File ${args(0)} not found.")
@@ -86,7 +79,7 @@ class SingleRunner extends CommandLineRunner with Logging {
 }
 
 @Configuration
-class LocalRunnerConfiguration extends Logging {
+class SingleRunnerConfiguration extends Logging {
   @Bean
   def workflow: Workflow[Double] = new Workflow[Double]()
 
