@@ -6,7 +6,7 @@ spring:
     include:
       - carrot.lcms
       - file.source.eclipse
-      - carrot.output.storage.aws
+#      - carrot.output.storage.aws
 #      - carrot.resource.loader.bucket
 #      - carrot.resource.store.bucket
 #      - carrot.targets.mona

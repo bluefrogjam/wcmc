@@ -33,10 +33,10 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
-            <artifactId>bucket</artifactId>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>edu.ucdavis.fiehnlab.wcmc</groupId>-->
+        <!--<artifactId>bucket</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
