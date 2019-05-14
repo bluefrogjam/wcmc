@@ -115,23 +115,3 @@ class LocalRunnerConfiguration extends Logging {
   def stasisClient: StasisClient = new NoOpStasisClient()
 }
 
-@Profile(Array("noStasis"))
-class NoOpStasisClient() extends StasisClient {
-  val id = System.currentTimeMillis().toString
-
-  override def getTracking(sample: String): TrackingResponse = TrackingResponse(id, sample, Seq.empty)
-
-  override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = ResponseEntity.ok(TrackingResponse("", "", Seq.empty))
-
-  override def getResults(sample: String): ResultResponse = ResultResponse(id, sample, new Date(), new java.util.HashMap())
-
-  override def addResult(data: ResultData): ResponseEntity[ResultData] = ResponseEntity.ok(data)
-
-  override def getAcquisition(sample: String): SampleResponse = SampleResponse(id, new Date(), sample, Acquisition("", "", ""), Metadata("", "", ""), Userdata("", ""), Array.empty)
-
-  override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = ResponseEntity.ok(data)
-
-  override def deleteTracking(sample: String): HttpEntity[String] = ResponseEntity.ok(sample)
-
-  override def schedule(sample: String, method: String, mode: String, env: String): ResponseEntity[ScheduleData] = ResponseEntity.ok(ScheduleData(sample, method, mode, env, "0"))
-}
