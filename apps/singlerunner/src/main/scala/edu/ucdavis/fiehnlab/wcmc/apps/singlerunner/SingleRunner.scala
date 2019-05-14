@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.wcmc.apps.localrunner
+package edu.ucdavis.fiehnlab.wcmc.apps.singlerunner
 
 import java.io.FileNotFoundException
 
@@ -17,15 +17,15 @@ import org.springframework.context.annotation.{Bean, Configuration}
 
 import scala.io.Source
 
-object LocalRunner extends App {
-  val app = new SpringApplication(classOf[LocalRunner])
+object SingleRunner extends App {
+  val app = new SpringApplication(classOf[SingleRunner])
   app.setWebApplicationType(WebApplicationType.NONE)
   args.foreach(println)
   val context = app.run(args: _*)
 }
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class LocalRunner extends CommandLineRunner with Logging {
+class SingleRunner extends CommandLineRunner with Logging {
   @Autowired
   val workflow: Workflow[Double] = null
 
@@ -106,6 +106,4 @@ class LocalRunnerConfiguration extends Logging {
 
   @Bean
   def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = new MergeLibraryAccess(correction, annotation)
-
 }
-
