@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, C
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +17,7 @@ import org.springframework.boot._
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.context.annotation.{Bean, Configuration, Profile}
-import org.springframework.http.HttpEntity
+import org.springframework.http.{HttpEntity, ResponseEntity}
 
 import scala.io.Source
 
@@ -112,26 +112,26 @@ class LocalRunnerConfiguration extends Logging {
   def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = new MergeLibraryAccess(correction, annotation)
 
   @Bean
-  def stasisClient: StasisService = new NoOpStasisClient()
+  def stasisClient: StasisClient = new NoOpStasisClient()
 }
 
-@Profile("noStasis")
-class NoOpStasisClient() extends StasisService {
+@Profile(Array("noStasis"))
+class NoOpStasisClient() extends StasisClient {
   val id = System.currentTimeMillis().toString
 
   override def getTracking(sample: String): TrackingResponse = TrackingResponse(id, sample, Seq.empty)
 
-  override def addTracking(data: TrackingData): HttpEntity[TrackingResponse] = HttpEntity[TrackingResponse]
+  override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = ResponseEntity.ok(TrackingResponse("", "", Seq.empty))
 
   override def getResults(sample: String): ResultResponse = ResultResponse(id, sample, new Date(), new java.util.HashMap())
 
-  override def addResult(data: ResultData): HttpEntity[ResultData] = HttpEntity[ResultData]
+  override def addResult(data: ResultData): ResponseEntity[ResultData] = ResponseEntity.ok(data)
 
   override def getAcquisition(sample: String): SampleResponse = SampleResponse(id, new Date(), sample, Acquisition("", "", ""), Metadata("", "", ""), Userdata("", ""), Array.empty)
 
-  override def createAcquisition(data: SampleData): HttpEntity[SampleData] = HttpEntity[SampleData]
+  override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = ResponseEntity.ok(data)
 
-  override def deleteTracking(sample: String): HttpEntity[String] = HttpEntity[String]
+  override def deleteTracking(sample: String): HttpEntity[String] = ResponseEntity.ok(sample)
 
-  override def schedule(sample: String, method: String, mode: String, env: String): HttpEntity[ScheduleData] = HttpEntity[ScheduleData]
+  override def schedule(sample: String, method: String, mode: String, env: String): ResponseEntity[ScheduleData] = ResponseEntity.ok(ScheduleData(sample, method, mode, env, "0"))
 }
