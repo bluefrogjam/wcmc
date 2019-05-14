@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.{MassAccuracy, Regression}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsDefinedException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -25,7 +25,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
   /**
     * Mass accuracy (in Dalton) used in target filtering and similarity calculation
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.015}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.010}")
   val massAccuracySetting: Double = 0.0
 
   /**
@@ -51,7 +51,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
     * and will depend on inject volume for these reasons
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:10000}")
+  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:1000}")
   var minPeakIntensity: Float = 0
 
   /**
@@ -128,7 +128,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     //     if we prefer a combination of the two
 
     val best = TargetAnnotation(standard, spectra.maxBy(x =>
-      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracyPPMSetting, rtAccuracySetting, intensityPenaltyThreshold))
+      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracySetting, rtAccuracySetting, intensityPenaltyThreshold))
     )
 
     best
@@ -142,7 +142,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     */
   def optimize(matches: Seq[TargetAnnotation[Target, Feature]]): Seq[TargetAnnotation[Target, Feature]] = {
     //if several adducts are found, which come at the same time, only use the one which is closest to it's accurate mass
-    //sorting is required since groupBy doesn't respsect order
+    //sorting is required since groupBy doesn't respect order
     val result = matches.groupBy(_.target.retentionIndex).collect {
       case x if x._2.nonEmpty =>
         // x._2.minBy(y => Math.abs(y.target.accurateMass.get - y.annotation.accurateMass.get))
@@ -152,11 +152,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     }.toSeq.sortBy(_.target.retentionIndex)
 
     logger.info(s"after optimization, we kept ${result.size} ri standards out of ${matches.size}")
-    logger.info(s"\nStandards used: ${
-      result.map { t =>
-        f"${t.target.name.getOrElse("---")} - ${t.annotation.retentionTimeInSeconds}%1.4f seconds"
-      }.mkString("\n")
-    }")
 
     result
   }
@@ -175,7 +170,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
       * allows us to filter the data by the height of the ion
       */
     val massIntensity = new MassAccuracyPPMorDalton(massAccuracyPPMSetting, massAccuracySetting, minIntensity = minPeakIntensity)
-
+    logger.info(s"correction minimum peak intensity: ${minPeakIntensity}")
 
     //our defined filters to find possible matches are registered in here
     val filters: SequentialAnnotate = new SequentialAnnotate(massIntensity :: List())
@@ -190,7 +185,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
         //find a possible match
         case target: Target =>
 
-          logger.debug(s"looking for matches for ${target.name.get}")
+          logger.debug(s"looking for matches for ${target.name.get} (${target.accurateMass.get}@${target.retentionTimeInSeconds})")
           val result = findMatch(target, input.spectra, filters)
 
           //nothing found, return null
@@ -200,18 +195,23 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
           }
           //1 found, perfect
           else if (result.size == 1) {
-            logger.debug(s"\t=>\t(${result.head.accurateMass.get}:${result.head.retentionTimeInSeconds}) found for this target")
+            logger.debug(s"\t=>\t(${result.head.accurateMass.get}@${result.head.retentionTimeInSeconds} <${result.head.massOfDetectedFeature.get}>) found for this target")
             TargetAnnotation[Target, Feature](target, result.head)
           }
           //otherwise let's find the best hit
           else {
             logger.debug(s"\t=>\t${result.size} hits found for this standard")
-            findBestHit(target, result)
+            result.foreach(h => logger.debug(s"\t\t-\t${h.accurateMass.get}@${result.head.retentionTimeInSeconds} <${result.head.massOfDetectedFeature.get}>)"))
+            val best = findBestHit(target, result)
+            logger.debug(s"\tbest: (${result.head.accurateMass.get}@${result.head.retentionTimeInSeconds} <${result.head.massOfDetectedFeature.get}>)")
+            best
           }
       }.collect {
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[Target, Feature] =>
-          logger.debug(f"annotated: ${hit.target.name.getOrElse("Unknown")} => ${hit.target.retentionIndex}%.2fs ${hit.target.precursorMass.getOrElse(0.0)}%.4fDa with ${hit.annotation.retentionTimeInSeconds}%.2fs ${hit.annotation.massOfDetectedFeature.get.mass}%.4fDa")
+          logger.info(f"annotated: {name:${hit.target.name.getOrElse("--")}, ri:${hit.target.retentionIndex}%.2f, mass:${hit.target.accurateMass.getOrElse(0.0)}%.4f} with {rt(s):${hit.annotation.retentionTimeInSeconds}%.2f, mass:${hit.annotation.massOfDetectedFeature.get.mass}%.4f}, " +
+              f"massErrorDa: ${MassAccuracy.calculateMassError(hit.annotation, hit.target).get}%.6f, " +
+              f"massErrorPPM: ${MassAccuracy.calculateMassErrorPPM(hit.annotation, hit.target).get}%.2f")
           hit
       }.seq
 

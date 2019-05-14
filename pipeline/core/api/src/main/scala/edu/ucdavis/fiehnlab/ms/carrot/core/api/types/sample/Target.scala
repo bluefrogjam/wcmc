@@ -31,7 +31,7 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
     * by default we report the retention time the same as the retention index
     * unless overwritten
     */
-  val retentionTimeInSeconds: Double = retentionIndex
+  def retentionTimeInSeconds: Double = retentionIndex
   /**
     * the unique inchi key for this spectra
     */

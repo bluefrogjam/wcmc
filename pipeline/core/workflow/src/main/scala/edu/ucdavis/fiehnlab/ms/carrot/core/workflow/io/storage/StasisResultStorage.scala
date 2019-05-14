@@ -1,13 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, QuantifiedSample, Target => CTarget}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, Target => CTarget}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
@@ -24,19 +22,23 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
 
   def save(sample: QuantifiedSample[T]): ResultData = {
 
-    val results = sample.spectra.map(feature => {
-      Result(CarrotToStasisConverter.asStasisTarget(feature.target),
+    //    val results = sample.spectra.map(feature => {
+    val results = sample.quantifiedTargets.map(feature => {
+      Result(CarrotToStasisConverter.asStasisTarget(feature),
         Annotation(feature.retentionIndex,
           feature.quantifiedValue.get match {
             case x: Double => x.toDouble
             case _ => 0.0
           },
-          replaced = checkGapFilledStatus(feature),
+          replaced = feature match {
+            case f: GapFilledSpectra[T] => true
+            case _ => false
+          },
 
           feature.accurateMass.getOrElse(0.0),
           nonCorrectedRt = feature.retentionTimeInSeconds,
-          feature.massAccuracy.getOrElse(0),
-          feature.massAccuracyPPM.getOrElse(0)
+          massError = feature.spectra.get.massAccuracy.getOrElse(-1.0),
+          massErrorPPM = feature.spectra.get.massAccuracyPPM.getOrElse(-1.0)
         )
       )
     })
@@ -60,14 +62,6 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
     } else {
       logger.warn(response.getStatusCode.getReasonPhrase)
       data
-    }
-  }
-
-  def checkGapFilledStatus(feature: Feature): Boolean = {
-    feature match {
-      case x: ZeroreplacedTarget => true
-      case x: GapFilledTarget[_] => true
-      case _ => false
     }
   }
 

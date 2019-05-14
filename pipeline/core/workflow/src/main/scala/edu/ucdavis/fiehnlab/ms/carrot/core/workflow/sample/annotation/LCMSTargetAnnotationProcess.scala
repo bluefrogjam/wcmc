@@ -33,8 +33,10 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
     */
   override protected def findMatches(target: Target, spectra: Seq[_ <: Feature with CorrectedSpectra], sample: CorrectedSample, method: AcquisitionMethod): Seq[_ <: Feature with CorrectedSpectra] = {
     val filters: SequentialAnnotate = new SequentialAnnotate(
-      new MassAccuracyPPMorDalton(lcmsProperties.massAccuracySettingPpm, lcmsProperties.massAccuracySetting, lcmsProperties.massIntensity) ::
-          new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow) :: List()
+      new MassAccuracyDalton(lcmsProperties.massAccuracySetting,
+        lcmsProperties.massIntensity) ::
+          new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow) ::
+          List()
     )
 
 
@@ -43,10 +45,6 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
         spectra
     }
 
-    //      logger.debug(s"discovered matches for ${target}")
-    //      result.seq.sortBy(_.retentionIndex).foreach { ms =>
-    //        logger.debug(s"\t=> ${ms}")
-    //      }
     result.seq
   }
 
@@ -61,10 +59,12 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
     if (matches.nonEmpty) {
       logger.debug(s"find best match for target $target, ${matches.size} possible annotations")
 
-      val resultList =
+      val resultList = if (matches.size == 1) {
+        matches
+      } else {
         if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
           logger.debug("preferring gaussian similarity over mass accuracy and rt distance")
-          matches.sortBy { r => SimilarityMethods.featureTargetSimilarity(r, target, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold) }
+          matches.sortBy { r => (MassAccuracy.calculateMassError(r, target).get, SimilarityMethods.featureTargetSimilarity(r, target, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold)) }
         } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
           logger.debug("preferring accuracy over retention time distance")
           matches.sortBy { r => (MassAccuracy.calculateMassErrorPPM(r, target).get, RetentionIndexDifference.diff(target, r)) }
@@ -72,6 +72,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
           logger.debug("preferring retention time over mass accuracy")
           matches.sortBy { r => (RetentionIndexDifference.diff(target, r), MassAccuracy.calculateMassErrorPPM(r, target).get) }
         }
+      }
 
       val best = resultList.head
 
@@ -87,11 +88,11 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
         Some(best)
       }
       else {
-        logger.debug(s"utilizing close peak detection mode since we have ${resultList.size} candidates")
+        logger.info(s"utilizing close peak detection mode since we have ${resultList.size} candidates")
 
         val closePeaks = resultList.sortBy(RetentionIndexDifference.diff(target, _))
 
-        logger.debug(s"discovered close peaks after filtering: ${closePeaks}")
+        logger.info(s"discovered close peaks after filtering: ${closePeaks}")
         if (closePeaks.nonEmpty) {
           //          if (debug) {
           //            logger.debug("close peaks:")
@@ -142,7 +143,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
           val optimizedTargetList =
             if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
               logger.debug("preferring gaussian similarity over mass accuracy and rt distance")
-              x._2.sortBy { r => SimilarityMethods.featureTargetSimilarity(x._1, r, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold) }
+              x._2.sortBy { r => (MassAccuracy.calculateMassError(x._1, r), SimilarityMethods.featureTargetSimilarity(x._1, r, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold)) }
             } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
               logger.debug("preferring accuracy over retention time distance")
               x._2.sortBy(r => (MassAccuracy.calculateMassErrorPPM(x._1, r).get, RetentionIndexDifference.diff(r, x._1)))
@@ -175,7 +176,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
 
           if (lcmsProperties.closePeakDetection > 0.0) {
 
-            val closePeaks = optimizedTargetList.filter { p => RetentionIndexDifference.diff(p, x._1) < lcmsProperties.closePeakDetection }.sortBy(p => RetentionIndexDifference.diff(p, x._1)).reverse
+            val closePeaks = optimizedTargetList.filter { p => RetentionIndexDifference.diff(p, x._1) < lcmsProperties.closePeakDetection }.sortBy(p => RetentionIndexDifference.diff(p, x._1)) //.reverse
 
             if (closePeaks.nonEmpty) {
 
@@ -185,12 +186,12 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
               //                logger.debug(f"\t\t=> rank:                ${y._2}")
               //                logger.debug(f"\t\t=> ri distance:         ${RetentionIndexDifference.diff(y._1, x._1)}%1.2f seconds")
               //                logger.debug(f"\t\t=> mass error:          ${MassAccuracy.calculateMassError(x._1, y._1).get}%1.5f dalton")
-                // logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.mass)}%1.5f dalton")
+              // logger.debug(f"\t\t=> mass error:          ${Math.abs(y._1.monoIsotopicMass.get - MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.mass)}%1.5f dalton")
               //                logger.debug(f"\t\t=> mass error (ppm):    ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get}%1.5f ppm")
               //                logger.debug(f"\t\t=> mass error * ri dis: ${MassAccuracy.calculateMassError(x._1, y._1).get * RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
               //                logger.debug(f"\t\t=> mass error / ri dis: ${MassAccuracy.calculateMassErrorPPM(x._1, y._1).get / RetentionIndexDifference.diff(y._1, x._1)}%1.5f ppm")
               //                logger.debug(f"\t\t=> mass intensity:      ${x._1.massOfDetectedFeature.get.intensity}%1.0f")
-                // logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.intensity}%1.0f")
+              // logger.debug(f"\t\t=> mass intensity:      ${MassAccuracy.findClosestIon(x._1, y._1.monoIsotopicMass.get, lcmsProperties.massAccuracy / 1000).get.intensity}%1.0f")
 
 
               //                logger.debug("")
@@ -279,27 +280,27 @@ class LCMSAnnotationProcessProperties {
   /**
     * Mass accuracy (in Dalton) used in target filtering and similarity calculation
     */
-  @Value("${wcmc.lcms.annotation.peak.mass.accuracy:0.015}")
-  val massAccuracySetting: Double = 0.0
+  @Value("${wcmc.lcms.annotation.peak.mass.accuracy:0.010}")
+  var massAccuracySetting: Double = 0.0
 
   /**
-    * Mass accuracy (in Dalton) used in target filtering and similarity calculation
+    * Mass accuracy (in PPM) used in target filtering and similarity calculation
     */
-  @Value("${wcmc.lcms.annotation.peak.mass.accuracyppm:5}")
-  val massAccuracySettingPpm: Double = 0.0
+  @Value("${wcmc.lcms.annotation.peak.mass.accuracyppm:10}")
+  var massAccuracySettingPpm: Double = 0.0
 
   /**
     * Retention time accuracy (in seconds) used in target filtering and similarity calculation
     */
   @Value("${wcmc.lcms.annotation.peak.rt.accuracy:6}")
-  val rtAccuracySetting: Double = 0.0
+  var rtAccuracySetting: Double = 0.0
 
   /**
     * Intensity used for penalty calculation - the peak similarity score for targets below this
     * intensity will be scaled down by the ratio of the intensity to this threshold
     */
-  @Value("${wcmc.lcms.annotation.peak.intensityPenaltyThreshold:5000}")
-  val intensityPenaltyThreshold: Float = 0
+  @Value("${wcmc.lcms.annotation.peak.intensityPenaltyThreshold:1000}")
+  var intensityPenaltyThreshold: Float = 0
 
 
 }

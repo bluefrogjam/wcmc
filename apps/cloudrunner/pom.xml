@@ -11,7 +11,7 @@
 
     <groupId>edu.ucdavis.fiehnlab.wcmc.apps</groupId>
     <artifactId>cloudrunner</artifactId>
-    <version>1.0.16-SNAPSHOT</version>
+    <version>1.0.17-SNAPSHOT</version>
 
 
     <properties>
@@ -36,13 +36,11 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
             <artifactId>bucket</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
             <artifactId>workflow</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -54,13 +52,11 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
             <artifactId>config</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
             <artifactId>api</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

@@ -5,13 +5,14 @@ spring:
     active: prod
     include:
       - carrot.lcms
-      - file.source.luna
-      - carrot.output.storage.aws
-      - carrot.resource.loader.bucket
-      - carrot.resource.store.bucket
+      - file.source.eclipse
+#      - carrot.output.storage.aws
+#      - carrot.resource.loader.bucket
+#      - carrot.resource.store.bucket
 #      - carrot.targets.mona
+      - carrot.targets.dynamic
       - carrot.runner.required
-      - carrot.processing.replacement.simple
+      - carrot.processing.replacement.rtmz
       - carrot.processing.peakdetection
       - carrot.report.quantify.height
   autoconfigure:
@@ -25,6 +26,7 @@ stasis:
 mona:
   rest:
     server:
+      host: ipa.fiehnlab.ucdavis.edu
       user: admin
       password: admin
       port: 9090
@@ -34,3 +36,18 @@ email:
   port: 25
   username: binbase@gmail.com
   pass: fiehnlab-2018
+
+---
+spring:
+  profiles: test
+
+mona:
+  rest:
+    server:
+      host: localhost
+      user: admin
+      password: admin
+      port: 9090
+
+stasis:
+  baseurl: http://test-api.metabolomics.us/stasis

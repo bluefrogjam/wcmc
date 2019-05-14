@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.math
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
+import org.apache.logging.log4j.scala.Logging
 
 object SimilarityMethods extends Logging {
   /**
@@ -40,8 +40,8 @@ object SimilarityMethods extends Logging {
     * @return
     */
   def featureTargetSimilarity(feature: Feature, target: Target, mzTolerance: Double, rtTolerance: Double): Double = {
-    if (feature.accurateMass.isDefined && target.precursorMass.isDefined) {
-      val mzSimilarity = gaussianSimilarity(feature.accurateMass.get, target.precursorMass.get, mzTolerance) * 1.2
+    if (feature.accurateMass.isDefined && target.accurateMass.isDefined) {
+      val mzSimilarity = gaussianSimilarity(feature.accurateMass.get, target.accurateMass.get, mzTolerance) * 1.2
       val rtSimilarity = gaussianSimilarity(feature.retentionTimeInSeconds, target.retentionIndex, rtTolerance) * 0.8
 
       logger.debug(f"massTolerance: ${mzTolerance}%.2f -- mz similarity: ${mzSimilarity}%.4f -- rt similarity: ${rtSimilarity}%.2f")

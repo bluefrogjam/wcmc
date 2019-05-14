@@ -13,6 +13,8 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 
+import scala.collection.JavaConverters._
+
 /**
   * quantifies a sample, so it's ready to be exported
   */
@@ -28,11 +30,11 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
     * @param input
     * @return
     */
-  final override def process(input: AnnotatedSample, targets: Iterable[Target], method: AcquisitionMethod): QuantifiedSample[T] = {
+  final override def process(input: AnnotatedSample, targets: Iterable[Target], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[T] = {
 
     logger.info(s"quantifying sample: ${input.fileName}")
     /**
-      * merge the found and none found targets, which can be later replaced or so
+      * merge the found and not found targets, which can be later replaced or so
       */
     val resultList: Seq[QuantifiedTarget[T]] = targets.collect {
       case myTarget: Target =>
@@ -43,101 +45,52 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
           logger.debug(s"\t=> annotation not found for ${myTarget}")
           new QuantifiedTarget[T] {
             override val uniqueMass: Option[Double] = myTarget.uniqueMass
-
-            /**
-              * value for this target
-              */
             override val quantifiedValue: Option[T] = None
-            /**
-              * associated spectra
-              */
             override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = None
-            /**
-              * a name for this spectra
-              */
             override var name: Option[String] = myTarget.name
-            /**
-              * retention time in seconds of this target
-              */
-            override val retentionIndex: Double = myTarget.retentionIndex
-            /**
-              * the unique inchi key for this spectra
-              */
+            override val retentionIndex: Double = input.regressionCurve.computeY(myTarget.retentionTimeInSeconds) // myTarget.retentionTimeInSeconds
+            override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
             override var inchiKey: Option[String] = myTarget.inchiKey
-            /**
-              * the mono isotopic mass of this spectra
-              */
             override val precursorMass: Option[Double] = myTarget.precursorMass
-            /**
-              * is this a confirmed target
-              */
             override var confirmed: Boolean = myTarget.confirmed
-            /**
-              * is this target required for a successful retention index correction
-              */
             override var requiredForCorrection: Boolean = myTarget.requiredForCorrection
-            /**
-              * is this a retention index correction standard
-              */
             override var isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
-            /**
-              * associated spectrum propties if applicable
-              */
             override val spectrum: Option[SpectrumProperties] = myTarget.spectrum
+            override val ionMode: IonMode = myTarget.ionMode
           }
         }
         //associated with a target and quantified
         else {
-          logger.debug(s"\t=> annotation found for ${myTarget}")
+          logger.debug(s"\t=> annotation found for ${myTarget.name.get}")
           new QuantifiedTarget[T] {
             override val uniqueMass: Option[Double] = myTarget.uniqueMass
-
-            /**
-              * value for this target
-              */
             override val quantifiedValue: Option[T] = computeValue(myTarget, result.head)
-            /**
-              * associated spectra
-              */
             lazy override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = Option(SpectraHelper.addQuantification(this, result.head))
-            /**
-              * a name for this spectra
-              */
             override var name: Option[String] = myTarget.name
-            /**
-              * retention time in seconds of this target
-              */
-            override val retentionIndex: Double = myTarget.retentionIndex
-            /**
-              * the unique inchi key for this spectra
-              */
-            override var inchiKey: Option[String] = myTarget.inchiKey
-            /**
-              * the mono isotopic mass of this spectra
-              */
-            override val precursorMass: Option[Double] = myTarget.precursorMass
-            /**
-              * is this a confirmed target
-              */
+            override val retentionIndex: Double = result.head.retentionIndex
+            override val retentionTimeInSeconds: Double = result.head.retentionTimeInSeconds
+            override var inchiKey: Option[String] = result.head.target.inchiKey
+            override val precursorMass: Option[Double] = result.head.accurateMass
             override var confirmed: Boolean = myTarget.confirmed
-            /**
-              * is this target required for a successful retention index correction
-              */
             override var requiredForCorrection: Boolean = myTarget.requiredForCorrection
-            /**
-              * is this a retention index correction standard
-              */
             override var isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
-            /**
-              * associated spectrum propties if applicable
-              */
-            override val spectrum: Option[SpectrumProperties] = myTarget.spectrum
+            override val spectrum: Option[SpectrumProperties] = result.head.associatedScan
+            override val ionMode: IonMode = result.head.ionMode.get
           }
         }
-    }.seq.toSeq.sortBy(_.retentionTimeInSeconds)
+    }.seq.toSeq.sortBy(t => (t.name.get, -t.retentionTimeInSeconds))
 
     stasisClient.addTracking(TrackingData(input.name, "quantified", input.fileName))
-    buildResult(input, resultList)
+
+    var result = buildResult(input, resultList)
+
+    // apply post processing
+    postprocessingInstructions.asScala.foreach { x =>
+      logger.info(s"executing: $x")
+      result = x.process(result, method, rawSample)
+    }
+
+    result
   }
 
   /**

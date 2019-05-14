@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.process
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
@@ -10,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 
 /**
@@ -27,7 +27,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     * @param input
     * @return
     */
-  override final def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod): CorrectedSample = {
+  override final def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod, rawSample: Option[Sample]): CorrectedSample = {
 
     val retentionIndexMarkers = target.filter(_.isRetentionIndexStandard)
     var requiredTargets = retentionIndexMarkers.filter(_.requiredForCorrection)

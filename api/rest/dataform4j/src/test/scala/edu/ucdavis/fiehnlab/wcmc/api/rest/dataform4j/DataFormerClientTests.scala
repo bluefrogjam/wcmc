@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -27,7 +27,7 @@ class DataFormerClientTests extends WordSpec with Matchers with Logging {
     "fail for invalid .d.zip file" in {
       val filename = "not_found.d.zip"
 
-      val result = dfClient.convert(filename, "abf")
+      val result = dfClient.convert(filename)
 
       result shouldBe None
     }
@@ -35,7 +35,7 @@ class DataFormerClientTests extends WordSpec with Matchers with Logging {
     "convert a raw data file (.d.zip) to mzml" ignore {
       val filename = "testA.d.zip"
 
-      val result = dfClient.convert(filename, "mzml")
+      val result = dfClient.convert(filename)
 
       result.isDefined shouldBe true
 

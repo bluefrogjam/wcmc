@@ -2,11 +2,11 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
 import java.io.{File, FileWriter, IOException}
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Sample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{IonMode, Sample, Target}
+import org.apache.logging.log4j.scala.Logging
 
 import scala.io.Source
 
@@ -45,18 +45,10 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override var inchiKey: Option[String] = None
               override var requiredForCorrection: Boolean = false
               override var isRetentionIndexStandard: Boolean = false
-              /**
-                * is this a confirmed target
-                */
               override var confirmed: Boolean = true
-              /**
-                * associated spectrum propties if applicable
-                */
               override val spectrum: Option[SpectrumProperties] = None
-              /**
-                * unique mass for a given target
-                */
               override val uniqueMass: Option[Double] = None
+              override val ionMode: IonMode = acquisitionMethod.chromatographicMethod.ionMode.get
             }
           }
           else if (temp.length == 2) {
@@ -70,7 +62,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override var confirmed: Boolean = true
               override val spectrum: Option[SpectrumProperties] = None
               override val uniqueMass: Option[Double] = None
-
+              override val ionMode: IonMode = acquisitionMethod.chromatographicMethod.ionMode.get
             }
           }
           else if (temp.length == 4) {
@@ -84,7 +76,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override var confirmed: Boolean = true
               override val spectrum: Option[SpectrumProperties] = None
               override val uniqueMass: Option[Double] = None
-
+              override val ionMode: IonMode = acquisitionMethod.chromatographicMethod.ionMode.get
             }
           }
           else if (temp.length == 5) {
@@ -98,7 +90,7 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
               override var confirmed: Boolean = true
               override val spectrum: Option[SpectrumProperties] = None
               override val uniqueMass: Option[Double] = None
-
+              override val ionMode: IonMode = acquisitionMethod.chromatographicMethod.ionMode.get
             }
           }
 
