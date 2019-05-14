@@ -111,7 +111,5 @@ class LocalRunnerConfiguration extends Logging {
   @Bean
   def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = new MergeLibraryAccess(correction, annotation)
 
-  @Bean
-  def stasisClient: StasisClient = new NoOpStasisClient()
 }
 
