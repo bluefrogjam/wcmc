@@ -32,7 +32,7 @@ class DataFormerClientTests extends WordSpec with Matchers with Logging {
       result shouldBe None
     }
 
-    "convert a raw data file (.d.zip) to mzml" in {
+    "convert a raw data file (.d.zip) to mzml" ignore {
       val filename = "testA.d.zip"
 
       val result = dfClient.convert(filename, "mzml")

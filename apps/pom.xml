@@ -17,6 +17,7 @@
     <modules>
         <module>localrunner</module>
         <module>cloudrunner</module>
+        <module>singlerunner</module>
         <!--<module>server</module>-->
         <!--<module>converter</module>-->
     </modules>
