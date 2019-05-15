@@ -8,13 +8,12 @@ spring:
       - carrot.lcms
       - file.source.luna
       - file.source.eclipse
-      - carrot.output.storage.aws
-      - carrot.resource.loader.bucket
-      - carrot.resource.store.bucket
       - carrot.runner.required
-      - carrot.processing.replacement.simple
+#      - carrot.processing.replacement.simple
       - carrot.processing.peakdetection
       - carrot.report.quantify.height
+      - carrot.output.storage.local
+      - carrot.output.writer.txt
   autoconfigure:
     exclude:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

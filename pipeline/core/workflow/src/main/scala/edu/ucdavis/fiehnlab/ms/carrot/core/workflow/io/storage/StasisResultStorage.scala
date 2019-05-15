@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.converter.SampleToMapConverter
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
@@ -21,39 +22,11 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
   @Autowired
   val stasis_cli: StasisService = null
 
+  val converter = new SampleToMapConverter[T]
+
   def save(sample: QuantifiedSample[T]): ResultData = {
 
-    //    val results = sample.spectra.map(feature => {
-    val results = sample.quantifiedTargets.map(feature => {
-      Result(CarrotToStasisConverter.asStasisTarget(feature),
-        Annotation(feature.retentionIndex,
-          feature.quantifiedValue.get match {
-            case x: Double => x.toDouble
-            case _ => 0.0
-          },
-          replaced = feature match {
-            case f: GapFilledSpectra[T] => true
-            case _ => false
-          },
-
-          feature.accurateMass.getOrElse(0.0),
-          nonCorrectedRt = feature.retentionTimeInSeconds,
-          massError = feature.spectra.get.massAccuracy.getOrElse(-1.0),
-          massErrorPPM = feature.spectra.get.massAccuracyPPM.getOrElse(-1.0)
-        )
-      )
-    })
-
-    val injections = Map(sample.name -> Injection(System.currentTimeMillis().toString,
-      Correction(3,
-        sample.correctedWith.name,
-        sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
-            .map(pair => Curve(pair._1, pair._2))
-      ),
-      results)
-    ).asJava
-
-    val data: ResultData = ResultData(sample.name, injections)
+    val data: ResultData = ResultData(sample.name, converter.convert(sample).asJava)
 
     val response = stasis_cli.addResult(data)
 
