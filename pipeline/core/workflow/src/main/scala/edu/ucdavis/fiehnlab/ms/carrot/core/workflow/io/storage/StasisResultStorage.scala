@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, QuantifiedSpectra, QuantifiedTarget, Target => CTarget}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
 import org.apache.logging.log4j.scala.Logging
@@ -22,22 +22,23 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
 
   def save(sample: QuantifiedSample[T]): ResultData = {
 
-    val results = sample.spectra.map(feature => {
-      Result(CarrotToStasisConverter.asStasisTarget(feature.target),
-        Annotation(feature.retentionIndex,
-          feature.quantifiedValue.get match {
+    //    val results = sample.spectra.map(feature => {
+    val results = sample.quantifiedTargets.map(target => {
+      Result(CarrotToStasisConverter.asStasisTarget(target),
+        Annotation(target.retentionIndex,
+          target.quantifiedValue.getOrElse(0.0) match {
             case x: Double => x.toDouble
             case _ => 0.0
           },
-          replaced = feature match {
+          replaced = target match {
             case f: GapFilledSpectra[T] => true
             case _ => false
           },
 
-          feature.accurateMass.getOrElse(0.0),
-          nonCorrectedRt = feature.retentionTimeInSeconds,
-          massError = feature.massAccuracy.getOrElse(-1.0),
-          massErrorPPM = feature.massAccuracyPPM.getOrElse(-1.0)
+          target.precursorMass.getOrElse(0.0),
+          nonCorrectedRt = target.retentionTimeInSeconds,
+          massError = getTargetMassError(target, target.spectra),
+          massErrorPPM = getTargetMassError(target, target.spectra, ppm = true)
         )
       )
     })
@@ -64,6 +65,17 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
     }
   }
 
+
+  def getTargetMassError(target: QuantifiedTarget[T], spectrum: Option[QuantifiedSpectra[T]], ppm: Boolean = false): Double = {
+    if (spectrum.isDefined)
+      if (ppm)
+        spectrum.get.massAccuracyPPM.getOrElse(0.0)
+      else
+        spectrum.get.massAccuracy.getOrElse(0.0)
+    else
+      0.0
+  }
+
   /**
     * store the given experiment
     *
@@ -81,6 +93,6 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
 
 object CarrotToStasisConverter {
   def asStasisTarget(target: CTarget): STTarget = {
-    STTarget(target.retentionIndex, target.name.get, target.name.get, target.accurateMass.getOrElse(0.0))
+    STTarget(target.retentionTimeInSeconds, target.name.get, target.name.get, target.accurateMass.getOrElse(0.0))
   }
 }

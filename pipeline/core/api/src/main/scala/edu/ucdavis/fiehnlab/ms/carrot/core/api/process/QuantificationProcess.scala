@@ -68,7 +68,7 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
             lazy override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = Option(SpectraHelper.addQuantification(this, result.head))
             override var name: Option[String] = myTarget.name
             override val retentionIndex: Double = result.head.retentionIndex
-            override val retentionTimeInSeconds: Double = result.head.retentionTimeInSeconds
+            override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
             override var inchiKey: Option[String] = result.head.target.inchiKey
             override val precursorMass: Option[Double] = result.head.accurateMass
             override var confirmed: Boolean = myTarget.confirmed

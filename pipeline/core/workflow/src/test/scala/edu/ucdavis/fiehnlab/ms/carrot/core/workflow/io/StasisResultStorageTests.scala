@@ -13,7 +13,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Chromat
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage.StasisResultStorage
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
@@ -22,7 +21,7 @@ import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.mockito.Mockito._
 import org.mockito.{InjectMocks, Mock, MockitoAnnotations}
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -36,7 +35,7 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
 @ActiveProfiles(Array("carrot.report.quantify.height",
-  "carrot.processing.replacement.mzrt",
+  //  "carrot.processing.replacement.mzrt",
   "carrot.lcms",
   "carrot.processing.peakdetection",
   "file.source.luna",
@@ -58,8 +57,8 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
   @Autowired
   val quantification: QuantifyByHeightProcess = null
 
-  @Autowired
-  val replacement: ZeroReplacement = null
+  //  @Autowired
+  //  val replacement: ZeroReplacement = null
 
   @Autowired
   val sampleLoader: SampleLoader = null
@@ -83,6 +82,21 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
     logger.info("initiating mocks")
     MockitoAnnotations.initMocks(this)
   }
+
+
+  val istds: Map[String, Double] = Map(
+    "1_Ceramide (d18:1/17:0) iSTD [M+Cl]-_ICWGMOFDULMCFL-QKSCFGQVSA-N" -> 363,
+    "1_Ceramide (d18:1/17:0) iSTD [M+FA-H]-_ICWGMOFDULMCFL-QKSCFGQVSA-N" -> 363,
+    "1_CUDA iSTD [M-H]-_HPTJABJPZMULFH-UHFFFAOYSA-N" -> 45,
+    "1_FA iSTD (16:0)-d3 [M-H]-_IPCSVZSSVZVIGE-FIBGUPNXSA-N" -> 189,
+    "1_LPC (17:0) iSTD [M+FA-H]-_SRRQPVVYXBTRQK-XMMPIXPASA-N" -> 108.6,
+    "1_LPE (17:1) iSTD [M-H]-_LNJNONCNASQZOB-HEDKFQSOSA-N" -> 77.4,
+    "1_MAG (17:0/0:0/0:0) iSTD [M+FA-H]-_SVUQHVRAGMNPLW-UHFFFAOYSA-N" -> 183.6,
+    "1_PC (12:0/13:0) iSTD [M+FA-H]-_FCTBVSCBBWKZML-WJOKGBTCSA-N" -> 214.2,
+    "1_PE (17:0/17:0) iSTD [M-H]-_YSFFAUPDXKTJMR-DIPNUNPCSA-N" -> 380.4,
+    "1_PG (17:0/17:0) iSTD [M-H]-_ZBVHXVKEMAIWQQ-QPPIDDCLSA-N" -> 336.6,
+    "1_SM (d18:1/17:0) iSTD [M+FA-H]-_YMQZQHIESOAPQH-JXGHDCMNSA-N" -> 309.6
+  )
 
   "StasisResultStorage" should {
     val sample = sampleLoader.loadSample("B2a_TEDDYLipids_Neg_QC006.mzml").get
@@ -125,18 +139,18 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
       writer.stasis_cli.getTracking(sample.name).status.maxBy(_.priority).value.toLowerCase === "exported"
 
       var results: ResultResponse = null
-      try {
-        results = stasis_cli.getResults(sample.name)
-      } catch {
-        case ex: Exception =>
-          logger.error(ex.getMessage, ex)
-      }
+      results = stasis_cli.getResults(sample.name)
 
       results should have(
         'sample (sample.name),
         'id (sample.name)
       )
 
+      istds.foreach(istd => {
+        val reportedtarget: Option[Result] = results.injections.get(sample.name).head.results.find(res => res.target.name.equals(istd._1))
+        if (reportedtarget.isDefined)
+          reportedtarget.get.target.retentionTimeInSeconds shouldBe istd._2 +- 0.01
+      })
     }
   }
 

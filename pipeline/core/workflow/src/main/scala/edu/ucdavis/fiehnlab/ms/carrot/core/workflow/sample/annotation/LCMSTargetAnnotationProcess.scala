@@ -88,11 +88,11 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
         Some(best)
       }
       else {
-        logger.info(s"utilizing close peak detection mode since we have ${resultList.size} candidates")
+        logger.debug(s"utilizing close peak detection mode since we have ${resultList.size} candidates")
 
         val closePeaks = resultList.sortBy(RetentionIndexDifference.diff(target, _))
 
-        logger.info(s"discovered close peaks after filtering: ${closePeaks}")
+        logger.debug(s"discovered close peaks after filtering: ${closePeaks}")
         if (closePeaks.nonEmpty) {
           //          if (debug) {
           //            logger.debug("close peaks:")

@@ -151,9 +151,9 @@ class TaskRunner extends Logging {
         case e: AuthenticationFailedException =>
           logger.warn(s"EmailService can't send email. ${e.getMessage}")
         case e: Exception =>
-          logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
           val os = new ByteArrayOutputStream()
           val content = s"Dear user, the task '${task.name}' did not execute properly!\n\n${os.toString("UTF8")}"
+          logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}\n${content}", e)
           try {
             emailService.send(emailSender, task.email :: List(),
               content,
