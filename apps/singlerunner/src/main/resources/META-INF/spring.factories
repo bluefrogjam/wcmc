@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=edu.ucdavis.fiehnlab.wcmc.apps.localrunner.LocalRunnerConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=edu.ucdavis.fiehnlab.wcmc.apps.singlerunner.SingleRunnerConfiguration
