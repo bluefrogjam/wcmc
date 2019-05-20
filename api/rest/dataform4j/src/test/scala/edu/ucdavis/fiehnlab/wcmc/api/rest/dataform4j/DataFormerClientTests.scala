@@ -32,11 +32,11 @@ class DataFormerClientTests extends WordSpec with Matchers with Logging {
       result shouldBe None
     }
 
-    "convert a raw data file (.d.zip) to mzml" in {
+    // ignoring this since we are not currently scheduling .d.zip files, only mzml
+    "convert a raw data file (.d.zip) to mzml" ignore {
       val filename = "testA.d.zip"
 
       val result = dfClient.convert(filename)
-
       result.isDefined shouldBe true
 
       result.get.getName.toLowerCase.endsWith("mzml") shouldBe true

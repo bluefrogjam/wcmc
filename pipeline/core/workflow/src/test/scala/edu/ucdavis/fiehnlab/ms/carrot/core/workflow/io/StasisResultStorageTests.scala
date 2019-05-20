@@ -13,6 +13,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Chromat
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage.StasisResultStorage
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
@@ -35,7 +36,7 @@ import scala.collection.JavaConverters._
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
 @ActiveProfiles(Array("carrot.report.quantify.height",
-  //  "carrot.processing.replacement.mzrt",
+  "carrot.processing.replacement.mzrt",
   "carrot.lcms",
   "carrot.processing.peakdetection",
   "file.source.luna",
@@ -57,8 +58,8 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
   @Autowired
   val quantification: QuantifyByHeightProcess = null
 
-  //  @Autowired
-  //  val replacement: ZeroReplacement = null
+  @Autowired
+  val replacement: ZeroReplacement = null
 
   @Autowired
   val sampleLoader: SampleLoader = null

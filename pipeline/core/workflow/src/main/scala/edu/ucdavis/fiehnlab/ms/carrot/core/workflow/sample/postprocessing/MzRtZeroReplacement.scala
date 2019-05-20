@@ -26,6 +26,8 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
 
     val filterByMass = new IncludeByMassRange(needsReplacement, zeroReplacementProperties.massAccuracyInDa * 2)
 
+    val desperateFilterByMass = new IncludeByMassRange(needsReplacement, 0.05)
+
     val filterByRetentionIndexNoise = new IncludeByRetentionIndexWindow(needsReplacement.retentionIndex, zeroReplacementProperties.noiseWindowInSeconds)
 
     val filterByRetentionIndex = new IncludeByRetentionIndexWindow(needsReplacement.retentionIndex, zeroReplacementProperties.retentionIndexWindowForPeakDetection)
@@ -36,20 +38,17 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
       includeMass(needsReplacement, filterByMass, spectra)
     }
 
-    logger.debug(s"found ${replacementValueSpectra.size} features for replacement")
+    val desperateValues = rawdata.spectra.filter { spectra =>
+      includeMass(needsReplacement, desperateFilterByMass, spectra)
+    }
 
     //first calculate noise for this ion trace
     val data = replacementValueSpectra.map {
       s => MassAccuracy.findClosestIon(s, needsReplacement.precursorMass.get, needsReplacement).get.intensity.toDouble
     }
+    logger.debug(s"found ${data.size} filtered features for replacement")
 
-    val h = Distribution(100, data.toList).histogram
-    val noiseInts = h.map { it => (it.size, it) }.sortBy(-_._1).take(2)
-    val summed = noiseInts.foldLeft((0, 0.0)) { case ((accA, accB), (a, b)) => (accA + a, accB + b.sum) }
-    val noise = (summed._2 / summed._1).toInt
-
-    logger.debug(s"noise is: ${noise} for target: ${needsReplacement}")
-
+    val noise: Int = getNoiseValue(needsReplacement, data)
 
     val filteredByTime: Seq[Feature with CorrectedSpectra] = replacementValueSpectra.filter { spectra =>
       filterByRetentionIndex.include(spectra, applicationContext)
@@ -93,8 +92,8 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
             intensity
           }
           else {
-            logger.warn("\tCreated failsafe [Feature with CorrectedSpectra] from target data and 0 intensity")
-            0.0f
+            logger.warn(s"\tCreated failsafe [Feature with CorrectedSpectra] from target data and intensity from noise ${noise}")
+            noise
           }
         }
 
@@ -158,6 +157,20 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
       * build target object
       */
     new ZeroreplacedTarget(value, noiseCorrectedValue, needsReplacement, fileUsedForReplacement = rawdata.fileName, ion)
+  }
+
+  def getNoiseValue(needsReplacement: QuantifiedTarget[Double], data: Seq[Double]): Int = {
+    try {
+      val h = Distribution(100, data.toList).histogram
+      val noiseInts = h.map { it => (it.size, it) }.sortBy(-_._1).take(2)
+      val summed = noiseInts.foldLeft((0, 0.0)) { case ((accA, accB), (a, b)) => (accA + a, accB + b.sum) }
+      val noise = (summed._2 / summed._1).toInt
+
+      logger.debug(s"noise is: ${noise} for target: ${needsReplacement}")
+      noise
+    } catch {
+      case _: Exception => 0
+    }
   }
 
   /**
