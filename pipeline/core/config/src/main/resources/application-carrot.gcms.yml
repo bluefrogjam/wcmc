@@ -1,5 +1,7 @@
-carrot:
+wcmc:
+ workflow:
   gcms:
+   library:
     annotation:
       config:
         -

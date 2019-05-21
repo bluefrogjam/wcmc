@@ -20,7 +20,7 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.submitter:dpedrosa@ucdavis.edu"
 ))
 class RunnerLCMSTest extends WordSpec with Matchers with Logging {
-  @Value("${carrot.sample:#{environment.CARROT_SAMPLE}}")
+  @Value("${wcmc.workflow.lcms.sample:#{environment.CARROT_SAMPLE}}")
   val sampleName = ""
 
   @Autowired

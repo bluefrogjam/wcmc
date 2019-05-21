@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component
 @Profile(Array("carrot.output.writer.flat"))
 class FlatTableWriter[T] extends Writer[Sample] with Logging {
 
-  @Value("${carrot.output.writer.flat.separator:,}")
+  @Value("${wcmc.workflow.lcms.output.writer.flat.separator:,}")
   val seperator: String = ","
 
   var lineCounter: Int = 0

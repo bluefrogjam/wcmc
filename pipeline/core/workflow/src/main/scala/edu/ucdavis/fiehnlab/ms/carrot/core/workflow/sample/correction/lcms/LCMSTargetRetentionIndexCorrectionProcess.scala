@@ -13,70 +13,72 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import javax.annotation.PostConstruct
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
+
+import scala.beans.BeanProperty
 
 /**
   * targeted retention index correction, should be refactored to be a super class to make things easier
   */
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, val config: LCMSCorrectionLibraryProperties, stasisClient: StasisService) extends CorrectionProcess(libraryAccess, stasisClient) with Logging {
-  /**
-    * Mass accuracy (in Dalton) used in target filtering and similarity calculation
-    */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracy:0.010}")
-  val massAccuracySetting: Double = 0.0
+@ConfigurationProperties(prefix = "wcmc.workflow.lcms.process.correction", ignoreUnknownFields = false, ignoreInvalidFields = false)
+class LCMSCorrectionProcessProperties {
+
+  @BeanProperty
+  var massAccuracySetting: Double = 0.01
 
   /**
     * MassAccuracy in PPM for correction target search
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.mass.accuracyppm:10}")
-  val massAccuracyPPMSetting: Double = 0.0
+  @BeanProperty
+  var massAccuracyPPMSetting: Double = 10
 
   /**
     * Retention time accuracy (in seconds) used in target filtering and similarity calculation
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.rt.accuracy:12}")
-  val rtAccuracySetting: Double = 0.0
+  @BeanProperty
+  var rtAccuracySetting: Double = 12
 
   /**
     * Intensity used for penalty calculation - the peak similarity score for targets below this
     * intensity will be scaled down by the ratio of the intensity to this threshold
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensityPenaltyThreshold:10000}")
-  val intensityPenaltyThreshold: Float = 0
+  @BeanProperty
+  var intensityPenaltyThreshold: Float = 10000
 
   /**
     * absolute value of the height of a peak, to be considered a retention index marker. This is a hard cut off
     * and will depend on inject volume for these reasons
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.peak.intensity:1000}")
-  var minPeakIntensity: Float = 0
+  @BeanProperty
+  var minPeakIntensity: Float = 1000
 
   /**
     * minimum amount of standards, which have to be defined for this method to work
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.minimumDefinedStandard:5}")
-  var minimumDefinedStandard: Int = 0
+  @BeanProperty
+  var minimumDefinedStandard: Int = 5
 
   /**
     * this defines how many standards we need to find on minimum
     * for a retention index correction method to be successful
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.minimumFoundStandards:5}")
-  var minimumFoundStandards: Int = 0
+  @BeanProperty
+  var minimumFoundStandards: Int = 5
   /**
     * how many data points are required for the linear regression at the beginning and the end of the curve
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.regression.linear:2}")
-  val linearSamples: Int = 0
+  @BeanProperty
+  var linearSamples: Int = 2
 
   /**
     * what order is the polynomial regression
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.regression.polynom:3}")
-  val polynomialOrder: Int = 0
+  @BeanProperty
+  var polynomialOrder: Int = 3
 
   /**
     * we are utilizing the setting to group close by retention targets. This is mostly required, since we can't guarantee the order
@@ -87,8 +89,23 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     *
     * This setting needs to be provided in seconds
     */
-  @Value("${wcmc.pipeline.workflow.config.correction.groupStandard:25}")
-  var groupCloseByRetentionIndexStandardDifference: Int = 0
+  @BeanProperty
+  var groupCloseByRetentionIndexStandardDifference: Int = 25
+}
+
+@Component
+@Profile(Array("carrot.lcms"))
+class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, val config: LCMSCorrectionLibraryProperties, stasisClient: StasisService, correctionProperties: LCMSCorrectionProcessProperties) extends CorrectionProcess(libraryAccess, stasisClient) with Logging {
+  val massAccuracySetting: Double = correctionProperties.massAccuracySetting
+  val massAccuracyPPMSetting: Double = correctionProperties.massAccuracyPPMSetting
+  val rtAccuracySetting: Double = correctionProperties.rtAccuracySetting
+  val intensityPenaltyThreshold: Float = correctionProperties.intensityPenaltyThreshold
+  var minPeakIntensity: Float = correctionProperties.minPeakIntensity
+  var minimumDefinedStandard: Int = correctionProperties.minimumDefinedStandard
+  var minimumFoundStandards: Int = correctionProperties.minimumFoundStandards
+  val linearSamples: Int = correctionProperties.linearSamples
+  val polynomialOrder: Int = correctionProperties.polynomialOrder
+  var groupCloseByRetentionIndexStandardDifference: Int = correctionProperties.groupCloseByRetentionIndexStandardDifference
 
   @PostConstruct
   def printConfig(): Unit = {
@@ -210,8 +227,8 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[Target, Feature] =>
           logger.info(f"annotated: {name:${hit.target.name.getOrElse("--")}, ri:${hit.target.retentionIndex}%.2f, mass:${hit.target.accurateMass.getOrElse(0.0)}%.4f} with {rt(s):${hit.annotation.retentionTimeInSeconds}%.2f, mass:${hit.annotation.massOfDetectedFeature.get.mass}%.4f}, " +
-              f"massErrorDa: ${MassAccuracy.calculateMassError(hit.annotation, hit.target).get}%.6f, " +
-              f"massErrorPPM: ${MassAccuracy.calculateMassErrorPPM(hit.annotation, hit.target).get}%.2f")
+            f"massErrorDa: ${MassAccuracy.calculateMassError(hit.annotation, hit.target).get}%.6f, " +
+            f"massErrorPPM: ${MassAccuracy.calculateMassErrorPPM(hit.annotation, hit.target).get}%.2f")
           hit
       }.seq
 

@@ -15,46 +15,6 @@ import scala.collection.JavaConverters._
 @ComponentScan
 class LCMSCorrectionTargetConfiguration extends Logging {
 
-  /**
-    * defines a library access method, based on all methods
-    * defines in the yaml file
-    *
-    * @param properties
-    * @return
-    */
-  @Bean
-  def correctionTargets(properties: LCMSCorrectionLibraryProperties): LibraryAccess[CorrectionTarget] = {
-
-    val methods: Map[AcquisitionMethod, Iterable[LCMSCorrectionTarget]] = properties.config.asScala.map { x =>
-      (AcquisitionMethod(ChromatographicMethod(x.name, Some(x.instrument), Some(x.column), x.ionMode match {
-        case "positive" => Some(PositiveMode())
-        case "negative" => Some(NegativeMode())
-        case _ => None
-      })), x.targets.asScala.map(LCMSCorrectionTarget))
-    }.toMap
-
-
-    val libs = methods.keySet.map { x =>
-      logger.info(s"==== method ${x.chromatographicMethod} ====")
-
-      new ReadonlyLibrary[LCMSCorrectionTarget] {
-
-        override def load(acquisitionMethod: AcquisitionMethod): Iterable[LCMSCorrectionTarget] = {
-          if (acquisitionMethod == x) {
-            methods(x)
-          }
-          else {
-            Seq.empty
-          }
-        }
-
-        override def libraries: Seq[AcquisitionMethod] = methods.keySet.toSeq
-      }.asInstanceOf[LibraryAccess[CorrectionTarget]]
-    }.toSeq.asJava
-
-    new DelegateLibraryAccess[CorrectionTarget](libs)
-  }
-
 }
 
 

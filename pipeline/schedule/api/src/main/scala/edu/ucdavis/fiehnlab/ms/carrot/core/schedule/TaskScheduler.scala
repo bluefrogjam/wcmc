@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
   */
 trait TaskScheduler {
 
-  @Value("${wcmc.pipeline.workflow.config.email.sender:binbase@gmail.com}")
+  @Value("${wcmc.workflow.config.email.sender:binbase@gmail.com}")
   val emailSender: String = ""
 
   @Autowired

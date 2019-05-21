@@ -8,14 +8,17 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, C
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
+import edu.ucdavis.fiehnlab.wcmc.apps.singlerunner.util.SpringProperties
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot._
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties}
 import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.core.env.ConfigurableEnvironment
 
-import scala.io.Source
+import scala.collection.JavaConverters._
 
 object SingleRunner extends App {
   val app = new SpringApplication(classOf[SingleRunner])
@@ -24,6 +27,7 @@ object SingleRunner extends App {
   val context = app.run(args: _*)
 }
 
+@EnableConfigurationProperties
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class SingleRunner extends CommandLineRunner with Logging {
   @Autowired
@@ -32,14 +36,31 @@ class SingleRunner extends CommandLineRunner with Logging {
   @Autowired
   val taskRunner: TaskRunner = null
 
+  @Autowired
+  val environment: ConfigurableEnvironment = null
+
   override def run(args: String*): Unit = {
     if (args.size != 2) {
       logger.error("\nPlease provide a sample file to process and an acquisition method name.\n")
+
+
       System.exit(0)
     } else {
       logger.info(s"Arguments: ${args.mkString("\n")}")
     }
 
+    val properties = SpringProperties.getAllProperties(environment)
+
+    properties.asScala.toSeq.sortBy(_._1).collect {
+
+      case (key, value) =>
+
+        if (!key.contains("target")) {
+          logger.info(s"config key: ${key} - ${value}")
+        }
+
+
+    }
     val method = args(1)
     try {
       process(List(args(0)), AcquisitionMethod.deserialize(method))
@@ -75,7 +96,10 @@ class SingleRunner extends CommandLineRunner with Logging {
           logger.error(s"\tFailed processing ${sample}.", ex)
       }
     }
+
+
   }
+
 }
 
 @Configuration
@@ -98,5 +122,10 @@ class SingleRunnerConfiguration extends Logging {
   def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
 
   @Bean
-  def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = new MergeLibraryAccess(correction, annotation)
+  def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = {
+    val lib = new MergeLibraryAccess(correction, annotation)
+
+    logger.info(s"libray has method: ${lib.libraries}")
+    return lib
+  }
 }

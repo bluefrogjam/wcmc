@@ -12,9 +12,8 @@ import org.springframework.validation.annotation.Validated
 import scala.beans.BeanProperty
 
 @Component
-@Validated
 @Profile(Array("carrot.lcms"))
-@ConfigurationProperties(prefix = "carrot.lcms.correction", ignoreUnknownFields = false, ignoreInvalidFields = false)
+@ConfigurationProperties(prefix = "wcmc.workflow.lcms.library.correction", ignoreUnknownFields = false, ignoreInvalidFields = false)
 class LCMSCorrectionLibraryProperties {
 
   /**

@@ -36,7 +36,7 @@ import scala.collection.JavaConverters._
 class TaskRunner extends Logging {
 
 
-  @Value("${wcmc.pipeline.workflow.config.email.sender:binbase@gmail.com}")
+  @Value("${wcmc.workflow.config.email.sender:binbase@gmail.com}")
   val emailSender: String = ""
 
   @Autowired
@@ -81,6 +81,8 @@ class TaskRunner extends Logging {
     assert(task.samples.nonEmpty)
     assert(task.mode != null, "task.mode cannot be null")
     assert(task.env != null, "task.env cannot be null")
+
+    assert(workflow.correction.libraryAccess.load(task.acquisitionMethod).nonEmpty, "your provided correction library had not retention index markers!")
 
     logger.info(s"executing received task: ${task} and discovering ${task.samples.size} files")
     val classes: Seq[ExperimentClass] = task.samples.groupBy(_.matrix).map { entry =>

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component
 @Profile(Array("carrot.output.writer.txt"))
 class QuantifiedSampleTxtWriter[T] extends Writer[Sample] with Logging {
 
-  @Value("${carrot.output.writer.txt.separator:,}")
+  @Value("${wcmc.workflow.lcms.output.writer.txt.separator:,}")
   val seperator: String = ","
 
   var lineCounter: Int = 0

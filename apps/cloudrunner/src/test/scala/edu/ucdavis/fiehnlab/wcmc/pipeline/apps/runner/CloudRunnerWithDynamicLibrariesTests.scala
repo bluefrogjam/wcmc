@@ -24,7 +24,7 @@ import org.springframework.web.client.HttpClientErrorException
   "mona.rest.server.port:9090"
 ))
 class CloudRunnerWithDynamicLibrariesTests extends WordSpec with Matchers with Logging {
-  @Value("${carrot.sample:#{environment.CARROT_SAMPLE}}")
+  @Value("${wcmc.workflow.lcms.sample:#{environment.CARROT_SAMPLE}}")
   val sampleName = ""
 
   @Autowired

@@ -92,7 +92,7 @@ class BucketLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfi
 }
 
 @Profile(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket"))
-@ConfigurationProperties(prefix = "carrot.resource.store.bucket")
+@ConfigurationProperties(prefix = "wcmc.workflow.resource.store.bucket")
 @Component
 class BucketStorageConfigurationProperties {
 

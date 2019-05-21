@@ -110,7 +110,7 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) ext
 @Component
 @Validated
 @Profile(Array("carrot.gcms.library.binbase"))
-@ConfigurationProperties(prefix = "carrot.gcms.library.binbase", ignoreUnknownFields = false, ignoreInvalidFields = false)
+@ConfigurationProperties(prefix = "wcmc.workflow.gcms.library.binbase", ignoreUnknownFields = false, ignoreInvalidFields = false)
 class BinBaseConnectionProperties {
 
   @BeanProperty

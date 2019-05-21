@@ -5,7 +5,6 @@ spring:
     active: prod
     include:
       - carrot.nostasis
-      - carrot.lcms
       - file.source.luna
       - file.source.eclipse
       - carrot.runner.required
@@ -14,6 +13,9 @@ spring:
       - carrot.report.quantify.height
       - carrot.output.storage.local
       - carrot.output.writer.txt
+      - carrot.targets.yaml.correction
+      - carrot.targets.yaml.annotation
+      - carrot.lcms
   autoconfigure:
     exclude:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
