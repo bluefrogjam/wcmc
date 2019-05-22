@@ -12,8 +12,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.math.{CombinedRegression, SimilarityMethod
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import javax.annotation.PostConstruct
 import org.apache.logging.log4j.scala.Logging
-import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
@@ -95,7 +95,7 @@ class LCMSCorrectionProcessProperties {
 
 @Component
 @Profile(Array("carrot.lcms"))
-class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, val config: LCMSCorrectionLibraryProperties, stasisClient: StasisService, correctionProperties: LCMSCorrectionProcessProperties) extends CorrectionProcess(libraryAccess, stasisClient) with Logging {
+class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, stasisClient: StasisService, correctionProperties: LCMSCorrectionProcessProperties) extends CorrectionProcess(libraryAccess, stasisClient) with Logging {
   val massAccuracySetting: Double = correctionProperties.massAccuracySetting
   val massAccuracyPPMSetting: Double = correctionProperties.massAccuracyPPMSetting
   val rtAccuracySetting: Double = correctionProperties.rtAccuracySetting
@@ -109,7 +109,6 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
 
   @PostConstruct
   def printConfig(): Unit = {
-    logger.info(s"Config: ${config}")
   }
 
   /**

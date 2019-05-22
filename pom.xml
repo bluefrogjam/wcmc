@@ -44,6 +44,11 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
+                <artifactId>yaml</artifactId>
+                <version>1.0.16-SNAPSHOT</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-scala_2.11 -->
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
@@ -993,7 +998,7 @@
         <repository>
             <id>releases</id>
             <name>Fiehnlab Releases</name>
-<url>http://gose.fiehnlab.ucdavis.edu:55000/content/repositories/releases/</url>
+            <url>http://gose.fiehnlab.ucdavis.edu:55000/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
@@ -1051,7 +1056,9 @@
                     <target>${maven.compiler.target}</target>
                     <compilerVersion>1.8</compilerVersion>
                     <annotationProcessors>
-                        <annotationProcessor>org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor</annotationProcessor>
+                        <annotationProcessor>
+                            org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor
+                        </annotationProcessor>
                     </annotationProcessors>
                 </configuration>
 

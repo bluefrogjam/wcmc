@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna","file.source.eclipse", "carrot.processing.peakdetection", "carrot.lcms", "test"))
+@ActiveProfiles(Array("file.source.luna","file.source.eclipse", "carrot.processing.peakdetection", "carrot.lcms", "test","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
 class RICorrectionBugTest extends WordSpec with Matchers with Logging {
   val libName = "lcms_istds"
 

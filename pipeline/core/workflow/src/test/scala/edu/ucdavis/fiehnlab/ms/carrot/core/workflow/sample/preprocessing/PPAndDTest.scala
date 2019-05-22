@@ -25,7 +25,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.report.quantify.height", "carrot.lcms", "test"))
+@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.report.quantify.height", "carrot.lcms", "test","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
 class PPAndDTest extends WordSpec with Matchers with Logging {
   val libName = "lcms_istds"
 

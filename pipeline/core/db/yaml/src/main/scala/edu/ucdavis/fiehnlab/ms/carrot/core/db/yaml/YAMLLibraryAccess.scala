@@ -38,7 +38,7 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
                 case _ => None
               }
 
-              val instrument = method.get("instrument").asInstanceOf[String]
+              val instrument = method.get("instrument").toString.asInstanceOf[String]
 
               val acquisitionMethod = AcquisitionMethod(
                 ChromatographicMethod(

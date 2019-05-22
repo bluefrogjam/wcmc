@@ -26,8 +26,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.mzrt",
   "carrot.lcms",
-  "test",
-  "teddy"))
+  "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with Logging {
 
   @Autowired
@@ -114,7 +113,7 @@ class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with
       targetValues.foreach(tgt => {
         logger.info(s"target: ${
           quantified.quantifiedTargets.filter(_.name.get == tgt._1)
-              .map(f => s"${f.retentionIndex} (${f.precursorMass.get})").mkString("; ")
+            .map(f => s"${f.retentionIndex} (${f.precursorMass.get})").mkString("; ")
         }")
         quantified.quantifiedTargets.filter(_.name.get == tgt._1).head.retentionIndex shouldBe tgt._2 +- annotation.lcmsProperties.retentionIndexWindow
       })

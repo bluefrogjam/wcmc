@@ -31060,3 +31060,86 @@
               isInternalStandard: true
               requiredForCorrection: true
               confirmed: true
+        - name: keim
+          description: ''
+          column: test
+          ionMode: negative
+          instrument: "6550"
+          targets:
+            - identifier: 1_CUDA iSTD [M-H]- _HPTJABJPZMULFH-UHFFFAOYSA-N
+              accurateMass: 339.265307
+              retentionTime: 0.66
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_LPE (17:1) iSTD [M-H]-_LNJNONCNASQZOB-HEDKFQSOSA-N
+              accurateMass: 464.278224
+              retentionTime: 1.43
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_LPC (17:0) iSTD [M+HAc-H]- _SRRQPVVYXBTRQK-XMMPIXPASA-N
+              accurateMass: 568.362
+              retentionTime: 1.912
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_FA iSTD (16:0)-d3 [M-H]- _IPCSVZSSVZVIGE-FIBGUPNXSA-N
+              accurateMass: 258.251524
+              retentionTime: 2.49
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_MAG (17:0/0:0/0:0) iSTD [M+HAc-H]- _SVUQHVRAGMNPLW-UHFFFAOYSA-N
+              accurateMass: 403.3066
+              retentionTime: 3.135
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_PC (12:0/13:0) iSTD [M+HAc-H]-_FCTBVSCBBWKZML-WJOKGBTCSA-N
+              accurateMass: 694.4665
+              retentionTime: 3.61
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_PG (17:0/17:0) iSTD [M-H]-_ZBVHXVKEMAIWQQ-QPPIDDCLSA-N
+              accurateMass: 749.533824
+              retentionTime: 5.148
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_SM (d18:1/17:0) iSTD [M+HAc-H]-_YMQZQHIESOAPQH-JXGHDCMNSA-N
+              accurateMass: 775.5971
+              retentionTime: 5.199
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_Ceramide (d18:1/17:0) iSTD [M+HAc-H]- _ICWGMOFDULMCFL-QKSCFGQVSA-N
+              accurateMass: 610.5416
+              retentionTime: 6.106
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_Ceramide (d18:1/17:0) iSTD [M+Cl]- _ICWGMOFDULMCFL-QKSCFGQVSA-N
+              accurateMass: 586.4971
+              retentionTime: 6.114
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
+            - identifier: 1_PE (17:0/17:0) iSTD [M-H]-_YSFFAUPDXKTJMR-DIPNUNPCSA-N
+              accurateMass: 718.539224
+              retentionTime: 6.422000000000001
+              retentionTimeUnit: minutes
+              isInternalStandard: true
+              requiredForCorrection: false
+              confirmed: true
