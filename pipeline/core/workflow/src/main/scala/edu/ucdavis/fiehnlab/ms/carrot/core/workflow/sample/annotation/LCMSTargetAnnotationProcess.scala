@@ -65,7 +65,8 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
       } else {
         if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
           logger.debug("preferring gaussian similarity over mass accuracy and rt distance")
-          matches.sortBy { r => (MassAccuracy.calculateMassError(r, target).get, SimilarityMethods.featureTargetSimilarity(r, target, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold)) }
+          matches.sortBy { r => (MassAccuracy.calculateMassError(r, target).get, SimilarityMethods.featureTargetSimilarity(r, target, lcmsProperties.massAccuracySetting, lcmsProperties.retentionIndexWindow, lcmsProperties.intensityPenaltyThreshold)) }
+
         } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
           logger.debug("preferring accuracy over retention time distance")
           matches.sortBy { r => (MassAccuracy.calculateMassErrorPPM(r, target).get, RetentionIndexDifference.diff(target, r)) }
@@ -144,7 +145,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
           val optimizedTargetList =
             if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
               logger.debug("preferring gaussian similarity over mass accuracy and rt distance")
-              x._2.sortBy { r => (MassAccuracy.calculateMassError(x._1, r), SimilarityMethods.featureTargetSimilarity(x._1, r, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold)) }
+              x._2.sortBy { r => (MassAccuracy.calculateMassError(x._1, r), SimilarityMethods.featureTargetSimilarity(x._1, r, lcmsProperties.massAccuracySetting, lcmsProperties.retentionIndexWindow, lcmsProperties.intensityPenaltyThreshold)) }
             } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
               logger.debug("preferring accuracy over retention time distance")
               x._2.sortBy(r => (MassAccuracy.calculateMassErrorPPM(x._1, r).get, RetentionIndexDifference.diff(r, x._1)))
@@ -243,7 +244,7 @@ class LCMSAnnotationProcessProperties {
     * should be half of the intended window
     */
   @BeanProperty
-  var retentionIndexWindow: Double = 0
+  var retentionIndexWindow: Double = 6
 
   /**
     * are we utilizing the recursive annotation mode.
@@ -260,7 +261,7 @@ class LCMSAnnotationProcessProperties {
     *
     * by default we define the retention index to be more important due to isomeres.
     */
-  @Value("${wcmc.workflow.lcms.annotation.detection.massOverRI:false}")
+  @BeanProperty
   var preferMassAccuracyOverRetentionIndexDistance: Boolean = false
 
   /**
@@ -290,12 +291,6 @@ class LCMSAnnotationProcessProperties {
     */
   @BeanProperty
   var massAccuracySettingPpm: Double = 10
-
-  /**
-    * Retention time accuracy (in seconds) used in target filtering and similarity calculation
-    */
-  @BeanProperty
-  var rtAccuracySetting: Double = 6
 
   /**
     * Intensity used for penalty calculation - the peak similarity score for targets below this

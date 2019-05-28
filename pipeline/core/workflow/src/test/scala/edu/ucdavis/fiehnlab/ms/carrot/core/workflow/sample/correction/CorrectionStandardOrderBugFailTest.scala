@@ -18,9 +18,9 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "keim","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 @TestPropertySource(properties = Array(
-  "wcmc.pipeline.workflow.config.correction.peak.intensity:5000"
+  "wcmc.workflow.lcms.process.correction.minPeakIntensity:5000"
 ))
 class CorrectionStandardOrderBugFailTest extends WordSpec with Matchers with Logging {
 

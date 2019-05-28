@@ -49,7 +49,7 @@ class SingleRunner extends CommandLineRunner with Logging {
       logger.info(s"Arguments: ${args.mkString("\n")}")
     }
 
-    val properties = SpringProperties.getAllProperties(environment)
+    val properties = SpringProperties.getPropertiesStartingWith(environment, "wcmc")
 
     properties.asScala.toSeq.sortBy(_._1).collect {
 
