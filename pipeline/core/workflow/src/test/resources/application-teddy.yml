@@ -10001,13 +10001,6 @@ carrot:
               requiredForCorrection: false
               confirmed: true
             - identifier: Unknown
-              accurateMass: 215.0323
-              retentionTime: 0.41
-              retentionTimeUnit: minutes
-              isInternalStandard: false
-              requiredForCorrection: false
-              confirmed: true
-            - identifier: Unknown
               accurateMass: 227.0523
               retentionTime: 0.41
               retentionTimeUnit: minutes

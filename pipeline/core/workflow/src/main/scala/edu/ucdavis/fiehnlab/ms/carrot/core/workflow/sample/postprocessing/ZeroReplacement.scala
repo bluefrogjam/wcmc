@@ -55,7 +55,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
     val rawdata: Option[Sample] =
       if (rawSample.isDefined) {
         rawSample
-      } else { //TODO: this block fails when rawSample not defined
+      } else {
         zeroReplacementProperties.fileExtension.collect {
 
           case extension: String =>
@@ -87,7 +87,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
         else {
           try {
             val replaced = replaceValue(target, sample, correctedRawData)
-            logger.info(f"replacing ${target.name.get} with ${replaced.spectraUsedForReplacement.massOfDetectedFeature}")
+            logger.debug(f"replacing ${target.name.get} with ${replaced.spectraUsedForReplacement.massOfDetectedFeature}")
             replaced
           }
           catch {
@@ -154,6 +154,16 @@ class ZeroReplacementProperties {
     * Likely more expensive, but a statistically reasonable estimate
     */
   var estimateByChromatogramNoise: Boolean = false
+
+  /**
+    * finds a replacement value using a mass widow of 0.050 Dalton
+    */
+  var estimateByBiggerMassWindow: Boolean = true
+
+  /**
+    * mass error value to search for replacement features
+    */
+  var failsafeMassAccuracyDa: Double = 0.05
 
   /**
     * utilized mass accuracy for searches

@@ -11,7 +11,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action.{AddToLibraryAction, ChartingAction2}
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
@@ -59,7 +58,7 @@ class TaskRunner extends Logging {
   val storage: java.util.Collection[ResultStorage] = new util.ArrayList[ResultStorage]()
 
   @Autowired
-  val msmsUpload: java.util.Collection[PostAction] = new util.ArrayList[PostAction]()
+  val actions: java.util.List[PostAction] = new util.ArrayList[PostAction]()
 
   @Autowired
   val context: ApplicationContext = null
@@ -120,21 +119,13 @@ class TaskRunner extends Logging {
 
 
     //send the MSMSSpectra to mona
-    msmsUpload.asScala.foreach {
-      case action: AddToLibraryAction =>
-        logger.info("Uploading msms to mona")
-        classes.foreach { x =>
-          x.samples.foreach { smp =>
-            action.run(smp, x, experiment)
-          }
+    actions.asScala.foreach { action =>
+      classes.foreach { x =>
+        x.samples.foreach { smp =>
+          logger.info(s"running action ${action.getClass.getSimpleName} on ${smp}, ${experiment}")
+          action.run(smp, x, experiment)
         }
-      case action: ChartingAction2[Double] =>
-        classes.foreach { x =>
-          x.samples.foreach { smp =>
-            action.run(smp, x, experiment)
-          }
-        }
-      case _ => None
+      }
     }
 
     //send the processed result to the storage engine.

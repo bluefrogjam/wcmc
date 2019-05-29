@@ -12,7 +12,7 @@ carrot:
 mona:
   rest:
     server:
-      host: 127.0.0.1
+      host: localhost
       port: 9090
       user: admin
       password: admin

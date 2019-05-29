@@ -86,7 +86,7 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
 
     // apply post processing
     postprocessingInstructions.asScala.foreach { x =>
-      logger.info(s"executing: $x")
+      logger.info(s"executing: ${x.getClass.getSimpleName}")
       result = x.process(result, method, rawSample)
     }
 

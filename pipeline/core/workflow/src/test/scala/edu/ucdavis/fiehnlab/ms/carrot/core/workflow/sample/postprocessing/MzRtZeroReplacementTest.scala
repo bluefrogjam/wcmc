@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
+import java.io.File
+
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledTarget, NegativeMode, QuantifiedSample}
@@ -11,7 +13,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
@@ -26,7 +28,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "file.source.luna",
   "teddy",
   "test"))
-class MzRtZeroReplacementTest extends WordSpec with Logging with Matchers {
+class MzRtZeroReplacementTest extends WordSpec with Logging with Matchers with BeforeAndAfterAll {
   val libName = "teddy"
 
   @Autowired
@@ -50,10 +52,14 @@ class MzRtZeroReplacementTest extends WordSpec with Logging with Matchers {
   @Autowired
   val stasis_cli: StasisService = null
 
+  override def beforeAll() = {
+    new File(s"${sys.env.get("java.io.temp")}/B2a_TEDDYLipids_Neg_QC006.mzml").delete()
+  }
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
-  "MzRtZeroReplacementTest" must {
+  "MzRtZeroReplacementTest" should {
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
     val rawSample = loader.getSample("B2a_TEDDYLipids_Neg_QC006.mzml")
     val sample: QuantifiedSample[Double] = quantify.process(
@@ -65,44 +71,47 @@ class MzRtZeroReplacementTest extends WordSpec with Logging with Matchers {
         method, Some(rawSample)),
       method, Some(rawSample))
 
-    "replaceValue" should {
+    "replace the null values in the file" in {
+      zeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = false
+      val replaced: QuantifiedSample[Double] = zeroReplacement.process(sample, method, Some(rawSample))
 
-      "replace the null values in the file" in {
-        zeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = false
-        val replaced: QuantifiedSample[Double] = zeroReplacement.process(sample, method, Some(rawSample))
-
-        replaced.quantifiedTargets.foreach { x =>
-          logger.info(s"target: ${x.accurateMass.get % .4f}_${x.name.get} = ${x.quantifiedValue.getOrElse("none")}")
+      logger.info("name, rts, ri, mz, int")
+      replaced.quantifiedTargets.foreach { x =>
+        if (x.quantifiedValue.isEmpty)
+          logger.info(f"${x.name.get}, ${x.retentionTimeInSeconds}%.2f, ${x.retentionIndex}%.2f, ${x.accurateMass.get}%.4f, ${x.quantifiedValue.getOrElse(0.0)}%.0f")
+        else
           x.quantifiedValue.getOrElse(-1.0) should be >= 0.0
-        }
-
-        //all spectra should be the same count as the targets
-        replaced.spectra.size should be(replaced.quantifiedTargets.size)
-
-        //should have GapFilledTargets
-        replaced.quantifiedTargets.collect {
-          case s: GapFilledTarget[Double] => s
-        } should not be empty
       }
 
-      "replace the null values in the file using nearest ion estimation" in {
-        zeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = true
-        val replaced: QuantifiedSample[Double] = zeroReplacement.process(sample, method, Some(rawSample))
+      //all spectra should be the same count as the targets
+      replaced.spectra.size should be(replaced.quantifiedTargets.size)
 
-        // All target must be nonzero
-        replaced.quantifiedTargets.foreach { x =>
-          logger.info(s"target: ${x.accurateMass.get % .4f}_${x.name.get} = ${x.quantifiedValue.getOrElse("none")}")
+      //should have GapFilledTargets
+      replaced.quantifiedTargets.collect {
+        case s: GapFilledTarget[Double] => s
+      } should not be empty
+    }
+
+    "replace the null values in the file using nearest ion estimation" in {
+      zeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = true
+      val replaced: QuantifiedSample[Double] = zeroReplacement.process(sample, method, Some(rawSample))
+
+      logger.info("name, rts, ri, mz, int")
+      // All target must be nonzero
+      replaced.quantifiedTargets.foreach { x =>
+        if (x.quantifiedValue.isEmpty)
+          logger.info(f"target: ${x.name.get}, ${x.retentionTimeInSeconds}%.2f, ${x.retentionIndex}%.2f, ${x.accurateMass.get}%.4f, ${x.quantifiedValue.getOrElse(0.0)}%.0f")
+        else
           x.quantifiedValue.getOrElse(-1.0) should be >= 0.0
-        }
-
-        //all spectra should be the same count as the targets
-        replaced.spectra.size should be(replaced.quantifiedTargets.size)
-
-        //should have GapFilledTargets
-        replaced.quantifiedTargets.collect {
-          case s: GapFilledTarget[Double] => s
-        } should not be empty
       }
+
+      //all spectra should be the same count as the targets
+      replaced.spectra.size should be(replaced.quantifiedTargets.size)
+
+      //should have GapFilledTargets
+      replaced.quantifiedTargets.collect {
+        case s: GapFilledTarget[Double] => s
+      } should not be empty
     }
   }
 }

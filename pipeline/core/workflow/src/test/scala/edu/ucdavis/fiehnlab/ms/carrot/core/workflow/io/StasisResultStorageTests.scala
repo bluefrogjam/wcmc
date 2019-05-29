@@ -13,7 +13,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Chromat
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage.StasisResultStorage
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{ZeroReplacement, ZeroreplacedTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
@@ -26,7 +26,7 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.{Bean, Configuration, Import}
+import org.springframework.context.annotation.{Configuration, Import}
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
@@ -103,7 +103,7 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
     val sample = sampleLoader.loadSample("B2a_TEDDYLipids_Neg_QC006.mzml").get
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
 
-    val result = quantification.process(
+    val quantified = quantification.process(
       annotation.process(
         correction.process(
           deconv.process(sample, method, Some(sample)),
@@ -112,8 +112,8 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
       method, Some(sample))
 
     "have quantified data" in {
-      logger.info(s"QUANTIFIED: ${result.quantifiedTargets.size}")
-      result.quantifiedTargets should not be empty
+      logger.info(s"QUANTIFIED: ${quantified.quantifiedTargets.size}")
+      quantified.quantifiedTargets should not be empty
     }
 
     "have a stasisWriter" in {
@@ -127,7 +127,13 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
       when(mockStasis.addTracking(TrackingData(sample.name, "exported", sample.fileName))).thenReturn(ResponseEntity.ok(mock[TrackingResponse]))
       when(mockStasis.addResult(mock[ResultData])).thenReturn(ResponseEntity.ok(mock[ResultData]))
 
-      val data = writer.save(result)
+      val repl = quantified.quantifiedTargets.collect {
+        case q: ZeroreplacedTarget => q
+      }
+
+      println(s"${repl.head}")
+
+      val data = writer.save(quantified)
       saveData(data)
 
       data.injections should have size 1
@@ -168,8 +174,5 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
 
 @Configuration
 @Import(Array(classOf[RestClientConfig], classOf[TargetedWorkflowTestConfiguration]))
-class StatisWriterTestConfig extends MockitoSugar {
-  @Bean
-  def writer: StasisResultStorage[Double] = new StasisResultStorage[Double]()
-
+class StatisWriterTestConfig {
 }

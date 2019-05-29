@@ -46,10 +46,9 @@ class QuantifyByHeightProcessTest extends WordSpec with Matchers with Logging {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "QuantifyByHeightProcessTest" should {
+    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.mzml", "B5_SA0002_P20Lipids_Pos_1FL_1006.mzml"))
 
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Option(PositiveMode())))
-
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.mzml", "B5_SA0002_P20Lipids_Pos_1FL_1006.mzml"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)
