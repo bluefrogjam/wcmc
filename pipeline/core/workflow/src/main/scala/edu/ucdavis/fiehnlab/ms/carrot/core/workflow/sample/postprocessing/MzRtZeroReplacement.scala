@@ -147,15 +147,14 @@ class MzRtZeroReplacement extends ZeroReplacement {
         }
       }
       else { // filterByTime not empty
-        if (needsReplacement.name.get.startsWith("FAHFA (26:2)"))
-          logger.info(s"${needsReplacement.name.get}")
+        //        if (needsReplacement.name.get.startsWith("FAHFA (26:2)"))
+        //          logger.info(s"${needsReplacement.name.get}")
 
         //        logger.info(s"replacementValueSpectra filter found ${filteredByTime.size} values for replacement")
         val filtered = filteredByTime.maxBy { spectra =>
           MassAccuracy.findClosestIon(spectra, needsReplacement.precursorMass.get, needsReplacement, zeroReplacementProperties.failsafeMassAccuracyDa).get.intensity
         }
 
-        logger.debug(s"closest: ${filtered}")
 
         new Feature with CorrectedSpectra {
           override val uniqueMass: Option[Double] = filtered.uniqueMass

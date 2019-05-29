@@ -131,8 +131,6 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
         case q: ZeroreplacedTarget => q
       }
 
-      println(s"${repl.head}")
-
       val data = writer.save(quantified)
       saveData(data)
 

@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, QuantifiedSpectra, QuantifiedTarget, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
 import org.apache.logging.log4j.scala.Logging
@@ -23,25 +24,33 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
   def save(sample: QuantifiedSample[T]): ResultData = {
 
     //    val results = sample.spectra.map(feature => {
-    val results = sample.quantifiedTargets.map(target => {
-      Result(CarrotToStasisConverter.asStasisTarget(target),
-        Annotation(target.retentionIndex,
-          target.quantifiedValue.getOrElse(0.0) match {
+    val results: Seq[Result] = sample.quantifiedTargets.collect {
+      case replacedtgt: ZeroreplacedTarget =>
+        Result(CarrotToStasisConverter.asStasisTarget(replacedtgt),
+          Annotation(replacedtgt.spectraUsedForReplacement.retentionIndex,
+            replacedtgt.spectraUsedForReplacement.quantifiedValue.get,
+            replaced = true,
+            replacedtgt.spectraUsedForReplacement.accurateMass.get,
+            replacedtgt.retentionTimeInSeconds,
+            massError = Math.abs(replacedtgt.precursorMass.get - replacedtgt.spectraUsedForReplacement.accurateMass.get),
+            massErrorPPM = getReplMassError(replacedtgt, Some(replacedtgt.spectraUsedForReplacement), ppm = true)
+          )
+        )
+      case quanttgt: QuantifiedTarget[T] =>
+        Result(CarrotToStasisConverter.asStasisTarget(quanttgt),
+          Annotation(quanttgt.retentionIndex,
+            quanttgt.quantifiedValue.getOrElse(0.0) match {
             case x: Double => x.toDouble
             case _ => 0.0
           },
-          replaced = target match {
-            case f: GapFilledSpectra[T] => true
-            case _ => false
-          },
-
-          target.precursorMass.getOrElse(0.0),
-          nonCorrectedRt = target.retentionTimeInSeconds,
-          massError = getTargetMassError(target, target.spectra),
-          massErrorPPM = getTargetMassError(target, target.spectra, ppm = true)
+            replaced = false,
+            quanttgt.precursorMass.get,
+            nonCorrectedRt = quanttgt.retentionTimeInSeconds,
+            massError = getTargetMassError(quanttgt, quanttgt.spectra),
+            massErrorPPM = getTargetMassError(quanttgt, quanttgt.spectra, ppm = true)
         )
       )
-    })
+    }
 
     val injections = Map(sample.name -> Injection(System.currentTimeMillis().toString,
       Correction(3,
@@ -73,7 +82,17 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
       else
         spectrum.get.massAccuracy.getOrElse(0.0)
     else
-      0.0
+      -0.2
+  }
+
+  def getReplMassError(target: ZeroreplacedTarget, spectrum: Option[GapFilledSpectra[Double]], ppm: Boolean = false): Double = {
+    if (spectrum.isDefined)
+      if (ppm)
+        spectrum.get.massAccuracyPPM.getOrElse(0.0)
+      else
+        spectrum.get.massAccuracy.get
+    else
+      -0.1
   }
 
   /**
