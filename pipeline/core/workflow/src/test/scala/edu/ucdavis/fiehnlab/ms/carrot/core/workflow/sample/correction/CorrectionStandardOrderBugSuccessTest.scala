@@ -20,7 +20,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "keim"))
+@ActiveProfiles(Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "keim", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class CorrectionStandardOrderBugSuccessTest extends WordSpec with Matchers with Logging {
 
   @Autowired

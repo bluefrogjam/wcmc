@@ -31,29 +31,30 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
   /**
     * minimum required similarity
     */
-  @Value("${carrot.msms.generate.library.similarity.min:0.7}")
+  @Value("${wcmc.workflow.lcms.msms.generate.library.similarity.min:0.7}")
   val minimumSimilarity: Double = 0
 
   /**
     * library inclusion time window in seconds
     */
-  @Value("${carrot.msms.generate.library.retentionIndex.window:6}")
+  @Value("${wcmc.workflow.lcms.msms.generate.library.retentionIndex.window:6}")
   val retentionIndexWindow: Double = 0
 
   /**
     * mass window in PPM
     */
-  @Value("${carrot.msms.generate.library.accurateMass.window:0.010}")
+  @Value("${wcmc.workflow.lcms.msms.generate.library.accurateMass.window:0.010}")
   val accurateMassWindow: Double = 0
 
-  @Value("${carrot.msms.generate.library.intensity.min: 1000}")
+  @Value("${wcmc.workflow.lcms.msms.generate.library.intensity.min: 1000}")
   val minimumRequiredIntensity: Double = 0
 
   /**
     * actually processes the item (implementations in subclasses)
     *
     * @param sample
-    * @return
+    * @param experimentClass
+    * @param experiment
     */
   //  override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
   def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {

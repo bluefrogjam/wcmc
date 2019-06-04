@@ -10,11 +10,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.math.SimilarityMethods
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
+import scala.beans.BeanProperty
 import scala.collection.immutable.ListMap
 
 /**
@@ -64,7 +65,8 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
       } else {
         if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
           logger.debug("preferring gaussian similarity over mass accuracy and rt distance")
-          matches.sortBy { r => (MassAccuracy.calculateMassError(r, target).get, SimilarityMethods.featureTargetSimilarity(r, target, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold)) }
+          matches.sortBy { r => (MassAccuracy.calculateMassError(r, target).get, SimilarityMethods.featureTargetSimilarity(r, target, lcmsProperties.massAccuracySetting, lcmsProperties.retentionIndexWindow, lcmsProperties.intensityPenaltyThreshold)) }
+
         } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
           logger.debug("preferring accuracy over retention time distance")
           matches.sortBy { r => (MassAccuracy.calculateMassErrorPPM(r, target).get, RetentionIndexDifference.diff(target, r)) }
@@ -143,7 +145,7 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
           val optimizedTargetList =
             if (lcmsProperties.preferGaussianSimilarityForAnnotation) {
               logger.debug("preferring gaussian similarity over mass accuracy and rt distance")
-              x._2.sortBy { r => (MassAccuracy.calculateMassError(x._1, r), SimilarityMethods.featureTargetSimilarity(x._1, r, lcmsProperties.massAccuracySetting, lcmsProperties.rtAccuracySetting, lcmsProperties.intensityPenaltyThreshold)) }
+              x._2.sortBy { r => (MassAccuracy.calculateMassError(x._1, r), SimilarityMethods.featureTargetSimilarity(x._1, r, lcmsProperties.massAccuracySetting, lcmsProperties.retentionIndexWindow, lcmsProperties.intensityPenaltyThreshold)) }
             } else if (lcmsProperties.preferMassAccuracyOverRetentionIndexDistance) {
               logger.debug("preferring accuracy over retention time distance")
               x._2.sortBy(r => (MassAccuracy.calculateMassErrorPPM(x._1, r).get, RetentionIndexDifference.diff(r, x._1)))
@@ -228,21 +230,21 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
 
 @Component
 @Profile(Array("carrot.lcms"))
-@ConfigurationProperties(prefix = "carrot.lcms.process.annotation")
+@ConfigurationProperties(prefix = "wcmc.workflow.lcms.process.annotation")
 class LCMSAnnotationProcessProperties {
 
   /**
     * minimum intensity in absolute counts the mass needs to have to be considered
     */
-  @Value("${workflow.lcms.annotation.peak.minIntensity:0}")
+  @BeanProperty
   var massIntensity: Float = 0
 
   /**
     * the defined retention index window to use for it's given targets. It's considered in seconds
     * should be half of the intended window
     */
-  @Value("${workflow.lcms.annotation.detection.riWindow:5}")
-  var retentionIndexWindow: Double = 0
+  @BeanProperty
+  var retentionIndexWindow: Double = 6
 
   /**
     * are we utilizing the recursive annotation mode.
@@ -251,6 +253,7 @@ class LCMSAnnotationProcessProperties {
     * This can be expensive computational wise and depending on settings
     * Can annotate peaks wrongly
     */
+  @BeanProperty
   var recursiveAnnotationMode: Boolean = false
 
   /**
@@ -258,7 +261,7 @@ class LCMSAnnotationProcessProperties {
     *
     * by default we define the retention index to be more important due to isomeres.
     */
-  @Value("${workflow.lcms.annotation.detection.massOverRI:false}")
+  @BeanProperty
   var preferMassAccuracyOverRetentionIndexDistance: Boolean = false
 
   /**
@@ -266,41 +269,35 @@ class LCMSAnnotationProcessProperties {
     *
     * by default we define the retention index to be more important due to isomeres.
     */
-  @Value("${workflow.lcms.annotation.detection.gaussian:true}")
+  @BeanProperty
   var preferGaussianSimilarityForAnnotation: Boolean = true
 
   /**
     * this enables the close peak detection system, if two possible targets are closer than n seconds,
     * then the larger peak will be accepted as default annotation. Set to 0 to disable this feature
     */
-  @Value("${workflow.lcms.annotation.detection.closePeak:3}")
-  var closePeakDetection: Double = 0
+  @BeanProperty
+  var closePeakDetection: Double = 3
 
 
   /**
     * Mass accuracy (in Dalton) used in target filtering and similarity calculation
     */
-  @Value("${wcmc.lcms.annotation.peak.mass.accuracy:0.010}")
-  var massAccuracySetting: Double = 0.0
+  @BeanProperty
+  var massAccuracySetting: Double = 0.010
 
   /**
     * Mass accuracy (in PPM) used in target filtering and similarity calculation
     */
-  @Value("${wcmc.lcms.annotation.peak.mass.accuracyppm:10}")
-  var massAccuracySettingPpm: Double = 0.0
-
-  /**
-    * Retention time accuracy (in seconds) used in target filtering and similarity calculation
-    */
-  @Value("${wcmc.lcms.annotation.peak.rt.accuracy:6}")
-  var rtAccuracySetting: Double = 0.0
+  @BeanProperty
+  var massAccuracySettingPpm: Double = 10
 
   /**
     * Intensity used for penalty calculation - the peak similarity score for targets below this
     * intensity will be scaled down by the ratio of the intensity to this threshold
     */
-  @Value("${wcmc.lcms.annotation.peak.intensityPenaltyThreshold:1000}")
-  var intensityPenaltyThreshold: Float = 0
+  @BeanProperty
+  var intensityPenaltyThreshold: Float = 1000
 
 
 }

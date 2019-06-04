@@ -16,7 +16,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTarget
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{ZeroReplacement, ZeroreplacedTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
@@ -65,7 +64,7 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
   val sampleLoader: SampleLoader = null
 
   @Mock
-  val mockStasis: StasisClient = MockitoSugar.mock[StasisClient](CALLS_REAL_METHODS)
+  val mockStasis: StasisService = MockitoSugar.mock[StasisService](CALLS_REAL_METHODS)
 
   @Autowired
   val stasis_cli: StasisService = null
@@ -118,9 +117,9 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
 
     "have a stasisWriter" in {
       mockStasis should not be null
-      mockStasis shouldBe a[StasisClient]
+      mockStasis shouldBe a[StasisService]
       writer.stasis_cli should not be null
-      writer.stasis_cli shouldBe a[StasisClient]
+      writer.stasis_cli shouldBe a[StasisService]
     }
 
     "send the result of a sample to stasis" in {

@@ -37,6 +37,7 @@ class DataFormerClientTests extends WordSpec with Matchers with Logging {
       val filename = "testA.d.zip"
 
       val result = dfClient.convert(filename)
+
       result.isDefined shouldBe true
 
       result.get.getName.toLowerCase.endsWith("mzml") shouldBe true

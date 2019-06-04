@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 
 import java.util.Date
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{Matchers, WordSpec}
@@ -28,7 +28,7 @@ class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "StasisClient Integration Tests" should {
+  "StasisService Integration Tests" should {
 
     val filename = s"test_${new Date().getTime}"
     val delay = 1000

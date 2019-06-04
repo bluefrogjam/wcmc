@@ -14,7 +14,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.lcms", "test"))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class ExperimentTXTReaderTest extends WordSpec with Logging {
 
   @Autowired

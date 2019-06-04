@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test", "teddy"))
+@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test", "teddy", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class LCMSRetentionIndexCorrectionMassErrorTest extends WordSpec with Matchers with Logging {
   val libName = "teddy"
 

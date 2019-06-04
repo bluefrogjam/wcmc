@@ -26,8 +26,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.mzrt",
   "carrot.lcms",
-  "test",
-  "teddy"))
+  "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with Logging {
 
   @Autowired

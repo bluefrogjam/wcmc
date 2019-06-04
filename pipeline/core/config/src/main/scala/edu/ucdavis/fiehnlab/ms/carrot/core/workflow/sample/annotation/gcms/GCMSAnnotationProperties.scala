@@ -19,7 +19,7 @@ class GCMSAnnotationConfigurations
 
 @Validated
 @Profile(Array("carrot.gcms"))
-@ConfigurationProperties(prefix = "carrot.gcms.annotation", ignoreUnknownFields = false, ignoreInvalidFields = false)
+@ConfigurationProperties(prefix = "wcmc.workflow.gcms.library.annotation", ignoreUnknownFields = false, ignoreInvalidFields = false)
 @Component
 class GCMSAnnotationProperties {
 

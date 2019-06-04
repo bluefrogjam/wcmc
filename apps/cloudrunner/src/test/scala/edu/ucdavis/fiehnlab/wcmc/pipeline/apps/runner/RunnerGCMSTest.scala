@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -24,7 +24,7 @@ class RunnerGCMSTest extends WordSpec with Matchers with Logging {
   val runner: Runner = null
 
   @Autowired
-  val stasis_cli: StasisClient = null
+  val stasis_cli: StasisService = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

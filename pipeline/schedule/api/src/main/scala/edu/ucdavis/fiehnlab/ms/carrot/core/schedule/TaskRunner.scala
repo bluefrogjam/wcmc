@@ -35,7 +35,7 @@ import scala.collection.JavaConverters._
 class TaskRunner extends Logging {
 
 
-  @Value("${wcmc.pipeline.workflow.config.email.sender:binbase@gmail.com}")
+  @Value("${wcmc.workflow.config.email.sender:binbase@gmail.com}")
   val emailSender: String = ""
 
   @Autowired
@@ -57,7 +57,10 @@ class TaskRunner extends Logging {
   @Autowired(required = false)
   val storage: java.util.Collection[ResultStorage] = new util.ArrayList[ResultStorage]()
 
-  @Autowired
+  /**
+    * TODO this needs to be in the workflow not in the task runner
+    */
+  @Autowired(required = false)
   val actions: java.util.List[PostAction] = new util.ArrayList[PostAction]()
 
   @Autowired
@@ -77,6 +80,8 @@ class TaskRunner extends Logging {
     assert(task.samples.nonEmpty)
     assert(task.mode != null, "task.mode cannot be null")
     assert(task.env != null, "task.env cannot be null")
+
+    assert(workflow.correction.libraryAccess.load(task.acquisitionMethod).nonEmpty, "your provided correction library had not retention index markers!")
 
     logger.info(s"executing received task: ${task} and discovering ${task.samples.size} files")
     val classes: Seq[ExperimentClass] = task.samples.groupBy(_.matrix).map { entry =>
@@ -119,13 +124,15 @@ class TaskRunner extends Logging {
 
 
     //send the MSMSSpectra to mona
-    actions.asScala.foreach { action =>
-      classes.foreach { x =>
-        x.samples.foreach { smp =>
-          logger.info(s"running action ${action.getClass.getSimpleName} on ${smp}, ${experiment}")
-          action.run(smp, x, experiment)
+    actions.asScala.foreach {
+      case action: PostAction =>
+        classes.foreach { x =>
+          x.samples.foreach { smp =>
+            logger.info(s"running action ${action.getClass.getSimpleName} on ${smp}, ${experiment}")
+            action.run(smp, x, experiment)
+          }
         }
-      }
+      case _ => None
     }
 
     //send the processed result to the storage engine.

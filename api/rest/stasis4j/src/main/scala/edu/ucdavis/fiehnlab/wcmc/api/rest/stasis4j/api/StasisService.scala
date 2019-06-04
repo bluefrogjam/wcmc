@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api
 
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
-import org.springframework.http.HttpEntity
+import org.springframework.http.{HttpEntity, ResponseEntity}
 
 trait StasisService {
   def getTracking(sample: String): TrackingResponse
@@ -10,7 +10,7 @@ trait StasisService {
 
   def getResults(sample: String): ResultResponse
 
-  def addResult(data: ResultData): HttpEntity[ResultData]
+  def addResult(data: ResultData): ResponseEntity[ResultData]
 
   def getAcquisition(sample: String): SampleResponse
 

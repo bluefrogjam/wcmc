@@ -24,7 +24,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
     "file.source.luna",
     "carrot.lcms",
     "test",
-    "teddy",
+    "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction",
     "charting"))
 class ChartingActionTest extends WordSpec with Matchers with Logging {
   @Autowired

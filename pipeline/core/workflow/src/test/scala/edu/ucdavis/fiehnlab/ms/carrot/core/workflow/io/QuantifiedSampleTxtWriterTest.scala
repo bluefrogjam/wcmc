@@ -25,7 +25,7 @@ import scala.io.Source
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms", "carrot.lcms.correction", "carrot.processing.peakdetection", "file.source.luna", "test"))
+@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms", "carrot.lcms.correction", "carrot.processing.peakdetection", "file.source.luna", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class QuantifiedSampleTxtWriterTest extends WordSpec with Matchers with Logging {
   val libName = "lcms_istds"
 
