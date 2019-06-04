@@ -35,10 +35,10 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
 
   private val noneSpecifiedValue = "unknown"
 
-  @Value("${wcmc.api.mona.rest.server.user}")
+  @Value("${mona.rest.server.user}")
   private val username: String = null
 
-  @Value("${wcmc.api.mona.rest.server.password}")
+  @Value("${mona.rest.server.password}")
   private val password: String = null
 
   @Autowired
