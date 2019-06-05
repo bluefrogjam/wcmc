@@ -68,7 +68,6 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
         val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
 
         replaced.quantifiedTargets.foreach { x =>
-          logger.info(s"target: ${x.name.get} = ${x.quantifiedValue}")
           x.quantifiedValue.getOrElse(-1.0) should be >= 0.0
         }
 
@@ -88,7 +87,6 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
 
         // All target must be nonzero
         replaced.quantifiedTargets.foreach { x =>
-          logger.info(s"target: ${x.name.get} = ${x.quantifiedValue}")
           x.quantifiedValue.getOrElse(-1.0) should be >= 0.0
         }
 

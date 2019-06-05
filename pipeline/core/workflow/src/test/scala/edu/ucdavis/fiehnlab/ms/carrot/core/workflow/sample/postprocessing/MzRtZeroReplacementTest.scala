@@ -24,6 +24,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @ActiveProfiles(Array("carrot.report.quantify.height",
   "carrot.processing.replacement.mzrt",
   "carrot.processing.peakdetection",
+  "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation",
   "carrot.lcms",
   "file.source.luna",
   "teddy",

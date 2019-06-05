@@ -11,6 +11,8 @@ spring:
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket
       - carrot.runner.required
+      - carrot.targets.yaml.correction
+      - carrot.targets.yaml.annotation
 # uncoment to enable msms spectra be sent to ipa
 #      - carrot.targets.dynamic
 # uncoment to enable targets to be loaded from mona @@ might be slow !!

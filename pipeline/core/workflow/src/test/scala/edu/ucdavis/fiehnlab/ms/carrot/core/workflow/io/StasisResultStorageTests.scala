@@ -5,7 +5,6 @@ import java.io.{FileOutputStream, OutputStream}
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.RestClientConfig
-import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -41,7 +40,8 @@ import scala.collection.JavaConverters._
   "file.source.luna",
   "carrot.output.storage.aws",
   "test",
-  "teddy"))
+  "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation"))
 class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfterEach with MockitoSugar with Logging {
   val libName = "teddy"
 
@@ -170,6 +170,6 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
 }
 
 @Configuration
-@Import(Array(classOf[RestClientConfig], classOf[TargetedWorkflowTestConfiguration]))
+@Import(Array(classOf[RestClientConfig]))
 class StatisWriterTestConfig {
 }

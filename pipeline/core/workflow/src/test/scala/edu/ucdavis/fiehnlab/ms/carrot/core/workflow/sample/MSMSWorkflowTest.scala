@@ -24,10 +24,14 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height",
-  "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna",
+  "carrot.processing.peakdetection",
   "carrot.processing.replacement.mzrt",
   "carrot.targets.dynamic",
-  "test", "teddy"))
+  "carrot.lcms",
+  "file.source.luna",
+  "test",
+  "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation"))
 class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null

@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 
 import edu.ucdavis.fiehnlab.math.similarity.{CompositeSimilarity, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.targets.dynamic"))
-class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extends PostAction with Logging {
+class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends PostAction with Logging {
 
   /**
     * which similarity to use in the system

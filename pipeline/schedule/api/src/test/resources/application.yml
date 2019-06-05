@@ -8,10 +8,12 @@ spring:
       - carrot.output.storage.aws
       - carrot.resource.store.bucket
       - carrot.report.quantify.height
-      - carrot.processing.replacement.simple
+      - carrot.processing.replacement.mzrt
       - carrot.processing.peakdetection
       - carrot.runner.required
       - carrot.targets.mona
+      - carrot.targets.yaml.correction
+      - carrot.targets.yaml.annotation
 
 email:
   host: smtp.gmail.com

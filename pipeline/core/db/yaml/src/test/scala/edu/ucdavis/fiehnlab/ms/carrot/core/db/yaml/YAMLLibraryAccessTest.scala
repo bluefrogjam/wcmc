@@ -42,7 +42,7 @@ class YAMLLibraryAccessTest extends WordSpec with Matchers {
 }
 
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.targets.yaml.annotation"))
+@ActiveProfiles(Array("test", "carrot.targets.yaml.correction", "carrot.targets.yaml.annotation"))
 class YAMLLibraryConfigurationAnnotationTest extends WordSpec {
 
   @Autowired
@@ -63,7 +63,7 @@ class YAMLLibraryConfigurationAnnotationTest extends WordSpec {
 
 
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("test", "carrot.targets.yaml.correction", "carrot.targets.yaml.annotation"))
 class YAMLLibraryConfigurationCorrectionTest extends WordSpec {
 
   @Autowired
