@@ -5,13 +5,10 @@ spring:
       - carrot.lcms
       - file.source.luna
       - carrot.lcms.correction
-      - carrot.output.storage.aws
-      - carrot.resource.store.bucket
       - carrot.report.quantify.height
       - carrot.processing.replacement.simple
       - carrot.processing.peakdetection
       - carrot.runner.required
-      - carrot.targets.mona
 
 email:
   host: smtp.gmail.com
