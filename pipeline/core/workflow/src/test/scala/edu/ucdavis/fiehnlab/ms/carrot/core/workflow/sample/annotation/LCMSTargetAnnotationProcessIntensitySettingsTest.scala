@@ -65,19 +65,19 @@ class LCMSTargetAnnotationProcessIntensitySettingsTest extends WordSpec with Mat
       //   "B2a_TEDDYLipids_Neg_QC016.mzml",
       //   "B2a_TEDDYLipids_Neg_QC017.mzml",
       //   "B2a_TEDDYLipids_Neg_QC030.mzml",
-      "B2a_SA1303_TEDDYLipids_Neg_1AS6X.mzml",
+      "B2a_SA1303_TEDDYLipids_Neg_1AS6X.mzml"
       //    "B2a_SA1304_TEDDYLipids_Neg_139TR_2.mzml",
       //   "B2a_SA1304_TEDDYLipids_Neg_139TR.mzml",
       //   "B2a_SA1305_TEDDYLipids_Neg_19VHX.mzml",
       //   "B2a_TEDDYLipids_Neg_NIST001.mzml",
-      "B2a_TEDDYLipids_Neg_NIST002.mzml"
+      //      "B2a_TEDDYLipids_Neg_NIST002.mzml"
     ))
 
     val purityComputed = samples //.map(purity.process)
 
     val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Some(NegativeMode())))
 
-    List(160000f, 80000f, 40000f, 20000f, 10000f, 5000f, 2500f, 1250f, 625f, 315.5f, 156.25f).reverse.foreach { ri_intensity =>
+    List(160000f, /*80000f,*/ 40000f, /*20000f,*/ 10000f, /*5000f,*/ 2500f, /*1250f,*/ 625f, /*315.5f,*/ 156.25f).reverse.foreach { ri_intensity =>
 
       s"correcting data with RI Correction intensity of ${ri_intensity}" should {
         //correct the data
@@ -91,7 +91,7 @@ class LCMSTargetAnnotationProcessIntensitySettingsTest extends WordSpec with Mat
 
           logger.info(s"found the following count of correction features ${sample.featuresUsedForCorrection.size}")
           s"process ${sample} to evaluate annotation count" should {
-            List(100, 500, 1000, 2000, 3000, 5000).foreach {
+            List(100, /*500,*/ 1000, 2000, /*3000,*/ 5000).foreach {
               intensity =>
                 s"depends on intensity, we are evaluating ${intensity}" in {
                   annotation.lcmsProperties.recursiveAnnotationMode = false

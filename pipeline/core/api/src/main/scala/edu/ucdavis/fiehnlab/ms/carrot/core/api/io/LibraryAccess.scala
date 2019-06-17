@@ -145,7 +145,7 @@ trait ReadWriteLibrary[T <: Target] extends LibraryAccess[T] {
 }
 
 final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with Logging {
-  logger.debug("==== creating delegate library ====")
+  logger.info("==== creating delegate library ====")
 
   /**
     * loads all the spectra from the library

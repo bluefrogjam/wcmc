@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.math.BasicMathematics;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
 
@@ -28,6 +27,10 @@ public class SpectralCentroiding {
      * @return
      */
     public static List<Ion> getLCMSCentroidedSpectrum(List<? extends Feature> spectrumList, MSDataType dataType, int msScanPoint, double massBin, boolean peakDetectionBasedCentroid) {
+
+        System.out.println("# of spectra: " + spectrumList.size());
+        System.out.println("dataType: " + dataType.name());
+        System.out.println("scan point: " + msScanPoint);
 
         if (msScanPoint < 0) {
             return new ArrayList<>();
@@ -110,9 +113,12 @@ public class SpectralCentroiding {
 
 			centroidedSpectrum.sort(Comparator.comparing(Ion::intensity).reversed());
 
-            double maxIntensity = centroidedSpectrum.get(0).intensity();
+            double maxIntensity = 0;
+            if (centroidedSpectrum.size() > 0) {
+                maxIntensity = centroidedSpectrum.get(0).intensity();
+            }
 
-			for (Ion centSpec : centroidedSpectrum) {
+            for (Ion centSpec : centroidedSpectrum) {
 				if (centSpec.intensity() > maxIntensity * 0.000001) {
 					filteredCentroidedSpectra.add(centSpec);
 				} else {
