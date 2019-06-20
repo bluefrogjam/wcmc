@@ -11,7 +11,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import scala.reflect.io.File
 
 @RunWith(classOf[SpringRunner])
-@ActiveProfiles(Array("file.source.luna"))
+@ActiveProfiles(Array("file.source.eclipse"))
 @SpringBootTest(classes = Array(classOf[SampleLoaderTestConfig]))
 class ConversionAwareSampleLoaderTest extends WordSpec with Matchers with BeforeAndAfter {
 
