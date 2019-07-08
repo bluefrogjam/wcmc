@@ -12,12 +12,12 @@ import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("prod", "carrot.lcms", "file.source.luna"))
+@ActiveProfiles(Array("test", "carrot.lcms", "file.source.eclipse"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:Biorec001_posCSH_preFlenniken001.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",
   "CARROT_MODE:lcms",
-  "carrot.submitter:inexistent.mail@mail1234.edu"
+  "carrot.submitter:fake@mymail.edu"
 ))
 class RunnerLCMSTest extends WordSpec with Matchers with Logging {
   @Value("${wcmc.workflow.lcms.sample:#{environment.CARROT_SAMPLE}}")

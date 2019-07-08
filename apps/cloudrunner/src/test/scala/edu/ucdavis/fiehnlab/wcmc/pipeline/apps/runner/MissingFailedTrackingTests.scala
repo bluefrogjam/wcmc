@@ -19,7 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
   "CARROT_SAMPLE:LipidsPos_PhV1_06_160362.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",
   "CARROT_MODE:lcms",
-  "carrot.submitter:dpedrosa@ucdavis.edu"
+  "carrot.submitter:fake@mymail.edu"
 ))
 class MissingFailedTrackingTests extends WordSpec with Matchers with Logging {
   @Value("#{environment.CARROT_SAMPLE}")

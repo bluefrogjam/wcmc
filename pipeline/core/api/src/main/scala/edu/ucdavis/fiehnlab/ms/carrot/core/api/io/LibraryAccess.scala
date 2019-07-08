@@ -217,7 +217,7 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
         .filterNot(_.isInstanceOf[ReadonlyLibrary[T]])
         .filterNot(_.isInstanceOf[DelegateLibraryAccess[T]])
         .foreach { lib => {
-          logger.info(s"adding target to ${lib.getClass.getSimpleName}")
+          logger.debug(s"adding target to ${lib.getClass.getSimpleName}")
           lib.add(targets, acquisitionMethod, sample)
         }
         }

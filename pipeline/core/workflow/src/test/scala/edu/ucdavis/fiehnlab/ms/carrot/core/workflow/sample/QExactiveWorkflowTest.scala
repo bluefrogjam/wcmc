@@ -34,7 +34,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "test",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation"))
-class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
+class QExactiveWorkflowTest extends WordSpec with Logging with Matchers {
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
@@ -61,11 +61,11 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "The process" should {
+  "The workflow" should {
 
-    "return some negative mode MSMS spectra" in {
-      val sample = loader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
-      val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode())))
+    "should process a qexactive file" in {
+      val sample = loader.loadSample("Biorec002_posCSH_postFlenniken010.mzml")
+      val method = AcquisitionMethod(ChromatographicMethod("csh", Some("6530"), Some("test"), Option(PositiveMode())))
       val expClass = ExperimentClass(Seq(sample.get), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
@@ -100,44 +100,6 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
 
       after should be > before
 
-    }
-
-    "return some positive mode MSMS spectra" in {
-      val sample = loader.loadSample("B1_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
-      val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode())))
-      val expClass = ExperimentClass(Seq(sample.get), None)
-      val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
-
-      monalib.deleteLibrary(method)
-
-      val result = quantification.process(
-        annotation.process(
-          correction.process(
-            deco.process(sample.get, method, None),
-            method, sample),
-          method, None),
-        method, sample)
-
-      val msms = result.spectra.collect {
-        case spec: MSMSSpectra => spec
-      }
-      val nonAnnotated = result.noneAnnotated.collect {
-        case spec: MSMSSpectra => spec
-      }
-
-      logger.info(s"# of   annotated MSMS: ${msms.size}")
-      logger.info(s"# of unannotated MSMS: ${nonAnnotated.size}")
-
-      msms.size should be > 0
-      nonAnnotated.size should be > 0
-
-      val before = monalib.load(method).size
-
-      action.run(result, expClass, experiment)
-
-      val after = monalib.load(method).size
-
-      after should be > before
     }
   }
 }

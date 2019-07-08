@@ -28,10 +28,6 @@ public class SpectralCentroiding {
      */
     public static List<Ion> getLCMSCentroidedSpectrum(List<? extends Feature> spectrumList, MSDataType dataType, int msScanPoint, double massBin, boolean peakDetectionBasedCentroid) {
 
-        System.out.println("# of spectra: " + spectrumList.size());
-        System.out.println("dataType: " + dataType.name());
-        System.out.println("scan point: " + msScanPoint);
-
         if (msScanPoint < 0) {
             return new ArrayList<>();
         }

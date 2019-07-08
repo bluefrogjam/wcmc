@@ -116,7 +116,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       }
       catch {
         case e: Exception =>
-          logger.warn(e.getMessage, e)
+//          logger.warn(e.getMessage, e)
       }
 
       eventually(timeout(10 seconds), interval(1 second)) {

@@ -525,7 +525,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
     */
   override def add(targets: Iterable[AnnotationTarget], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
 
-    logger.info(s"adding ${targets.size} targets for method ${acquisitionMethod}")
+    logger.debug(s"adding ${targets.size} targets for method ${acquisitionMethod}")
     targets.foreach {
       t =>
         val spectrum: Option[Spectrum] = generateSpectrum(t, acquisitionMethod, sample)
