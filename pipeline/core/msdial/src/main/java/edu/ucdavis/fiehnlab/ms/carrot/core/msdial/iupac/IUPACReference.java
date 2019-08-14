@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.iupac;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 public class IUPACReference {
@@ -13,9 +12,9 @@ public class IUPACReference {
      * Load IUPAC data
      */
     static {
-        String iupacFile = IUPACReference.class.getClassLoader().getResource("IUPAC.txt").getFile();
+        final InputStream iupacStream = IUPACReference.class.getClassLoader().getResourceAsStream("IUPAC.txt");
 
-        try (Scanner scanner = new Scanner(new File(iupacFile))) {
+        try (Scanner scanner = new Scanner(iupacStream)) {
             int iupacID = 0;
             String iupacElementName = "";
             List<IUPACElement> iupacElements = new ArrayList<>();
@@ -45,7 +44,7 @@ public class IUPACReference {
                 iupacElementsByID.put(iupacID, iupacElements);
                 iupacElementsByName.put(iupacElementName, iupacElements);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
