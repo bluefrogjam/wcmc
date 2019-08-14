@@ -44,7 +44,7 @@ class PeakDetectionTest extends WordSpec {
         print(cache)
         cacheManager.getCache(cache).clear()
       }
-      rking
+
     }
     "doProcess" in {
 
