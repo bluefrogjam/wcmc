@@ -25,7 +25,9 @@ case class Matrix(
                    treatments: Seq[Treatment]
                  )
 
-case class AcquisitionMethod(chromatographicMethod: ChromatographicMethod = ChromatographicMethod("default", None, None))
+case class AcquisitionMethod(chromatographicMethod: ChromatographicMethod = ChromatographicMethod("default", None, None)) {
+  override def toString: String = AcquisitionMethod.serialize(this)
+}
 
 object AcquisitionMethod {
 

@@ -52,5 +52,5 @@ abstract class Process[I <: Sample, O <: Sample]() extends Logging {
     *
     * @return
     */
-  def priortiy: Int = 0
+  def priority: Int = 0
 }

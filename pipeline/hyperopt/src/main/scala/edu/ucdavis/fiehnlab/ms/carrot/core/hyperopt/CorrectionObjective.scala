@@ -18,10 +18,10 @@ import org.springframework.context.ApplicationContext
   */
 class CorrectionObjective(config: Class[_], profiles: Array[String], samples: List[String]) extends SpringBootObjective(config, profiles) {
 
-  def getSpace(): Map[String, Iterable[Any]] = {
+  def getSpace(massAccuracySetting: Seq[Double], rtAccuracySetting: Seq[Double]): Map[String, Iterable[Any]] = {
     Map(
-      "massAccuracySetting" -> Seq(0.005, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06),
-      "rtAccuracySetting" -> Seq(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)
+      "massAccuracySetting" -> massAccuracySetting,
+      "rtAccuracySetting" -> rtAccuracySetting
     )
   }
 

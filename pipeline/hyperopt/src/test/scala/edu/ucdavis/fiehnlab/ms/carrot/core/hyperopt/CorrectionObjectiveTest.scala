@@ -17,30 +17,39 @@ import org.springframework.test.context.TestContextManager
 
 @RunWith(classOf[JUnitRunner])
 class CorrectionObjectiveTest extends WordSpec {
+  val samples: List[String] = List(
+
+    "B2A_TEDDYLipids_Pos_QC006.mzml",
+    "B2A_TEDDYLipids_Pos_QC007.mzml",
+    "B2A_TEDDYLipids_Pos_QC008.mzml",
+    "B3A_TEDDYLipids_Pos_QC006.mzml",
+    "B3A_TEDDYLipids_Pos_QC007.mzml",
+    "B3A_TEDDYLipids_Pos_QC008.mzml",
+    "B1A_TEDDYLipids_Pos_QC006.mzml",
+    "B1A_TEDDYLipids_Pos_QC007.mzml",
+    "B1A_TEDDYLipids_Pos_QC008.mzml"
+
+
+  )
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
+
+
   "CorrectionObjectiveTest" should {
 
     "apply" in {
       val sc = new SparkContext(new SparkConf().setAppName("Correction Objective Test").setMaster("local[8]"))
 
-      val samples: List[String] = List(
-        "B2_TEDDYLipids_Pos_QC001.mzml",
-        "B2_TEDDYLipids_Pos_QC002.mzml",
-        "B2_TEDDYLipids_Pos_QC003.mzml",
-        "B2_TEDDYLipids_Pos_QC004.mzml",
-        "B2_TEDDYLipids_Pos_QC005.mzml",
-        "B2_TEDDYLipids_Pos_QC006.mzml",
-        "B2_TEDDYLipids_Pos_QC007.mzml",
-        "B2_TEDDYLipids_Pos_QC008.mzml"
 
-      )
       val optimizer = new SparkGridSearch[Point, Double](sc)
 
-      val correctionObjective = new CorrectionObjective(classOf[HyperoptTestConfiguration], Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"), samples)
+      val correctionObjective = new CorrectionObjective(classOf[HyperoptTestConfiguration], Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"), samples)
 
 
-      val result = optimizer.minimize(correctionObjective, correctionObjective.getSpace())
+      val result = optimizer.minimize(correctionObjective, correctionObjective.getSpace(
+        Seq(0.005, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06),
+        Seq(5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+      ))
       print(result)
       sc.stop()
     }

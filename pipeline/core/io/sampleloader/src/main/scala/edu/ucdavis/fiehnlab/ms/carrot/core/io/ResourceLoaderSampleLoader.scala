@@ -11,6 +11,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
 
 /**
   * utilizes the new resource loader api
@@ -29,6 +30,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     * @param name
     * @return
     */
+  @Cacheable(value = Array("resource-load-sample"), key = "#name")
   override def loadSample(name: String): Option[_ <: Sample] = {
     logger.debug(s"looking for sample: ${name} with ${resourceLoader}")
     val fileOption = resourceLoader.loadAsFile(name)
@@ -69,6 +71,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     * @param name
     * @return
     */
+  @Cacheable(value = Array("resource-exist-sample"), key = "#name")
   override def sampleExists(name: String): Boolean = {
     resourceLoader.exists(name)
   }

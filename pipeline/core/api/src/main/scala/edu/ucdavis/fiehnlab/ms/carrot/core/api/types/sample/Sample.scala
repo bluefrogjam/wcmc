@@ -42,6 +42,10 @@ trait Sample {
   lazy val name: String = if (fileName.contains(".")) fileName.substring(0, fileName.indexOf(".")) else fileName
 
   override def toString = s"Sample file name is $fileName, unique name is $name"
+
+  def getFileName(): String = {
+    fileName
+  }
 }
 
 /**
