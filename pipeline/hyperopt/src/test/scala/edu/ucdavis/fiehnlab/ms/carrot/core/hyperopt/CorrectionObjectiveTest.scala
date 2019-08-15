@@ -20,14 +20,14 @@ class CorrectionObjectiveTest extends WordSpec {
   val samples: List[String] = List(
 
     "B2A_TEDDYLipids_Pos_QC006.mzml",
-    "B2A_TEDDYLipids_Pos_QC007.mzml",
-    "B2A_TEDDYLipids_Pos_QC008.mzml",
-    "B3A_TEDDYLipids_Pos_QC006.mzml",
-    "B3A_TEDDYLipids_Pos_QC007.mzml",
-    "B3A_TEDDYLipids_Pos_QC008.mzml",
-    "B1A_TEDDYLipids_Pos_QC006.mzml",
-    "B1A_TEDDYLipids_Pos_QC007.mzml",
-    "B1A_TEDDYLipids_Pos_QC008.mzml"
+    "B2A_TEDDYLipids_Pos_QC007.mzml"
+//  "B2A_TEDDYLipids_Pos_QC008.mzml",
+//  "B3A_TEDDYLipids_Pos_QC006.mzml",
+//  "B3A_TEDDYLipids_Pos_QC007.mzml",
+//  "B3A_TEDDYLipids_Pos_QC008.mzml",
+//  "B1A_TEDDYLipids_Pos_QC006.mzml",
+//  "B1A_TEDDYLipids_Pos_QC007.mzml",
+//  "B1A_TEDDYLipids_Pos_QC008.mzml"
 
 
   )
