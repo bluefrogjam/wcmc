@@ -2,9 +2,9 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
 import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component
 @Profile(Array("carrot.output.writer.txt"))
 class QuantifiedSampleTxtWriter[T] extends Writer[Sample] with Logging {
 
-  @Value("${carrot.output.writer.txt.separator:,}")
+  @Value("${wcmc.workflow.lcms.output.writer.txt.separator:,}")
   val seperator: String = ","
 
   var lineCounter: Int = 0

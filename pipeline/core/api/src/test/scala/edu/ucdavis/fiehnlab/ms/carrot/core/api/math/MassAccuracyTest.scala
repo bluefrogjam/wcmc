@@ -2,12 +2,11 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.math
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Target}
-import org.scalatest.Matchers._
-import org.scalatest.WordSpec
+import org.scalatest.{Matchers, WordSpec}
 /**
   * Created by wohlgemuth on 6/22/16.
   */
-class MassAccuracyTest extends WordSpec {
+class MassAccuracyTest extends WordSpec with Matchers {
 
   "MassAccuracyTest" should {
 

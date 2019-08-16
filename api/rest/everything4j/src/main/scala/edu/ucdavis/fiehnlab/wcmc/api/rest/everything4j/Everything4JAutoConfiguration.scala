@@ -10,7 +10,7 @@ class Everything4JAutoConfiguration {
 
   @Profile(Array("file.source.luna"))
   @Bean
-  def everything4Jluna: Everything4J = new Everything4J()
+  def everything4Jluna: Everything4J = new Everything4J("luna.server.fiehnlab.ucdavis.edu")
 
   @Profile(Array("file.source.localhost"))
   @Bean

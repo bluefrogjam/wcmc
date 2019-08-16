@@ -15,7 +15,7 @@ import org.springframework.web.client.HttpClientErrorException
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "runner", "csh", "carrot.targets.dummy"))
+@ActiveProfiles(Array("test", "carrot.lcms", "runner", "carrot.targets.dummy"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:B2a_TEDDYLipids_Neg_NIST001.mzml",
   "CARROT_METHOD:csh | 6550 | test | negative",
@@ -23,7 +23,7 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.submitter:dpedrosa@ucdavis.edu"
 ))
 class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with Logging {
-  @Value("${carrot.sample:#{environment.CARROT_SAMPLE}}")
+  @Value("${wcmc.workflow.lcms.sample:#{environment.CARROT_SAMPLE}}")
   val sampleName = ""
 
   @Autowired
@@ -39,7 +39,6 @@ class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with
     "have results on aws" in {
       try {
         val results = stasis_cli.getResults(sampleName.split('.')(0))
-        logger.info(results.toString)
 
         results should not be null
       } catch {

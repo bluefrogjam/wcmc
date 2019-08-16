@@ -13,15 +13,15 @@ import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlgemuth on 6/17/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test", "teddy"))
+@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test", "teddy", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class LCMSRetentionIndexCorrectionMassErrorTest extends WordSpec with Matchers with Logging {
   val libName = "teddy"
 
@@ -37,11 +37,11 @@ class LCMSRetentionIndexCorrectionMassErrorTest extends WordSpec with Matchers w
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "LCMSRetentionIndexCorrectionTest" should {
-    val sample = loader.getSample("B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml")
-    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
+    val name = "B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml"
 
-    s"should pass, because we have enough standards for us to continue ${sample}" in {
-
+    s"should pass, because we have enough standards for us to continue ${name}" in {
+      val sample = loader.getSample(name)
+      val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
       val corrected = correction.process(deco.process(sample, method, None), method, None)
 
       corrected.featuresUsedForCorrection.foreach { x =>

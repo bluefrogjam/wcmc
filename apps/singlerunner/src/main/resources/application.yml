@@ -1,0 +1,28 @@
+debug: false
+
+spring:
+  profiles:
+    active: prod
+    include:
+      - carrot.nostasis
+      - file.source.luna
+      - file.source.eclipse
+      - carrot.runner.required
+#      - carrot.processing.replacement.simple
+      - carrot.processing.peakdetection
+      - carrot.report.quantify.height
+      - carrot.output.storage.local
+      - carrot.output.writer.txt
+      - carrot.targets.yaml.correction
+      - carrot.targets.yaml.annotation
+      - carrot.lcms
+  autoconfigure:
+    exclude:
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: fiehnlab-2018

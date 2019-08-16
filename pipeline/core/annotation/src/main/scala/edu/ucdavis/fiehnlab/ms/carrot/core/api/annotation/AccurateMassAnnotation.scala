@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.annotation
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Target}
+import org.apache.logging.log4j.scala.Logging
 
 /**
   * considered to be a match, if the accurate mass of the spectra is in the range of
@@ -103,12 +103,16 @@ class MassIsHighEnoughAnnotation(massAccuracyInDalton: Double, minIntensity: Flo
 }
 
 /**
-  * we accept if either the mass accuracy is in the correct window for ppm or mDa
+  * we accept if either the mass accuracy is in the correct window for ppm or Da
   *
   * @param massAccuracyInPPM
-  * @param massAccuracyInmDa
+  * @param massAccuracyInDa
   */
-class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, minIntensity: Double = 0.0) extends Annotate with Logging {
+class MassAccuracyPPMorDalton(massAccuracyInPPM: Double, massAccuracyInDa: Double, minIntensity: Double = 0.0) extends Annotate with Logging {
+  assert(massAccuracyInDa < 1, "needs to be below 1, no sense in checking for 1 dalton precession in 2019")
+  assert(massAccuracyInPPM >= 1, "ppm needs to be larger/equal 1")
+  assert(minIntensity >= 0, "min intensity needs to be >= 0")
+
   override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
     librarySpectra.precursorMass match {
       case Some(mass) =>
@@ -120,20 +124,61 @@ class MassAccuracyPPMorMD(massAccuracyInPPM: Double, massAccuracyInmDa: Double, 
             val ppmError = MassAccuracy.calculateMassErrorPPM(x, librarySpectra)
             val massError = MassAccuracy.calculateMassError(x, librarySpectra)
 
-            if (ppmError.isDefined && ppmError.get <= massAccuracyInPPM && x.massOfDetectedFeature.get.intensity > minIntensity) {
+            // check mass accuracy in Da first
+            if (massError.isDefined && massError.get <= massAccuracyInDa && x.massOfDetectedFeature.get.intensity > minIntensity) {
               true
             }
-            else if (massError.isDefined && massError.get <= massAccuracyInmDa && x.massOfDetectedFeature.get.intensity > minIntensity) {
+            else if (ppmError.isDefined && ppmError.get <= massAccuracyInPPM && x.massOfDetectedFeature.get.intensity > minIntensity) {
               true
             }
             else {
               false
             }
-          case _ => false
+          case x =>
+            logger.warn(f"correctedSpectra matching special situation, mass: ${mass}%.4f, feature: ${x}")
+            false
         }
 
       case None =>
-        logger.trace(s"no spectra was provided for given library spectra: $librarySpectra")
+        logger.warn(s"no spectra was provided for given library spectra: $librarySpectra")
+        false
+    }
+  }
+}
+
+/**
+  * Mass accuracy in Da only annotation
+  *
+  * @param massAccuracyInDa
+  * @param minIntensity
+  */
+class MassAccuracyDalton(massAccuracyInDa: Double, minIntensity: Double = 0.0) extends Annotate with Logging {
+  assert(massAccuracyInDa < 1, "needs to be below 1, no sense in checking for 1 dalton precession in 2019")
+  assert(minIntensity >= 0, "min intensity needs to be >= 0")
+
+  override def doMatch(correctedSpectra: Feature, librarySpectra: Target): Boolean = {
+    librarySpectra.precursorMass match {
+      case Some(mass) =>
+
+
+        correctedSpectra match {
+          case x: Feature if x.massOfDetectedFeature.isDefined =>
+
+            val massError = MassAccuracy.calculateMassError(x, librarySpectra)
+
+            if (massError.isDefined && massError.get <= massAccuracyInDa && x.massOfDetectedFeature.get.intensity > minIntensity) {
+              true
+            }
+            else {
+              false
+            }
+          case x =>
+            logger.warn(f"correctedSpectra matching special situation, mass: ${mass}%.4f, feature: ${x}")
+            false
+        }
+
+      case None =>
+        logger.warn(s"no spectra was provided for given library spectra: $librarySpectra")
         false
     }
   }

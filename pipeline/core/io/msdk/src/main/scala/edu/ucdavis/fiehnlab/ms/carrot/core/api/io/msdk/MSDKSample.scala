@@ -39,22 +39,31 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Loggin
         if (spectra.getMsLevel == 0) {
           throw new RuntimeException("Invalid MS Level!")
         } else if (spectra.getMsLevel == 1 || spectra.getIsolations.isEmpty) {
-
           //discover which mixins we need
           precursor = spectra.getSpectrumType match {
             case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Centroided
+
             case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Profiled
-            case _ => {
-              logger.warn("Unrecognized spectrum type, setting to profiled")
-              new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Profiled
-            }
+
+            case _ =>
+              logger.warn("Unrecognized MS1 spectrum type, setting to centroided")
+              new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Centroided
           }
 
           precursor
         } else {
-          new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan)
-        }
+          spectra.getSpectrumType match {
+            case MsSpectrumType.CENTROIDED =>
+              new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Centroided
 
+            case MsSpectrumType.CENTROIDED =>
+              new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Profiled
+
+            case _ =>
+              logger.warn("Unrecognized MSMS spectrum type, setting to centroided")
+              new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Centroided
+          }
+        }
     }
   } finally {
     delegate.dispose()

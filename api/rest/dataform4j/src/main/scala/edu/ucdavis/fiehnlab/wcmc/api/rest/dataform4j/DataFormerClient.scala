@@ -3,11 +3,11 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j
 import java.io._
 import java.net.URL
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.FileType.FileType
 import org.apache.commons.io.IOUtils
 import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.core.io.ByteArrayResource
@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate
   * sends a raw data file to DataFormer rest service to be converted into .abf and .mzml and then sends the result to fserv
   */
 class DataFormerClient(fserv4j:ResourceLoader) extends Logging {
-  @Value("${wcmc.api.rest.dataformer.host:luna.fiehnlab.ucdavis.edu}")
+  @Value("${wcmc.api.rest.dataformer.host:luna.server.fiehnlab.ucdavis.edu}")
   private val host: String = ""
 
   @Value("${wcmc.api.rest.dataformer.port:9090}")
@@ -92,9 +92,11 @@ class DataFormerClient(fserv4j:ResourceLoader) extends Logging {
   def doConvert(filename: String, extension: String = "mzml"): Option[File] = {
 
     if (fserv4j.exists(filename)) {
+      logger.info(s"File ${filename} exists")
       val file = fserv4j.load(filename)
 
       if (file.isEmpty) {
+        logger.error(s"Error downloading ${filename}")
         throw new IOException(s"File ${filename} did not download correctly")
       } else {
 
@@ -105,6 +107,7 @@ class DataFormerClient(fserv4j:ResourceLoader) extends Logging {
             Option(download(filename, FileType.MZML))
           }
           else {
+            logger.error(s"Error uploading ${filename} to ${host}:${port}")
             throw new IOException(s"invalid extension provided: ${extension}")
           }
 
@@ -113,6 +116,9 @@ class DataFormerClient(fserv4j:ResourceLoader) extends Logging {
             throw new IOException(uex.getMessage, uex)
           case dex: DownloadException =>
             throw new IOException(dex.getMessage, dex)
+          case ex =>
+            logger.error(s"Error ${ex.getMessage}")
+            throw ex
         }
       }
     } else {

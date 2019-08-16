@@ -2,7 +2,8 @@
 # defines neccesaery properties to connect to the old school binbase
 # system to query existing targets on demand
 #
-carrot:
+wcmc:
+ workflow:
   gcms:
     library:
       binbase:

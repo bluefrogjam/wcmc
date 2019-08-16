@@ -3,17 +3,19 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 import java.net.URI
 import java.util.Date
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api._
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import javax.annotation.PostConstruct
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.context.annotation.Profile
 import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, ResponseEntity}
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
 import scala.collection.JavaConverters._
 
+@Profile(Array("!carrot.nostasis"))
 @Component
 class StasisClient extends StasisService with Logging {
   @Autowired
@@ -74,4 +76,26 @@ class StasisClient extends StasisService with Logging {
 
   override def schedule(sample: String, method: String, mode: String, env: String): ResponseEntity[ScheduleData] = restTemplate.postForEntity(s"${baseUrl}/schedule", new HttpEntity(ScheduleData(sample, method, mode, env, "86"), headers()), classOf[ScheduleData])
 
+}
+
+@Component
+@Profile(Array("carrot.nostasis"))
+class NoOpStasisService() extends StasisService {
+  val id = System.currentTimeMillis().toString
+
+  override def getTracking(sample: String): TrackingResponse = TrackingResponse(id, sample, Seq.empty)
+
+  override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = ResponseEntity.ok(TrackingResponse("", "", Seq.empty))
+
+  override def getResults(sample: String): ResultResponse = ResultResponse(id, sample, new Date(), new java.util.HashMap())
+
+  override def addResult(data: ResultData): ResponseEntity[ResultData] = ResponseEntity.ok(data)
+
+  override def getAcquisition(sample: String): SampleResponse = SampleResponse(id, new Date(), sample, Acquisition("", "", ""), Metadata("", "", ""), Userdata("", ""), Array.empty)
+
+  override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = ResponseEntity.ok(data)
+
+  override def deleteTracking(sample: String): HttpEntity[String] = ResponseEntity.ok(sample)
+
+  override def schedule(sample: String, method: String, mode: String, env: String): ResponseEntity[ScheduleData] = ResponseEntity.ok(ScheduleData(sample, method, mode, env, "0"))
 }

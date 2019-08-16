@@ -1,8 +1,8 @@
 #!/bin/bash
 
 target=/files
-awssrc=/home/diego/.aws
-awstgt=/root/.aws
+awssrc=/home/diego/.carrot
+awstgt=/home/diego/.carrot/result
 
 if [ $# -lt 4 ]; then
     echo "need 4 parameters: 'source folder', 'method name', 'start idx' and 'end idx'"

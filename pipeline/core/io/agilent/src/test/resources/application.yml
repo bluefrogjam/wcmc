@@ -5,5 +5,5 @@ wcmc:
   api:
     rest:
       msdialrest4j:
-        host: luna.fiehnlab.ucdavis.edu
+        host: luna.server.fiehnlab.ucdavis.edu
         port: 9090

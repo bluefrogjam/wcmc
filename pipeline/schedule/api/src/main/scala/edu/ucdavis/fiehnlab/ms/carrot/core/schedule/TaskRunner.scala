@@ -11,7 +11,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action.AddToLibraryAction
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
@@ -36,7 +35,7 @@ import scala.collection.JavaConverters._
 class TaskRunner extends Logging {
 
 
-  @Value("${wcmc.pipeline.workflow.config.email.sender:binbase@gmail.com}")
+  @Value("${wcmc.workflow.config.email.sender:binbase@gmail.com}")
   val emailSender: String = ""
 
   @Autowired
@@ -58,8 +57,11 @@ class TaskRunner extends Logging {
   @Autowired(required = false)
   val storage: java.util.Collection[ResultStorage] = new util.ArrayList[ResultStorage]()
 
-  @Autowired
-  val msmsUpload: java.util.Collection[PostAction] = new util.ArrayList[PostAction]()
+  /**
+    * TODO this needs to be in the workflow not in the task runner
+    */
+  @Autowired(required = false)
+  val actions: java.util.List[PostAction] = new util.ArrayList[PostAction]()
 
   @Autowired
   val context: ApplicationContext = null
@@ -78,6 +80,8 @@ class TaskRunner extends Logging {
     assert(task.samples.nonEmpty)
     assert(task.mode != null, "task.mode cannot be null")
     assert(task.env != null, "task.env cannot be null")
+
+    assert(workflow.correction.libraryAccess.load(task.acquisitionMethod).nonEmpty, "your provided correction library had not retention index markers!")
 
     logger.info(s"executing received task: ${task} and discovering ${task.samples.size} files")
     val classes: Seq[ExperimentClass] = task.samples.groupBy(_.matrix).map { entry =>
@@ -120,11 +124,11 @@ class TaskRunner extends Logging {
 
 
     //send the MSMSSpectra to mona
-    msmsUpload.asScala.foreach {
-      case action: AddToLibraryAction =>
-        logger.info("Uploading msms to mona")
+    actions.asScala.foreach {
+      case action: PostAction =>
         classes.foreach { x =>
           x.samples.foreach { smp =>
+            logger.info(s"running action ${action.getClass.getSimpleName} on ${smp}, ${experiment}")
             action.run(smp, x, experiment)
           }
         }
@@ -145,9 +149,9 @@ class TaskRunner extends Logging {
         case e: AuthenticationFailedException =>
           logger.warn(s"EmailService can't send email. ${e.getMessage}")
         case e: Exception =>
-          logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
           val os = new ByteArrayOutputStream()
           val content = s"Dear user, the task '${task.name}' did not execute properly!\n\n${os.toString("UTF8")}"
+          logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}\n${content}", e)
           try {
             emailService.send(emailSender, task.email :: List(),
               content,

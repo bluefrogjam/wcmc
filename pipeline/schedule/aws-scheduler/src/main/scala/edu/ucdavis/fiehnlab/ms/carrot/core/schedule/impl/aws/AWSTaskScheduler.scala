@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.schedule.impl.aws
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskScheduler
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}
@@ -19,7 +19,7 @@ class AWSTaskScheduler extends TaskScheduler {
   val context: ApplicationContext = null
 
   @Autowired
-  val stasisClient: StasisClient = null
+  val stasisClient: StasisService = null
 
   /**
     * does the actual submitting of the task to a processing engine

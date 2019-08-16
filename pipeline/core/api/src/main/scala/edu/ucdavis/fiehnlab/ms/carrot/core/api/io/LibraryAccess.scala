@@ -145,7 +145,7 @@ trait ReadWriteLibrary[T <: Target] extends LibraryAccess[T] {
 }
 
 final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with Logging {
-  logger.debug("==== creating delegate library ====")
+  logger.info("==== creating delegate library ====")
 
   /**
     * loads all the spectra from the library
@@ -217,7 +217,7 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
         .filterNot(_.isInstanceOf[ReadonlyLibrary[T]])
         .filterNot(_.isInstanceOf[DelegateLibraryAccess[T]])
         .foreach { lib => {
-          logger.info(s"adding target to ${lib.getClass.getSimpleName}")
+          logger.debug(s"adding target to ${lib.getClass.getSimpleName}")
           lib.add(targets, acquisitionMethod, sample)
         }
         }
@@ -229,14 +229,21 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
     * @return
     */
   override def libraries: Seq[AcquisitionMethod] = {
-    delegates.asScala.flatMap(_.libraries)
+    val begin = System.currentTimeMillis()
+    try {
+
+      delegates.asScala.flatMap(_.libraries)
+    }
+    finally {
+      logger.info(s"computing all libraries too ${System.currentTimeMillis() - begin} ms")
+    }
   }
 
   override def toString = s"DelegateLibraryAccess(\n\t${this.delegates}\n)"
 }
 
 final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]) extends LibraryAccess[Target] with Logging {
-  logger.debug("==== creating merged library ====")
+  logger.info(s"creating merged library, based on ${correction} for correction and ${annotation} for annotation")
 
   /**
     * loads all the spectra from the library
@@ -280,7 +287,6 @@ final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[Co
     */
 
   // !!! Correction library might have different name than annotation library
-  // override def libraries: Seq[AcquisitionMethod] = annotation.libraries.filter(correction.libraries.contains(_))
   override def libraries: Seq[AcquisitionMethod] = annotation.libraries
 
   def correctionLibraries(acquisitionMethod: AcquisitionMethod): Iterable[CorrectionTarget] = {

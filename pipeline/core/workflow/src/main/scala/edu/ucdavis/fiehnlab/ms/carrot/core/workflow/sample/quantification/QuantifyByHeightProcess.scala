@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.QuantificationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Target
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
@@ -25,5 +25,10 @@ class QuantifyByHeightProcess @Autowired()(libraryAccess: MergeLibraryAccess, st
     * @param spectra
     * @return
     */
-  protected override def computeValue(target: Target, spectra: Feature): Option[Double] = if (spectra.massOfDetectedFeature.isDefined) Some(spectra.massOfDetectedFeature.get.intensity) else None
+  protected override def computeValue(target: Target, spectra: Feature): Option[Double] = {
+    if (spectra.massOfDetectedFeature.isDefined)
+      Some(spectra.massOfDetectedFeature.get.intensity)
+    else
+      None
+  }
 }

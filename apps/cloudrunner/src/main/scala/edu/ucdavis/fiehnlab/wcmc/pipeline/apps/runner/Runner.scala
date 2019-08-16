@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.ApplicationContext
@@ -11,17 +11,17 @@ import org.springframework.stereotype.Component
 
 @Component
 class Runner extends CommandLineRunner with Logging {
-  @Value("${carrot.sample:#{environment.CARROT_SAMPLE}}")
+  @Value("${wcmc.workflow.lcms.sample:#{environment.CARROT_SAMPLE}}")
   val sampleName: String = null
 
-  @Value("${carrot.method:#{environment.CARROT_METHOD}}")
+  @Value("${wcmc.workflow.lcms.method:#{environment.CARROT_METHOD}}")
   val method: String = null
 
-  @Value("${carrot.mode:#{environment.CARROT_MODE}}")
+  @Value("${wcmc.workflow.lcms.mode:#{environment.CARROT_MODE}}")
   // This turns into the active profile to run the sample ['carrot.lcms','carrot.gcms']
   val mode: String = null
 
-  @Value("${carrot.submitter:dpedrosa@ucdavis.edu}")
+  @Value("${wcmc.workflow.lcms.submitter:dpedrosa@ucdavis.edu}")
   val submitter: String = null
 
   @Autowired

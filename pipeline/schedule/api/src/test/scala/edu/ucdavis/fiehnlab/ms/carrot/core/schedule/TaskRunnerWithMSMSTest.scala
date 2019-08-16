@@ -13,7 +13,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "teddy", "carrot.targets.dummy"))
+@ActiveProfiles(Array("test", "carrot.targets.dummy"))
 class TaskRunnerWithMSMSTest extends WordSpec {
   val libName = "teddy"
 

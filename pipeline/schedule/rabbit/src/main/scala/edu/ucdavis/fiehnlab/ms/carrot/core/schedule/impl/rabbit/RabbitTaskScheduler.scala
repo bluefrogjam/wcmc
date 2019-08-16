@@ -22,7 +22,7 @@ import scala.reflect.classTag
   */
 class RabbitTaskScheduler extends TaskScheduler {
 
-  @Value("${wcmc.pipeline.workflow.scheduler.queue:carrot-tasks}")
+  @Value("${wcmc.workflow.scheduler.queue:carrot-tasks}")
   val queueName: String = ""
 
   @Autowired
@@ -78,10 +78,10 @@ class RabbitTaskRunner extends MessageListener {
 class RabbitTaskAutoconfiguration {
 
 
-  @Value("${wcmc.pipeline.workflow.scheduler.queue:carrot-tasks}")
+  @Value("${wcmc.workflow.scheduler.queue:carrot-tasks}")
   val queueName: String = ""
 
-  @Value("${wcmc.pipeline.workflow.scheduler.exchange:carrot-exchange}")
+  @Value("${wcmc.workflow.scheduler.exchange:carrot-exchange}")
   val exchangeName: String = ""
 
 

@@ -55,7 +55,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
     val rawdata: Option[Sample] =
       if (rawSample.isDefined) {
         rawSample
-      } else { //TODO: this block fails when rawSample not defined
+      } else {
         zeroReplacementProperties.fileExtension.collect {
 
           case extension: String =>
@@ -87,14 +87,12 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
         else {
           try {
             val replaced = replaceValue(target, sample, correctedRawData)
-            logger.debug(f"replacing ${target.name.get} with ${replaced}")
+            logger.debug(f"replacing ${target.name.get} with ${replaced.spectraUsedForReplacement.massOfDetectedFeature}")
             replaced
           }
           catch {
             case e: Exception =>
-              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}", e)
-              // commented to avoid excessive logging output.
-              // e.printStackTrace()
+              logger.error(s"replacement failed for entry, ignore for now: ${e.getMessage}, target was: ${target}.", e)
               target
           }
         }
@@ -142,13 +140,13 @@ class ZeroReplacementProperties {
     * the defined retention index correction for the peak detection during the replacement
     * should be half of intended window
     */
-  var retentionIndexWindowForPeakDetection: Double = 6
+  var retentionIndexWindowForPeakDetection: Double = 10
 
   /**
     * Use the mean of the 2 nearest ions on the left and right of matching mass to the target to estimate the
     * replacement value if no value is found within the RI window.  Takes precedence over estimateByChromatogramNoise
     */
-  var estimateByNearestFourIons: Boolean = true
+  var estimateByNearestFourIons: Boolean = false
 
   /**
     * Estimate noise as the mean of the lowest 5% of ions for the given mass in the entire chromatogram
@@ -158,9 +156,19 @@ class ZeroReplacementProperties {
   var estimateByChromatogramNoise: Boolean = false
 
   /**
+    * finds a replacement value using a mass widow of 0.050 Dalton
+    */
+  var estimateByBiggerMassWindow: Boolean = true
+
+  /**
+    * mass error value to search for replacement features
+    */
+  var failsafeMassAccuracyDa: Double = 0.05
+
+  /**
     * utilized mass accuracy for searches
     */
-  var massAccuracyInDa: Double = 0.1
+  var massAccuracyInDa: Double = 0.01
 
   /**
     * extension of our rawdata files, to be used for replacement
@@ -335,8 +343,8 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * which actual spectra has been used for the replacement
     */
   override val spectraUsedForReplacement: Feature with GapFilledSpectra[Double] = new Feature with GapFilledSpectra[Double] {
-    override val uniqueMass: Option[Double] = None
-    override val signalNoise: Option[Double] = None
+    override val uniqueMass: Option[Double] = value.uniqueMass
+    override val signalNoise: Option[Double] = value.signalNoise
 
     override val sample: String = value.sample
     /**
@@ -362,7 +370,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     /**
       * distance of the retention index distance
       */
-    override val retentionIndexDistance: Option[Double] = None
+    override val retentionIndexDistance: Option[Double] = Some(target.retentionIndex - value.retentionIndex)
 
     override val retentionIndex: Double = value.retentionIndex
     /**
@@ -435,4 +443,5 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * unique mass for a given target
     */
   override val uniqueMass: Option[Double] = needsReplacement.uniqueMass
+  override val ionMode: IonMode = value.ionMode.get
 }

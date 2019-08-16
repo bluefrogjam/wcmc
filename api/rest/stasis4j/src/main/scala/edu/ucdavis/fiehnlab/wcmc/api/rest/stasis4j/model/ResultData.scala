@@ -53,13 +53,13 @@ case class Correction(
 /**
   * Target used in this sample's annotation
   *
-  * @param retentionIndex
+  * @param retentionTimeInSeconds
   * @param name
   * @param id
   * @param mass
   */
 case class Target(
-                     retentionIndex: Double,
+                     retentionTimeInSeconds: Double,
                      name: String,
                      id: String,
                      mass: Double
@@ -80,7 +80,8 @@ case class Annotation(
                          mass: Double,
                          nonCorrectedRt: Double = 0,
                          massError: Double = 0,
-                         massErrorPPM: Double = 0
+                         massErrorPPM: Double = 0,
+                         other: Option[Map[String, Any]] = None
                      ) {
   def rtDistance: Double = Math.abs(nonCorrectedRt - retentionIndex)
 }

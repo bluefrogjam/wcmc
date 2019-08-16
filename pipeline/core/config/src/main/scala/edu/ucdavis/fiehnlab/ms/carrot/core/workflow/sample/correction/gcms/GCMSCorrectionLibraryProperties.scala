@@ -14,7 +14,7 @@ import scala.beans.BeanProperty
 @Component
 @Validated
 @Profile(Array("carrot.gcms"))
-@ConfigurationProperties(prefix = "carrot.gcms.correction", ignoreUnknownFields = false, ignoreInvalidFields = false)
+@ConfigurationProperties(prefix = "wcmc.workflow.gcms.library.correction", ignoreUnknownFields = false, ignoreInvalidFields = false)
 class GCMSCorrectionLibraryProperties {
 
   /**

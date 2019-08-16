@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 import java.util.Date
 import java.util.concurrent.{ExecutorService, Executors}
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.mona.backend.core.domain._
 import edu.ucdavis.fiehnlab.mona.backend.core.domain.service.LoginService
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.{GenericRestClient, MonaSpectrumRestClient}
@@ -14,6 +13,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
 import javax.annotation.PostConstruct
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.annotation._
@@ -525,7 +525,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
     */
   override def add(targets: Iterable[AnnotationTarget], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
 
-    logger.info(s"adding ${targets.size} targets for method ${acquisitionMethod}")
+    logger.debug(s"adding ${targets.size} targets for method ${acquisitionMethod}")
     targets.foreach {
       t =>
         val spectrum: Option[Spectrum] = generateSpectrum(t, acquisitionMethod, sample)

@@ -1,11 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, Ion, NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import org.apache.logging.log4j.scala.Logging
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
@@ -87,7 +87,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     "be able to add an mzrt target" in {
       library.deleteAll
 
-      eventually(timeout(5 seconds), interval(1 second)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val initargets = library.load(acquisitionMethod3)
         logger.info(s"initial targets: ${initargets.map(_.name).mkString("; ")}")
 
@@ -95,7 +95,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       }
 
       library.add(mzRt, acquisitionMethod3, None)
-      eventually(timeout(5 seconds), interval(1 second)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val targets = library.load(acquisitionMethod3)
         logger.info(s"after targets: ${targets.map(_.name).mkString("; ")}")
 
@@ -116,12 +116,11 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       }
       catch {
         case e: Exception =>
-          logger.warn(e.getMessage, e)
+//          logger.warn(e.getMessage, e)
       }
 
-      eventually(timeout(10 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         client.list().size shouldBe 0
-        Thread.sleep(100)
       }
     }
 
@@ -129,38 +128,35 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     "be possible to add and load targets" in {
 
       library.add(testTarget, acquisitionMethod1, None)
-
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
       }
-      library.add(testTarget2, acquisitionMethod2, None)
 
-      eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod2).size shouldBe 1
-        Thread.sleep(1000)
+      library.add(testTarget2, acquisitionMethod1, None)
+      eventually(timeout(10 seconds), interval(1 second)) {
+        library.load(acquisitionMethod1).size shouldBe 2
       }
 
     }
 
     "be possible to add and load targets from a different library" in {
+      library.deleteAll
 
       library.add(testTarget, acquisitionMethod1, None)
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
-      }
-      library.add(testTarget2, acquisitionMethod1, None)
-      eventually(timeout(5 seconds)) {
-        library.load(acquisitionMethod1).size should be >= 2
-        Thread.sleep(1000)
       }
 
-      eventually(timeout(5 seconds)) {
+      library.add(testTarget2, acquisitionMethod2, None)
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod2).size shouldBe 1
-        Thread.sleep(1000)
       }
-      eventually(timeout(5 seconds)) {
+
+      eventually(timeout(10 seconds), interval(1 second)) {
+        library.load(acquisitionMethod2).size shouldBe 1
+      }
+
+      eventually(timeout(10 seconds), interval(1 second)) {
 
         val count: Int = library.libraries.map { x =>
           library.load(x).map { y =>
@@ -168,33 +164,28 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
           }.sum
         }.sum
 
-        count shouldBe 4
+        count shouldBe 2
 
-        Thread.sleep(1000)
       }
     }
 
     "there should be 2 acquisition methods defined now" in {
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 2
-        Thread.sleep(1000)
       }
     }
 
     "able to update the name of a spectrum" in {
 
-      library.deleteLibrary(acquisitionMethod1)
-      library.deleteLibrary(acquisitionMethod2)
+      library.deleteAll
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 0
-        Thread.sleep(1000)
       }
       library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
       }
 
       val target = library.load(acquisitionMethod1).head
@@ -203,7 +194,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.update(target, acquisitionMethod1)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.name.get shouldBe ("12345")
       }
@@ -216,17 +207,15 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
-        Thread.sleep(1000)
       }
 
       library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
 
       }
 
@@ -237,7 +226,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.update(target, acquisitionMethod1)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.inchiKey.get shouldBe ("QNAYBMKLOCPYGJ-REOHCLBHSA-N")
       }
@@ -249,18 +238,15 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
-
-        Thread.sleep(1000)
       }
 
       library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
       }
 
       val target = library.load(acquisitionMethod1).head
@@ -269,11 +255,9 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.update(target, acquisitionMethod1)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.confirmed shouldBe true
-        Thread.sleep(1000)
-
       }
 
     }
@@ -283,18 +267,15 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
-
-        Thread.sleep(1000)
       }
 
       library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
       }
 
       val target = library.load(acquisitionMethod1).head
@@ -303,11 +284,9 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.update(target, acquisitionMethod1)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.confirmed shouldBe false
-        Thread.sleep(1000)
-
       }
     }
 
@@ -317,18 +296,15 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
-
-        Thread.sleep(1000)
       }
 
       library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
       }
 
       val target = library.load(acquisitionMethod1).head
@@ -337,11 +313,9 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.update(target, acquisitionMethod1)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.isRetentionIndexStandard shouldBe true
-        Thread.sleep(1000)
-
       }
 
     }
@@ -351,18 +325,15 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
-
-        Thread.sleep(1000)
       }
 
       library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
       }
 
       val target = library.load(acquisitionMethod1).head
@@ -371,11 +342,9 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.update(target, acquisitionMethod1)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.isRetentionIndexStandard shouldBe true
-        Thread.sleep(1000)
-
       }
     }
 
@@ -384,18 +353,15 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
-
-        Thread.sleep(1000)
       }
 
       library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
       }
 
       val target = library.load(acquisitionMethod1).head
@@ -404,7 +370,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.update(target, acquisitionMethod1)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.requiredForCorrection shouldBe true
       }
@@ -416,18 +382,15 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 0
         client.list().size shouldBe 0
-
-        Thread.sleep(1000)
       }
 
       library.add(testTarget, acquisitionMethod1, None)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
-        Thread.sleep(1000)
       }
 
       val target = library.load(acquisitionMethod1).head
@@ -436,7 +399,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.update(target, acquisitionMethod1)
 
-      eventually(timeout(5 seconds)) {
+      eventually(timeout(10 seconds), interval(1 second)) {
         val updatedSpectra = library.load(acquisitionMethod1).head
         updatedSpectra.requiredForCorrection shouldBe false
       }
