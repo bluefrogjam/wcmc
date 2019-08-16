@@ -47,7 +47,7 @@ object Statistics {
   def variance[T: Numeric](xs: Iterable[T]): Double = {
     val avg = mean(xs)
 
-    xs.map(_.toDouble).map(a => math.pow(a - avg, 2)).sum / xs.size
+    xs.map(_.toDouble).map(a => math.pow(a - avg, 2)).sum / (xs.size - 1)
   }
 
   def stdDev[T: Numeric](xs: Iterable[T]): Double = math.sqrt(variance(xs))
