@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContext
   * @param config
   * @param profiles
   */
-class CorrectionObjective(config: Class[_], profiles: Array[String], samples: List[String]) extends SpringBootObjective(config, profiles) {
+class CorrectionObjective(config: Class[_], profiles: Array[String], samples: List[String]) extends SpringBootObjective(config, profiles) with LossFunctions {
 
   def getSpace(massAccuracySetting: Seq[Double], rtAccuracySetting: Seq[Double]): Map[String, Iterable[Any]] = {
     Map(
@@ -66,37 +66,7 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], samples: Li
     * @param corrected
     * @return
     */
-  private def loss_function(corrected: List[CorrectedSample]): Double = {
-    val targetsAndAnnotationsForAllSamples = corrected.flatMap {
-      item: CorrectedSample =>
-        if (item.correctionFailed) {
-          throw new RejectDueToCorrectionFailed
-        }
-        else {
-          item.featuresUsedForCorrection.map {
-            annotation =>
-              (annotation.target, annotation.annotation)
-          }
-        }
-    }.groupBy(_._1)
-
-    val rsd = targetsAndAnnotationsForAllSamples.map {
-      item =>
-        val annotations = item._2.map(_._2)
-        val heights = annotations.collect {
-          case feature: MSSpectra with MetadataSupport =>
-            feature.metadata("peakHeight").asInstanceOf[Some[Double]].get
-        }
-
-        val stdDev = Statistics.rsdDev(heights)
-        (item._1, stdDev)
-
-    }
-
-    val averageRst = Statistics.mean(rsd.values)
-
-    averageRst
-  }
+  private def loss_function(corrected: List[CorrectedSample]): Double = peakHeightRsdLossFunction(corrected)
 
   /**
     * drops all spectra here to safe some memory
