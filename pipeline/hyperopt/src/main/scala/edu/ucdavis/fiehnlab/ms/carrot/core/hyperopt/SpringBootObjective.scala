@@ -26,7 +26,7 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
   }
 
   /**
-    * actualy apply function, providing subclasses with a correctly configured configuration class
+    * actual apply function, providing subclasses with a correctly configured configuration class
     *
     * @param context
     * @param point
@@ -53,4 +53,23 @@ object Statistics {
   def stdDev[T: Numeric](xs: Iterable[T]): Double = math.sqrt(variance(xs))
 
   def rsdDev[T: Numeric](xs: Iterable[T]): Double = stdDev(xs) * 100 / mean(xs)
+
+  /**
+    * recursively removes outliers from a dataset outside of stdThreshold * stdDev from the mean
+    * @param data
+    * @param sigmaThreshold cutoff distance from mean in units of standard deviation
+    * @tparam T
+    */
+  def eliminateOutliers[T: Numeric](data: Iterable[T], stdThreshold: Double = 3): Iterable[T] = {
+    val mean = Statistics.mean(data)
+    val stdDev = Statistics.stdDev(data)
+
+    val filteredData = data.filter(x => math.abs(x.toDouble - mean) <= stdThreshold * stdDev)
+
+    if (data.size == filteredData.size) {
+      data
+    } else {
+      eliminateOutliers(filteredData, stdThreshold)
+    }
+  }
 }
