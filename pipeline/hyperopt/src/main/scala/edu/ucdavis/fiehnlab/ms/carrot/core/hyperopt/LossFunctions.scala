@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, MetadataSupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra, MetadataSupport}
 
 trait LossFunctions {
 
@@ -54,9 +54,10 @@ trait LossFunctions {
 
 
   /**
-    * calculates a error value based on the presence of outliers in mass, retention time or peak height
+    * calculates an error value based on the presence of outliers in mass, retention time or peak height
     * @param corrected
-    * @param usePeakHeight
+    * @param usePeakHeight optionally include peak height in addition to ri and m/z the error calculation
+    *                      note that this is useful for internal standards which should have predicatable
     * @return
     */
   def mzAndRTOutlierLossFunction(corrected: List[CorrectedSample], usePeakHeight: Boolean = true): Double = {
@@ -76,8 +77,8 @@ trait LossFunctions {
         }
 
         val retentionTimes: List[Double] = annotations.collect {
-          case feature: MSSpectra with MetadataSupport =>
-            feature.metadata("peakRTmin").asInstanceOf[Some[Double]].get
+          case feature: MSSpectra with CorrectedSpectra =>
+            feature.retentionIndex
         }
 
         val accurateMasses: List[Double] = annotations.collect {
