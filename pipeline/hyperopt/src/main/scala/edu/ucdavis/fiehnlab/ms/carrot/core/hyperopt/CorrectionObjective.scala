@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra, MetadataSupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.LossFunction
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.springframework.context.ApplicationContext
@@ -16,7 +17,7 @@ import org.springframework.context.ApplicationContext
   * @param config
   * @param profiles
   */
-class CorrectionObjective(config: Class[_], profiles: Array[String], samples: List[String]) extends SpringBootObjective(config, profiles) with LossFunctions {
+class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction, samples: List[String]) extends SpringBootObjective(config, profiles) {
 
   def getSpace(massAccuracySetting: Seq[Double], rtAccuracySetting: Seq[Double]): Map[String, Iterable[Any]] = {
     Map(
@@ -50,23 +51,15 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], samples: Li
     //compute statistics
 
     try {
-      loss_function(corrected)
+      lossFunction.lossFunction(corrected)
     }
     catch {
-
       case e: RejectDueToCorrectionFailed =>
         e.printStackTrace()
         Double.MaxValue
     }
   }
 
-  /**
-    * computes our validation score across all the samples
-    *
-    * @param corrected
-    * @return
-    */
-  private def loss_function(corrected: List[CorrectedSample]): Double = peakHeightRsdLossFunction(corrected)
 
   /**
     * drops all spectra here to safe some memory

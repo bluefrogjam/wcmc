@@ -4,6 +4,7 @@ import com.eharmony.spotz.Preamble.Point
 import com.eharmony.spotz.optimizer.grid.SparkGridSearch
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.PeakHeightRSDLossFunction
 import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.{SparkConf, SparkContext}
 import org.junit.runner.RunWith
@@ -43,7 +44,12 @@ class CorrectionObjectiveTest extends WordSpec {
 
       val optimizer = new SparkGridSearch[Point, Double](sc)
 
-      val correctionObjective = new CorrectionObjective(classOf[HyperoptTestConfiguration], Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"), samples)
+      val correctionObjective = new CorrectionObjective(
+        classOf[HyperoptTestConfiguration],
+        Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"),
+        new PeakHeightRSDLossFunction(),
+        samples
+      )
 
 
       val result = optimizer.minimize(correctionObjective, correctionObjective.getSpace(

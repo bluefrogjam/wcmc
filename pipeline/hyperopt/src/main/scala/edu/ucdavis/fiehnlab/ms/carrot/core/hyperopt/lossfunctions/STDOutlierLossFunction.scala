@@ -1,66 +1,20 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt
+package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra, MetadataSupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.CorrectedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, MSSpectra, MetadataSupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.Statistics
 
-trait LossFunctions {
-
-  /**
-    * Return a list of all annotated correction features grouped by metabolite
-    * @param corrected
-    * @return
-    */
-  private def getTargetsAndAnnotationsForAllSamples(corrected: List[CorrectedSample]): Map[Target, List[(Target, Feature)]] = {
-    corrected.flatMap {
-      item: CorrectedSample =>
-        if (item.correctionFailed) {
-          throw new RejectDueToCorrectionFailed
-        }
-        else {
-          item.featuresUsedForCorrection.map {
-            annotation =>
-              (annotation.target, annotation.annotation)
-          }
-        }
-    }.groupBy(_._1)
-  }
-
-
-  /**
-    * calculates the average rsd in peak height by metabolite over all samples
-    * @param corrected
-    * @return
-    */
-  def peakHeightRsdLossFunction(corrected: List[CorrectedSample]): Double = {
-    val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAllSamples(corrected)
-
-    val rsd = targetsAndAnnotationsForAllSamples.map {
-      item =>
-        val annotations = item._2.map(_._2)
-
-        val heights = annotations.collect {
-          case feature: MSSpectra with MetadataSupport =>
-            feature.metadata("peakHeight").asInstanceOf[Some[Double]].get
-        }
-
-        val stdDev = Statistics.rsdDev(heights)
-        (item._1, stdDev)
-    }
-
-    val averageRst = Statistics.mean(rsd.values)
-
-    averageRst
-  }
-
+class STDOutlierLossFunction extends LossFunction {
 
   /**
     * calculates an error value based on the presence of outliers in mass, retention time or peak height
     * @param corrected
     * @param usePeakHeight optionally include peak height in addition to ri and m/z the error calculation
-    *                      note that this is useful for internal standards which should have predicatable
+    *                      note that this is useful for internal standards which should have more consistent
+    *                      intensities, whereas metabolites may have real biological variation
     * @return
     */
-  def mzAndRTOutlierLossFunction(corrected: List[CorrectedSample], usePeakHeight: Boolean = true): Double = {
+  def lossFunction(corrected: List[CorrectedSample], usePeakHeight: Boolean = true): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAllSamples(corrected)
 
     // for each metabolite, calculate the ratio of the rsd of all annotations by the rsd of
@@ -96,7 +50,7 @@ trait LossFunctions {
         val retentionTimeRsdRatio = Statistics.rsdDev(filteredRetentionTime) / Statistics.rsdDev(retentionTimes)
         val accurateMassRsdRatio = Statistics.rsdDev(filteredAccurateMasses) / Statistics.rsdDev(accurateMasses)
 
-        // combine ratios using euclidean metric
+        // combine ratios using euclidean norm
         val error = math.sqrt(
           if (usePeakHeight) {
             math.pow(peakHeightRsdRatio, 2) + math.pow(retentionTimeRsdRatio, 2) + math.pow(accurateMassRsdRatio, 2)
