@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, Librar
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.{ConversionAwareSampleLoader, ResourceLoaderSampleLoader}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.PeakHeightRSDCorrectionLossFunction
 import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.{SparkConf, SparkContext}
 import org.junit.runner.RunWith
@@ -22,6 +23,7 @@ import org.springframework.test.context.TestContextManager
 
 @RunWith(classOf[JUnitRunner])
 class CorrectionObjectiveTest extends WordSpec {
+
   val samples: List[String] = List(
 
     "B2A_TEDDYLipids_Pos_QC006.mzml",
@@ -48,9 +50,14 @@ class CorrectionObjectiveTest extends WordSpec {
 
       val optimizer = new SparkGridSearch[Point, Double](sc)
 
-      val correctionObjective = new CorrectionObjective(classOf[HyperoptTestConfiguration], Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"), samples)
-      correctionObjective.warmCaches()
+      val correctionObjective = new CorrectionObjective(
+        classOf[HyperoptTestConfiguration],
+        Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"),
+        new PeakHeightRSDCorrectionLossFunction(),
+        samples
+      )
 
+      correctionObjective.warmCaches()
 
       val result = optimizer.minimize(correctionObjective, correctionObjective.getSpace(
         Seq(0.005, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06),

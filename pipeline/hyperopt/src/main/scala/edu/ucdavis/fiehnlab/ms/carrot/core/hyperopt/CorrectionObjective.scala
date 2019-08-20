@@ -7,6 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStanda
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra, MetadataSupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.LossFunction
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.springframework.context.ApplicationContext
@@ -17,7 +18,7 @@ import org.springframework.context.ApplicationContext
   * @param config
   * @param profiles
   */
-class CorrectionObjective(config: Class[_], profiles: Array[String], samples: List[String]) extends SpringBootObjective(config, profiles) with LossFunctions {
+class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String]) extends SpringBootObjective(config, profiles) {
 
   def getSpace(massAccuracySetting: Seq[Double], rtAccuracySetting: Seq[Double]): Map[String, Iterable[Any]] = {
     Map(
@@ -45,20 +46,13 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], samples: Li
     correction.massAccuracySetting = point.get("massAccuracySetting").asInstanceOf[Double]
     correction.rtAccuracySetting = point.get("rtAccuracySetting").asInstanceOf[Double]
 
+    //deconvolute and correct them
+    val corrected = samples.map((item: String) => dropSpectra(correction.process(deco.process(loader.getSample(item), method, None), method, None), loader))
 
     //compute statistics
 
     try {
-      //deconvolute and correct them
-      val corrected = samples.map { item: String =>
-
-        val rawdata = loader.getSample(item)
-        val deconvoluted = deco.process(rawdata, method, None)
-        val corrected = correction.process(deconvoluted, method, None)
-        corrected
-      }
-
-      loss_function(corrected)
+      lossFunction.lossFunction(corrected)
     }
     catch {
 
@@ -71,13 +65,6 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], samples: Li
     }
   }
 
-  /**
-    * computes our validation score across all the samples
-    *
-    * @param corrected
-    * @return
-    */
-  private def loss_function(corrected: List[CorrectedSample]): Double = peakHeightRsdLossFunction(corrected)
 
   /**
     * cache the objects which are cacheable to avoid doing the same task over and over
