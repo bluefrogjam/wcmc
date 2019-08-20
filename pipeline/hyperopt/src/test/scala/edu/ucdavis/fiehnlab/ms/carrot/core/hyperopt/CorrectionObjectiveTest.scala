@@ -4,7 +4,7 @@ import com.eharmony.spotz.Preamble.Point
 import com.eharmony.spotz.optimizer.grid.SparkGridSearch
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
-import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.PeakHeightRSDLossFunction
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.PeakHeightRSDCorrectionLossFunction
 import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.{SparkConf, SparkContext}
 import org.junit.runner.RunWith
@@ -18,8 +18,8 @@ import org.springframework.test.context.TestContextManager
 
 @RunWith(classOf[JUnitRunner])
 class CorrectionObjectiveTest extends WordSpec {
-  val samples: List[String] = List(
 
+  val samples: List[String] = List(
     "B2A_TEDDYLipids_Pos_QC006.mzml",
     "B2A_TEDDYLipids_Pos_QC007.mzml"
 //  "B2A_TEDDYLipids_Pos_QC008.mzml",
@@ -29,8 +29,6 @@ class CorrectionObjectiveTest extends WordSpec {
 //  "B1A_TEDDYLipids_Pos_QC006.mzml",
 //  "B1A_TEDDYLipids_Pos_QC007.mzml",
 //  "B1A_TEDDYLipids_Pos_QC008.mzml"
-
-
   )
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
@@ -47,7 +45,7 @@ class CorrectionObjectiveTest extends WordSpec {
       val correctionObjective = new CorrectionObjective(
         classOf[HyperoptTestConfiguration],
         Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"),
-        new PeakHeightRSDLossFunction(),
+        new PeakHeightRSDCorrectionLossFunction(),
         samples
       )
 

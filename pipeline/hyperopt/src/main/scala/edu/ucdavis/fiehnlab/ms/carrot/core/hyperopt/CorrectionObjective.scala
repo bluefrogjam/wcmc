@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContext
   * @param config
   * @param profiles
   */
-class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction, samples: List[String]) extends SpringBootObjective(config, profiles) {
+class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String]) extends SpringBootObjective(config, profiles) {
 
   def getSpace(massAccuracySetting: Seq[Double], rtAccuracySetting: Seq[Double]): Map[String, Iterable[Any]] = {
     Map(

@@ -1,27 +1,26 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.CorrectedSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, MSSpectra, MetadataSupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra, MetadataSupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.Statistics
 
-class STDOutlierLossFunction extends LossFunction {
+private abstract class STDOutlierLossFunction[T] extends LossFunction[T] {
 
   /**
     * calculates an error value based on the presence of outliers in mass, retention time or peak height
-    * @param corrected
+    * @param data
     * @param usePeakHeight optionally include peak height in addition to ri and m/z the error calculation
     *                      note that this is useful for internal standards which should have more consistent
     *                      intensities, whereas metabolites may have real biological variation
     * @return
     */
-  def lossFunction(corrected: List[CorrectedSample], usePeakHeight: Boolean = true): Double = {
-    val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAllSamples(corrected)
+  def peakHeightMeanRsd(data: Map[Target, List[(Target, Feature)]], usePeakHeight: Boolean = true): Double = {
 
     // for each metabolite, calculate the ratio of the rsd of all annotations by the rsd of
     // the outlier filtered annotations.  high values indicate larger spread of the data before
     // outlier removal and therefore the presence of mis-annotations.  a ratio of 1 indicates
     // no outliers and therefore a reasonable confidence of good annotations
-    val rsd = targetsAndAnnotationsForAllSamples.map {
+    val rsd = data.map {
       item =>
         val annotations = item._2.map(_._2)
 
@@ -62,8 +61,23 @@ class STDOutlierLossFunction extends LossFunction {
         (item._1, error)
     }
 
-    val averageError = Statistics.mean(rsd.values)
+    Statistics.mean(rsd.values)
+  }
+}
 
-    averageError
+
+class STDOutlierCorrectionLossFunction extends STDOutlierLossFunction[CorrectedSample] {
+
+  def lossFunction(corrected: List[CorrectedSample]): Double = {
+    val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForCorrectedSamples(corrected)
+    peakHeightMeanRsd(targetsAndAnnotationsForAllSamples)
+  }
+}
+
+class STDOutlierAnnotationLossFunction extends STDOutlierLossFunction[AnnotatedSample] {
+
+  def lossFunction(annotated: List[AnnotatedSample]): Double = {
+    val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAnnotatedSamples(annotated)
+    peakHeightMeanRsd(targetsAndAnnotationsForAllSamples)
   }
 }

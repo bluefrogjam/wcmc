@@ -1,21 +1,20 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.CorrectedSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSSpectra, MetadataSupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, Target}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, MetadataSupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.Statistics
 
 
-class PeakHeightRSDLossFunction extends LossFunction {
+private abstract class PeakHeightRSDLossFunction[T] extends LossFunction[T] {
 
   /**
     * calculates the average rsd in peak height by metabolite over all samples
-    * @param corrected
+    * @param data
     * @return
     */
-  def lossFunction(corrected: List[CorrectedSample]): Double = {
-    val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAllSamples(corrected)
+  def peakHeightMeanRsd(data: Map[Target, List[(Target, Feature)]]): Double = {
 
-    val rsd = targetsAndAnnotationsForAllSamples.map {
+    val rsd = data.map {
       item =>
         val annotations = item._2.map(_._2)
 
@@ -28,8 +27,23 @@ class PeakHeightRSDLossFunction extends LossFunction {
         (item._1, stdDev)
     }
 
-    val averageRst = Statistics.mean(rsd.values)
+    Statistics.mean(rsd.values)
+  }
+}
 
-    averageRst
+
+class PeakHeightRSDCorrectionLossFunction extends PeakHeightRSDLossFunction[CorrectedSample] {
+
+  def lossFunction(corrected: List[CorrectedSample]): Double = {
+    val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForCorrectedSamples(corrected)
+    peakHeightMeanRsd(targetsAndAnnotationsForAllSamples)
+  }
+}
+
+class PeakHeightRSDAnnotationLossFunction extends PeakHeightRSDLossFunction[AnnotatedSample] {
+
+  def lossFunction(annotated: List[AnnotatedSample]): Double = {
+    val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAnnotatedSamples(annotated)
+    peakHeightMeanRsd(targetsAndAnnotationsForAllSamples)
   }
 }
