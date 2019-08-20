@@ -1,9 +1,11 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types;
 
+import java.io.Serializable;
+
 /**
  * Created by diego on 9/13/2016.
  */
-public class PeakAreaBean {
+public class PeakAreaBean implements Serializable {
 
 	public PeakAreaBean(){};
 

@@ -20,10 +20,16 @@ import org.springframework.context.ApplicationContext
   */
 class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String]) extends SpringBootObjective(config, profiles) {
 
-  def getSpace(massAccuracySetting: Seq[Double], rtAccuracySetting: Seq[Double]): Map[String, Iterable[Any]] = {
+  def getSpace(massAccuracyPPMSetting: Seq[Double], massAccuracySetting: Seq[Double] = Seq.empty, rtAccuracySetting: Seq[Double] = Seq.empty, minPeakIntensitySetting: Seq[Float] = Seq.empty, intensityPenaltyThresholdSetting: Seq[Float] = Seq.empty): Map[String, Iterable[Any]] = {
     Map(
       "massAccuracySetting" -> massAccuracySetting,
+      "massAccuracyPPMSetting" -> massAccuracyPPMSetting,
+      "rtAccuracySetting" -> rtAccuracySetting,
+      "minPeakIntensitySetting" -> minPeakIntensitySetting,
+      "intensityPenaltyThresholdSetting" -> intensityPenaltyThresholdSetting,
       "rtAccuracySetting" -> rtAccuracySetting
+
+
     )
   }
 
@@ -45,6 +51,9 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
     //apply the hyper opt space settings
     correction.massAccuracySetting = point.get("massAccuracySetting").asInstanceOf[Double]
     correction.rtAccuracySetting = point.get("rtAccuracySetting").asInstanceOf[Double]
+    correction.minPeakIntensity = point.get("minPeakIntensitySetting").asInstanceOf[Float]
+    correction.intensityPenaltyThreshold = point.get("intensityPenaltyThresholdSetting").asInstanceOf[Float]
+    correction.massAccuracyPPMSetting = point.get("massAccuracyPPMSetting").asInstanceOf[Double]
 
     try {
       //deconvolute and correct them

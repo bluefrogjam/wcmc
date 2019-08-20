@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 import java.io.{File, FileNotFoundException}
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSMSSpectra, MSSpectra, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, IonMode, Sample, SampleProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.cache.annotation.Cacheable
 
@@ -226,22 +226,44 @@ trait SampleLoader extends Logging {
         val _fileName = x.fileName
         val _properties = x.properties
 
-        new Sample {
+        if (x.isInstanceOf[RawData]) {
+          new RawData {
 
-          /**
-            * a collection of spectra
-            * belonging to this sample
-            */
-          override val spectra: Seq[_ <: Feature] = wrapped_spectra
-          /**
-            * the unique file name of the sample
-            */
-          override val fileName: String = _fileName
-          /**
-            * associated properties
-            */
-          override val properties: Option[SampleProperties] = _properties
+            /**
+              * a collection of spectra
+              * belonging to this sample
+              */
+            override val spectra: Seq[_ <: Feature] = wrapped_spectra
+            /**
+              * the unique file name of the sample
+              */
+            override val fileName: String = _fileName
+            /**
+              * associated properties
+              */
+            override val properties: Option[SampleProperties] = _properties
+          }
         }
+
+        else {
+          new Sample {
+
+            /**
+              * a collection of spectra
+              * belonging to this sample
+              */
+            override val spectra: Seq[_ <: Feature] = wrapped_spectra
+            /**
+              * the unique file name of the sample
+              */
+            override val fileName: String = _fileName
+            /**
+              * associated properties
+              */
+            override val properties: Option[SampleProperties] = _properties
+          }
+        }
+
     }
   }
 

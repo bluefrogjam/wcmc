@@ -17,8 +17,12 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
     */
   override def apply(point: Point): Double = {
     val context: ConfigurableApplicationContext = build_context
-
-    apply(context, point)
+    try {
+      apply(context, point)
+    }
+    finally {
+      context.close()
+    }
   }
 
   private def build_context = {
@@ -48,11 +52,14 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
   def warmCaches(): Unit = {
     val begin = System.currentTimeMillis()
     logger.info("warming caches....")
+    val context = build_context
     try {
-      warmCaches(build_context)
+
+      warmCaches(context)
     }
     finally {
       logger.info(s"warmup took ${(System.currentTimeMillis() - begin) / 1000}s")
+      context.close()
     }
   }
 

@@ -4,13 +4,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.Peak;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.PeakAreaBean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by diego on 7/22/2016.
  */
-public class MS2DeconvolutionResult {
+public class MS2DeconvolutionResult implements Serializable {
 
     public int peakTopScan;
     public double peakTopRetentionTime = -1.0;
@@ -48,14 +49,14 @@ public class MS2DeconvolutionResult {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         return sb.append(peakTopScan).append(" ")
-            .append(peakTopRetentionTime).append(" ")
-            .append(ms1AccurateMass).append(" ")
-            .append(uniqueMs).append(" ")
-            .append(ms1PeakHeight).append(" ")
-            .append(ms1IsotopicIonM1PeakHeight).append(" ")
-            .append(ms1IsotopicIonM2PeakHeight).append(" ")
-            .append(ms2DecPeakHeight).append(" ")
-            .append(ms2DecPeakArea).append(" ").toString();
+                .append(peakTopRetentionTime).append(" ")
+                .append(ms1AccurateMass).append(" ")
+                .append(uniqueMs).append(" ")
+                .append(ms1PeakHeight).append(" ")
+                .append(ms1IsotopicIonM1PeakHeight).append(" ")
+                .append(ms1IsotopicIonM2PeakHeight).append(" ")
+                .append(ms2DecPeakHeight).append(" ")
+                .append(ms2DecPeakArea).append(" ").toString();
     }
 }
 
