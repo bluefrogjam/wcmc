@@ -1,20 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
-import java.io.File
-
-import org.apache.logging.log4j.scala.Logging
-import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cache.CacheManager
-import org.springframework.context.annotation._
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -44,33 +37,36 @@ class ResourceLoaderSampleLoaderTest extends WordSpec with Matchers with Logging
 
     "able to load d.zip sample GLA_Ag6_Lipids_QC01" in {
 
-      val sample = loader.loadSample("GLA_Ag6_Lipids_QC01.d.zip")
+      val sample = loader.getSample("GLA_Ag6_Lipids_QC01.d.zip")
 
-      assert(sample.isDefined)
-      assert(sample.get.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
+      assert(sample.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
+      assert(sample.spectra != null)
+
     }
 
     "ensure that object is now cached" in {
 
-      val sample: Option[Sample] = cacheManager.getCache("resource-load-sample").get("GLA_Ag6_Lipids_QC01.d.zip").get().asInstanceOf[Option[Sample]]
+      val sample: Option[Sample] = cacheManager.getCache("resource-get-sample").get("GLA_Ag6_Lipids_QC01.d.zip").get().asInstanceOf[Option[Sample]]
 
       assert(sample.get.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
+      assert(sample.get.spectra != null)
     }
 
 
     "able to reload d.zip sample GLA_Ag6_Lipids_QC01, which should be cached now" in {
 
-      val sample = loader.loadSample("GLA_Ag6_Lipids_QC01.d.zip")
+      val sample = loader.getSample("GLA_Ag6_Lipids_QC01.d.zip")
 
-      assert(sample.isDefined)
-      assert(sample.get.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
+      assert(sample.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
+      assert(sample.spectra != null)
     }
     "able to load mzml sample X-blank_04" in {
 
-      val sample = loader.loadSample("X-blank_04.mzml")
+      val sample = loader.getSample("X-blank_04.mzml")
 
-      assert(sample.isDefined)
-      assert(sample.get.fileName == "X-blank_04.mzml")
+      assert(sample.fileName == "X-blank_04.mzml")
+      assert(sample.spectra != null)
+      assert(sample.spectra.nonEmpty)
     }
 
   }

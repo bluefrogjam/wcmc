@@ -1,17 +1,15 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.NegativeMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, PositiveMode}
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cache.CacheManager
-import org.springframework.cache.concurrent.{ConcurrentMapCache, ConcurrentMapCacheManager}
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.collection.JavaConverters._
 
@@ -49,16 +47,15 @@ class PeakDetectionTest extends WordSpec {
     "doProcess" in {
 
       assert(cacheManager.getCache("process-peak-detection").get(key) == null)
-      val sample = sampleLoader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml").get
+      val sample = sampleLoader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       val result = peakDetection.process(sample, method, None)
-      assert(cacheManager.getCache("process-peak-detection").get(key).get().asInstanceOf[MSDialLCMSProcessedSample].fileName == "B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
+      assert(cacheManager.getCache("process-peak-detection").get(key) != null)
     }
 
     "doProcessCached" in {
       assert(cacheManager.getCache("process-peak-detection").get(key) != null)
-      val sample = sampleLoader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml").get
+      val sample = sampleLoader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       val result = peakDetection.process(sample, method, None)
-      assert(cacheManager.getCache("process-peak-detection").get(key).get().asInstanceOf[MSDialLCMSProcessedSample].fileName == "B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
     }
 
   }

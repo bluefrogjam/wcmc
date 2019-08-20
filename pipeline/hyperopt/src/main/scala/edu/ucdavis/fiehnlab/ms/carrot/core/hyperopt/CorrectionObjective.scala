@@ -3,6 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt
 import com.eharmony.spotz.Preamble._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra, MetadataSupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -44,18 +45,28 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], samples: Li
     correction.massAccuracySetting = point.get("massAccuracySetting").asInstanceOf[Double]
     correction.rtAccuracySetting = point.get("rtAccuracySetting").asInstanceOf[Double]
 
-    //deconvolute and correct them
-    val corrected = samples.map((item: String) => dropSpectra(correction.process(deco.process(loader.getSample(item), method, None), method, None), loader))
 
     //compute statistics
 
     try {
+      //deconvolute and correct them
+      val corrected = samples.map { item: String =>
+
+        val rawdata = loader.getSample(item)
+        val deconvoluted = deco.process(rawdata, method, None)
+        val corrected = correction.process(deconvoluted, method, None)
+        corrected
+      }
+
       loss_function(corrected)
     }
     catch {
 
+      case e: NotEnoughStandardsFoundException =>
+        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and re accuracy ${correction.rtAccuracySetting}")
+        Double.MaxValue
       case e: RejectDueToCorrectionFailed =>
-        e.printStackTrace()
+        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and re accuracy ${correction.rtAccuracySetting}")
         Double.MaxValue
     }
   }
@@ -67,6 +78,28 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], samples: Li
     * @return
     */
   private def loss_function(corrected: List[CorrectedSample]): Double = peakHeightRsdLossFunction(corrected)
+
+  /**
+    * cache the objects which are cacheable to avoid doing the same task over and over
+    *
+    * @param context
+    */
+  override protected def warmCaches(context: ApplicationContext): Unit = {
+
+
+    val method: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Some(PositiveMode())))
+    val correction: LCMSTargetRetentionIndexCorrectionProcess = context.getBean(classOf[LCMSTargetRetentionIndexCorrectionProcess])
+    val deco: PeakDetection = context.getBean(classOf[PeakDetection])
+    val loader: SampleLoader = context.getBean(classOf[SampleLoader])
+
+    samples.foreach { sample =>
+      val rawdata = loader.getSample(sample)
+      val deconvoluted = deco.process(rawdata, method, None)
+      logger.info(s"sample ${sample} was deconvoluted and had ${deconvoluted.spectra.size} spectra")
+    }
+
+    logger.info(s"warmed up cache for ${samples.size} samples")
+  }
 
   /**
     * drops all spectra here to safe some memory

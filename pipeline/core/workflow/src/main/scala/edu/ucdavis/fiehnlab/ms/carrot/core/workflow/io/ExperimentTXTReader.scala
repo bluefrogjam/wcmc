@@ -39,7 +39,7 @@ class ExperimentTXTReader @Autowired()(val loader: SampleLoader, val properties:
       case line: String =>
         if (!line.startsWith("#")) {
           val data = line.split(properties.delimiter)
-          val sample = loader.loadSample(data(0)).get
+          val sample = loader.getSample(data(0))
 
           if (data.size == 1) {
             ("none", sample)

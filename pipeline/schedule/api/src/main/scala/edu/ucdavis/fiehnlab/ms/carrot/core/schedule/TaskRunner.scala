@@ -94,9 +94,8 @@ class TaskRunner extends Logging {
 
         try {
           //processes the actual sample
-          val value = sampleLoader.loadSample(x.fileName)
-          assert(value.isDefined, "please ensure that specified file name is defined!")
-          workflow.process(value.get, task.acquisitionMethod, value)
+          val value = sampleLoader.getSample(x.fileName)
+          workflow.process(value, task.acquisitionMethod, Some(value))
         }
         catch {
           case e: UnsupportedSampleException =>

@@ -63,12 +63,7 @@ abstract class ZeroReplacement extends PostProcessing[Double] with Logging {
             logger.debug(s"attempting to load file: ${fileNameToLoad}")
 
             try {
-              val result = sampleLoader.loadSample(fileNameToLoad)
-
-              if (result.isDefined) {
-                logger.info(s"loaded rawdata file: ${result.get}")
-                result.get
-              }
+              sampleLoader.getSample(fileNameToLoad)
             } catch {
               case e: Throwable =>
                 logger.error(s"observed error: ${e.getMessage} => skip", e)
@@ -237,32 +232,32 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           if (zeroReplacementProperties.estimateByNearestFourIons && replacementValueSpectra.nonEmpty) {
             // estimate the replacement value using the nearest four ions of matching mass
             val leftIntensities = replacementValueSpectra
-                .filter(x => receivedTarget.retentionIndex > x.retentionIndex)
-                .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
-                .take(2)
+              .filter(x => receivedTarget.retentionIndex > x.retentionIndex)
+              .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
+              .take(2)
 
             val rightIntensities = replacementValueSpectra
-                .filter(x => receivedTarget.retentionIndex < x.retentionIndex)
-                .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
-                .take(2)
+              .filter(x => receivedTarget.retentionIndex < x.retentionIndex)
+              .sortBy(x => Math.abs(x.retentionIndex - receivedTarget.retentionIndex))
+              .take(2)
 
             val nearestIntensities = (leftIntensities ++ rightIntensities)
-                .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get, receivedTarget).get.intensity)
+              .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get, receivedTarget).get.intensity)
 
             val intensity = nearestIntensities.sum / nearestIntensities.length
             logger.warn(s"\tCreated failsafe [Feature with CorrectedSpectra] from nearest ${nearestIntensities.length} " +
-                s"ions with ${intensity} intensity")
+              s"ions with ${intensity} intensity")
             intensity
           } else if (zeroReplacementProperties.estimateByChromatogramNoise && replacementValueSpectra.nonEmpty) {
             // estimate the replacement value by averaging the intensities of the smallest 5% of ions
             val intensities = replacementValueSpectra
-                .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get, receivedTarget).get.intensity)
-                .sorted
-                .take((replacementValueSpectra.length / 20.0 + 1).toInt)
+              .map(x => MassAccuracy.findClosestIon(x, receivedTarget.precursorMass.get, receivedTarget).get.intensity)
+              .sorted
+              .take((replacementValueSpectra.length / 20.0 + 1).toInt)
 
             val intensity = intensities.sum / intensities.length
             logger.warn(s"\tCreated failsafe [Feature with CorrectedSpectra] from smallest ${intensities.length} " +
-                s"ions with ${intensity} intensity")
+              s"ions with ${intensity} intensity")
             intensity
           } else {
             logger.warn("\tCreated failsafe [Feature with CorrectedSpectra] from target data and 0 intensity")

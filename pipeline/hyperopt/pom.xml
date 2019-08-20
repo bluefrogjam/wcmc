@@ -40,12 +40,6 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
             <artifactId>workflow</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-data-mongodb</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -61,6 +55,11 @@
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
             <artifactId>yaml</artifactId>
             <version>1.0.16-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
     </dependencies>
 

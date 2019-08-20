@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
 import java.io.{File, FileInputStream}
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent.AgilentSample
@@ -10,6 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.leco.LecoSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
 
@@ -30,9 +30,8 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     * @param name
     * @return
     */
-  @Cacheable(value = Array("resource-load-sample"), key = "#name")
   override def loadSample(name: String): Option[_ <: Sample] = {
-    logger.debug(s"looking for sample: ${name} with ${resourceLoader}")
+    logger.info(s"looking for sample: ${name} with ${resourceLoader}")
     val fileOption = resourceLoader.loadAsFile(name)
     convertFileToSample(name, fileOption)
   }

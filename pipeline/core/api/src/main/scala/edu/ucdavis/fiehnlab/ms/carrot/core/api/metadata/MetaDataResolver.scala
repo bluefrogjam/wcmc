@@ -20,7 +20,7 @@ class MetaDataResolver {
   @Autowired
   val loader: ResourceLoader = null
 
-  @Autowired
+  @Autowired(required = false)
   val metadataRepository: FileMetadataRepository = null
 
   val validExtensions: Array[String] = Array("mzML", "mzml")
@@ -35,7 +35,7 @@ class MetaDataResolver {
 
     //check if the repository has our data
     val result = validExtensions.collectFirst {
-      case x if metadataRepository.findByFilename(s"${sample.name}.${x}") != null => metadataRepository.findByFilename(s"${sample.name}.${x}")
+      case x if metadataRepository != null && metadataRepository.findByFilename(s"${sample.name}.${x}") != null => metadataRepository.findByFilename(s"${sample.name}.${x}")
     }
 
     if (result.isDefined) {
@@ -49,7 +49,7 @@ class MetaDataResolver {
       validExtensions.collectFirst {
         case x if loader.exists(s"${sample.name}.${x}") && extractor.isDefined =>
           extractor.get.getMetadata(loader.loadAsFile(s"${sample.name}.${x}").get)
-      }.getOrElse(None)
+      }.flatten
 
     }
   }

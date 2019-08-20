@@ -41,12 +41,7 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
             <artifactId>workflow</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-data-mongodb</artifactId>
-                </exclusion>
-            </exclusions>
+
         </dependency>
 
         <dependency>

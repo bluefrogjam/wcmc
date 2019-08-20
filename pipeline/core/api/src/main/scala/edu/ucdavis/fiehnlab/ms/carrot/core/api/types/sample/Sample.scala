@@ -7,7 +7,7 @@ import org.apache.logging.log4j.scala.Logging
 /**
   * Defines a basic sample, which needs to be processed
   */
-trait Sample {
+trait Sample extends Serializable{
   /**
     * a collection of spectra
     * belonging to this sample

@@ -12,3 +12,10 @@ mona:
       password: admin
       host: localhost
       port: 9090
+
+spring:
+  cache:
+    type: redis
+  redis:
+    host: 127.0.0.1
+    port: 6379

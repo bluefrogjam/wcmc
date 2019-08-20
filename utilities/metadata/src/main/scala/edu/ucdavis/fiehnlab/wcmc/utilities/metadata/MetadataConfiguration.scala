@@ -3,12 +3,13 @@ package edu.ucdavis.fiehnlab.wcmc.utilities.metadata
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.api.MetadataExtraction
 import edu.ucdavis.fiehnlab.wcmc.utilities.metadata.impl.MzXMLMetadataExtraction
 import org.springframework.beans.factory.{BeanFactory, NoSuchBeanDefinitionException}
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Profile}
 import org.springframework.data.mongodb.MongoDbFactory
 import org.springframework.data.mongodb.core.convert.{CustomConversions, DefaultDbRefResolver, DefaultMongoTypeMapper, MappingMongoConverter}
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
+@Profile(Array("carrot.metadata.mongo"))
 @Configuration
 @EnableMongoRepositories
 class MetadataConfiguration {

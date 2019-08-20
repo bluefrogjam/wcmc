@@ -46,16 +46,16 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
 
   "The process" should {
     "return some negative mode MSMS spectra" in {
-      val sample = loader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
+      val sample: Sample = loader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode())))
 
       val neg_result = quantification.process(
         annotation.process(
           correction.process(
-            deco.process(sample.get, method, None),
-            method, sample),
+            deco.process(sample, method, None),
+            method, Some(sample)),
           method, None),
-        method, sample)
+        method, Some(sample))
 
       val msms = neg_result.spectra.count(_.isInstanceOf[MSMSSpectra])
       logger.info(s"# of   annotated MSMS: $msms")
@@ -64,16 +64,16 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
     }
 
     "return some positive mode MSMS spectra" in {
-      val sample = loader.loadSample("B1_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
+      val sample = loader.getSample("B1_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode())))
 
       val pos_result = quantification.process(
         annotation.process(
           correction.process(
-            deco.process(sample.get, method, None),
-            method, sample),
+            deco.process(sample, method, None),
+            method, Some(sample)),
           method, None),
-        method, sample)
+        method, Some(sample))
 
       val msms = pos_result.spectra.count(_.isInstanceOf[MSMSSpectra])
       logger.info(s"# of   annotated MSMS: $msms")

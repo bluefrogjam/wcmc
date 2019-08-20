@@ -85,7 +85,7 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
   }
 
   "StasisResultStorage" should {
-    val sample = sampleLoader.loadSample("B2a_TEDDYLipids_Neg_QC006.mzml").get
+    val sample = sampleLoader.getSample("B2a_TEDDYLipids_Neg_QC006.mzml")
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
 
     val result = quantification.process(
