@@ -4,7 +4,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.RejectDueToCorrectionFailed
 
-abstract class LossFunction[T <: Sample] {
+abstract class LossFunction[T <: Sample] extends Serializable {
 
   /**
     * return a list of all annotated correction features grouped by compound
