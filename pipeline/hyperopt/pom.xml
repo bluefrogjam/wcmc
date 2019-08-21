@@ -61,6 +61,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>net.jcazevedo</groupId>
+            <artifactId>moultingyaml_${scala.version}</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -18,6 +18,7 @@
         <module>localrunner</module>
         <module>cloudrunner</module>
         <module>singlerunner</module>
+        <module>hyperopt</module>
         <!--<module>server</module>-->
         <!--<module>converter</module>-->
     </modules>

@@ -1,0 +1,95 @@
+hyperopt:
+
+  ##
+  # which spark server we want to use
+  spark: local[8]
+
+  ##
+  # which samples we want to investigate
+  samples:
+    - Biorec003_posCSH_postFlenniken020.mzml
+    - Biorec001_posCSH_preFlenniken001.mzml
+    - Biorec004_posCSH_postFlenniken030.mzml
+    - Biorec005_posCSH_postFlenniken040.mzml
+    - Biorec006_posCSH_postFlenniken050.mzml
+    - Biorec007_posCSH_postFlenniken060.mzml
+    - Biorec008_posCSH_postFlenniken070.mzml
+    - Biorec009_posCSH_postFlenniken080.mzml
+    - Biorec010_posCSH_postFlenniken090.mzml
+    - Biorec011_posCSH_postFlenniken100.mzml
+    - Biorec012_posCSH_postFlenniken110.mzml
+    - Biorec013_posCSH_postFlenniken120.mzml
+    - Biorec014_posCSH_postFlenniken130.mzml
+    - Biorec015_posCSH_postFlenniken140.mzml
+    - Biorec016_posCSH_postFlenniken150.mzml
+    - Biorec017_posCSH_postFlenniken160.mzml
+    - Biorec018_posCSH_postFlenniken170.mzml
+    - Biorec019_posCSH_postFlenniken180.mzml
+    - Biorec020_posCSH_postFlenniken190.mzml
+    - Biorec022_posCSH_postFlenniken210.mzml
+    - Biorec021_posCSH_postFlenniken200.mzml
+    - Biorec023_posCSH_postFlenniken220.mzml
+
+
+  ##
+  # required springboot profiles
+  # for the hyperopt process to correctly run
+  profiles:
+    - file.source.eclipse
+    - carrot.repot.quantify.height
+    - carrot.processing.peakdetection
+    - carrot.lcms
+    - carrot.targets.yaml.annotation
+    - carrot.targets.yaml.correction
+
+  ##
+  # name of the method to use, in it's serialized format
+  method: name
+
+  ##
+  # which stages we care about
+  stages:
+
+    ##
+    # settings for the correction stage
+    # of hyper opt
+    correction:
+
+      ##
+      # this defines all the settings you want to evaluate
+      settings:
+
+        massAccuracyPPM:
+          - 5
+          - 10
+          - 15
+          - 20
+          - 30
+        massAccuracy:
+          - 0.01
+          - 0.02
+          - 0.03
+          - 0.04
+          - 0.05
+          - 0.06
+          - 0.07
+          - 0.08
+          - 0.09
+          - 0.10
+        rtAccuracy:
+          - 0
+        minPeakIntensity:
+          - 1000
+          - 2000
+          - 4000
+          - 6000
+          - 8000
+          - 10000
+          - 15000
+          - 20000
+
+        intensityPenalty:
+          - 10000
+          - 20000
+          - 30000
+

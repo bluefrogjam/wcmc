@@ -29,7 +29,10 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
     val app = new SpringApplication(config)
     app.setWebApplicationType(WebApplicationType.NONE)
     app.setBannerMode(Banner.Mode.OFF)
-    app.setAdditionalProfiles(profiles: _*)
+
+    //we never want to hit stasis
+    val active_profiles = "carrot.nostasis" +: profiles
+    app.setAdditionalProfiles(active_profiles: _*)
 
 
     val context = app.run()
@@ -66,6 +69,14 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
   protected def warmCaches(applicationContext: ApplicationContext): Unit = {
 
   }
+
+  /**
+    * generates the space to be used based on the given configuration
+    *
+    * @param config
+    * @return
+    */
+  def getSpace(config: Config): Map[String, Iterable[Any]]
 }
 
 /**

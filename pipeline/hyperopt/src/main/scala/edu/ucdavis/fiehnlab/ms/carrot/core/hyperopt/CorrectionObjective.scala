@@ -20,19 +20,6 @@ import org.springframework.context.ApplicationContext
   */
 class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String]) extends SpringBootObjective(config, profiles) {
 
-  def getSpace(massAccuracyPPMSetting: Seq[Double], massAccuracySetting: Seq[Double] = Seq.empty, rtAccuracySetting: Seq[Double] = Seq.empty, minPeakIntensitySetting: Seq[Float] = Seq.empty, intensityPenaltyThresholdSetting: Seq[Float] = Seq.empty): Map[String, Iterable[Any]] = {
-    Map(
-      "massAccuracySetting" -> massAccuracySetting,
-      "massAccuracyPPMSetting" -> massAccuracyPPMSetting,
-      "rtAccuracySetting" -> rtAccuracySetting,
-      "minPeakIntensitySetting" -> minPeakIntensitySetting,
-      "intensityPenaltyThresholdSetting" -> intensityPenaltyThresholdSetting,
-      "rtAccuracySetting" -> rtAccuracySetting
-
-
-    )
-  }
-
   /**
     * actualy apply function, providing subclasses with a correctly configured configuration class
     *
@@ -130,6 +117,26 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
         */
       override val properties: Option[SampleProperties] = None
     }
+  }
+
+  /**
+    * generates the space to be used based on the given configuration
+    *
+    * @param config
+    * @return
+    */
+  override def getSpace(config: Config): Map[String, Iterable[Any]] = {
+    val settings = config.hyperopt.stages.correction.get.settings
+
+    Map(
+      "massAccuracySetting" -> settings.massAccuracy,
+      "massAccuracyPPMSetting" -> settings.massAccuracyPPM,
+      "rtAccuracySetting" -> settings.rtAccuracy,
+      "minPeakIntensitySetting" -> settings.minPeakIntensity,
+      "intensityPenaltyThresholdSetting" -> settings.intensityPenalty,
+      "rtAccuracySetting" -> settings.rtAccuracy
+
+    )
   }
 }
 

@@ -29,12 +29,6 @@ class CorrectionObjectiveTest extends WordSpec {
     "B2A_TEDDYLipids_Pos_QC006.mzml",
     "B2A_TEDDYLipids_Pos_QC007.mzml",
     "B2A_TEDDYLipids_Pos_QC008.mzml"
-    //  "B3A_TEDDYLipids_Pos_QC006.mzml",
-    //  "B3A_TEDDYLipids_Pos_QC007.mzml",
-    //  "B3A_TEDDYLipids_Pos_QC008.mzml",
-    //  "B1A_TEDDYLipids_Pos_QC006.mzml",
-    //  "B1A_TEDDYLipids_Pos_QC007.mzml",
-    //  "B1A_TEDDYLipids_Pos_QC008.mzml"
 
 
   )
@@ -60,11 +54,26 @@ class CorrectionObjectiveTest extends WordSpec {
       correctionObjective.warmCaches()
 
       val result = optimizer.minimize(correctionObjective, correctionObjective.getSpace(
-        massAccuracyPPMSetting = Seq(5, 10, 20, 30),
-        massAccuracySetting = Seq(0.005, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06),
-        rtAccuracySetting = Seq(1,2),
-        minPeakIntensitySetting = Seq(500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000),
-        intensityPenaltyThresholdSetting = Seq(10000, 20000, 30000)
+        Config(
+          Hyperopt(
+            spark = "localhost[*]",
+            samples = List.empty,
+            profiles = List.empty,
+            method = "",
+            stages = Stages(
+              correction = Some(Correction(
+                CorrectionSettings(
+                  massAccuracyPPM = List(5, 10, 20),
+                  massAccuracy = List(0.05, 0.06),
+                  rtAccuracy = List(1),
+                  minPeakIntensity = List(1000, 2000),
+                  intensityPenalty = List(10000)
+                )
+              ))
+            )
+          )
+        )
+
       ))
       print(result)
       sc.stop()

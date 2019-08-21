@@ -1,0 +1,21 @@
+
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: fiehnlab-2018
+
+mona:
+  rest:
+    server:
+      user: admin
+      password: admin
+      host: localhost
+      port: 9090
+
+spring:
+  cache:
+    type: redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
