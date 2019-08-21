@@ -5,7 +5,7 @@ import net.jcazevedo.moultingyaml._
 object ConfigYamlProtocol extends DefaultYamlProtocol {
   implicit val correctionSettingsFormat = yamlFormat5(CorrectionSettings)
   implicit val correctionFormat = yamlFormat1(Correction)
-  implicit val stagesFormat = yamlFormat1(Stages)
+  implicit val stagesFormat = yamlFormat2(Stages)
   implicit val hyperoptFormat = yamlFormat5(Hyperopt)
   implicit val configFormat = yamlFormat1(Config)
 }
@@ -18,12 +18,19 @@ case class CorrectionSettings(
                                intensityPenalty: List[Float]
                              )
 
+case class AnnotationSettings()
+
 case class Correction(
                        settings: CorrectionSettings
                      )
 
+case class Annotation(
+                       settings: AnnotationSettings
+                     )
+
 case class Stages(
-                   correction: Option[Correction]
+                   correction: Option[Correction],
+                   annotation: Option[Annotation]
                  )
 
 case class Hyperopt(

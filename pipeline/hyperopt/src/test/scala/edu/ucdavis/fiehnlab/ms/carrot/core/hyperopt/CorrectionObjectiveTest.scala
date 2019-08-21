@@ -24,23 +24,20 @@ import org.springframework.test.context.TestContextManager
 @RunWith(classOf[JUnitRunner])
 class CorrectionObjectiveTest extends WordSpec {
 
-  val samples: List[String] = List(
-
-    "B2A_TEDDYLipids_Pos_QC006.mzml",
-    "B2A_TEDDYLipids_Pos_QC007.mzml",
-    "B2A_TEDDYLipids_Pos_QC008.mzml"
-
-
-  )
-
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
 
   "CorrectionObjectiveTest" should {
 
-    "apply" in {
+    "apply-qtof-lipids" in {
       val sc = new SparkContext(new SparkConf().setAppName("Correction Objective Test").setMaster("local[8]"))
 
+
+      val samples: List[String] = List(
+        "B2A_TEDDYLipids_Pos_QC006.mzml",
+        "B2A_TEDDYLipids_Pos_QC007.mzml",
+        "B2A_TEDDYLipids_Pos_QC008.mzml"
+      )
 
       val optimizer = new SparkGridSearch[Point, Double](sc)
 

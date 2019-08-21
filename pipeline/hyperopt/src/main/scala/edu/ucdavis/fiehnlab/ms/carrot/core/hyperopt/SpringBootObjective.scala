@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt
 
 import com.eharmony.spotz.Preamble.Point
 import com.eharmony.spotz.objective.Objective
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.springframework.boot.{Banner, SpringApplication, WebApplicationType}
 import org.springframework.context.{ApplicationContext, ConfigurableApplicationContext}
 import org.apache.logging.log4j.scala.Logging
@@ -77,6 +78,30 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
     * @return
     */
   def getSpace(config: Config): Map[String, Iterable[Any]]
+}
+
+/**
+  * provides lcms specific helper methods to avoid code duplication
+  *
+  * @param config
+  * @param profiles
+  */
+abstract class LCMSObjective(config: Class[_], profiles: Array[String]) extends SpringBootObjective(config, profiles) {
+
+
+  /**
+    * correctly configures our correction
+    *
+    * @param point
+    * @param correction
+    */
+  def applyCorrectionSettings(point: Point, correction: LCMSTargetRetentionIndexCorrectionProcess): Unit = {
+    correction.massAccuracySetting = point.get("massAccuracySetting").asInstanceOf[Double]
+    correction.rtAccuracySetting = point.get("rtAccuracySetting").asInstanceOf[Double]
+    correction.minPeakIntensity = point.get("minPeakIntensitySetting").asInstanceOf[Float]
+    correction.intensityPenaltyThreshold = point.get("intensityPenaltyThresholdSetting").asInstanceOf[Float]
+    correction.massAccuracyPPMSetting = point.get("massAccuracyPPMSetting").asInstanceOf[Double]
+  }
 }
 
 /**

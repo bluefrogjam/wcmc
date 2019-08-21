@@ -25,6 +25,16 @@ import scala.io.Source
 class HyperoptRunner {
 
   /**
+    * evaluates all our annotations parameters and provides us with the best combination of them
+    *
+    * @param config
+    * @param optimizer
+    * @param bestCorrectionPoint
+    * @return
+    */
+  def runAnnotation(config: Config, optimizer: SparkGridSearch[Point, Double], bestCorrectionPoint: Option[Point]): GridSearchResult[Point, Double] = ???
+
+  /**
     * takes the given config and runs all the defines stages for us
     *
     * @param config
@@ -35,9 +45,25 @@ class HyperoptRunner {
     val optimizer = new SparkGridSearch[Point, Double](sc)
 
     try {
-      if (config.hyperopt.stages.correction.isDefined) {
-        val correctionResult = runCorrection(config, optimizer)
-        print(correctionResult)
+
+      //compute the possible correction parameters for us
+      val bestCorrectionPoint: Option[Point] = config.hyperopt.stages.correction match {
+        case Some(x) =>
+          val correctionResult = runCorrection(config, optimizer)
+          print(correctionResult)
+          val bestCorrectionSettings = correctionResult.bestPoint
+
+          print(bestCorrectionSettings)
+          Some(bestCorrectionSettings)
+        case None => None
+      }
+
+      val bestAnnotationPoint: Option[Point] = config.hyperopt.stages.annotation match {
+        case Some(x) =>
+          val annotationResult = runAnnotation(config, optimizer, bestCorrectionPoint)
+          print(annotationResult)
+          Some(annotationResult.bestPoint)
+        case None => None
       }
     }
     finally {

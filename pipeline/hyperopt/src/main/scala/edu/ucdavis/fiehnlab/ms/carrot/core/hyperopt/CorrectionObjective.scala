@@ -18,7 +18,7 @@ import org.springframework.context.ApplicationContext
   * @param config
   * @param profiles
   */
-class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String]) extends SpringBootObjective(config, profiles) {
+class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String]) extends LCMSObjective(config, profiles) {
 
   /**
     * actualy apply function, providing subclasses with a correctly configured configuration class
@@ -36,11 +36,7 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
 
 
     //apply the hyper opt space settings
-    correction.massAccuracySetting = point.get("massAccuracySetting").asInstanceOf[Double]
-    correction.rtAccuracySetting = point.get("rtAccuracySetting").asInstanceOf[Double]
-    correction.minPeakIntensity = point.get("minPeakIntensitySetting").asInstanceOf[Float]
-    correction.intensityPenaltyThreshold = point.get("intensityPenaltyThresholdSetting").asInstanceOf[Float]
-    correction.massAccuracyPPMSetting = point.get("massAccuracyPPMSetting").asInstanceOf[Double]
+    applyCorrectionSettings(point, correction)
 
     try {
       //deconvolute and correct them
