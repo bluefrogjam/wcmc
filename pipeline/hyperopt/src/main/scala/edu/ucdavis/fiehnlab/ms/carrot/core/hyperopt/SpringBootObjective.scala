@@ -21,6 +21,11 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
     try {
       apply(context, point)
     }
+    catch {
+      case e: Exception =>
+        logger.error("we received an exception, return double max to filter result out!", e)
+        Double.MaxValue
+    }
     finally {
       context.close()
     }

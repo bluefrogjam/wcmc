@@ -18,7 +18,7 @@ import org.springframework.context.ApplicationContext
   * @param config
   * @param profiles
   */
-class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String]) extends LCMSObjective(config, profiles) {
+class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String], methodName: String) extends LCMSObjective(config, profiles) {
 
   /**
     * actualy apply function, providing subclasses with a correctly configured configuration class
@@ -29,7 +29,7 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
     */
   override def apply(context: ApplicationContext, point: Point): Double = {
 
-    val method: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Some(PositiveMode())))
+    val method: AcquisitionMethod = AcquisitionMethod.deserialize(methodName)
     val correction: LCMSTargetRetentionIndexCorrectionProcess = context.getBean(classOf[LCMSTargetRetentionIndexCorrectionProcess])
     val deco: PeakDetection = context.getBean(classOf[PeakDetection])
     val loader: SampleLoader = context.getBean(classOf[SampleLoader])

@@ -98,7 +98,8 @@ class HyperoptRunner {
       config = classOf[HyperoptConfiguration],
       profiles = config.hyperopt.profiles.toArray,
       lossFunction = new PeakHeightRSDCorrectionLossFunction(),
-      samples = config.hyperopt.samples
+      samples = config.hyperopt.samples,
+      methodName = config.hyperopt.method
     )
 
     correctionObjective.warmCaches()
