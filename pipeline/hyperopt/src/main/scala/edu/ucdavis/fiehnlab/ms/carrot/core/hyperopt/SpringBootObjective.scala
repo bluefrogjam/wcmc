@@ -2,6 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt
 
 import com.eharmony.spotz.Preamble.Point
 import com.eharmony.spotz.objective.Objective
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.springframework.boot.{Banner, SpringApplication, WebApplicationType}
 import org.springframework.context.{ApplicationContext, ConfigurableApplicationContext}
@@ -107,6 +108,29 @@ abstract class LCMSObjective(config: Class[_], profiles: Array[String]) extends 
     correction.intensityPenaltyThreshold = point.get("intensityPenaltyThresholdSetting").asInstanceOf[Float]
     correction.massAccuracyPPMSetting = point.get("massAccuracyPPMSetting").asInstanceOf[Double]
   }
+
+  /**
+    * applies the annotation settings for the given point
+    *
+    * @param point
+    * @param annotation
+    */
+  def applyAnnotationSettings(point: Point, annotation: LCMSTargetAnnotationProcess) = {
+
+    annotation.lcmsProperties.recursiveAnnotationMode = point.get("recursive").asInstanceOf[Boolean]
+    annotation.lcmsProperties.preferMassAccuracyOverRetentionIndexDistance = point.get("preferMassAccuracy").asInstanceOf[Boolean]
+    annotation.lcmsProperties.preferGaussianSimilarityForAnnotation = point.get("preferGaussianSimilarity").asInstanceOf[Boolean]
+
+    annotation.lcmsProperties.closePeakDetection = point.get("closePeakDetection").asInstanceOf[Double]
+    annotation.lcmsProperties.massAccuracySetting = point.get("massAccuracy").asInstanceOf[Double]
+    annotation.lcmsProperties.massAccuracySettingPpm = point.get("massAccuracyPPM").asInstanceOf[Double]
+    annotation.lcmsProperties.retentionIndexWindow = point.get("rtIndexWindow").asInstanceOf[Double]
+
+    annotation.lcmsProperties.intensityPenaltyThreshold = point.get("intensityPenalty").asInstanceOf[Float]
+    annotation.lcmsProperties.massIntensity = point.get("massIntensity").asInstanceOf[Float]
+
+
+  }
 }
 
 /**
@@ -132,7 +156,6 @@ object Statistics {
     * recursively removes outliers from a dataset outside of stdThreshold * stdDev from the mean
     *
     * @param data
-    * @param sigmaThreshold cutoff distance from mean in units of standard deviation
     * @tparam T
     */
   def eliminateOutliers[T: Numeric](data: Iterable[T], stdThreshold: Double = 3): Iterable[T] = {

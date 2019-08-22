@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.ConfigYamlProtocol._
-import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.PeakHeightRSDCorrectionLossFunction
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.{PeakHeightRSDAnnotationLossFunction, PeakHeightRSDCorrectionLossFunction}
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import net.jcazevedo.moultingyaml._
 import org.apache.spark.{SparkConf, SparkContext}
@@ -23,16 +23,6 @@ import scala.io.Source
   * utility class to run a hyperoptimization
   */
 class HyperoptRunner {
-
-  /**
-    * evaluates all our annotations parameters and provides us with the best combination of them
-    *
-    * @param config
-    * @param optimizer
-    * @param bestCorrectionPoint
-    * @return
-    */
-  def runAnnotation(config: Config, optimizer: SparkGridSearch[Point, Double], bestCorrectionPoint: Option[Point]): GridSearchResult[Point, Double] = ???
 
   /**
     * takes the given config and runs all the defines stages for us
@@ -58,6 +48,7 @@ class HyperoptRunner {
         case None => None
       }
 
+      //compute best annotation properties for us
       val bestAnnotationPoint: Option[Point] = config.hyperopt.stages.annotation match {
         case Some(x) =>
           val annotationResult = runAnnotation(config, optimizer, bestCorrectionPoint)
@@ -106,6 +97,29 @@ class HyperoptRunner {
 
     optimizer.minimize(correctionObjective, correctionObjective.getSpace(config))
   }
+
+
+  /**
+    * evaluates all our annotations parameters and provides us with the best combination of them
+    *
+    * @param config
+    * @param optimizer
+    * @param bestCorrectionPoint
+    * @return
+    */
+  def runAnnotation(config: Config, optimizer: SparkGridSearch[Point, Double], bestCorrectionPoint: Option[Point]): GridSearchResult[Point, Double] = {
+    val annotationObjective = new AnnotationObjective(
+      config = classOf[HyperoptConfiguration],
+      profiles = config.hyperopt.profiles.toArray,
+      lossFunction = new PeakHeightRSDAnnotationLossFunction(),
+      samples = config.hyperopt.samples,
+      methodName = config.hyperopt.method
+    )
+
+    annotationObjective.warmCaches()
+    optimizer.minimize(annotationObjective, annotationObjective.getSpace(config))
+  }
+
 
 }
 
