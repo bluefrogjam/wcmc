@@ -2,12 +2,11 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt
 
 import com.eharmony.spotz.Preamble.Point
 import com.eharmony.spotz.optimizer.grid.{GridSearchResult, SparkGridSearch}
-import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.ConfigYamlProtocol._
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.callbacks.CallbackHandler
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.{PeakHeightRSDAnnotationLossFunction, PeakHeightRSDCorrectionLossFunction}
-import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
 import net.jcazevedo.moultingyaml._
 import org.apache.spark.{SparkConf, SparkContext}
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,14 +14,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.context.annotation.{Bean, Primary}
+import org.springframework.context.annotation.Bean
 
 import scala.io.Source
 
 /**
   * utility class to run a hyperoptimization
   */
-class HyperoptRunner {
+class HyperoptRunner(callbacks: Seq[CallbackHandler] = Seq.empty) {
 
   /**
     * takes the given config and runs all the defines stages for us
@@ -90,7 +89,8 @@ class HyperoptRunner {
       profiles = config.hyperopt.profiles.toArray,
       lossFunction = new PeakHeightRSDCorrectionLossFunction(),
       samples = config.hyperopt.samples,
-      methodName = config.hyperopt.method
+      methodName = config.hyperopt.method,
+      callbacks
     )
 
     correctionObjective.warmCaches()
@@ -113,7 +113,9 @@ class HyperoptRunner {
       profiles = config.hyperopt.profiles.toArray,
       lossFunction = new PeakHeightRSDAnnotationLossFunction(),
       samples = config.hyperopt.samples,
-      methodName = config.hyperopt.method
+      methodName = config.hyperopt.method,
+      correctionBestPoint = bestCorrectionPoint,
+      callbacks = callbacks
     )
 
     annotationObjective.warmCaches()

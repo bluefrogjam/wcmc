@@ -2,13 +2,14 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt
 
 import com.eharmony.spotz.Preamble.Point
 import com.eharmony.spotz.objective.Objective
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.callbacks.CallbackHandler
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.springframework.boot.{Banner, SpringApplication, WebApplicationType}
 import org.springframework.context.{ApplicationContext, ConfigurableApplicationContext}
 import org.apache.logging.log4j.scala.Logging
 
-abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) extends Objective[Point, Double] with Logging {
+abstract class SpringBootObjective(config: Class[_], profiles: Array[String], callbacks: Seq[CallbackHandler]) extends Objective[Point, Double] with Logging {
 
   /**
     * builds a spring boot context for us and forwards the actual stuff todo
@@ -18,17 +19,44 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
     * @return
     */
   override def apply(point: Point): Double = {
-    val context: ConfigurableApplicationContext = build_context
     try {
-      apply(context, point)
+      val context: ConfigurableApplicationContext = build_context
+      try {
+        val result = apply(context, point)
+
+        fireEvent(result, point, context)
+
+        result
+      }
+      catch {
+        case e: Exception =>
+          logger.error("we received an exception, return double max to filter result out!", e)
+          Double.MaxValue
+      }
+      finally {
+        context.close()
+      }
+    }
+    catch {
+      case e: NullPointerException =>
+        logger.error(s"weird spring logging error happend... Ignore this point ${point}")
+        Double.MaxValue
+    }
+  }
+
+  /**
+    * keep track of scores, in case you want to analyze them later
+    *
+    * @param score
+    * @param point
+    */
+  protected def fireEvent(score: Double, point: Point, context: ConfigurableApplicationContext) = {
+    try {
+      callbacks.foreach(callback => callback.handle(this, score, point, context))
     }
     catch {
       case e: Exception =>
-        logger.error("we received an exception, return double max to filter result out!", e)
-        Double.MaxValue
-    }
-    finally {
-      context.close()
+        logger.warn("received error while firing event, ignored!", e)
     }
   }
 
@@ -36,6 +64,7 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
     val app = new SpringApplication(config)
     app.setWebApplicationType(WebApplicationType.NONE)
     app.setBannerMode(Banner.Mode.OFF)
+
 
     //we never want to hit stasis
     val active_profiles = "carrot.nostasis" +: profiles
@@ -92,7 +121,7 @@ abstract class SpringBootObjective(config: Class[_], profiles: Array[String]) ex
   * @param config
   * @param profiles
   */
-abstract class LCMSObjective(config: Class[_], profiles: Array[String]) extends SpringBootObjective(config, profiles) {
+abstract class LCMSObjective(config: Class[_], profiles: Array[String], callbacks: Seq[CallbackHandler]) extends SpringBootObjective(config, profiles, callbacks) {
 
 
   /**

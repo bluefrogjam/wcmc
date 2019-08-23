@@ -5,13 +5,14 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.AnnotatedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.callbacks.CallbackHandler
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.LossFunction
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import org.springframework.context.ApplicationContext
 
-class AnnotationObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[AnnotatedSample], samples: List[String], methodName: String, correctionBestPoint: Option[Point] = None) extends LCMSObjective(config, profiles) {
+class AnnotationObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[AnnotatedSample], samples: List[String], methodName: String, callbacks: Seq[CallbackHandler], correctionBestPoint: Option[Point] = None) extends LCMSObjective(config, profiles,callbacks) {
   /**
     * actual apply function, providing subclasses with a correctly configured configuration class
     *
