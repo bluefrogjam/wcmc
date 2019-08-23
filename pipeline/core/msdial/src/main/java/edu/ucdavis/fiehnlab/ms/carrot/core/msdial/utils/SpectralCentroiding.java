@@ -104,25 +104,34 @@ public class SpectralCentroiding {
 
 	private static List<Ion> centroid(List<Ion> spectrum, double massBin, boolean peakDetectionBasedCentroid) {
 
-		if (peakDetectionBasedCentroid) {
+	    if (spectrum.isEmpty()) {
+	        return new ArrayList<>();
+        }
+
+		else if (peakDetectionBasedCentroid) {
             List<Ion> centroidedSpectrum = peakDetectionBasedCentroiding(spectrum, massBin);
 			List<Ion> filteredCentroidedSpectra = new ArrayList<>();
 
-			centroidedSpectrum.sort(Comparator.comparing(Ion::intensity).reversed());
+			if (!centroidedSpectrum.isEmpty()) {
+                centroidedSpectrum.sort(Comparator.comparing(Ion::intensity).reversed());
 
-            double maxIntensity = centroidedSpectrum.get(0).intensity();
+                double maxIntensity = centroidedSpectrum.get(0).intensity();
 
-			for (Ion centSpec : centroidedSpectrum) {
-				if (centSpec.intensity() > maxIntensity * 0.000001) {
-					filteredCentroidedSpectra.add(centSpec);
-				} else {
-					break;
-				}
-			}
+                for (Ion centSpec : centroidedSpectrum) {
+                    if (centSpec.intensity() > maxIntensity * 0.000001) {
+                        filteredCentroidedSpectra.add(centSpec);
+                    } else {
+                        break;
+                    }
+                }
 
-			filteredCentroidedSpectra.sort(Comparator.comparing(Ion::mass));
+                filteredCentroidedSpectra.sort(Comparator.comparing(Ion::mass));
+            }
+
 			return filteredCentroidedSpectra;
-		} else {
+		}
+
+		else {
 			// Sweep bin based centroid
 			massBin = 0.1;
 			List<Ion> centroidedSpectra = new ArrayList<>();
