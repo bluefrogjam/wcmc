@@ -8,13 +8,15 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
 
   /**
     * calculates an error value based on the presence of outliers in mass, retention time or peak height
+    * @param samples sample data
     * @param data
+    * @param targetCount total number of targets required (can be more than what was annotated)
     * @param usePeakHeight optionally include peak height in addition to ri and m/z the error calculation
     *                      note that this is useful for internal standards which should have more consistent
     *                      intensities, whereas metabolites may have real biological variation
     * @return
     */
-  def peakHeightMeanRsd(data: Map[Target, List[(Target, Feature)]], usePeakHeight: Boolean = true): Double = {
+  def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[(Target, Feature)]], targetCount: Int, usePeakHeight: Boolean = true): Double = {
 
     // for each metabolite, calculate the ratio of the rsd of all annotations by the rsd of
     // the outlier filtered annotations.  high values indicate larger spread of the data before
@@ -61,23 +63,26 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
         (item._1, error)
     }
 
-    Statistics.mean(rsd.values)
+    // ratio of annotation count to maximum number of possible annotations
+    val scaling = data.size.toDouble / (samples.length * targetCount)
+
+    Statistics.mean(rsd.values) / scaling
   }
 }
 
 
 class STDOutlierCorrectionLossFunction extends STDOutlierLossFunction[CorrectedSample] {
 
-  def lossFunction(corrected: List[CorrectedSample]): Double = {
+  def lossFunction(corrected: List[CorrectedSample], targetCount: Int): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForCorrectedSamples(corrected)
-    peakHeightMeanRsd(targetsAndAnnotationsForAllSamples)
+    peakHeightMeanRsd(corrected, targetsAndAnnotationsForAllSamples, targetCount)
   }
 }
 
 class STDOutlierAnnotationLossFunction extends STDOutlierLossFunction[AnnotatedSample] {
 
-  def lossFunction(annotated: List[AnnotatedSample]): Double = {
+  def lossFunction(annotated: List[AnnotatedSample], targetCount: Int): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAnnotatedSamples(annotated)
-    peakHeightMeanRsd(targetsAndAnnotationsForAllSamples)
+    peakHeightMeanRsd(annotated, targetsAndAnnotationsForAllSamples, targetCount)
   }
 }
