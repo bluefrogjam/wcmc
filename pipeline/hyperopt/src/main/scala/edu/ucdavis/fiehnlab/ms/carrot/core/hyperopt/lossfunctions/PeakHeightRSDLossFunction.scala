@@ -9,10 +9,12 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
 
   /**
     * calculates the average rsd in peak height by metabolite over all samples
-    * @param data
+    * @param samples sample data
+    * @param data map of annotations grouped by target
+    * @param targetCount total number of targets required (can be more than what was annotated)
     * @return
     */
-  def peakHeightMeanRsd(data: Map[Target, List[(Target, Feature)]]): Double = {
+  def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[(Target, Feature)]], targetCount: Option[Int]): Double = {
 
     val rsd = data.map {
       item =>
@@ -27,23 +29,31 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
         (item._1, stdDev)
     }
 
-    Statistics.mean(rsd.values)
+    // ratio of annotation count to maximum number of possible annotations
+    val scaling =
+      if (targetCount.isDefined) {
+        data.size.toDouble / (samples.length * targetCount.get)
+      } else {
+        1
+      }
+
+    Statistics.mean(rsd.values) / scaling
   }
 }
 
 
 class PeakHeightRSDCorrectionLossFunction extends PeakHeightRSDLossFunction[CorrectedSample] {
 
-  def lossFunction(corrected: List[CorrectedSample]): Double = {
+  def lossFunction(corrected: List[CorrectedSample], targetCount: Option[Int]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForCorrectedSamples(corrected)
-    peakHeightMeanRsd(targetsAndAnnotationsForAllSamples)
+    peakHeightMeanRsd(corrected, targetsAndAnnotationsForAllSamples, targetCount)
   }
 }
 
 class PeakHeightRSDAnnotationLossFunction extends PeakHeightRSDLossFunction[AnnotatedSample] {
 
-  def lossFunction(annotated: List[AnnotatedSample]): Double = {
+  def lossFunction(annotated: List[AnnotatedSample], targetCount: Option[Int]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAnnotatedSamples(annotated)
-    peakHeightMeanRsd(targetsAndAnnotationsForAllSamples)
+    peakHeightMeanRsd(annotated, targetsAndAnnotationsForAllSamples, targetCount)
   }
 }
