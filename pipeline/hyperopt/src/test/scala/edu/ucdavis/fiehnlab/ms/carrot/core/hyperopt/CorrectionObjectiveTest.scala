@@ -74,7 +74,7 @@ class CorrectionObjectiveTest extends WordSpec {
           stages = Stages(
             correction = Some(Correction(
               CorrectionSettings(
-                massAccuracyPPM = List(5, 10, 20),
+                massAccuracyPPM = List(5, 10),
                 massAccuracy = List(0.05, 0.06),
                 rtAccuracy = List(1),
                 minPeakIntensity = List(1000, 2000),
