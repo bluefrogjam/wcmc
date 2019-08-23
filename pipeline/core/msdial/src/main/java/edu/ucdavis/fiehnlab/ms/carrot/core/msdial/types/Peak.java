@@ -1,6 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types;
 
-public class Peak {
+import java.io.Serializable;
+
+public class Peak implements Serializable {
     public double mz;
     public float intensity;
     public double retentionTime;
