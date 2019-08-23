@@ -16,7 +16,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
     *                      intensities, whereas metabolites may have real biological variation
     * @return
     */
-  def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[(Target, Feature)]], targetCount: Int, usePeakHeight: Boolean = true): Double = {
+  def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[(Target, Feature)]], targetCount: Option[Int], usePeakHeight: Boolean = true): Double = {
 
     // for each metabolite, calculate the ratio of the rsd of all annotations by the rsd of
     // the outlier filtered annotations.  high values indicate larger spread of the data before
@@ -64,7 +64,12 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
     }
 
     // ratio of annotation count to maximum number of possible annotations
-    val scaling = data.size.toDouble / (samples.length * targetCount)
+    val scaling =
+      if (targetCount.isDefined) {
+        data.size.toDouble / (samples.length * targetCount.get)
+      } else {
+        1
+      }
 
     Statistics.mean(rsd.values) / scaling
   }
@@ -73,7 +78,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
 
 class STDOutlierCorrectionLossFunction extends STDOutlierLossFunction[CorrectedSample] {
 
-  def lossFunction(corrected: List[CorrectedSample], targetCount: Int): Double = {
+  def lossFunction(corrected: List[CorrectedSample], targetCount: Option[Int]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForCorrectedSamples(corrected)
     peakHeightMeanRsd(corrected, targetsAndAnnotationsForAllSamples, targetCount)
   }
@@ -81,7 +86,7 @@ class STDOutlierCorrectionLossFunction extends STDOutlierLossFunction[CorrectedS
 
 class STDOutlierAnnotationLossFunction extends STDOutlierLossFunction[AnnotatedSample] {
 
-  def lossFunction(annotated: List[AnnotatedSample], targetCount: Int): Double = {
+  def lossFunction(annotated: List[AnnotatedSample], targetCount: Option[Int]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAnnotatedSamples(annotated)
     peakHeightMeanRsd(annotated, targetsAndAnnotationsForAllSamples, targetCount)
   }

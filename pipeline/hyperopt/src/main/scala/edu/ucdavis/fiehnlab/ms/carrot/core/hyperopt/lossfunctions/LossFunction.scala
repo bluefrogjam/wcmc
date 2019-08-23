@@ -40,7 +40,7 @@ abstract class LossFunction[T <: Sample] extends Serializable {
   }
 
 
-  def lossFunction(samples: List[T]): Double = lossFunction(samples, -1)
+  def lossFunction(samples: List[T]): Double = lossFunction(samples, None)
 
   /**
     * loss function to be implemented
@@ -49,5 +49,5 @@ abstract class LossFunction[T <: Sample] extends Serializable {
     * @param targetCount number of targets used in the correction or annotation step, otherwise ignored
     * @return
     */
-  def lossFunction(samples: List[T], targetCount: Int): Double
+  def lossFunction(samples: List[T], targetCount: Option[Int]): Double
 }

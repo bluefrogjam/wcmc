@@ -14,7 +14,7 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
     * @param targetCount total number of targets required (can be more than what was annotated)
     * @return
     */
-  def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[(Target, Feature)]], targetCount: Int): Double = {
+  def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[(Target, Feature)]], targetCount: Option[Int]): Double = {
 
     val rsd = data.map {
       item =>
@@ -30,7 +30,12 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
     }
 
     // ratio of annotation count to maximum number of possible annotations
-    val scaling = data.size.toDouble / (samples.length * targetCount)
+    val scaling =
+      if (targetCount.isDefined) {
+        data.size.toDouble / (samples.length * targetCount.get)
+      } else {
+        1
+      }
 
     Statistics.mean(rsd.values) / scaling
   }
@@ -39,7 +44,7 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
 
 class PeakHeightRSDCorrectionLossFunction extends PeakHeightRSDLossFunction[CorrectedSample] {
 
-  def lossFunction(corrected: List[CorrectedSample], targetCount: Int): Double = {
+  def lossFunction(corrected: List[CorrectedSample], targetCount: Option[Int]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForCorrectedSamples(corrected)
     peakHeightMeanRsd(corrected, targetsAndAnnotationsForAllSamples, targetCount)
   }
@@ -47,7 +52,7 @@ class PeakHeightRSDCorrectionLossFunction extends PeakHeightRSDLossFunction[Corr
 
 class PeakHeightRSDAnnotationLossFunction extends PeakHeightRSDLossFunction[AnnotatedSample] {
 
-  def lossFunction(annotated: List[AnnotatedSample], targetCount: Int): Double = {
+  def lossFunction(annotated: List[AnnotatedSample], targetCount: Option[Int]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAnnotatedSamples(annotated)
     peakHeightMeanRsd(annotated, targetsAndAnnotationsForAllSamples, targetCount)
   }
