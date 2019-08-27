@@ -8,7 +8,7 @@ object ConfigYamlProtocol extends DefaultYamlProtocol {
   implicit val annotationFormat = yamlFormat1(Annotation)
   implicit val correctionFormat = yamlFormat1(Correction)
   implicit val stagesFormat = yamlFormat2(Stages)
-  implicit val hyperoptFormat = yamlFormat5(Hyperopt)
+  implicit val hyperoptFormat = yamlFormat6(Hyperopt)
   implicit val configFormat = yamlFormat1(Config)
 }
 
@@ -52,7 +52,8 @@ case class Hyperopt(
                      samples: List[String],
                      profiles: List[String],
                      method: String,
-                     stages: Stages
+                     stages: Stages,
+                     identifier: Option[String] = Some(s"hyperopt_${System.currentTimeMillis()}")
                    )
 
 case class Config(

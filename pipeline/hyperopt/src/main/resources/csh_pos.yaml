@@ -2,7 +2,7 @@ hyperopt:
 
   ##
   # which spark server we want to use
-  spark: local[8]
+  spark: local[14]
 
   ##
   # which samples we want to investigate
@@ -65,16 +65,12 @@ hyperopt:
           - 20
           - 30
         massAccuracy:
-          - 0.01
-          - 0.02
-          - 0.03
-          - 0.04
-          - 0.05
-          - 0.06
-          - 0.07
-          - 0.08
-          - 0.09
-          - 0.10
+          - 0.005
+          - 0.006
+          - 0.007
+          - 0.008
+          - 0.009
+          - 0.100
         rtAccuracy:
           - 0
         minPeakIntensity:
@@ -120,11 +116,7 @@ hyperopt:
           - 3
           - 4
           - 5
-          - 6
-          - 7
-          - 8
-          - 9
-          - 10
+
         massAccuracyPPM:
           - 5
           - 10
@@ -132,16 +124,12 @@ hyperopt:
           - 20
           - 30
         massAccuracy:
+          - 0.005
+          - 0.006
+          - 0.007
+          - 0.008
+          - 0.009
           - 0.01
-          - 0.02
-          - 0.03
-          - 0.04
-          - 0.05
-          - 0.06
-          - 0.07
-          - 0.08
-          - 0.09
-          - 0.1
         massIntensity:
           - 1000
           - 2000
@@ -164,9 +152,4 @@ hyperopt:
           - 6
           - 7
           - 8
-          - 9
-          - 10
-          - 11
-          - 12
-          - 13
-          - 14
+
