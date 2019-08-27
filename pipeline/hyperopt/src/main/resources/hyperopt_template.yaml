@@ -15,7 +15,7 @@ hyperopt:
   # for the hyperopt process to correctly run
   profiles:
     - file.source.eclipse
-    - carrot.repot.quantify.height
+    - carrot.report.quantify.height
     - carrot.processing.peakdetection
     - carrot.lcms
     - carrot.targets.yaml.annotation
