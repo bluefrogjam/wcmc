@@ -65,8 +65,8 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
 
     // ratio of annotation count to maximum number of possible annotations
     val scaling =
-      if (targetCount.isDefined) {
-        data.size.toDouble / (samples.length * targetCount.get)
+      if (targetCount.isDefined && targetCount.get > 0) {
+        data.values.map(_.size).sum.toDouble / (samples.length * targetCount.get)
       } else {
         1
       }
