@@ -3,10 +3,12 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt
 import com.eharmony.spotz.Preamble._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra, MetadataSupport}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.callbacks.CallbackHandler
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.LossFunction
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
@@ -18,7 +20,7 @@ import org.springframework.context.ApplicationContext
   * @param config
   * @param profiles
   */
-class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String], methodName: String) extends LCMSObjective(config, profiles) {
+class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunction: LossFunction[CorrectedSample], samples: List[String], methodName: String, callbacks: Seq[CallbackHandler]) extends LCMSObjective(config, profiles, callbacks) {
 
   /**
     * actualy apply function, providing subclasses with a correctly configured configuration class
@@ -67,7 +69,7 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
 
 
     val method: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Some(PositiveMode())))
-    val correction: LCMSTargetRetentionIndexCorrectionProcess = context.getBean(classOf[LCMSTargetRetentionIndexCorrectionProcess])
+    val correction: CorrectionProcess = context.getBean(classOf[LCMSTargetRetentionIndexCorrectionProcess])
     val deco: PeakDetection = context.getBean(classOf[PeakDetection])
     val loader: SampleLoader = context.getBean(classOf[SampleLoader])
 

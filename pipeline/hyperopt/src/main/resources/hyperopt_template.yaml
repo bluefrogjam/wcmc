@@ -7,14 +7,15 @@ hyperopt:
   ##
   # which samples we want to investigate
   samples:
-
+    - B2A_TEDDYLipids_Pos_QC006.mzml
+    - B2A_TEDDYLipids_Pos_QC007.mzml
 
   ##
   # required springboot profiles
   # for the hyperopt process to correctly run
   profiles:
     - file.source.eclipse
-    - carrot.repot.quantify.height
+    - carrot.report.quantify.height
     - carrot.processing.peakdetection
     - carrot.lcms
     - carrot.targets.yaml.annotation
@@ -40,89 +41,54 @@ hyperopt:
         massAccuracyPPM:
           - 5
           - 10
-          - 15
-          - 20
-          - 30
         massAccuracy:
-          - 0.01
-          - 0.02
-          - 0.03
-          - 0.04
           - 0.05
-          - 0.06
-          - 0.07
-          - 0.08
-          - 0.09
           - 0.10
         rtAccuracy:
           - 0
         minPeakIntensity:
           - 1000
-          - 2000
-          - 4000
-          - 6000
           - 8000
-          - 10000
-          - 15000
           - 20000
 
         intensityPenalty:
           - 10000
-          - 20000
           - 30000
 
     ##
     # settings of the annotation stage
     # of hyper optimization
     annotation:
-      recursive:
-        - true
-        - false
-      preferMassAccuracy:
-        - true
-        - false
-      preferGaussianSimilarity:
-        - true
-        - false
-      closePeakDetection:
-        - 1
-        - 2
-        - 3
-        - 4
-        - 5
-        - 6
-        - 7
-        - 8
-        - 9
-        - 10
-      massAccuracyPPM:
-        - 5
-        - 10
-        - 15
-        - 20
-        - 30
-      massAccuracy:
-        - 0.01
-        - 0.02
-        - 0.03
-        - 0.04
-        - 0.05
-        - 0.06
-        - 0.07
-        - 0.08
-        - 0.09
-        - 0.1
-      massIntensity:
-        - 1000
-        - 2000
-        - 4000
-        - 8000
-        - 16000
-        - 32000
-      intensityPenality:
-        - 10000
-        - 20000
-        - 40000
-        - 80000
-        - 160000
+      settings:
+        recursive:
+          - true
+          - false
+        preferMassAccuracy:
+          - true
+          - false
+        preferGaussianSimilarity:
+          - true
+          - false
+        closePeakDetection:
+          - 3
+          - 6
+          - 9
+        massAccuracyPPM:
+          - 5
+          - 10
+        massAccuracy:
+          - 0.05
+          - 0.1
+        massIntensity:
+          - 2000
+          - 8000
+          - 32000
+        intensityPenalty:
+          - 10000
+          - 40000
+          - 160000
 
+        rtIndexWindow:
+          - 1
+          - 2
+          - 3

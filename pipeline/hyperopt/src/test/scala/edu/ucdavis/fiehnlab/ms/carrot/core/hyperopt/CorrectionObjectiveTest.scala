@@ -59,7 +59,8 @@ class CorrectionObjectiveTest extends WordSpec {
       Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"),
       new PeakHeightRSDCorrectionLossFunction(),
       samples,
-      method
+      method,
+      Seq.empty
     )
 
     correctionObjective.warmCaches()

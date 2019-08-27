@@ -29,7 +29,7 @@ class AnnotationObjectiveTest extends WordSpec {
 
   "AnnotationObjectiveTest" should {
 
-    "apply-qtof-lipids" in {
+    "apply-qtof-lipids" ignore {
 
 
       val samples: List[String] = List(
@@ -69,7 +69,8 @@ class AnnotationObjectiveTest extends WordSpec {
       Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"),
       new PeakHeightRSDAnnotationLossFunction(),
       samples,
-      method
+      method,
+      Seq.empty
     )
 
     annotationObjective.warmCaches()
@@ -84,7 +85,7 @@ class AnnotationObjectiveTest extends WordSpec {
           stages = Stages(
             correction = Some(Correction(
               CorrectionSettings(
-                massAccuracyPPM = List(5, 10, 20),
+                massAccuracyPPM = List(5, 10),
                 massAccuracy = List(0.05, 0.06),
                 rtAccuracy = List(1),
                 minPeakIntensity = List(1000, 2000),
@@ -96,12 +97,12 @@ class AnnotationObjectiveTest extends WordSpec {
                 recursive = List(true, false),
                 preferMassAccuracy = List(true, false),
                 preferGaussianSimilarity = List(true, false),
-                closePeakDetection = List(1, 2, 3, 4, 5),
-                massAccuracy = List(0.05, 0.06, 0.07),
-                massAccuracyPPM = List(5, 10, 20),
-                rtIndexWindow = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                massIntensity = List(1000, 2000, 3000, 4000),
-                intensityPenalty = List(10000, 20000, 30000)
+                closePeakDetection = List(3, 5),
+                massAccuracy = List(0.05, 0.07),
+                massAccuracyPPM = List(5, 20),
+                rtIndexWindow = List(4, 7),
+                massIntensity = List(1000, 2000),
+                intensityPenalty = List(10000, 20000)
               )
             ))
           )

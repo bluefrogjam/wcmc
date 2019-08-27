@@ -27,7 +27,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     * @param input
     * @return
     */
-  override final def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod, rawSample: Option[Sample]): CorrectedSample = {
+  override def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod, rawSample: Option[Sample]): CorrectedSample = {
 
     val retentionIndexMarkers = target.filter(_.isRetentionIndexStandard)
     var requiredTargets = retentionIndexMarkers.filter(_.requiredForCorrection)
