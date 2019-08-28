@@ -21,7 +21,7 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
         val annotations = item._2.map(_._2)
 
         val heights = annotations.collect {
-          case feature: MSSpectragit  =>
+          case feature: MSSpectra =>
             feature.metadata("peakHeight").asInstanceOf[Some[Double]].get
         }
 
