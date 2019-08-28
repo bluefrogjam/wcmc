@@ -2,10 +2,10 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types
 
 import java.util
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.MS2DeconvolutionResult
+import org.apache.logging.log4j.scala.Logging
 
 import scala.collection.JavaConverters._
 
@@ -16,7 +16,7 @@ class MSDialLCMSProcessedSample(ms2DecResults: util.List[MS2DeconvolutionResult]
 
   override val spectra: Seq[_ <: Feature] = ms2DecResults.asScala.map { x: MS2DeconvolutionResult =>
     if (x.peak.ms2LevelDataPointNumber == -1) {
-      new MSSpectra with MetadataSupport {
+      new MSSpectra {
 //        logger.info(s"creating MS peak")
         override val uniqueMass: Option[Double] = None
         override val signalNoise: Option[Double] = None
