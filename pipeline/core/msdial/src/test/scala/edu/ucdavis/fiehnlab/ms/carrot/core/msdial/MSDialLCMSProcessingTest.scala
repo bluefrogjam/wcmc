@@ -2,16 +2,13 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
 import java.io.File
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SampleSerializer
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
@@ -51,7 +48,6 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
       outSample.spectra should not be null
       outSample.spectra.size should be > 0
 
-      outSample shouldBe a[MSDialLCMSProcessedSample]
 
       if (serializer != null)
         serializer.saveFile(outSample)
@@ -63,10 +59,9 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[MSDialLCMSProcessedSample]
 
       if (serializer != null) {
-        serializer.saveFile(outSample.asInstanceOf[MSDialLCMSProcessedSample])
+        serializer.saveFile(outSample.asInstanceOf[Sample])
       }
     }
 
@@ -76,10 +71,9 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[MSDialLCMSProcessedSample]
 
       if (serializer != null) {
-        serializer.saveFile(outSample.asInstanceOf[MSDialLCMSProcessedSample])
+        serializer.saveFile(outSample.asInstanceOf[Sample])
       }
     }
 
@@ -89,13 +83,12 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
       val outSample = msdProcessing.process(sample, properties)
 
       outSample.spectra.size should be > 0
-      outSample shouldBe a[MSDialLCMSProcessedSample]
 
       val ions = outSample.spectra.head.associatedScan.get.ions
       ions(0).mass should not be ions(0).intensity
 
       if (serializer != null) {
-        serializer.saveFile(outSample.asInstanceOf[MSDialLCMSProcessedSample])
+        serializer.saveFile(outSample.asInstanceOf[Sample])
       }
     }
   }
