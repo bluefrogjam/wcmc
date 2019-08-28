@@ -38,11 +38,7 @@ class PeakDetectionTest extends WordSpec {
   "PeakDetectionTest" should {
 
     "clear caches" in {
-      for (cache <- cacheManager.getCacheNames.asScala) {
-        print(cache)
-        cacheManager.getCache(cache).clear()
-      }
-
+      peakDetection.clearCache()
     }
     "doProcess" in {
 
@@ -56,6 +52,7 @@ class PeakDetectionTest extends WordSpec {
       assert(cacheManager.getCache("process-peak-detection").get(key) != null)
       val sample = sampleLoader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       val result = peakDetection.process(sample, method, None)
+      print(result)
     }
 
   }

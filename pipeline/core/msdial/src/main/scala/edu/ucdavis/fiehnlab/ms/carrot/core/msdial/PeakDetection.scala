@@ -7,7 +7,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{RawData, Sample}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.context.annotation._
 import org.springframework.stereotype.Component
 
@@ -59,6 +59,9 @@ class PeakDetectionImpl extends PeakDetection with Logging {
       item
     }
   }
+
+  @CacheEvict(value = Array("process-peak-detection"), allEntries = true)
+  override def clearCache() = {}
 }
 
 class IonModeRequiredException(str: String) extends Exception(str)

@@ -8,7 +8,7 @@ import org.springframework.context.ConfigurableApplicationContext
 /**
   * simple class to support callbacks in the hyperopt objective to track results in external databases or so
   */
-abstract class CallbackHandler(config:Config) {
+abstract class CallbackHandler(config:Config) extends Serializable {
 
   /**
     * does something with the given data

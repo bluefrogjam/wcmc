@@ -1,26 +1,22 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.callbacks
 
-import com.amazonaws.services.sns.{AmazonSNS, AmazonSNSClient}
-import com.amazonaws.services.sns.model.{CreateTopicRequest, PublishRequest}
-import com.amazonaws.services.sqs.AmazonSQS
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder
+import com.amazonaws.services.sqs.model.{AmazonSQSException, CreateQueueRequest, SendMessageRequest}
 import com.eharmony.spotz.Preamble.Point
 import com.eharmony.spotz.objective.Objective
 import com.google.gson.Gson
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.Config
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.context.ConfigurableApplicationContext
-import com.amazonaws.services.sqs.AmazonSQS
-import com.amazonaws.services.sqs.AmazonSQSClientBuilder
-import com.amazonaws.services.sqs.model.{AmazonSQSException, CreateQueueRequest, SendMessageRequest}
-import com.amazonaws.services.sqs.AmazonSQSClientBuilder
-import com.amazonaws.services.sqs.model.AmazonSQSException
 
 /**
   * publishes a message to SNS for later persistence
   */
-class SQSCallbackHandler(queueName: String, sqsClient: AmazonSQS, config: Config) extends CallbackHandler(config) {
+class SQSCallbackHandler(queueName: String, config: Config) extends CallbackHandler(config) with Logging {
 
   val url: String = init()
 
+  logger.info(s"established connection to queue: ${url}")
   /**
     * does something with the given data
     *
@@ -30,17 +26,23 @@ class SQSCallbackHandler(queueName: String, sqsClient: AmazonSQS, config: Config
     */
   override def handle(objective: Objective[Point, Double], score: Double, point: Point, context: ConfigurableApplicationContext): Unit = {
 
-    point.hyperParamMap
+    if (score.isNaN) {
+      logger.error((s"recevied score was NAN, point = ${point} and score = ${score} for objective ${objective.getClass.getName}"))
+    }
+    else {
+      point.hyperParamMap
 
-    val content = Map(
-      "parameters" -> point.hyperParamMap,
-      "objective" -> objective.getClass.getName,
-      "score" -> score,
-      "config_id" -> config.hyperopt.identifier
+      val content = Map(
+        "parameters" -> point.hyperParamMap,
+        "objective" -> objective.getClass.getName,
+        "score" -> score,
+        "config_id" -> config.hyperopt.identifier
 
-    )
-    val request = new SendMessageRequest().withQueueUrl(url).withMessageBody(new Gson().toJson(content))
-    sqsClient.sendMessage(request)
+      )
+      logger.info(s"sending message -> ${point}")
+      val request = new SendMessageRequest().withQueueUrl(url).withMessageBody(new Gson().toJson(content))
+      AmazonSQSClientBuilder.defaultClient().sendMessage(request)
+    }
   }
 
   def init(): String = {
@@ -54,7 +56,7 @@ class SQSCallbackHandler(queueName: String, sqsClient: AmazonSQS, config: Config
       case e: AmazonSQSException =>
         if (!(e.getErrorCode == "QueueAlreadyExists")) throw e
     }
-    sqsClient.getQueueUrl(queueName).getQueueUrl
+    AmazonSQSClientBuilder.defaultClient().getQueueUrl(queueName).getQueueUrl
 
   }
 }

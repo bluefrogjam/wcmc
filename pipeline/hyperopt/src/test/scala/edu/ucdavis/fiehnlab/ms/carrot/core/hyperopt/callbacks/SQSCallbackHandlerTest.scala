@@ -10,7 +10,7 @@ class SQSCallbackHandlerTest extends WordSpec {
 
   "SQSCallbackHandlerTest" should {
     val client = AmazonSQSAsyncClientBuilder.defaultClient()
-    val callback = new SQSCallbackHandler("CarrotHyperoptQueue-test", sqsClient = client, Config(Hyperopt("", List.empty, List.empty, "", Stages())))
+    val callback = new SQSCallbackHandler("CarrotHyperoptQueue-test", Config(Hyperopt("", List.empty, List.empty, "", Stages())))
     "init" in {
 
       callback.init()
