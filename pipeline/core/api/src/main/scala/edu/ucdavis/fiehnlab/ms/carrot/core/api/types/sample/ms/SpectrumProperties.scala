@@ -78,6 +78,10 @@ trait Feature extends AccurateMassSupport {
     None
   }
 
+  /**
+    * Contains random metadata associated to the object we mix this into
+    */
+  val metadata: Map[String, AnyRef] = Map()
 }
 
 /**
@@ -207,11 +211,4 @@ trait SimilaritySupport {
     */
   val spectrum: Option[SpectrumProperties]
 
-}
-
-trait MetadataSupport {
-  /**
-    * Contains random metadata associated to the object we mix this into
-    */
-  val metadata: Map[String,AnyRef]
 }
