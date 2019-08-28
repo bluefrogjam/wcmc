@@ -1,11 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt
 
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder
 import com.eharmony.spotz.Preamble.Point
 import com.eharmony.spotz.optimizer.grid.{GridSearchResult, SparkGridSearch}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.ConfigYamlProtocol._
-import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.callbacks.CallbackHandler
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.callbacks.{CallbackHandler, SQSCallbackHandler}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions.{PeakHeightRSDAnnotationLossFunction, PeakHeightRSDCorrectionLossFunction}
 import net.jcazevedo.moultingyaml._
 import org.apache.spark.{SparkConf, SparkContext}
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 
@@ -61,19 +64,6 @@ class HyperoptRunner(callbacks: Seq[CallbackHandler] = Seq.empty) {
     }
   }
 
-
-  /**
-    * loads the given config files and executes the defined properties for us
-    *
-    * @param configFile
-    */
-  def run(configFile: String): Unit = {
-    val data = Source.fromFile(configFile).getLines.mkString("\n")
-    val yaml = data.parseYaml
-    val config = yaml.convertTo[Config]
-
-    run(configFile, config)
-  }
 
   /**
     * evaluates the correction settings for us and reports the final score
@@ -127,13 +117,17 @@ class HyperoptRunner(callbacks: Seq[CallbackHandler] = Seq.empty) {
 
 object HyperoptRunner {
   def main(args: Array[String]): Unit = {
-    val opt = new HyperoptRunner()
-    opt.run(args(0))
+
+    val data = Source.fromFile(args(0)).getLines.mkString("\n")
+    val yaml = data.parseYaml
+    val config = yaml.convertTo[Config]
+    val opt = new HyperoptRunner(callbacks = Seq(new SQSCallbackHandler("CarrotHyperoptQueue-prod", config)))
+    opt.run(args(0), config)
 
   }
 }
 
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration], classOf[MongoDataAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration], classOf[MongoDataAutoConfiguration], classOf[MongoAutoConfiguration], classOf[QuartzAutoConfiguration]))
 @EnableCaching
 class HyperoptConfiguration {
   @Bean

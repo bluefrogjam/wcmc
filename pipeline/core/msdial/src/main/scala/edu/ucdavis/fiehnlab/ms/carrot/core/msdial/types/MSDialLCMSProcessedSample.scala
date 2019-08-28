@@ -16,22 +16,8 @@ class MSDialLCMSProcessedSample(ms2DecResults: util.List[MS2DeconvolutionResult]
 
   override val spectra: Seq[_ <: Feature] = ms2DecResults.asScala.map { x: MS2DeconvolutionResult =>
     if (x.peak.ms2LevelDataPointNumber == -1) {
-      new MSSpectra with MetadataSupport {
-//        logger.info(s"creating MS peak")
-        override val uniqueMass: Option[Double] = None
-        override val signalNoise: Option[Double] = None
-        override val ionMode: Option[IonMode] = Option(mode)
-        override val purity: Option[Double] = None
-        override val sample: String = MSDialLCMSProcessedSample.this.fileName
-        override val retentionTimeInSeconds: Double = x.peakTopRetentionTime * 60
-        override val scanNumber: Int = x.peakTopScan
-        override val massOfDetectedFeature: Option[Ion] = Option(Ion(x.peak.accurateMass, x.peak.intensityAtPeakTop))
-        override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
-          override val msLevel: Short = 1
-          override val modelIons: Option[List[Double]] = None
-          override val ions: Seq[Ion] = x.ms1Spectrum.asScala
-        })
-        override val metadata: Map[String, AnyRef] = Map(
+
+      val _metadata =  Map(
             "baseChromatogram" -> Some(x.baseChromatogram.asScala),
             "modelMasses" -> Some(x.modelMasses.asScala),
             "ms1AccurateMass" -> Some(x.ms1AccurateMass),
@@ -53,6 +39,22 @@ class MSDialLCMSProcessedSample(ms2DecResults: util.List[MS2DeconvolutionResult]
               "idealSlopeValue" -> Some(x.peak.idealSlopeValue),
               "normalizedValue" -> Some(x.peak.normalizedValue)
           ))
+      new MSSpectra with MetadataSupport {
+//        logger.info(s"creating MS peak")
+        override val uniqueMass: Option[Double] = None
+        override val signalNoise: Option[Double] = None
+        override val ionMode: Option[IonMode] = Option(mode)
+        override val purity: Option[Double] = None
+        override val sample: String = MSDialLCMSProcessedSample.this.fileName
+        override val retentionTimeInSeconds: Double = x.peakTopRetentionTime * 60
+        override val scanNumber: Int = x.peakTopScan
+        override val massOfDetectedFeature: Option[Ion] = Option(Ion(x.peak.accurateMass, x.peak.intensityAtPeakTop))
+        override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
+          override val msLevel: Short = 1
+          override val modelIons: Option[List[Double]] = None
+          override val ions: Seq[Ion] = x.ms1Spectrum.asScala
+        })
+        override val metadata: Map[String, AnyRef] = _metadata
       }
     } else {
       new MSMSSpectra {
