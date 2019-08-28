@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, Sample, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra, MetadataSupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.Statistics
 
 abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
@@ -27,7 +27,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
         val annotations = item._2.map(_._2)
 
         val peakHeights: List[Double] = annotations.collect {
-          case feature: MSSpectra with MetadataSupport =>
+          case feature: MSSpectra =>
             feature.metadata("peakHeight").asInstanceOf[Some[Double]].get
         }
 
@@ -37,7 +37,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
         }
 
         val accurateMasses: List[Double] = annotations.collect {
-          case feature: MSSpectra with MetadataSupport =>
+          case feature: MSSpectra =>
             feature.metadata("ms1AccurateMass").asInstanceOf[Some[Double]].get
         }
 

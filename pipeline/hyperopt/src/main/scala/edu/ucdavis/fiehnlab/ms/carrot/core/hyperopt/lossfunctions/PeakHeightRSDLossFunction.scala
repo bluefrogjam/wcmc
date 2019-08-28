@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, Sample, Target}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, MetadataSupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.Statistics
 
 
@@ -21,7 +21,7 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
         val annotations = item._2.map(_._2)
 
         val heights = annotations.collect {
-          case feature: MSSpectra with MetadataSupport =>
+          case feature: MSSpectragit  =>
             feature.metadata("peakHeight").asInstanceOf[Some[Double]].get
         }
 
