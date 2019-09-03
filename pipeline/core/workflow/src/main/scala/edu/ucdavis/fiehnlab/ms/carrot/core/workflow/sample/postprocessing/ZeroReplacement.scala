@@ -276,6 +276,10 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
           override val associatedScan: Option[SpectrumProperties] = None
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(receivedTarget.accurateMass.get, intensity))
           override val retentionIndex: Double = receivedTarget.retentionIndex
+          /**
+            * Contains random metadata associated to the object we mix this into
+            */
+          override val metadata: Map[String, AnyRef] = Map()
         }
       } else {
         filteredByTime.maxBy { spectra =>
@@ -382,6 +386,10 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
       * the associated complete scan for this feature
       */
     override val associatedScan: Option[SpectrumProperties] = value.associatedScan
+    /**
+      * Contains random metadata associated to the object we mix this into
+      */
+    override val metadata: Map[String, AnyRef] = value.metadata
   }
 
   /**

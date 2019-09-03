@@ -8,9 +8,10 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
 
   /**
     * calculates an error value based on the presence of outliers in mass, retention time or peak height
-    * @param samples sample data
+    *
+    * @param samples       sample data
     * @param data
-    * @param targetCount total number of targets required (can be more than what was annotated)
+    * @param targetCount   total number of targets required (can be more than what was annotated)
     * @param usePeakHeight optionally include peak height in addition to ri and m/z the error calculation
     *                      note that this is useful for internal standards which should have more consistent
     *                      intensities, whereas metabolites may have real biological variation
@@ -27,7 +28,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
         val annotations = item._2.map(_._2)
 
         val peakHeights: List[Double] = annotations.collect {
-          case feature: MSSpectra =>
+          case feature: MSSpectra if feature.metadata.contains("peakHeight") =>
             feature.metadata("peakHeight").asInstanceOf[Some[Double]].get
         }
 
@@ -37,7 +38,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
         }
 
         val accurateMasses: List[Double] = annotations.collect {
-          case feature: MSSpectra =>
+          case feature: MSSpectra if feature.metadata.contains("ms1AccurateMass") =>
             feature.metadata("ms1AccurateMass").asInstanceOf[Some[Double]].get
         }
 

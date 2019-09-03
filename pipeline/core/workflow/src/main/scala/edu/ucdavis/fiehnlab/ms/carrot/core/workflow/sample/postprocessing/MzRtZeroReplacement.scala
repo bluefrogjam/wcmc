@@ -116,6 +116,7 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
           override val scanNumber: Int = 0
           override val associatedScan: Option[SpectrumProperties] = newAssociatedScan
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(needsReplacement.accurateMass.get, intensity))
+          override val metadata: Map[String, AnyRef] = Map()
 
         }
       }
@@ -138,6 +139,7 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
           override val associatedScan: Option[SpectrumProperties] = filtered.associatedScan
           override val massOfDetectedFeature: Option[Ion] = filtered.massOfDetectedFeature
           override val retentionIndex: Double = quantSample.regressionCurve.computeY(needsReplacement.retentionIndex)
+          override val metadata: Map[String, AnyRef] = filtered.metadata
         }
 
       }

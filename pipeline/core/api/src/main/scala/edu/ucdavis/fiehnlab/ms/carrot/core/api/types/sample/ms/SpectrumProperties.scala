@@ -81,7 +81,7 @@ trait Feature extends AccurateMassSupport with Serializable {
   /**
     * Contains random metadata associated to the object we mix this into
     */
-  val metadata: Map[String, AnyRef] = Map()
+  val metadata: Map[String, AnyRef]
 }
 
 /**

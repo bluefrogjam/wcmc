@@ -22,4 +22,5 @@ case class LecoSpectrum(
   override val massOfDetectedFeature: Option[Ion] = None
   override val ionMode: Option[IonMode] = Some(PositiveMode())
 
+  override val metadata: Map[String, AnyRef] = Map()
 }

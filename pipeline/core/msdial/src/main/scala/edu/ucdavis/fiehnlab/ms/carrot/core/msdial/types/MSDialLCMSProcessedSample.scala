@@ -110,6 +110,10 @@ object MSDialLCMSProcessedSample {
           override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
           override val precursorScan: Option[SpectrumProperties] = _precursorScan
           override val associatedScan: Option[SpectrumProperties] = _associatedScan
+          /**
+            * Contains random metadata associated to the object we mix this into
+            */
+          override val metadata: Map[String, AnyRef] = Map()
         }
       }
     }

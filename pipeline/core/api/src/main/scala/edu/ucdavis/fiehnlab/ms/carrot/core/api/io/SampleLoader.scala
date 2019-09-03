@@ -42,6 +42,8 @@ trait SampleLoader extends Logging {
         val wrapped_spectra = x.spectra.map {
           case x: MSMSSpectra =>
 
+
+            val _metadata = x.metadata
             val _precursorIon = x.precursorIon
             val _sample = x.sample
             val _purity = x.purity
@@ -143,9 +145,14 @@ trait SampleLoader extends Logging {
                 * accurate mass of this feature, if applicable
                 */
               override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
+              /**
+                * Contains random metadata associated to the object we mix this into
+                */
+              override val metadata: Map[String, AnyRef] = _metadata
             }
 
           case x: MSSpectra =>
+            val _metadata = x.metadata
             val _sample = x.sample
             val _purity = x.purity
             val _signalNoise = x.signalNoise
@@ -216,6 +223,8 @@ trait SampleLoader extends Logging {
                 * accurate mass of this feature, if applicable
                 */
               override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
+
+              override val metadata: Map[String, AnyRef] = _metadata
             }
         }
 

@@ -9,8 +9,9 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
 
   /**
     * calculates the average rsd in peak height by metabolite over all samples
-    * @param samples sample data
-    * @param data map of annotations grouped by target
+    *
+    * @param samples     sample data
+    * @param data        map of annotations grouped by target
     * @param targetCount total number of targets required (can be more than what was annotated)
     * @return
     */
@@ -21,12 +22,16 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
         val annotations = item._2.map(_._2)
 
         val heights = annotations.collect {
-          case feature: MSSpectra =>
+          case feature: MSSpectra if feature.metadata.contains("peakHeight") =>
             feature.metadata("peakHeight").asInstanceOf[Some[Double]].get
         }
 
         val stdDev = Statistics.rsdDev(heights)
         (item._1, stdDev)
+    }.collect {
+      case x if !x._2.isNaN =>
+        x
+
     }
 
     // ratio of annotation count to maximum number of possible annotations
@@ -37,7 +42,9 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
         1
       }
 
-    Statistics.mean(rsd.values) / scaling
+    val mean = Statistics.mean(rsd.values) / scaling
+
+    mean
   }
 }
 
