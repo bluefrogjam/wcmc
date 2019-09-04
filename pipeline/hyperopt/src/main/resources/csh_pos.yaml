@@ -10,25 +10,25 @@ hyperopt:
     - Biorec003_posCSH_postFlenniken020.mzml
     - Biorec001_posCSH_preFlenniken001.mzml
     - Biorec004_posCSH_postFlenniken030.mzml
-#   - Biorec005_posCSH_postFlenniken040.mzml
-#   - Biorec006_posCSH_postFlenniken050.mzml
-#   - Biorec007_posCSH_postFlenniken060.mzml
-#   - Biorec008_posCSH_postFlenniken070.mzml
-#   - Biorec009_posCSH_postFlenniken080.mzml
-#   - Biorec010_posCSH_postFlenniken090.mzml
-#   - Biorec011_posCSH_postFlenniken100.mzml
-#   - Biorec012_posCSH_postFlenniken110.mzml
-#   - Biorec013_posCSH_postFlenniken120.mzml
-#   - Biorec014_posCSH_postFlenniken130.mzml
-#   - Biorec015_posCSH_postFlenniken140.mzml
-#   - Biorec016_posCSH_postFlenniken150.mzml
-#   - Biorec017_posCSH_postFlenniken160.mzml
-#   - Biorec018_posCSH_postFlenniken170.mzml
-#   - Biorec019_posCSH_postFlenniken180.mzml
-#   - Biorec020_posCSH_postFlenniken190.mzml
-#   - Biorec022_posCSH_postFlenniken210.mzml
-#   - Biorec021_posCSH_postFlenniken200.mzml
-#   - Biorec023_posCSH_postFlenniken220.mzml
+    - Biorec005_posCSH_postFlenniken040.mzml
+    - Biorec006_posCSH_postFlenniken050.mzml
+    - Biorec007_posCSH_postFlenniken060.mzml
+    - Biorec008_posCSH_postFlenniken070.mzml
+    - Biorec009_posCSH_postFlenniken080.mzml
+    - Biorec010_posCSH_postFlenniken090.mzml
+    - Biorec011_posCSH_postFlenniken100.mzml
+    - Biorec012_posCSH_postFlenniken110.mzml
+    - Biorec013_posCSH_postFlenniken120.mzml
+    - Biorec014_posCSH_postFlenniken130.mzml
+    - Biorec015_posCSH_postFlenniken140.mzml
+    - Biorec016_posCSH_postFlenniken150.mzml
+    - Biorec017_posCSH_postFlenniken160.mzml
+    - Biorec018_posCSH_postFlenniken170.mzml
+    - Biorec019_posCSH_postFlenniken180.mzml
+    - Biorec020_posCSH_postFlenniken190.mzml
+    - Biorec022_posCSH_postFlenniken210.mzml
+    - Biorec021_posCSH_postFlenniken200.mzml
+    - Biorec023_posCSH_postFlenniken220.mzml
 
   ##
   # required springboot profiles
@@ -52,38 +52,38 @@ hyperopt:
     ##
     # settings for the correction stage
     # of hyper opt
-#   correction:
+    correction:
 
-#     ##
-#     # this defines all the settings you want to evaluate
-#     settings:
+      ##
+      # this defines all the settings you want to evaluate
+      settings:
 
-#       massAccuracyPPM:
-#         - 5
-#         - 10
-#         - 15
-#         - 20
-#         - 30
-#       massAccuracy:
-#         - 0.005
-#         - 0.008
-#         - 0.100
-#       rtAccuracy:
-#         - 0
-#       minPeakIntensity:
-#         - 1000
-#         - 2000
-#         - 4000
-#         - 8000
-#         - 16000
-#         - 32000
-#         - 64000
+        massAccuracyPPM:
+          - 5
+          - 10
+          - 15
+          - 20
+          - 30
+        massAccuracy:
+          - 0.005
+          - 0.008
+          - 0.100
+        rtAccuracy:
+          - 0
+        minPeakIntensity:
+          - 1000
+          - 2000
+          - 4000
+          - 8000
+          - 16000
+          - 32000
+          - 64000
 
-#       intensityPenalty:
-#         - 10000
-#         - 20000
-#         - 40000
-#         - 80000
+        intensityPenalty:
+          - 10000
+          - 20000
+          - 40000
+          - 80000
 
 
     ##
@@ -103,33 +103,33 @@ hyperopt:
         closePeakDetection:
           - 1
           - 2
-#         - 4
-#         - 8
-#         - 16
-
+          - 4
+          - 8
+          - 16
         massAccuracyPPM:
           - 5
           - 10
           - 15
-#         - 20
-#         - 30
+          - 20
+          - 30
         massAccuracy:
           - 0.005
           - 0.008
-#         - 0.01
+          - 0.01
         massIntensity:
          - 1000
          - 2000
          - 4000
-#        - 8000
-#        - 16000
-#        - 32000
+         - 8000
+         - 16000
+         - 32000
         intensityPenalty:
+         - 5000
          - 10000
          - 20000
-#        - 40000
-#        - 80000
-#        - 160000
+         - 40000
+         - 80000
+         - 160000
         rtIndexWindow:
            - 1
            - 2
