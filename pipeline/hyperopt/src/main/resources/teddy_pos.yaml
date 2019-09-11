@@ -1,10 +1,6 @@
 hyperopt:
 
   ##
-  # which spark server we want to use
-  spark: local[8]
-
-  ##
   # which samples we want to investigate
   samples:
     - B2A_TEDDYLipids_Pos_QC006.mzml

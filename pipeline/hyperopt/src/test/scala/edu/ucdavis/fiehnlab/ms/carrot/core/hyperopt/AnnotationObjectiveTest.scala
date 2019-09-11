@@ -78,7 +78,6 @@ class AnnotationObjectiveTest extends WordSpec {
     val result = optimizer.minimize(annotationObjective, annotationObjective.getSpace(
       Config(
         Hyperopt(
-          spark = "localhost[*]",
           samples = List.empty,
           profiles = List.empty,
           method = "",

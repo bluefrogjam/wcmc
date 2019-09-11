@@ -3,28 +3,28 @@ hyperopt:
   ##
   # which samples we want to investigate
   samples:
-    - Biorec003_posCSH_postFlenniken020.mzml
-    - Biorec001_posCSH_preFlenniken001.mzml
-    - Biorec004_posCSH_postFlenniken030.mzml
-    - Biorec005_posCSH_postFlenniken040.mzml
-    - Biorec006_posCSH_postFlenniken050.mzml
-    - Biorec007_posCSH_postFlenniken060.mzml
-    - Biorec008_posCSH_postFlenniken070.mzml
-    - Biorec009_posCSH_postFlenniken080.mzml
-    - Biorec010_posCSH_postFlenniken090.mzml
-    - Biorec011_posCSH_postFlenniken100.mzml
-    - Biorec012_posCSH_postFlenniken110.mzml
-    - Biorec013_posCSH_postFlenniken120.mzml
-    - Biorec014_posCSH_postFlenniken130.mzml
-    - Biorec015_posCSH_postFlenniken140.mzml
-    - Biorec016_posCSH_postFlenniken150.mzml
-    - Biorec017_posCSH_postFlenniken160.mzml
-    - Biorec018_posCSH_postFlenniken170.mzml
-    - Biorec019_posCSH_postFlenniken180.mzml
-    - Biorec020_posCSH_postFlenniken190.mzml
-    - Biorec022_posCSH_postFlenniken210.mzml
-    - Biorec021_posCSH_postFlenniken200.mzml
-    - Biorec023_posCSH_postFlenniken220.mzml
+    - Biorec003_posHILIC_postFlenniken020.mzml
+    - Biorec001_posHILIC_preFlenniken001.mzml
+    - Biorec004_posHILIC_postFlenniken030.mzml
+    - Biorec005_posHILIC_postFlenniken040.mzml
+    - Biorec006_posHILIC_postFlenniken050.mzml
+    - Biorec007_posHILIC_postFlenniken060.mzml
+    - Biorec008_posHILIC_postFlenniken070.mzml
+    - Biorec009_posHILIC_postFlenniken080.mzml
+    - Biorec010_posHILIC_postFlenniken090.mzml
+    - Biorec011_posHILIC_postFlenniken100.mzml
+    - Biorec012_posHILIC_postFlenniken110.mzml
+    - Biorec013_posHILIC_postFlenniken120.mzml
+    - Biorec014_posHILIC_postFlenniken130.mzml
+    - Biorec015_posHILIC_postFlenniken140.mzml
+    - Biorec016_posHILIC_postFlenniken150.mzml
+    - Biorec017_posHILIC_postFlenniken160.mzml
+    - Biorec018_posHILIC_postFlenniken170.mzml
+    - Biorec019_posHILIC_postFlenniken180.mzml
+    - Biorec020_posHILIC_postFlenniken190.mzml
+    - Biorec022_posHILIC_postFlenniken210.mzml
+    - Biorec021_posHILIC_postFlenniken200.mzml
+    - Biorec023_posHILIC_postFlenniken220.mzml
 
   ##
   # required springboot profiles
@@ -39,7 +39,7 @@ hyperopt:
 
   ##
   # name of the method to use, in it's serialized format
-  method: csh | 6530 | test | positive
+  method: csh | qexactive | test | positive
 
   ##
   # which stages we care about

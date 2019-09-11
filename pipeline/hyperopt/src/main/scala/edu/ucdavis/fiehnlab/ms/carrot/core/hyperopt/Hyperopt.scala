@@ -33,7 +33,7 @@ class HyperoptRunner(callbacks: Seq[CallbackHandler] = Seq.empty) {
     */
   def run(name: String, config: Config): Unit = {
 
-    val sc = new SparkContext(new SparkConf().setAppName(name).setMaster(config.hyperopt.spark))
+    val sc = new SparkContext(new SparkConf().setAppName(name))
     val optimizer = new SparkGridSearch[Point, Double](sc)
 
     try {

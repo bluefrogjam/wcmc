@@ -68,7 +68,6 @@ class CorrectionObjectiveTest extends WordSpec {
     val result = optimizer.minimize(correctionObjective, correctionObjective.getSpace(
       Config(
         Hyperopt(
-          spark = "localhost[*]",
           samples = List.empty,
           profiles = List.empty,
           method = "",
