@@ -16,6 +16,21 @@ abstract class LossFunction[T <: Sample] extends Serializable {
 
 
   /**
+    *
+    * @param samples
+    * @param data
+    * @return
+    */
+  def calculateScalingByTargetCount(samples: List[T], data: Map[Target, List[Feature]]): Double = {
+    if (params.contains("targetCount") && params("targetCount").asInstanceOf[Double] > 0) {
+      data.values.map(_.size).sum.toDouble / (samples.length * params("targetCount").asInstanceOf[Double])
+    } else {
+      1
+    }
+  }
+
+
+  /**
     * return a list of all annotated correction features grouped by compound
     *
     * @param corrected

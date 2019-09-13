@@ -10,14 +10,13 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
     * calculates an error value based on the presence of outliers in mass, retention time or peak height
     *
     * @param samples       sample data
-    * @param data
-    * @param targetCount   total number of targets required (can be more than what was annotated)
+    * @param data          map of annotations grouped by target
     * @param usePeakHeight optionally include peak height in addition to ri and m/z the error calculation
     *                      note that this is useful for internal standards which should have more consistent
     *                      intensities, whereas metabolites may have real biological variation
     * @return
     */
-  def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[(Target, Feature)]], targetCount: Option[Int], usePeakHeight: Boolean = true): Double = {
+  def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[ Feature]], usePeakHeight: Boolean = true): Double = {
 
     // for each metabolite, calculate the ratio of the rsd of all annotations by the rsd of
     // the outlier filtered annotations.  high values indicate larger spread of the data before
@@ -65,12 +64,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
     }
 
     // ratio of annotation count to maximum number of possible annotations
-    val scaling =
-      if (targetCount.isDefined && targetCount.get > 0) {
-        data.values.map(_.size).sum.toDouble / (samples.length * targetCount.get)
-      } else {
-        1
-      }
+    val scaling = calculateScalingByTargetCount(samples, data)
 
     Statistics.mean(rsd.values) / scaling
   }
