@@ -24,7 +24,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
     // no outliers and therefore a reasonable confidence of good annotations
     val rsd = data.map {
       item =>
-        val annotations = item._2.map(_._2)
+        val annotations = item._2
 
         val peakHeights: List[Double] = annotations.collect {
           case feature: MSSpectra if feature.metadata.contains("peakHeight") =>

@@ -36,19 +36,21 @@ abstract class LossFunction[T <: Sample] extends Serializable {
     * @param corrected
     * @return
     */
-  protected def getTargetsAndAnnotationsForCorrectedSamples(corrected: List[CorrectedSample]): Map[Target, List[(Target, Feature)]] = {
-    corrected.flatMap {
-      item: CorrectedSample =>
-        if (item.correctionFailed) {
-          throw new RejectDueToCorrectionFailed
-        }
-        else {
-          item.featuresUsedForCorrection.map {
-            annotation =>
-              (annotation.target, annotation.annotation)
+  protected def getTargetsAndAnnotationsForCorrectedSamples(corrected: List[CorrectedSample]): Map[Target, List[Feature]] = {
+    corrected
+      .flatMap {
+        item: CorrectedSample =>
+          if (item.correctionFailed) {
+            throw new RejectDueToCorrectionFailed
+          } else {
+            item.featuresUsedForCorrection.map {
+              annotation =>
+                (annotation.target, annotation.annotation)
+            }
           }
-        }
-    }.groupBy(_._1)
+      }
+      .groupBy(_._1)
+      .map { case (key, value) => (key, value.map(_._2)) }
   }
 
   /**
@@ -57,10 +59,11 @@ abstract class LossFunction[T <: Sample] extends Serializable {
     * @param corrected
     * @return
     */
-  protected def getTargetsAndAnnotationsForAnnotatedSamples(corrected: List[AnnotatedSample]): Map[Target, List[(Target, Feature)]] = {
-    corrected.flatMap {
-      item: AnnotatedSample => item.spectra.map(s => (s.target, s))
-    }.groupBy(_._1)
+  protected def getTargetsAndAnnotationsForAnnotatedSamples(corrected: List[AnnotatedSample]): Map[Target, List[Feature]] = {
+    corrected
+      .flatMap { item: AnnotatedSample => item.spectra.map(s => (s.target, s)) }
+      .groupBy(_._1)
+      .map { case (key, value) => (key, value.map(_._2)) }
   }
 
 
