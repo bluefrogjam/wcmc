@@ -79,16 +79,16 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
 
 class STDOutlierCorrectionLossFunction extends STDOutlierLossFunction[CorrectedSample] {
 
-  def lossFunction(corrected: List[CorrectedSample], targetCount: Option[Int]): Double = {
+  def lossFunction(corrected: List[CorrectedSample]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForCorrectedSamples(corrected)
-    peakHeightMeanRsd(corrected, targetsAndAnnotationsForAllSamples, targetCount)
+    peakHeightMeanRsd(corrected, targetsAndAnnotationsForAllSamples)
   }
 }
 
 class STDOutlierAnnotationLossFunction extends STDOutlierLossFunction[AnnotatedSample] {
 
-  def lossFunction(annotated: List[AnnotatedSample], targetCount: Option[Int]): Double = {
+  def lossFunction(annotated: List[AnnotatedSample]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAnnotatedSamples(annotated)
-    peakHeightMeanRsd(annotated, targetsAndAnnotationsForAllSamples, targetCount)
+    peakHeightMeanRsd(annotated, targetsAndAnnotationsForAllSamples)
   }
 }

@@ -51,16 +51,16 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
 
 class PeakHeightRSDCorrectionLossFunction extends PeakHeightRSDLossFunction[CorrectedSample] {
 
-  def lossFunction(corrected: List[CorrectedSample], targetCount: Option[Int]): Double = {
+  def lossFunction(corrected: List[CorrectedSample]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForCorrectedSamples(corrected)
-    peakHeightMeanRsd(corrected, targetsAndAnnotationsForAllSamples, targetCount)
+    peakHeightMeanRsd(corrected, targetsAndAnnotationsForAllSamples)
   }
 }
 
 class PeakHeightRSDAnnotationLossFunction extends PeakHeightRSDLossFunction[AnnotatedSample] {
 
-  def lossFunction(annotated: List[AnnotatedSample], targetCount: Option[Int]): Double = {
+  def lossFunction(annotated: List[AnnotatedSample]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAnnotatedSamples(annotated)
-    peakHeightMeanRsd(annotated, targetsAndAnnotationsForAllSamples, targetCount)
+    peakHeightMeanRsd(annotated, targetsAndAnnotationsForAllSamples)
   }
 }

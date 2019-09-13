@@ -6,6 +6,15 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.RejectDueToCorrectionFailed
 
 abstract class LossFunction[T <: Sample] extends Serializable {
 
+  val params: Map[String, Any] = Map()
+
+  // set various parameters used by loss functions
+  // ugly, but better to have fixed map keys
+  def setMassAccuracy(massAccuracy: Double): Unit = params("massAccuracy") = massAccuracy
+  def setTtAccuracy(rtAccuracy: Double): Unit = params("rtAccuracy") = rtAccuracy
+  def setTargetCount(targetCount: Double): Unit = params("targetCount") = targetCount
+
+
   /**
     * return a list of all annotated correction features grouped by compound
     *
@@ -40,14 +49,11 @@ abstract class LossFunction[T <: Sample] extends Serializable {
   }
 
 
-  def lossFunction(samples: List[T]): Double = lossFunction(samples, None)
-
   /**
     * loss function to be implemented
     *
     * @param samples
-    * @param targetCount number of targets used in the correction or annotation step, otherwise ignored
     * @return
     */
-  def lossFunction(samples: List[T], targetCount: Option[Int]): Double
+  def lossFunction(samples: List[T]): Double
 }
