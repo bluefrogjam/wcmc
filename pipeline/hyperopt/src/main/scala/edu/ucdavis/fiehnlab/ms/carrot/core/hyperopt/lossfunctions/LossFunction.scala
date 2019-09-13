@@ -11,7 +11,8 @@ abstract class LossFunction[T <: Sample] extends Serializable {
   // set various parameters used by loss functions
   // ugly, but better to have fixed map keys
   def setMassAccuracy(massAccuracy: Double): Unit = params("massAccuracy") = massAccuracy
-  def setTtAccuracy(rtAccuracy: Double): Unit = params("rtAccuracy") = rtAccuracy
+  def setRtAccuracy(rtAccuracy: Double): Unit = params("rtAccuracy") = rtAccuracy
+  def setIntensityThreshold(intensityThreshold: Double): Unit = params("intensityThreshold") = intensityThreshold
   def setTargetCount(targetCount: Double): Unit = params("targetCount") = targetCount
 
 
@@ -21,9 +22,11 @@ abstract class LossFunction[T <: Sample] extends Serializable {
     * @param data
     * @return
     */
-  def calculateScalingByTargetCount(samples: List[T], data: Map[Target, List[Feature]]): Double = {
-    if (params.contains("targetCount") && params("targetCount").asInstanceOf[Double] > 0) {
-      data.values.map(_.size).sum.toDouble / (samples.length * params("targetCount").asInstanceOf[Double])
+  def calculateScalingByTargetCount(samples: List[T], data: Map[Target, List[Feature]], targetCount: Option[Int] = None): Double = {
+    val targets: Option[Any] = targetCount orElse params.get("targetCount")
+
+    if (targets.isDefined) {
+      data.values.map(_.size).sum.toDouble / (samples.length * targets.asInstanceOf[Int])
     } else {
       1
     }

@@ -30,7 +30,7 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
     }
 
     // ratio of annotation count to maximum number of possible annotations
-    val scaling = calculateScalingByTargetCount(samples, data)
+    val scaling = calculateScalingByTargetCount(samples, data, Some(data.size))
     val mean = Statistics.mean(rsd.values) / scaling
 
     mean
