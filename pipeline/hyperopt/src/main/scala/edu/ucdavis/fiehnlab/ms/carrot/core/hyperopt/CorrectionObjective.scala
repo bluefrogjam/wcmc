@@ -45,16 +45,15 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
       val corrected = samples.map((item: String) => dropSpectra(correction.process(deco.process(loader.getSample(item), method, None), method, None), loader))
 
       //compute statistics
-
       lossFunction.lossFunction(corrected)
     }
     catch {
 
       case e: NotEnoughStandardsFoundException =>
-        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and re accuracy ${correction.rtAccuracySetting}")
+        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and rt accuracy ${correction.rtAccuracySetting}")
         Double.MaxValue
       case e: RejectDueToCorrectionFailed =>
-        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and re accuracy ${correction.rtAccuracySetting}")
+        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and rt accuracy ${correction.rtAccuracySetting}")
         Double.MaxValue
     }
   }
@@ -133,7 +132,6 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
       "minPeakIntensitySetting" -> settings.minPeakIntensity,
       "intensityPenaltyThresholdSetting" -> settings.intensityPenalty,
       "rtAccuracySetting" -> settings.rtAccuracy
-
     )
   }
 }
