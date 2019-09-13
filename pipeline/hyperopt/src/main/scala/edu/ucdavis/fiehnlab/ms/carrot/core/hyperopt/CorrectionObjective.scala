@@ -130,8 +130,7 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
       "massAccuracyPPMSetting" -> settings.massAccuracyPPM,
       "rtAccuracySetting" -> settings.rtAccuracy,
       "minPeakIntensitySetting" -> settings.minPeakIntensity,
-      "intensityPenaltyThresholdSetting" -> settings.intensityPenalty,
-      "rtAccuracySetting" -> settings.rtAccuracy
+      "intensityPenaltyThresholdSetting" -> settings.intensityPenalty
     )
   }
 }
