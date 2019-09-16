@@ -28,7 +28,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
 
         val peakHeights: List[Double] = annotations.collect {
           case feature: MSSpectra if feature.metadata.contains("peakHeight") =>
-            feature.metadata("peakHeight").asInstanceOf[Some[Double]].get
+            feature.metadata("peakHeight").asInstanceOf[Option[Double]].get
         }
 
         val retentionTimes: List[Double] = annotations.collect {
@@ -38,7 +38,7 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
 
         val accurateMasses: List[Double] = annotations.collect {
           case feature: MSSpectra if feature.metadata.contains("ms1AccurateMass") =>
-            feature.metadata("ms1AccurateMass").asInstanceOf[Some[Double]].get
+            feature.metadata("ms1AccurateMass").asInstanceOf[Option[Double]].get
         }
 
         // remove outliers

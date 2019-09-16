@@ -26,7 +26,7 @@ abstract class LossFunction[T <: Sample] extends Serializable {
     val targets: Option[Any] = targetCount orElse params.get("targetCount")
 
     if (targets.isDefined) {
-      data.values.map(_.size).sum.toDouble / (samples.length * targets.asInstanceOf[Int])
+      data.values.map(_.size).sum.toDouble / (samples.length * targets.get.toString.toInt)
     } else {
       1
     }

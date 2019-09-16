@@ -29,10 +29,10 @@ abstract class GaussianSimilarityLossFunction[T <: Sample] extends LossFunction[
             features.map(x => {
               if (params.contains("intensityThreshold")) {
                 SimilarityMethods.featureTargetSimilarity(x, target,
-                  params("massAccuracy").asInstanceOf[Double], params("rtAccuracy").asInstanceOf[Double], params("intensityThreshold").asInstanceOf[Double])
+                  params("massAccuracy").toString.toDouble, params("rtAccuracy").toString.toDouble, params("intensityThreshold").toString.toDouble)
               } else {
                 SimilarityMethods.featureTargetSimilarity(x, target,
-                  params("massAccuracy").asInstanceOf[Double], params("rtAccuracy").asInstanceOf[Double])
+                  params("massAccuracy").toString.toDouble, params("rtAccuracy").toString.toDouble)
               }
             })
           )

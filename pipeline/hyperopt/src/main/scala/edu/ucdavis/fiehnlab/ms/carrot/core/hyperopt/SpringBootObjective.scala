@@ -131,11 +131,11 @@ abstract class LCMSObjective(config: Class[_], profiles: Array[String], callback
     * @param correction
     */
   def applyCorrectionSettings(point: Point, correction: LCMSTargetRetentionIndexCorrectionProcess): Unit = {
-    correction.massAccuracySetting = point.get("massAccuracySetting").asInstanceOf[Double]
-    correction.rtAccuracySetting = point.get("rtAccuracySetting").asInstanceOf[Double]
-    correction.minPeakIntensity = point.get("minPeakIntensitySetting").asInstanceOf[Float]
-    correction.intensityPenaltyThreshold = point.get("intensityPenaltyThresholdSetting").asInstanceOf[Float]
-    correction.massAccuracyPPMSetting = point.get("massAccuracyPPMSetting").asInstanceOf[Double]
+    correction.massAccuracySetting = point.get("massAccuracySetting").toString.toDouble
+    correction.rtAccuracySetting = point.get("rtAccuracySetting").toString.toDouble
+    correction.minPeakIntensity = point.get("minPeakIntensitySetting").toString.toFloat
+    correction.intensityPenaltyThreshold = point.get("intensityPenaltyThresholdSetting").toString.toFloat
+    correction.massAccuracyPPMSetting = point.get("massAccuracyPPMSetting").toString.toDouble
   }
 
   /**
@@ -146,17 +146,17 @@ abstract class LCMSObjective(config: Class[_], profiles: Array[String], callback
     */
   def applyAnnotationSettings(point: Point, annotation: LCMSTargetAnnotationProcess) = {
 
-    annotation.lcmsProperties.recursiveAnnotationMode = point.get("recursive").asInstanceOf[Boolean]
-    annotation.lcmsProperties.preferMassAccuracyOverRetentionIndexDistance = point.get("preferMassAccuracy").asInstanceOf[Boolean]
-    annotation.lcmsProperties.preferGaussianSimilarityForAnnotation = point.get("preferGaussianSimilarity").asInstanceOf[Boolean]
+    annotation.lcmsProperties.recursiveAnnotationMode = point.get("recursive").toString.toBoolean
+    annotation.lcmsProperties.preferMassAccuracyOverRetentionIndexDistance = point.get("preferMassAccuracy").toString.toBoolean
+    annotation.lcmsProperties.preferGaussianSimilarityForAnnotation = point.get("preferGaussianSimilarity").toString.toBoolean
 
-    annotation.lcmsProperties.closePeakDetection = point.get("closePeakDetection").asInstanceOf[Double]
-    annotation.lcmsProperties.massAccuracySetting = point.get("massAccuracy").asInstanceOf[Double]
-    annotation.lcmsProperties.massAccuracySettingPpm = point.get("massAccuracyPPM").asInstanceOf[Double]
-    annotation.lcmsProperties.retentionIndexWindow = point.get("rtIndexWindow").asInstanceOf[Double]
+    annotation.lcmsProperties.closePeakDetection = point.get("closePeakDetection").toString.toDouble
+    annotation.lcmsProperties.massAccuracySetting = point.get("massAccuracy").toString.toDouble
+    annotation.lcmsProperties.massAccuracySettingPpm = point.get("massAccuracyPPM").toString.toDouble
+    annotation.lcmsProperties.retentionIndexWindow = point.get("rtIndexWindow").toString.toDouble
 
-    annotation.lcmsProperties.intensityPenaltyThreshold = point.get("intensityPenalty").asInstanceOf[Float]
-    annotation.lcmsProperties.massIntensity = point.get("massIntensity").asInstanceOf[Float]
+    annotation.lcmsProperties.intensityPenaltyThreshold = point.get("intensityPenalty").toString.toFloat
+    annotation.lcmsProperties.massIntensity = point.get("massIntensity").toString.toFloat
 
 
   }
