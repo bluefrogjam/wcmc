@@ -16,22 +16,22 @@ abstract class PeakHeightRSDLossFunction[T <: Sample] extends LossFunction[T] {
     */
   def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[Feature]]): Double = {
 
-    val rsd = data.map {
-      item =>
-        val heights = item._2.collect {
-          case feature: MSSpectra if feature.metadata.contains("peakHeight") =>
-            feature.metadata("peakHeight").asInstanceOf[Some[Double]].get
-        }
+    val rsd = data
+      .map {
+        case (target, features) =>
+          val heights: List[Double] = features.collect {
+            case feature: MSSpectra if feature.metadata.contains("peakHeight") =>
+              feature.metadata("peakHeight").asInstanceOf[Option[Double]].get
+          }
 
-        val stdDev = Statistics.rsdDev(heights)
-        (item._1, stdDev)
-    }.collect {
-      case x if !x._2.isNaN => x
-    }
+          (target, heights)
+      }
+      .filter { case (target, heights) => heights.length > 1 }
+      .map { case (target, heights) => (target, Statistics.rsdDev(heights)) }
 
     // ratio of annotation count to maximum number of possible annotations
     val scaling = calculateScalingByTargetCount(samples, data, Some(data.size))
-    val mean = Statistics.mean(rsd.values) / scaling
+    val mean = Statistics.mean(rsd.values) / scaling / (rsd.size.toDouble / data.size)
 
     mean
   }
