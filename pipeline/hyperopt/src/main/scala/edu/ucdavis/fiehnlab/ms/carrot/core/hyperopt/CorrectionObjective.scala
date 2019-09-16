@@ -44,6 +44,11 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
       //deconvolute and correct them
       val corrected = samples.map((item: String) => dropSpectra(correction.process(deco.process(loader.getSample(item), method, None), method, None), loader))
 
+      //add parameters to loss function
+      lossFunction.massAccuracy = Some(correction.massAccuracySetting)
+      lossFunction.rtAccuracy = Some(correction.rtAccuracySetting)
+      lossFunction.intensityThreshold = Some(correction.intensityPenaltyThreshold)
+
       //compute statistics
       lossFunction.lossFunction(corrected)
     }

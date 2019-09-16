@@ -17,7 +17,7 @@ abstract class GaussianSimilarityLossFunction[T <: Sample] extends LossFunction[
     */
   def peakSimilarityDistance(samples: List[T], data: Map[Target, List[Feature]]): Double = {
 
-    if (!params.contains("massAccuracy") || !params.contains("rtAccuracy")) {
+    if (massAccuracy.isEmpty || rtAccuracy.isEmpty) {
       logger.warn("Parameters not present for computing gaussian similarity")
       Double.MaxValue
     }
@@ -27,12 +27,10 @@ abstract class GaussianSimilarityLossFunction[T <: Sample] extends LossFunction[
         case (target, features) =>
           val meanSimilarity = Statistics.mean(
             features.map(x => {
-              if (params.contains("intensityThreshold")) {
-                SimilarityMethods.featureTargetSimilarity(x, target,
-                  params("massAccuracy").toString.toDouble, params("rtAccuracy").toString.toDouble, params("intensityThreshold").toString.toDouble)
+              if (intensityThreshold.isDefined) {
+                SimilarityMethods.featureTargetSimilarity(x, target, massAccuracy.get, rtAccuracy.get, intensityThreshold.get)
               } else {
-                SimilarityMethods.featureTargetSimilarity(x, target,
-                  params("massAccuracy").toString.toDouble, params("rtAccuracy").toString.toDouble)
+                SimilarityMethods.featureTargetSimilarity(x, target, massAccuracy.get, rtAccuracy.get)
               }
             })
           )

@@ -4,16 +4,13 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.RejectDueToCorrectionFailed
 
+
 abstract class LossFunction[T <: Sample] extends Serializable {
 
-  val params: Map[String, Any] = Map()
-
-  // set various parameters used by loss functions
-  // ugly, but better to have fixed map keys
-  def setMassAccuracy(massAccuracy: Double): Unit = params("massAccuracy") = massAccuracy
-  def setRtAccuracy(rtAccuracy: Double): Unit = params("rtAccuracy") = rtAccuracy
-  def setIntensityThreshold(intensityThreshold: Double): Unit = params("intensityThreshold") = intensityThreshold
-  def setTargetCount(targetCount: Double): Unit = params("targetCount") = targetCount
+  var massAccuracy: Option[Double] = None
+  var rtAccuracy: Option[Double] = None
+  var intensityThreshold: Option[Double] = None
+  var totalTargetCount: Option[Int] = None
 
 
   /**
@@ -23,10 +20,10 @@ abstract class LossFunction[T <: Sample] extends Serializable {
     * @return
     */
   def calculateScalingByTargetCount(samples: List[T], data: Map[Target, List[Feature]], targetCount: Option[Int] = None): Double = {
-    val targets: Option[Any] = targetCount orElse params.get("targetCount")
+    val targets: Option[Int] = targetCount orElse totalTargetCount
 
     if (targets.isDefined) {
-      data.values.map(_.size).sum.toDouble / (samples.length * targets.get.toString.toInt)
+      data.values.map(_.size).sum.toDouble / (samples.length * targets.get)
     } else {
       1
     }
