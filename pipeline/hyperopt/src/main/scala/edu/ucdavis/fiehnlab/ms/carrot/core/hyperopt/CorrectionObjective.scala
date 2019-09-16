@@ -40,14 +40,14 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
     //apply the hyper opt space settings
     applyCorrectionSettings(point, correction)
 
+    //apply parameters to loss function
+    lossFunction.massAccuracy = Some(correction.massAccuracySetting)
+    lossFunction.rtAccuracy = Some(correction.rtAccuracySetting)
+    lossFunction.intensityThreshold = Some(correction.intensityPenaltyThreshold)
+
     try {
       //deconvolute and correct them
       val corrected = samples.map((item: String) => dropSpectra(correction.process(deco.process(loader.getSample(item), method, None), method, None), loader))
-
-      //add parameters to loss function
-      lossFunction.massAccuracy = Some(correction.massAccuracySetting)
-      lossFunction.rtAccuracy = Some(correction.rtAccuracySetting)
-      lossFunction.intensityThreshold = Some(correction.intensityPenaltyThreshold)
 
       //compute statistics
       lossFunction.lossFunction(corrected)
@@ -70,7 +70,6 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
     * @param context
     */
   override protected def warmCaches(context: ApplicationContext): Unit = {
-
 
     val method: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Some(PositiveMode())))
     val correction: CorrectionProcess = context.getBean(classOf[LCMSTargetRetentionIndexCorrectionProcess])
