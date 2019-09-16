@@ -1,8 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.{CorrectionObjective, CorrectionSettings, HyperoptTestConfiguration, Statistics}
+import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.{CorrectionObjective, HyperoptTestConfiguration}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.springframework.test.context.TestContextManager
@@ -25,12 +23,8 @@ class GaussianSimilarityCorrectionLossFunctionTest extends CorrectionLossFunctio
       )
 
       val tightResult = correctionObjective.apply(CSH_CORRECTION_TIGHT_PARAMS)
-      val narrowResult = correctionObjective.apply(CSH_CORRECTION_NARROW_PARAMS)
-
-
-      println(tightResult)
-      println(narrowResult)
-      assert(narrowResult < tightResult)
+      val wideResult = correctionObjective.apply(CSH_CORRECTION_WIDE_PARAMS)
+      assert(wideResult < tightResult)
     }
   }
 }

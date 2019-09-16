@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpect
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.Statistics
 import edu.ucdavis.fiehnlab.ms.carrot.math.SimilarityMethods
 
-abstract class GaussianSimilarityLossFunction[T <: Sample] extends LossFunction[T] with LazyLogging {
+abstract class GaussianSimilarityLossFunction[T <: Sample] extends LossFunction[T] {
 
   /**
     * calculates the variability in peak similarity

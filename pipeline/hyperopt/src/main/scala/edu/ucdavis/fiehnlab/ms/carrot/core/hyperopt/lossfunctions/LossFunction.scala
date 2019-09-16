@@ -1,11 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.RejectDueToCorrectionFailed
 
 
-abstract class LossFunction[T <: Sample] extends Serializable {
+abstract class LossFunction[T <: Sample] extends Serializable with LazyLogging {
 
   var massAccuracy: Option[Double] = None
   var rtAccuracy: Option[Double] = None

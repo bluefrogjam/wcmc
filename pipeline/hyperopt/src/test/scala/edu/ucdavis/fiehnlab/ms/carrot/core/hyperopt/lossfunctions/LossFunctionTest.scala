@@ -8,6 +8,7 @@ abstract class LossFunctionTest extends WordSpec {
 
   val CSH_SAMPLES: List[String] = List(
     "Biorec001_posCSH_preFlenniken001.mzml",
+    "Biorec003_posCSH_postFlenniken020.mzml",
     "Biorec004_posCSH_postFlenniken030.mzml"
   )
 
@@ -17,14 +18,14 @@ abstract class LossFunctionTest extends WordSpec {
 abstract class CorrectionLossFunctionTest extends LossFunctionTest {
 
   val CSH_CORRECTION_TIGHT_PARAMS = Map(
-    "massAccuracySetting" -> 0.01,
+    "massAccuracySetting" -> 0.001,
     "massAccuracyPPMSetting" -> 1,
     "rtAccuracySetting" -> 1,
     "minPeakIntensitySetting" -> 5000,
     "intensityPenaltyThresholdSetting" -> 50000
   )
 
-  val CSH_CORRECTION_NARROW_PARAMS = Map(
+  val CSH_CORRECTION_WIDE_PARAMS = Map(
     "massAccuracySetting" -> 0.05,
     "massAccuracyPPMSetting" -> 5,
     "rtAccuracySetting" -> 2,
