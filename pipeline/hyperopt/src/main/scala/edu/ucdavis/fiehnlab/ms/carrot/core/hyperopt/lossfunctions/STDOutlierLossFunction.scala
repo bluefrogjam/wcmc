@@ -16,57 +16,63 @@ abstract class STDOutlierLossFunction[T <: Sample] extends LossFunction[T] {
     *                      intensities, whereas metabolites may have real biological variation
     * @return
     */
-  def peakHeightMeanRsd(samples: List[T], data: Map[Target, List[ Feature]], usePeakHeight: Boolean = true): Double = {
+  def stdOutlierRsd(samples: List[T], data: Map[Target, List[Feature]], usePeakHeight: Boolean = true): Double = {
 
     // for each metabolite, calculate the ratio of the rsd of all annotations by the rsd of
     // the outlier filtered annotations.  high values indicate larger spread of the data before
     // outlier removal and therefore the presence of mis-annotations.  a ratio of 1 indicates
     // no outliers and therefore a reasonable confidence of good annotations
     val rsd = data.map {
-      item =>
-        val annotations = item._2
+      case (target, features) =>
 
-        val peakHeights: List[Double] = annotations.collect {
+        val peakHeights: List[Double] = features.collect {
           case feature: MSSpectra if feature.metadata.contains("peakHeight") =>
             feature.metadata("peakHeight").asInstanceOf[Option[Double]].get
         }
 
-        val retentionTimes: List[Double] = annotations.collect {
-          case feature: MSSpectra with CorrectedSpectra =>
+        val retentionTimes: List[Double] = features.collect {
+          case feature: CorrectedSpectra =>
             feature.retentionIndex
         }
 
-        val accurateMasses: List[Double] = annotations.collect {
+        val accurateMasses: List[Double] = features.collect {
           case feature: MSSpectra if feature.metadata.contains("ms1AccurateMass") =>
             feature.metadata("ms1AccurateMass").asInstanceOf[Option[Double]].get
         }
 
-        // remove outliers
-        val filteredPeakHeights = Statistics.eliminateOutliers(peakHeights)
-        val filteredRetentionTime = Statistics.eliminateOutliers(retentionTimes)
-        val filteredAccurateMasses = Statistics.eliminateOutliers(accurateMasses)
-
-        // rsd ratios
-        val peakHeightRsdRatio = Statistics.rsdDev(filteredPeakHeights) / Statistics.rsdDev(peakHeights)
-        val retentionTimeRsdRatio = Statistics.rsdDev(filteredRetentionTime) / Statistics.rsdDev(retentionTimes)
-        val accurateMassRsdRatio = Statistics.rsdDev(filteredAccurateMasses) / Statistics.rsdDev(accurateMasses)
-
-        // combine ratios using euclidean norm
-        val error = math.sqrt(
+        // create list of properties used for error calculation
+        val properties =
           if (usePeakHeight) {
-            math.pow(peakHeightRsdRatio, 2) + math.pow(retentionTimeRsdRatio, 2) + math.pow(accurateMassRsdRatio, 2)
+            List(accurateMasses, retentionTimes)
           } else {
-            math.pow(retentionTimeRsdRatio, 2) + math.pow(accurateMassRsdRatio, 2)
+            List(accurateMasses, retentionTimes, peakHeights)
           }
-        )
 
-        (item._1, error)
+        val ratios = properties
+          // outlier-removed values in second collection
+          .map(x => (x, Statistics.eliminateOutliers(x)))
+
+          // ensure both collections have at least 2 elements to avoid NaNs
+          .filter { case (x, filtered) => x.size > 1 && filtered.size > 1 }
+
+          // calculate rsd ratios
+          .map { case (x, filtered) => Statistics.rsdDev(filtered) / Statistics.rsdDev(x) }
+
+
+        if (ratios.isEmpty) {
+          logger.warn("Unable to compute loss function due to lack of shared target values")
+          (target, Double.NaN)
+        } else {
+          // calculate combined error and scale by missing targets
+          val errorSquared = ratios.map(x => math.pow(x, 2)).sum / (ratios.length / properties.length)
+          (target, math.sqrt(errorSquared))
+        }
     }
 
     // ratio of annotation count to maximum number of possible annotations
     val scaling = calculateScalingByTargetCount(samples, data, Some(data.size))
 
-    Statistics.mean(rsd.values) / scaling
+    Statistics.mean(rsd.values.filter(!_.isNaN)) / scaling
   }
 }
 
@@ -75,7 +81,7 @@ class STDOutlierCorrectionLossFunction extends STDOutlierLossFunction[CorrectedS
 
   def lossFunction(corrected: List[CorrectedSample]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForCorrectedSamples(corrected)
-    peakHeightMeanRsd(corrected, targetsAndAnnotationsForAllSamples)
+    stdOutlierRsd(corrected, targetsAndAnnotationsForAllSamples)
   }
 }
 
@@ -83,6 +89,6 @@ class STDOutlierAnnotationLossFunction extends STDOutlierLossFunction[AnnotatedS
 
   def lossFunction(annotated: List[AnnotatedSample]): Double = {
     val targetsAndAnnotationsForAllSamples = getTargetsAndAnnotationsForAnnotatedSamples(annotated)
-    peakHeightMeanRsd(annotated, targetsAndAnnotationsForAllSamples)
+    stdOutlierRsd(annotated, targetsAndAnnotationsForAllSamples)
   }
 }
