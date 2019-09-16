@@ -8,10 +8,6 @@ import org.springframework.context.annotation.{Bean, Configuration, Profile}
 @Configuration
 class Everything4JAutoConfiguration {
 
-  @Profile(Array("file.source.luna"))
-  @Bean
-  def everything4Jluna: Everything4J = new Everything4J()
-
   @Profile(Array("file.source.localhost"))
   @Bean
   def everything4J: Everything4J = new Everything4J("localhost", 8585)

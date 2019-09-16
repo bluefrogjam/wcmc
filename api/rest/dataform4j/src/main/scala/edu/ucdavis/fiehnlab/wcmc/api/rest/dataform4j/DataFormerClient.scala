@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate
   * sends a raw data file to DataFormer rest service to be converted into .abf and .mzml and then sends the result to fserv
   */
 class DataFormerClient(fserv4j:ResourceLoader) extends Logging {
-  @Value("${wcmc.api.rest.dataformer.host:luna.fiehnlab.ucdavis.edu}")
+  @Value("${wcmc.api.rest.dataformer.host:eclipse.fiehnlab.ucdavis.edu}")
   private val host: String = ""
 
   @Value("${wcmc.api.rest.dataformer.port:9090}")

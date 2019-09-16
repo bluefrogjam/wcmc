@@ -19,7 +19,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test"))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
 class Weiss2RICorrectionBugTest extends WordSpec with Matchers with Logging {
 
   @Autowired
@@ -30,9 +30,6 @@ class Weiss2RICorrectionBugTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val loader: SampleLoader = null
-
-  @Autowired
-  val libraryAccess: LibraryAccess[Target] = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

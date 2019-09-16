@@ -4,7 +4,7 @@ spring:
     include:
       - prod
       - carrot.lcms
-      - file.source.luna
+      - file.source.eclipse
       - carrot.lcms.correction
       - carrot.output.storage.aws
       - carrot.resource.loader.bucket
