@@ -144,7 +144,7 @@ abstract class LCMSObjective(config: Class[_], profiles: Array[String], callback
     * @param point
     * @param annotation
     */
-  def applyAnnotationSettings(point: Point, annotation: LCMSTargetAnnotationProcess) = {
+  def applyAnnotationSettings(point: Point, annotation: LCMSTargetAnnotationProcess): Unit = {
 
     annotation.lcmsProperties.recursiveAnnotationMode = point.get("recursive").toString.toBoolean
     annotation.lcmsProperties.preferMassAccuracyOverRetentionIndexDistance = point.get("preferMassAccuracy").toString.toBoolean
@@ -157,8 +157,6 @@ abstract class LCMSObjective(config: Class[_], profiles: Array[String], callback
 
     annotation.lcmsProperties.intensityPenaltyThreshold = point.get("intensityPenalty").toString.toFloat
     annotation.lcmsProperties.massIntensity = point.get("massIntensity").toString.toFloat
-
-
   }
 }
 
