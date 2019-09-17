@@ -41,7 +41,7 @@ import scala.collection.JavaConverters._
   "carrot.processing.peakdetection",
   "file.source.eclipse",
   "carrot.output.storage.aws",
-  "test",
+  "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction",
   "teddy"))
 class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfterEach with MockitoSugar with Logging {
   val libName = "teddy"

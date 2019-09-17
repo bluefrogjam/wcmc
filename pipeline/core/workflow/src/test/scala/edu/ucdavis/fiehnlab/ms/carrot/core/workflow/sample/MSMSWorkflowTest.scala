@@ -22,7 +22,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height",
   "carrot.processing.peakdetection", "carrot.lcms", "file.source.eclipse",
-  "test", "teddy"))
+  "test", "teddy","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
 class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
@@ -64,7 +64,7 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
     }
 
     "return some positive mode MSMS spectra" in {
-      val sample = loader.getSample("B1_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
+      val sample = loader.getSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode())))
 
       val pos_result = quantification.process(
