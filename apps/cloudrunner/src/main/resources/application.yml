@@ -13,7 +13,7 @@ spring:
       - carrot.runner.required
       - carrot.targets.yaml.correction
       - carrot.targets.yaml.annotation
-      - carrot.targets.mona
+#      - carrot.targets.mona
 # uncoment to enable msms spectra be sent to ipa
 #      - carrot.targets.dynamic
 
