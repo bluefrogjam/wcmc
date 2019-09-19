@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, PositiveMode, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
@@ -10,8 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
-import org.scalatest.Matchers._
-import org.scalatest.WordSpec
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
@@ -60,19 +59,19 @@ class LCMSTargetAnnotationProcessIntensitySettingsTest extends WordSpec with Log
       //   "B2a_TEDDYLipids_Neg_QC016.mzml",
       //   "B2a_TEDDYLipids_Neg_QC017.mzml",
       //   "B2a_TEDDYLipids_Neg_QC030.mzml",
-      "B2a_SA1303_TEDDYLipids_Neg_1AS6X.mzml",
+      "B2a_SA1303_TEDDYLipids_Neg_1AS6X.mzml"
       //    "B2a_SA1304_TEDDYLipids_Neg_139TR_2.mzml",
       //   "B2a_SA1304_TEDDYLipids_Neg_139TR.mzml",
       //   "B2a_SA1305_TEDDYLipids_Neg_19VHX.mzml",
       //   "B2a_TEDDYLipids_Neg_NIST001.mzml",
-      "B2a_TEDDYLipids_Neg_NIST002.mzml"
+      //      "B2a_TEDDYLipids_Neg_NIST002.mzml"
     ))
 
     val purityComputed = samples //.map(purity.process)
 
     val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Some(NegativeMode())))
 
-    List(160000f, 80000f, 40000f, 20000f, 10000f, 5000f, 2500f, 1250f, 625f, 315.5f, 156.25f).reverse.foreach { ri_intensity =>
+    List(160000f, /*80000f,*/ 40000f, /*20000f,*/ 10000f, /*5000f,*/ 2500f, /*1250f,*/ 625f, /*315.5f,*/ 156.25f).reverse.foreach { ri_intensity =>
 
       s"correcting data with RI Correction intensity of ${ri_intensity}" should {
         //correct the data
@@ -86,7 +85,7 @@ class LCMSTargetAnnotationProcessIntensitySettingsTest extends WordSpec with Log
 
           logger.info(s"found the following count of correction features ${sample.featuresUsedForCorrection.size}")
           s"process ${sample} to evaluate annotation count" should {
-            List(100, 500, 1000, 2000, 3000, 5000).foreach {
+            List(100, /*500,*/ 1000, 2000, /*3000,*/ 5000).foreach {
               intensity =>
                 s"depends on intensity, we are evaluating ${intensity}" in {
                   annotation.lcmsProperties.recursiveAnnotationMode = false

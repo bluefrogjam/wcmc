@@ -32,6 +32,7 @@ class DataFormerClientTests extends WordSpec with Matchers with Logging {
       result shouldBe None
     }
 
+    // ignoring this since we are not currently scheduling .d.zip files, only mzml
     "convert a raw data file (.d.zip) to mzml" ignore {
       val filename = "testA.d.zip"
 

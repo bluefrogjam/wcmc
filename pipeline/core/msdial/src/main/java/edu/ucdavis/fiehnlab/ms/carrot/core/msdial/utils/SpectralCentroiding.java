@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils;
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion;
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature;
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSSpectra;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.math.BasicMathematics;
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDataType;
 

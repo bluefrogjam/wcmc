@@ -6,10 +6,8 @@ import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisService
 import org.springframework.beans.factory.annotation.Autowired
 
-import scala.collection.JavaConverters._
 import scala.collection.parallel.ForkJoinTaskSupport
 import scala.concurrent.forkjoin.ForkJoinPool
 import scala.io.Source

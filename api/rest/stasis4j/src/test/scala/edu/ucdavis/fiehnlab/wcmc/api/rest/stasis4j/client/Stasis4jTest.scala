@@ -2,9 +2,8 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 
 import java.util.Date
 
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{Matchers, WordSpec}

@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.exception.NotEnoughStandardsFoundException
@@ -9,17 +8,18 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Chromat
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlgemuth on 6/17/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.eclipse", "test","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
 class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with Matchers with Logging {

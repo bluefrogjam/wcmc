@@ -113,7 +113,7 @@ class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with
       targetValues.foreach(tgt => {
         logger.info(s"target: ${
           quantified.quantifiedTargets.filter(_.name.get == tgt._1)
-            .map(f => s"${f.retentionIndex} (${f.precursorMass.get})").mkString("; ")
+              .map(f => s"${f.retentionIndex} (${f.precursorMass.get})").mkString("; ")
         }")
         quantified.quantifiedTargets.filter(_.name.get == tgt._1).head.retentionIndex shouldBe tgt._2 +- annotation.lcmsProperties.retentionIndexWindow
       })

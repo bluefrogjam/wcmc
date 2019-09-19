@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.MassAccuracy
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -11,7 +12,10 @@ import org.springframework.stereotype.Component
 
 @Component
 @Profile(Array("carrot.processing.replacement.mzrt"))
-class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
+class MzRtZeroReplacement extends ZeroReplacement {
+
+  @Autowired(required = false)
+  val writer: ObjectMapper = null
 
   /**
     * replaces the given value, with the best possible value
@@ -19,46 +23,43 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
     *
     * @param needsReplacement
     * @param quantSample
-    * @param rawdata
+    * @param correctedRawData
     * @return
     */
-  override def replaceValue(needsReplacement: QuantifiedTarget[Double], quantSample: QuantifiedSample[Double], rawdata: CorrectedSample): GapFilledTarget[Double] = {
+  override def replaceValue(needsReplacement: QuantifiedTarget[Double], quantSample: QuantifiedSample[Double], correctedRawData: CorrectedSample): GapFilledTarget[Double] = {
 
-    val filterByMass = new IncludeByMassRange(needsReplacement, zeroReplacementProperties.massAccuracyInDa * 2)
+    val filterByMass = new IncludeByMassRange(needsReplacement, zeroReplacementProperties.failsafeMassAccuracyDa)
 
     val filterByRetentionIndexNoise = new IncludeByRetentionIndexWindow(needsReplacement.retentionIndex, zeroReplacementProperties.noiseWindowInSeconds)
 
     val filterByRetentionIndex = new IncludeByRetentionIndexWindow(needsReplacement.retentionIndex, zeroReplacementProperties.retentionIndexWindowForPeakDetection)
 
+    val desperateFilterByMass = new IncludeByMassRange(needsReplacement, zeroReplacementProperties.failsafeMassAccuracyDa)
+
     // getting EIC
-    val replacementValueSpectra = rawdata.spectra.filter { spectra =>
+    val replacementValueSpectra = correctedRawData.spectra.filter { spectra =>
       //find the closest possible mass
       includeMass(needsReplacement, filterByMass, spectra)
     }
-
-    logger.debug(s"found ${replacementValueSpectra.size} features for replacement")
+    //    logger.debug(s"found ${replacementValueSpectra.size} replacement values")
 
     //first calculate noise for this ion trace
     val data = replacementValueSpectra.map {
       s => MassAccuracy.findClosestIon(s, needsReplacement.precursorMass.get, needsReplacement).get.intensity.toDouble
     }
+    //    logger.debug(s"found ${data.size} filtered intensities for noise calculation")
 
-    val h = Distribution(100, data.toList).histogram
-    val noiseInts = h.map { it => (it.size, it) }.sortBy(-_._1).take(2)
-    val summed = noiseInts.foldLeft((0, 0.0)) { case ((accA, accB), (a, b)) => (accA + a, accB + b.sum) }
-    val noise = (summed._2 / summed._1).toInt
-
-    logger.debug(s"noise is: ${noise} for target: ${needsReplacement}")
-
+    val noise: Int = getNoiseValue(needsReplacement, data)
 
     val filteredByTime: Seq[Feature with CorrectedSpectra] = replacementValueSpectra.filter { spectra =>
       filterByRetentionIndex.include(spectra, applicationContext)
     }
-    logger.debug(s"found ${filteredByTime.size} spectra, after retention index filter for target ${needsReplacement}")
+    //    logger.debug(s"found ${filteredByTime.size} spectra, after retention index filter for target ${needsReplacement}")
 
     val value: (Feature with CorrectedSpectra) = {
       if (filteredByTime.isEmpty) {
-        logger.debug("replacementValueSpectra filter empty result")
+        //        logger.info(s"worst case ${needsReplacement.name.get}")
+        //        logger.info("replacementValueSpectra filter found no values for replacement")
         val intensity: Float = {
           if (zeroReplacementProperties.estimateByNearestFourIons && replacementValueSpectra.nonEmpty) {
             // estimate the replacement value using the nearest four ions of matching mass
@@ -76,8 +77,8 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
                 .map(x => MassAccuracy.findClosestIon(x, needsReplacement.precursorMass.get, needsReplacement).get.intensity)
 
             val intensity = nearestIntensities.sum / nearestIntensities.length
-            logger.warn(s"\tCreated failsafe [Feature with CorrectedSpectra] from nearest ${nearestIntensities.length} " +
-                s"ions with ${intensity} intensity")
+            //            logger.warn(s"\tFound failsafe intensity value from nearest ${nearestIntensities.length} " +
+            //                s"ions with ${intensity} intensity")
             intensity
           }
           else if (zeroReplacementProperties.estimateByChromatogramNoise && replacementValueSpectra.nonEmpty) {
@@ -88,22 +89,48 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
                 .take((replacementValueSpectra.length / 20.0 + 1).toInt)
 
             val intensity = intensities.sum / intensities.length
-            logger.warn(s"\tCreated failsafe [Feature with CorrectedSpectra] from smallest ${intensities.length} " +
-                s"ions with ${intensity} intensity")
+            //            logger.warn(s"\tFound failsafe intensity value from smallest ${intensities.length} " +
+            //                s"ions with ${intensity} intensity")
+            intensity
+          }
+          else if (zeroReplacementProperties.estimateByBiggerMassWindow) {
+            val desperateValues = correctedRawData.spectra.filter { spectra =>
+              includeMass(needsReplacement, desperateFilterByMass, spectra)
+            }
+            //            logger.info(s"\tfound ${desperateValues.size} failsafe mass filtered replacement values")
+
+            //            logger.info(writer.writeValueAsString(desperateValues.head))
+
+            val tmp = desperateValues.map(_.associatedScan.get.ions).collect {
+              case s if s.nonEmpty => s.filter(ion => ion.mass - needsReplacement.precursorMass.get <= zeroReplacementProperties.failsafeMassAccuracyDa)
+                  .sortBy(_.intensity)
+                  .reverse.head
+            }
+                .minBy {
+                  _.intensity
+                }
+                .intensity
+
+            val intensity = if (tmp > noise)
+              tmp - noise
+            else
+              noise
+            //            logger.warn(s"\tFound failsafe intensity value using 0.05 Da mass window (${intensity})")
             intensity
           }
           else {
-            logger.warn("\tCreated failsafe [Feature with CorrectedSpectra] from target data and 0 intensity")
-            0.0f
+            //            logger.warn(s"\tFound failsafe intensity value from noise (${noise})")
+            noise
           }
         }
 
         val corrRI = quantSample.regressionCurve.computeY(needsReplacement.retentionIndex)
 
-        val newAssociatedScan = rawdata.spectra.filter(spec => spec.retentionIndex - corrRI <= zeroReplacementProperties.retentionIndexWindowForPeakDetection)
+        val newAssociatedScan = correctedRawData.spectra.filter(spec => spec.retentionIndex - corrRI <= zeroReplacementProperties.retentionIndexWindowForPeakDetection)
             .minBy(spec => spec.retentionIndex - corrRI).associatedScan
 
-        logger.debug(f"nr RI: ${needsReplacement.retentionIndex}%.4f --- corrRI: ${corrRI}%.4f")
+        //        logger.debug(f"nr RI: ${needsReplacement.retentionIndex}%.4f --- corrRI: ${corrRI}%.4f")
+
         // failsafe feature to use for replacement
         new Feature with CorrectedSpectra {
           override val uniqueMass: Option[Double] = None
@@ -120,13 +147,15 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
 
         }
       }
-      else {
-        logger.debug(s"replacementValueSpectra filter some results (${filteredByTime.size})")
+      else { // filterByTime not empty
+        //        if (needsReplacement.name.get.startsWith("FAHFA (26:2)"))
+        //          logger.info(s"${needsReplacement.name.get}")
+
+        //        logger.info(s"replacementValueSpectra filter found ${filteredByTime.size} values for replacement")
         val filtered = filteredByTime.maxBy { spectra =>
-          MassAccuracy.findClosestIon(spectra, needsReplacement.precursorMass.get, needsReplacement).get.intensity
+          MassAccuracy.findClosestIon(spectra, needsReplacement.precursorMass.get, needsReplacement, zeroReplacementProperties.failsafeMassAccuracyDa).get.intensity
         }
 
-        logger.debug(s"closest: ${filtered}")
 
         new Feature with CorrectedSpectra {
           override val uniqueMass: Option[Double] = filtered.uniqueMass
@@ -138,8 +167,8 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
           override val scanNumber: Int = filtered.scanNumber
           override val associatedScan: Option[SpectrumProperties] = filtered.associatedScan
           override val massOfDetectedFeature: Option[Ion] = filtered.massOfDetectedFeature
-          override val retentionIndex: Double = quantSample.regressionCurve.computeY(needsReplacement.retentionIndex)
           override val metadata: Map[String, AnyRef] = filtered.metadata
+          override val retentionIndex: Double = filtered.retentionIndex
         }
 
       }
@@ -147,19 +176,33 @@ class MzRtZeroReplacement @Autowired() extends ZeroReplacement {
 
     val ion = MassAccuracy.findClosestIon(value, needsReplacement.precursorMass.get, needsReplacement).getOrElse(Ion(needsReplacement.precursorMass.get, 0))
 
-    logger.debug(s"found best spectra for replacement: RI ${value.retentionIndex}, mass,int: ${ion} ")
+    //    logger.debug(s"found best spectra for replacement: RI ${value.retentionIndex}, mass,int: ${ion} ")
 
     val noiseCorrectedValue: Float = if (noise <= ion.intensity) {
       ion.intensity - noise
     } else {
-      logger.warn(s"selected ion's intensity is lower than noise, skipping noise subtraction")
+      //      logger.warn(s"selected ion's intensity is lower than noise, skipping noise subtraction")
       ion.intensity
     }
 
     /**
       * build target object
       */
-    new ZeroreplacedTarget(value, noiseCorrectedValue, needsReplacement, fileUsedForReplacement = rawdata.fileName, ion)
+    new ZeroreplacedTarget(value, noiseCorrectedValue, needsReplacement, fileUsedForReplacement = correctedRawData.fileName, ion)
+  }
+
+  def getNoiseValue(needsReplacement: QuantifiedTarget[Double], data: Seq[Double]): Int = {
+    try {
+      val h = Distribution(100, data.toList).histogram
+      val noiseInts = h.map { it => (it.size, it) }.sortBy(-_._1).take(2)
+      val summed = noiseInts.foldLeft((0, 0.0)) { case ((accA, accB), (a, b)) => (accA + a, accB + b.sum) }
+      val noise = (summed._2 / summed._1).toInt
+
+      logger.debug(s"noise is: ${noise} for target: ${needsReplacement}")
+      noise
+    } catch {
+      case _: Exception => 0
+    }
   }
 
   /**
@@ -196,7 +239,7 @@ case class Distribution(binWidth: Int, data: List[Double]) {
 
   def histo(bounds: List[Double], data: List[Double]): List[List[Double]] =
     bounds match {
-      case h :: Nil => List(data)
+      case h if h.isEmpty => List(data)
       case h :: t => val (l, r) = data.partition(_ < h); l :: histo(t, r)
     }
 
