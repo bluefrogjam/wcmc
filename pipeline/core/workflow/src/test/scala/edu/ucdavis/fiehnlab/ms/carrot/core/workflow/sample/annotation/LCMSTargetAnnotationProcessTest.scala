@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class LCMSTargetAnnotationProcessTest extends WordSpec with Logging with Matchers {
 
   @Autowired
@@ -107,20 +107,20 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with Logging with Matcher
 
         val result = annotation.process(sample, method, None)
 
-        //        result.spectra.foreach { spectra => //sortBy(_.target.name.get).
-        //          logger.debug(f"${spectra.target.name.get}")
-        //          logger.debug(f"\ttarget data:")
-        //          logger.debug(f"\t\t mass:           ${spectra.target.precursorMass.get}%1.4f")
-        //          logger.debug(f"\t\t rt (s):         ${spectra.target.retentionIndex}%1.3f")
-        //          logger.debug(f"\tannotation data:")
-        //          logger.debug(f"\t\t scan:           ${spectra.scanNumber}")
-        //          logger.debug(f"\t\t mass:           ${spectra.accurateMass.get}%1.4f")
-        //          logger.debug(f"\t\t rt (s):         ${spectra.retentionTimeInSeconds}%1.3f")
-        //          logger.debug(f"\t\t mass accuracy:  ${spectra.massAccuracy.get}%1.5f")
-        //          logger.debug(f"\t\t mass accuracy:  ${spectra.massAccuracyPPM.get}%1.3f} ppm")
-        //          logger.debug(f"\t\t distance ri:    ${spectra.retentionIndexDistance.get}%1.3f")
-        //          logger.debug("")
-        //        }
+        result.spectra.foreach { spectra => //sortBy(_.target.name.get).
+          logger.info(f"${spectra.target.name.get}")
+          logger.info(f"\ttarget data:")
+          logger.info(f"\t\t mass:           ${spectra.target.precursorMass.get}%1.4f")
+          logger.info(f"\t\t rt (s):         ${spectra.target.retentionIndex}%1.3f")
+          logger.info(f"\tannotation data:")
+          logger.info(f"\t\t scan:           ${spectra.scanNumber}")
+          logger.info(f"\t\t mass:           ${spectra.accurateMass.get}%1.4f")
+          logger.info(f"\t\t rt (s):         ${spectra.retentionTimeInSeconds}%1.3f")
+          logger.info(f"\t\t mass accuracy:  ${spectra.massAccuracy.get}%1.5f")
+          logger.info(f"\t\t mass accuracy:  ${spectra.massAccuracyPPM.get}%1.3f} ppm")
+          logger.info(f"\t\t distance ri:    ${spectra.retentionIndexDistance.get}%1.3f")
+          logger.info("")
+        }
 
         assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)
@@ -128,7 +128,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with Logging with Matcher
 
         val quantified = quantify.process(result, method, Some(sample))
 
-        logger.debug(s"quantified: ${quantified.quantifiedTargets.size}")
+        logger.info(s"quantified: ${quantified.quantifiedTargets.size}")
 
         //these are our ISTD being compared to the quantified features
         targetValues(sample.name).foreach(tgt => {
@@ -145,22 +145,22 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with Logging with Matcher
 
         val result = annotation.process(sample, method, None)
 
-        //        logger.debug(s"sample name: ${sample.fileName}")
-        //        result.spectra.sortBy(_.target.name.get).foreach { spectra =>
-        //          logger.debug(f"${spectra.target.name.get}")
-        //          logger.debug(f"\ttarget data:")
-        //          logger.debug(f"\t\t mass:          ${spectra.target.precursorMass.get}%1.4f")
-        //          logger.debug(f"\t\t rt (s):        ${spectra.target.retentionIndex}%1.3f")
-        //          logger.debug(f"\tannotation data:")
-        //          logger.debug(f"\t\t scan:          ${spectra.scanNumber}")
-        //          logger.debug(f"\t\t mass:          ${spectra.accurateMass.get}%1.4f")
-        //          logger.debug(f"\t\t ri (s):        ${spectra.retentionIndex}%1.3f")
-        //          logger.debug(f"\t\t rt (s):        ${spectra.retentionTimeInSeconds}%1.3f")
-        //          logger.debug(f"\t\t mass accuracy: ${spectra.massAccuracy.get}%1.5f")
-        //          logger.debug(f"\t\t mass accuracy: ${spectra.massAccuracyPPM.get}%1.3f ppm")
-        //          logger.debug(f"\t\t distance ri:   ${spectra.retentionIndexDistance.get}%1.3f")
-        //          logger.debug("")
-        //        }
+        logger.info(s"sample name: ${sample.fileName}")
+        result.spectra.sortBy(_.target.name.get).foreach { spectra =>
+          logger.info(f"${spectra.target.name.get}")
+          logger.info(f"\ttarget data:")
+          logger.info(f"\t\t mass:          ${spectra.target.precursorMass.get}%1.4f")
+          logger.info(f"\t\t rt (s):        ${spectra.target.retentionIndex}%1.3f")
+          logger.info(f"\tannotation data:")
+          logger.info(f"\t\t scan:          ${spectra.scanNumber}")
+          logger.info(f"\t\t mass:          ${spectra.accurateMass.get}%1.4f")
+          logger.info(f"\t\t ri (s):        ${spectra.retentionIndex}%1.3f")
+          logger.info(f"\t\t rt (s):        ${spectra.retentionTimeInSeconds}%1.3f")
+          logger.info(f"\t\t mass accuracy: ${spectra.massAccuracy.get}%1.5f")
+          logger.info(f"\t\t mass accuracy: ${spectra.massAccuracyPPM.get}%1.3f ppm")
+          logger.info(f"\t\t distance ri:   ${spectra.retentionIndexDistance.get}%1.3f")
+          logger.info("")
+        }
 
         assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)
@@ -172,7 +172,7 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with Logging with Matcher
         targetValues(sample.name).foreach(tgt => {
           logger.info(s"target: ${
             quantified.quantifiedTargets.filter(_.name.get == tgt._1)
-                .map(f => s"${f.retentionTimeInSeconds} (${f.precursorMass}:${f.quantifiedValue})").mkString("; ")
+              .map(f => s"${f.retentionTimeInSeconds} (${f.precursorMass}:${f.quantifiedValue})").mkString("; ")
           }")
           quantified.quantifiedTargets.filter(_.name.get == tgt._1).head.retentionIndex shouldBe tgt._2 +- annotation.lcmsProperties.retentionIndexWindow * 2
         })
