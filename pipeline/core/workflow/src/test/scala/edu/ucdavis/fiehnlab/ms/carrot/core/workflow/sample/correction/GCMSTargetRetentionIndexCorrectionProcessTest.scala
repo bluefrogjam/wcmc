@@ -75,7 +75,7 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Matche
         sample.name should be("060712afisa86_1")
       }
 
-      "allow to process data while loading a configuration from the Gerstel default Method" must {
+      "allow to process data while loading a configuration from the Gerstel default Method" ignore {
 
         "for sample 060712afisa86_1" should {
 

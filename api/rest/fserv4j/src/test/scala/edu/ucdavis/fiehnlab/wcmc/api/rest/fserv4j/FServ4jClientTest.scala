@@ -22,23 +22,23 @@ import scala.io.Source
   */
 
 @Configuration
-class FServ4JClientTestConfiguration{
+class FServ4JClientTestConfiguration {
 
   @Bean
-  def client:FServ4jClient = new FServ4jClient(
+  def client: FServ4jClient = new FServ4jClient(
     "127.0.0.1",
     11113
   )
 }
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ4jClientConfiguration],classOf[FServ]))
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT, classes = Array(classOf[FServ4jClientConfiguration], classOf[FServ]))
 class FServ4jClientTest extends WordSpec with Matchers with BeforeAndAfterEach with Logging {
 
   override protected def beforeEach(): Unit = {
     val f = new File(s"$directory/test.txt")
     logger.warn(s"file located at: ${f.getAbsolutePath}")
-    if(f.exists()) {
+    if (f.exists()) {
       f.delete() should be(true)
     }
   }
@@ -63,7 +63,11 @@ class FServ4jClientTest extends WordSpec with Matchers with BeforeAndAfterEach w
 
       res.isDefined should be(true)
 
-      Source.fromInputStream(res.get).getLines().toSeq.size should be(Source.fromFile(new File("src/test/resources/test.txt")).getLines().toSeq.size)
+      print(res)
+      val line = Source.fromInputStream(res.get).getLines().toSeq
+
+      print(line)
+      line.size should be(Source.fromFile(new File("src/test/resources/test.txt")).getLines().toSeq.size)
 
     }
 
