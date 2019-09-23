@@ -225,7 +225,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
       }.collect {
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[Target, Feature] =>
-          logger.info(f"annotated: {name:${hit.target.name.getOrElse("--")}, ri:${hit.target.retentionIndex}%.2f, mass:${hit.target.accurateMass.getOrElse(0.0)}%.4f} with {rt(s):${hit.annotation.retentionTimeInSeconds}%.2f, mass:${hit.annotation.massOfDetectedFeature.get.mass}%.4f}, " +
+          logger.info(f"annotated: ${hit.target} with Annotation(rt(s):${hit.annotation.retentionTimeInSeconds}%.2f, mass:${hit.annotation.massOfDetectedFeature.get.mass}%.4f), " +
               f"massErrorDa: ${MassAccuracy.calculateMassError(hit.annotation, hit.target).get}%.6f, " +
               f"massErrorPPM: ${MassAccuracy.calculateMassErrorPPM(hit.annotation, hit.target).get}%.2f")
           hit

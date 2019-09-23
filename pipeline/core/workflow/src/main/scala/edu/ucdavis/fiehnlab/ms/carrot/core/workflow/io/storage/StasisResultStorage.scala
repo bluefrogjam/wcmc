@@ -2,10 +2,10 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.converter.SampleToMapConverter
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{ResultData, TrackingData, Target => STTarget}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{ResultData, TrackingData}
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
@@ -50,11 +50,5 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
           save(sample)
       }
     )
-  }
-}
-
-object CarrotToStasisConverter {
-  def asStasisTarget(target: CTarget): STTarget = {
-    STTarget(target.retentionTimeInSeconds, target.name.get, target.name.get, target.accurateMass.getOrElse(0.0))
   }
 }

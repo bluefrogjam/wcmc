@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk
 import java.io.{File, FileInputStream, FileOutputStream}
 import java.util.zip.GZIPInputStream
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{SpectrumProperties, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
@@ -13,6 +12,7 @@ import io.github.msdk.io.mzml.MzMLFileImportMethod
 import io.github.msdk.io.mzxml.MzXMLFileImportMethod
 import io.github.msdk.io.netcdf.NetCDFFileImportMethod
 import org.apache.commons.io.IOUtils
+import org.apache.logging.log4j.scala.Logging
 
 import scala.collection.JavaConverters._
 
@@ -172,7 +172,8 @@ object MSDKSample extends Logging {
   * @param spectra
   */
 class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) extends MSSpectra {
-  override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
+  override val retentionTimeInSeconds: Double = BigDecimal(spectra.getRetentionTime)
+      .setScale(2, BigDecimal.RoundingMode.CEILING).toDouble
   override val uniqueMass: Option[Double] = None
   override val signalNoise: Option[Double] = None
 
@@ -211,8 +212,8 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String
   }
   override val uniqueMass: Option[Double] = None
   override val signalNoise: Option[Double] = None
-
-  override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
+  override val retentionTimeInSeconds: Double = BigDecimal(spectra.getRetentionTime)
+      .setScale(2, BigDecimal.RoundingMode.CEILING).toDouble
   override val scanNumber: Int = spectra.getScanNumber
   override val purity: Option[Double] = None
   override val ionMode: Option[IonMode] = mode

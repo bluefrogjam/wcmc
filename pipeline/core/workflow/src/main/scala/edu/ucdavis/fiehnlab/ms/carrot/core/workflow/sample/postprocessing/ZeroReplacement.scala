@@ -337,7 +337,7 @@ class SimpleZeroReplacement @Autowired() extends ZeroReplacement {
   }
 }
 
-class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedValue: Double, needsReplacement: QuantifiedTarget[Double], fileUsedForReplacement: String, ion: Ion) extends GapFilledTarget[Double] {
+class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedValue: Double, needsReplacement: QuantifiedTarget[Double], fileUsedForReplacement: String, ion: Ion) extends GapFilledTarget[Double] with AccurateMassSupport {
 
   /**
     * which actual spectra has been used for the replacement
@@ -358,7 +358,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     /**
       * associated target
       */
-    override val target: Target = ZeroreplacedTarget.this
+    override val target: Target = needsReplacement
     /**
       * mass accuracy
       */
@@ -411,6 +411,8 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * retention time in seconds of this target
     */
   override val retentionTimeInSeconds: Double = needsReplacement.retentionTimeInSeconds
+
+  override val retentionTimeInMinutes: Double = needsReplacement.retentionTimeInMinutes
   /**
     * a name for this spectra
     */
@@ -419,6 +421,12 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     * the mono isotopic mass of this spectra
     */
   override val precursorMass: Option[Double] = needsReplacement.precursorMass
+
+  /**
+    * Accurate Mass of the target
+    */
+  override val accurateMass: Option[Double] = needsReplacement.accurateMass
+
   /**
     * is this a confirmed target
     */
@@ -444,4 +452,5 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     */
   override val uniqueMass: Option[Double] = needsReplacement.uniqueMass
   override val ionMode: IonMode = value.ionMode.get
+  override val idx: Int = needsReplacement.idx
 }

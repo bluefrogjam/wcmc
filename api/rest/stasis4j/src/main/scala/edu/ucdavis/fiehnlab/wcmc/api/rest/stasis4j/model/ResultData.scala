@@ -62,8 +62,20 @@ case class Target(
                      retentionTimeInSeconds: Double,
                      name: String,
                      id: String,
-                     mass: Double
-                 )
+                     mass: Double,
+                     index: Int
+                 ) {
+  override def toString: String = {
+    val sb = new StringBuilder()
+    sb.append("Target(")
+        .append(index).append(",")
+        .append(id).append(",")
+        .append(name).append(",")
+        .append(retentionTimeInSeconds).append(",")
+        .append(mass).append(",")
+        .append(")").toString()
+  }
+}
 
 /**
   * Feature from this sample that has been anotated with a target
