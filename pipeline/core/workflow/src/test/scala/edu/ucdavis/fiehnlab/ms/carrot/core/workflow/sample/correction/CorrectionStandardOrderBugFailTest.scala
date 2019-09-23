@@ -18,7 +18,13 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"))
 @TestPropertySource(properties = Array(
   "wcmc.workflow.lcms.process.correction.minPeakIntensity:5000"
 ))
@@ -43,7 +49,7 @@ class CorrectionStandardOrderBugFailTest extends WordSpec with Matchers with Log
       correction.minPeakIntensity shouldBe 5000
     }
 
-    "should succeed with high intensity setting for standard" in {
+    "succeed with high intensity setting for standard" in {
       val sample = loader.getSample("FL95-032_Wk1_B4_posCSH_Keim_2.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("keim", Some("6550"), Some("test"), Some(NegativeMode())))
 

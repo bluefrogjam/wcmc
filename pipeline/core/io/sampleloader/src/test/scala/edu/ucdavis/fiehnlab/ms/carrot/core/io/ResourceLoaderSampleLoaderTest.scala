@@ -1,17 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
-import java.io.File
-
 import org.apache.logging.log4j.scala.Logging
-import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation._
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
@@ -19,7 +12,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   * Created by wohlg on 7/28/2016.
   */
 @RunWith(classOf[SpringRunner])
-@ActiveProfiles(Array("file.source.eclipse", "file.source.luna"))
+@ActiveProfiles(Array("file.source.eclipse"))
 @SpringBootTest
 class ResourceLoaderSampleLoaderTest extends WordSpec with Matchers with Logging {
 

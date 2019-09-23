@@ -21,7 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna",
+@ActiveProfiles(Array("file.source.eclipse",
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.lcms",

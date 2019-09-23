@@ -37,7 +37,7 @@ import scala.collection.JavaConverters._
   "carrot.processing.replacement.mzrt",
   "carrot.lcms",
   "carrot.processing.peakdetection",
-  "file.source.luna",
+  "file.source.eclipse",
   "carrot.output.storage.aws",
   "test",
   "carrot.targets.yaml.correction",

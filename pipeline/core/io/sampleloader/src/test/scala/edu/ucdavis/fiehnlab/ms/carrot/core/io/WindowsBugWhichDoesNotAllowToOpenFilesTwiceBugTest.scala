@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest(classes = Array(classOf[SampleLoaderTestConfig]))
-@ActiveProfiles(Array("file.source.eclipse", "file.source.luna"))
+@ActiveProfiles(Array("file.source.eclipse"))
 class WindowsBugWhichDoesNotAllowToOpenFilesTwiceBugTest extends WordSpec {
 
   @Autowired

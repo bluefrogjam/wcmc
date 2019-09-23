@@ -17,11 +17,12 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.luna",
+@ActiveProfiles(Array(
+  "test",
+  "carrot.lcms",
+  "file.source.eclipse",
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
-  "carrot.lcms",
-  "test",
   "carrot.targets.yaml.correction"))
 class Weiss2RICorrectionBugTest extends WordSpec with Matchers with Logging {
 

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, PositiveMode}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -15,7 +15,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest()
-@ActiveProfiles(Array("carrot.lcms", "file.source.luna", "file.source.eclipse", "test"))
+@ActiveProfiles(Array("carrot.lcms", "file.source.eclipse", "test"))
 class QExactiveProcessingTest extends WordSpec with Logging with Matchers {
 
   @Autowired

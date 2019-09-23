@@ -21,15 +21,15 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height",
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "teddy",
+  "carrot.report.quantify.height",
   "carrot.processing.replacement.mzrt",
   "carrot.processing.peakdetection",
   "carrot.targets.yaml.correction",
-  "carrot.targets.yaml.annotation",
-  "carrot.lcms",
-  "file.source.luna",
-  "teddy",
-  "test"))
+  "carrot.targets.yaml.annotation"))
 class MzRtZeroReplacementTest extends WordSpec with Logging with Matchers with BeforeAndAfterAll {
   val libName = "teddy"
 

@@ -22,7 +22,15 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
+@ActiveProfiles(Array(
+  "test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
+  "carrot.processing.replacement.simple",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"))
 class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
   @Autowired
   val simpleZeroReplacement: SimpleZeroReplacement = null
