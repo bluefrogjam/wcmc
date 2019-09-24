@@ -21,5 +21,5 @@ class UpdateMetaData extends PreProcessor {
     */
   override def doProcess(item: Sample, method: AcquisitionMethod, rawSample: Option[Sample]): Sample = item
 
-  override def priortiy: Int = 99
+  override def priority: Int = 99
 }

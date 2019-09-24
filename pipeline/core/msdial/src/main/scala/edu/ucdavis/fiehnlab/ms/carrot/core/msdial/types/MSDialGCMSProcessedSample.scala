@@ -61,6 +61,10 @@ class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult]
         * associated spectrum propties if applicable
         */
       override val spectrum: Option[SpectrumProperties] = associatedScan
+      /**
+        * Contains random metadata associated to the object we mix this into
+        */
+      override val metadata: Map[String, AnyRef] = Map()
     }
   }
 }

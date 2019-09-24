@@ -64,9 +64,9 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
   "The process" should {
 
     "return some negative mode MSMS spectra" in {
-      val sample = loader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
+      val sample: Sample = loader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode())))
-      val expClass = ExperimentClass(Seq(sample.get), None)
+      val expClass = ExperimentClass(Seq(sample), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
       monalib.deleteLibrary(method)
@@ -74,10 +74,10 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       val result = quantification.process(
         annotation.process(
           correction.process(
-            deco.process(sample.get, method, None),
-            method, sample),
+            deco.process(sample, method, None),
+            method, Some(sample)),
           method, None),
-        method, sample)
+        method, Some(sample))
 
       val msms = result.spectra.collect {
         case spec: MSMSSpectra => spec
@@ -103,9 +103,9 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
     }
 
     "return some positive mode MSMS spectra" in {
-      val sample = loader.loadSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
+      val sample = loader.getSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode())))
-      val expClass = ExperimentClass(Seq(sample.get), None)
+      val expClass = ExperimentClass(Seq(sample), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
       monalib.deleteLibrary(method)
@@ -113,10 +113,10 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       val result = quantification.process(
         annotation.process(
           correction.process(
-            deco.process(sample.get, method, None),
-            method, sample),
+            deco.process(sample, method, None),
+            method, Some(sample)),
           method, None),
-        method, sample)
+        method, Some(sample))
 
       val msms = result.spectra.collect {
         case spec: MSMSSpectra => spec

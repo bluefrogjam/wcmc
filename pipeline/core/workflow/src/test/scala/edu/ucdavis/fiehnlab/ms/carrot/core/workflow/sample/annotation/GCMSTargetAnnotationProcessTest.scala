@@ -47,7 +47,7 @@ class GCMSTargetAnnotationProcessTest extends WordSpec with Matchers {
     sample
   }
 
-  "GCMSTargetAnnotationProcessTest" should {
+  "GCMSTargetAnnotationProcessTest" ignore {
 
     "process" must {
 

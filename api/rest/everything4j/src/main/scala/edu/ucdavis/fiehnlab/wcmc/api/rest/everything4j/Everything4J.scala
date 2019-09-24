@@ -4,9 +4,9 @@ import java.io._
 import java.net.{URI, URL, URLEncoder}
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.RemoteLoader
 import org.apache.commons.io.IOUtils
-import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.zeroturnaround.zip.ZipUtil
@@ -14,7 +14,7 @@ import org.zeroturnaround.zip.ZipUtil
 /**
   * Created by wohlgemuth on 10/10/17.
   */
-class Everything4J(host: String = "luna.server.fiehnlab.ucdavis.edu", port: Int = 80, enableLookup: Boolean = true) extends RemoteLoader with Logging {
+class Everything4J(host: String = "eclipse.fiehnlab.ucdavis.edu", port: Int = 80, enableLookup: Boolean = true) extends RemoteLoader with Logging {
 
   /**
     * is a server allowed to use this one for lookup
@@ -23,7 +23,7 @@ class Everything4J(host: String = "luna.server.fiehnlab.ucdavis.edu", port: Int 
   override def isLookupEnabled(): Boolean = enableLookup
 
   @Autowired
-  val objectMapper: ObjectMapper = null
+  val objectMapper: ObjectMapper = new ObjectMapper()
 
   /**
     * returns the related resource or none

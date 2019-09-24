@@ -1,0 +1,90 @@
+hyperopt:
+
+  ##
+  # which samples we want to investigate
+  samples:
+    - B2A_TEDDYLipids_Pos_QC006.mzml
+    - B2A_TEDDYLipids_Pos_QC007.mzml
+
+  ##
+  # required springboot profiles
+  # for the hyperopt process to correctly run
+  profiles:
+    - file.source.eclipse
+    - carrot.report.quantify.height
+    - carrot.processing.peakdetection
+    - carrot.lcms
+    - carrot.targets.yaml.annotation
+    - carrot.targets.yaml.correction
+
+  ##
+  # name of the method to use, in it's serialized format
+  method: teddy | 6530 | test | positive
+
+  ##
+  # which stages we care about
+  stages:
+
+    ##
+    # settings for the correction stage
+    # of hyper opt
+    correction:
+
+      ##
+      # this defines all the settings you want to evaluate
+      settings:
+
+        massAccuracyPPM:
+          - 5
+          - 10
+        massAccuracy:
+          - 0.05
+          - 0.10
+        rtAccuracy:
+          - 0
+        minPeakIntensity:
+          - 1000
+          - 8000
+          - 20000
+
+        intensityPenalty:
+          - 10000
+          - 30000
+
+    ##
+    # settings of the annotation stage
+    # of hyper optimization
+    annotation:
+      settings:
+        recursive:
+          - true
+          - false
+        preferMassAccuracy:
+          - true
+          - false
+        preferGaussianSimilarity:
+          - true
+          - false
+        closePeakDetection:
+          - 3
+          - 6
+          - 9
+        massAccuracyPPM:
+          - 5
+          - 10
+        massAccuracy:
+          - 0.05
+          - 0.1
+        massIntensity:
+          - 2000
+          - 8000
+          - 32000
+        intensityPenalty:
+          - 10000
+          - 40000
+          - 160000
+
+        rtIndexWindow:
+          - 1
+          - 2
+          - 3

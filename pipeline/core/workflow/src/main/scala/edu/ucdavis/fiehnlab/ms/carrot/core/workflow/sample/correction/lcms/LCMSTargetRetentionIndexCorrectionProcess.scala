@@ -96,15 +96,15 @@ class LCMSCorrectionProcessProperties {
 @Component
 @Profile(Array("carrot.lcms"))
 class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, stasisClient: StasisService, correctionProperties: LCMSCorrectionProcessProperties) extends CorrectionProcess(libraryAccess, stasisClient) with Logging {
-  val massAccuracySetting: Double = correctionProperties.massAccuracySetting
-  val massAccuracyPPMSetting: Double = correctionProperties.massAccuracyPPMSetting
-  val rtAccuracySetting: Double = correctionProperties.rtAccuracySetting
-  val intensityPenaltyThreshold: Float = correctionProperties.intensityPenaltyThreshold
+  var massAccuracySetting: Double = correctionProperties.massAccuracySetting
+  var massAccuracyPPMSetting: Double = correctionProperties.massAccuracyPPMSetting
+  var rtAccuracySetting: Double = correctionProperties.rtAccuracySetting
+  var intensityPenaltyThreshold: Float = correctionProperties.intensityPenaltyThreshold
   var minPeakIntensity: Float = correctionProperties.minPeakIntensity
   var minimumDefinedStandard: Int = correctionProperties.minimumDefinedStandard
   var minimumFoundStandards: Int = correctionProperties.minimumFoundStandards
-  val linearSamples: Int = correctionProperties.linearSamples
-  val polynomialOrder: Int = correctionProperties.polynomialOrder
+  var linearSamples: Int = correctionProperties.linearSamples
+  var polynomialOrder: Int = correctionProperties.polynomialOrder
   var groupCloseByRetentionIndexStandardDifference: Int = correctionProperties.groupCloseByRetentionIndexStandardDifference
 
   @PostConstruct

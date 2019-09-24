@@ -197,6 +197,7 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) 
 
     override val msLevel: Short = 1
   })
+  override val metadata: Map[String, AnyRef] = Map()
 }
 
 /**
@@ -233,4 +234,9 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String
   })
 
   override val precursorScan: Option[SpectrumProperties] = precursor
+  /**
+    * Contains random metadata associated to the object we mix this into
+    */
+  override val metadata: Map[String, AnyRef] = Map()
+
 }

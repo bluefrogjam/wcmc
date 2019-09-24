@@ -2,11 +2,10 @@ package edu.ucdavis.fiehnlab.loader
 
 import java.io._
 import java.nio.channels.{Channels, ReadableByteChannel}
-import java.nio.file.{FileAlreadyExistsException, Files, Paths, StandardCopyOption}
+import java.nio.file._
 
 import org.apache.logging.log4j.scala.Logging
 import javax.annotation.PostConstruct
-
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Primary
@@ -36,10 +35,6 @@ trait ResourceLoader extends Logging {
     * @return
     */
   def loadAsFile(name: String): Option[File] = {
-    val tempDir = new File(System.getProperty("java.io.tmpdir"))
-    if (!tempDir.exists()) {
-      tempDir.mkdirs()
-    }
 
     val loaded = try {
       load(name)
@@ -57,14 +52,14 @@ trait ResourceLoader extends Logging {
         name
       }
 
-      val tempFile = new File(System.getProperty("java.io.tmpdir"), fName)
+      val tempFile = new File(Files.createTempDirectory("fserv").toFile, fName)
       logger.debug(s"storing ${fName} at: ${tempFile.getAbsolutePath}")
       tempFile.deleteOnExit()
 
       try {
         Files.copy(loaded.get, Paths.get(tempFile.toURI))
-      }catch {
-        case x:FileAlreadyExistsException =>
+      } catch {
+        case x: FileAlreadyExistsException =>
           logger.warn(s"reusing existing file: ${x.getMessage}")
       }
 

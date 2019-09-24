@@ -50,6 +50,10 @@ class RICorrectionBugTest extends WordSpec with Matchers with Logging {
     override val massOfDetectedFeature: Option[Ion] = Some(Ion(mz, intensity))
     override val signalNoise: Option[Double] = None
     override val uniqueMass: Option[Double] = None
+    /**
+      * Contains random metadata associated to the object we mix this into
+      */
+    override val metadata: Map[String, AnyRef] = Map()
   }
 
   def buildTarget(mz: Double, rt: Double): Target = new Target {

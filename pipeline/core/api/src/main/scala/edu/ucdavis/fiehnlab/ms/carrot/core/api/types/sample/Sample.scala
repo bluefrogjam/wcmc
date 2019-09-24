@@ -7,7 +7,7 @@ import org.apache.logging.log4j.scala.Logging
 /**
   * Defines a basic sample, which needs to be processed
   */
-trait Sample {
+trait Sample extends Serializable{
   /**
     * a collection of spectra
     * belonging to this sample
@@ -42,6 +42,10 @@ trait Sample {
   lazy val name: String = if (fileName.contains(".")) fileName.substring(0, fileName.indexOf(".")) else fileName
 
   override def toString = s"Sample file name is $fileName, unique name is $name"
+
+  def getFileName(): String = {
+    fileName
+  }
 }
 
 /**

@@ -20,7 +20,7 @@ import org.springframework.web.client.HttpClientErrorException
   "CARROT_SAMPLE:B2a_TEDDYLipids_Neg_NIST001.mzml",
   "CARROT_METHOD:csh | 6550 | test | negative",
   "CARROT_MODE:lcms",
-  "carrot.submitter:dpedrosa@ucdavis.edu"
+  "carrot.submitter:fake@mymail.edu"
 ))
 class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with Logging {
   @Value("${wcmc.workflow.lcms.sample:#{environment.CARROT_SAMPLE}}")

@@ -43,6 +43,7 @@ class Weiss5RICorrectionBugTest extends WordSpec with Matchers with Logging {
             override val ionMode: Option[IonMode] = None
             override val purity: Option[Double] = None
             override val sample: String = null
+          override val metadata: Map[String, AnyRef] = Map()
             override val retentionTimeInSeconds: Double = 337.6080017089844
             override val scanNumber: Int = -1
             override val associatedScan: Option[SpectrumProperties] = None
@@ -56,6 +57,7 @@ class Weiss5RICorrectionBugTest extends WordSpec with Matchers with Logging {
             override val sample: String = null
             override val retentionTimeInSeconds: Double = 307.7190246582031
             override val scanNumber: Int = -1
+          override val metadata: Map[String, AnyRef] = Map()
             override val associatedScan: Option[SpectrumProperties] = None
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8284506827555, 8500))
             override val signalNoise: Option[Double] = None
@@ -67,6 +69,7 @@ class Weiss5RICorrectionBugTest extends WordSpec with Matchers with Logging {
             override val sample: String = null
             override val retentionTimeInSeconds: Double = 653.9290161132812
             override val scanNumber: Int = -1
+          override val metadata: Map[String, AnyRef] = Map()
             override val associatedScan: Option[SpectrumProperties] = None
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8420100089353, 8750))
             override val signalNoise: Option[Double] = None
@@ -77,6 +80,7 @@ class Weiss5RICorrectionBugTest extends WordSpec with Matchers with Logging {
             override val purity: Option[Double] = None
             override val sample: String = null
             override val retentionTimeInSeconds: Double = 658.9100341796875
+          override val metadata: Map[String, AnyRef] = Map()
             override val scanNumber: Int = -1
             override val associatedScan: Option[SpectrumProperties] = None
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8254281944745, 8100))
@@ -91,6 +95,7 @@ class Weiss5RICorrectionBugTest extends WordSpec with Matchers with Logging {
             override val retentionTimeInSeconds: Double = 666.8800048828125
             override val scanNumber: Int = -1
             override val associatedScan: Option[SpectrumProperties] = None
+          override val metadata: Map[String, AnyRef] = Map()
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8318244279354, 208450))
             override val signalNoise: Option[Double] = None
             override val uniqueMass: Option[Double] = None
@@ -117,6 +122,7 @@ class Weiss5RICorrectionBugTest extends WordSpec with Matchers with Logging {
       val wrongFeature1 = new Feature {
         override val ionMode: Option[IonMode] = None
         override val purity: Option[Double] = None
+        override val metadata: Map[String, AnyRef] = Map()
         override val sample: String = null
         override val retentionTimeInSeconds: Double = 612.09
         override val scanNumber: Int = 1
@@ -131,6 +137,7 @@ class Weiss5RICorrectionBugTest extends WordSpec with Matchers with Logging {
         override val purity: Option[Double] = None
         override val sample: String = null
         override val retentionTimeInSeconds: Double = 653.93
+        override val metadata: Map[String, AnyRef] = Map()
         override val scanNumber: Int = 2
         override val associatedScan: Option[SpectrumProperties] = None
         override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.7934, 15134))
@@ -142,6 +149,7 @@ class Weiss5RICorrectionBugTest extends WordSpec with Matchers with Logging {
         override val ionMode: Option[IonMode] = None
         override val purity: Option[Double] = None
         override val sample: String = null
+        override val metadata: Map[String, AnyRef] = Map()
         override val retentionTimeInSeconds: Double = 667.38
         override val scanNumber: Int = 10
         override val associatedScan: Option[SpectrumProperties] = None

@@ -212,10 +212,10 @@ class Workflow[T] extends Logging {
       sample
     }
     else {
-      logger.info(s"PreProcessors: ${preProcessor.asScala.sortBy(_.priortiy).reverse.map(_.getClass.getSimpleName).mkString(";")}")
+      logger.info(s"PreProcessors: ${preProcessor.asScala.sortBy(_.priority).reverse.map(_.getClass.getSimpleName).mkString(";")}")
 
       //TODO could be done more elegant with a fold, but no time to play with it
-      val iterator = preProcessor.asScala.sortBy(_.priortiy).reverseIterator
+      val iterator = preProcessor.asScala.sortBy(_.priority).reverseIterator
       var temp = iterator.next().process(sample, acquisitionMethod, rawSample)
 
       while (iterator.hasNext) {
@@ -258,7 +258,7 @@ class Workflow[T] extends Logging {
       else {
 
         //TODO could be done more elegant with a fold, but no time to play with it
-        val iterator = postProcessor.asScala.sortBy(_.priortiy).reverseIterator
+        val iterator = postProcessor.asScala.sortBy(_.priority).reverseIterator
         var temp = iterator.next().process(s, acquisitionMethod, rawSample)
 
         while (iterator.hasNext) {

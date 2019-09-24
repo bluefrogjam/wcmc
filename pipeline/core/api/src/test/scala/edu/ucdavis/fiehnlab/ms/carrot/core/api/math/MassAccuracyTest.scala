@@ -17,6 +17,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
       "example 1" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val metadata: Map[String, AnyRef] = Map()
             override val sample:String = null
             override val uniqueMass: Option[Double] = None
             override val signalNoise: Option[Double] = None
@@ -53,6 +54,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
       "example 2" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val metadata: Map[String, AnyRef] = Map()
             override val sample:String = null
             override val uniqueMass: Option[Double] = None
             override val signalNoise: Option[Double] = None
@@ -89,6 +91,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
       "example 3" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val metadata: Map[String, AnyRef] = Map()
             override val sample:String = null
 
             override val ionMode: Option[IonMode] = None
@@ -127,6 +130,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
       "example 4" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val metadata: Map[String, AnyRef] = Map()
             override val sample:String = null
             override val uniqueMass: Option[Double] = None
             override val signalNoise: Option[Double] = None
@@ -164,6 +168,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
       "example 5" in {
         val ppmError = accuracy.calculateMassErrorPPM(
           new MSSpectra {override val purity: Option[Double] = None
+            override val metadata: Map[String, AnyRef] = Map()
             override val sample:String = null
             override val uniqueMass: Option[Double] = None
             override val signalNoise: Option[Double] = None
@@ -203,6 +208,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
         val ppmError = accuracy.calculateMassErrorPPM(
 
           new MSSpectra {override val purity: Option[Double] = None
+            override val metadata: Map[String, AnyRef] = Map()
             override val sample:String = null
             override val uniqueMass: Option[Double] = None
             override val signalNoise: Option[Double] = None

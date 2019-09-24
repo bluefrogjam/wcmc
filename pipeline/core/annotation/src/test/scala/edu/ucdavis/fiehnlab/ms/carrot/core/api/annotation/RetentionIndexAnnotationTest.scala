@@ -17,6 +17,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
       assert(test.isMatch(
 
         new MSSpectra with CorrectedSpectra {
+          override val metadata: Map[String, AnyRef] = Map()
           val sample:String = null
           override val uniqueMass: Option[Double] = None
           override val signalNoise: Option[Double] = None
@@ -79,6 +80,7 @@ class RetentionIndexAnnotationTest extends WordSpec {
       assert(!test.isMatch(
 
         new MSSpectra with CorrectedSpectra {
+          override val metadata: Map[String, AnyRef] = Map()
           val sample:String = null
           override val uniqueMass: Option[Double] = None
           override val signalNoise: Option[Double] = None

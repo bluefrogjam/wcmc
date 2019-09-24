@@ -80,10 +80,10 @@ class LCMSTargetAnnotationMassErrorTest extends WordSpec with Matchers with Logg
     val name = "B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml"
 
     s"process $name without recursive annotation and using gaussian similarity" in {
-      val sample = loader.loadSample("B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml")
+      val sample = loader.getSample("B2a_SA0973_TEDDYLipids_Neg_1GZSZ.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Some(NegativeMode())))
       //correct the data
-      val correctedSample = correction.process(deco.process(sample.get, method, None), method, sample)
+      val correctedSample = correction.process(deco.process(sample, method, None), method, Some(sample))
 
 
       annotation.lcmsProperties.recursiveAnnotationMode = false
@@ -113,7 +113,7 @@ class LCMSTargetAnnotationMassErrorTest extends WordSpec with Matchers with Logg
 
       logger.info("----------")
 
-      val replaced = simpleZeroReplacement.process(quant, method, sample)
+      val replaced = simpleZeroReplacement.process(quant, method, Some(sample))
       logger.info(s"quantified: ${replaced.quantifiedTargets.count(_.quantifiedValue.isDefined)}")
       logger.info(s"quantified: ${replaced.spectra.size}")
 
