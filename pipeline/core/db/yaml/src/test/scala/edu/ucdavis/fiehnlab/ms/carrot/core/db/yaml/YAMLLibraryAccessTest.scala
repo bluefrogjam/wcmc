@@ -43,7 +43,7 @@ class YAMLLibraryAccessTest extends WordSpec with Matchers {
 
 @SpringBootTest
 @ActiveProfiles(Array("test", "carrot.targets.yaml.correction", "carrot.targets.yaml.annotation"))
-class YAMLLibraryConfigurationAnnotationTest extends WordSpec {
+class YAMLLibraryConfigurationAnnotationTest extends WordSpec with Matchers {
 
   @Autowired
   val libraryAccess: LibraryAccess[AnnotationTarget] = null
@@ -56,7 +56,7 @@ class YAMLLibraryConfigurationAnnotationTest extends WordSpec {
 
       val data = libraryAccess.load(AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Some(PositiveMode()))))
 
-      assert(data.size > 0)
+      data should have size 939
     }
   }
 }
@@ -64,7 +64,7 @@ class YAMLLibraryConfigurationAnnotationTest extends WordSpec {
 
 @SpringBootTest
 @ActiveProfiles(Array("test", "carrot.targets.yaml.correction", "carrot.targets.yaml.annotation"))
-class YAMLLibraryConfigurationCorrectionTest extends WordSpec {
+class YAMLLibraryConfigurationCorrectionTest extends WordSpec with Matchers {
 
   @Autowired
   val libraryAccess: LibraryAccess[CorrectionTarget] = null
@@ -76,6 +76,8 @@ class YAMLLibraryConfigurationCorrectionTest extends WordSpec {
     "load teddy library" in {
 
       val data = libraryAccess.load(AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Some(PositiveMode()))))
+
+      data should have size 25
     }
   }
 }

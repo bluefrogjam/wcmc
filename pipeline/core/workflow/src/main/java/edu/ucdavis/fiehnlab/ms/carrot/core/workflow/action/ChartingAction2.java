@@ -82,7 +82,7 @@ public class ChartingAction2<T> extends PostActionWrapper {
 
         Regression regression = ((QuantifiedSample) ssample).regressionCurve();
 
-        Sample rawData = this.loader.loadSample(ssample.fileName()).get();
+        Sample rawData = this.loader.getSample(ssample.fileName());
         List<? extends Feature> rawSpectra = scala.collection.JavaConversions.seqAsJavaList(rawData.spectra());
 
         XYSeriesCollection curves = new XYSeriesCollection();

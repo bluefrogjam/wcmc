@@ -7,7 +7,7 @@ import org.apache.logging.log4j.scala.Logging
 /**
   * Defines a basic sample, which needs to be processed
   */
-trait Sample {
+trait Sample extends Serializable{
   /**
     * a collection of spectra
     * belonging to this sample
@@ -42,6 +42,10 @@ trait Sample {
   lazy val name: String = if (fileName.contains(".")) fileName.substring(0, fileName.indexOf(".")) else fileName
 
   override def toString = s"Sample file name is $fileName, unique name is $name"
+
+  def getFileName(): String = {
+    fileName
+  }
 }
 
 /**
@@ -193,7 +197,7 @@ trait GapFilledSpectra[T] extends QuantifiedSpectra[T] {
     */
   val sampleUsedForReplacement: String
 
-  override def toString = s"GapFilled(quantifiedValue=$quantifiedValue, target=$target, sample=$sampleUsedForReplacement)"
+  override def toString = s"GapFilledSpectra(quantifiedValue=$quantifiedValue, target=$target, sample=$sampleUsedForReplacement)"
 
 }
 
@@ -215,7 +219,11 @@ trait QuantifiedTarget[T] extends Target {
     */
   val spectra: Option[_ <: Feature with QuantifiedSpectra[T]]
 
-  override def toString = s"QuantifiedTarget(quantifiedValue=$quantifiedValue, name=$name, rt=$retentionIndex, mass=${accurateMass.getOrElse(0.0)}"
+  override def toString = f"QuantifiedTarget(idx=$idx, name=${name.getOrElse("None")}, " +
+      f"retentionTimeInMinutes=$retentionTimeInMinutes, retentionIndex=$retentionIndex, " +
+      f"accurateMass=${accurateMass.getOrElse("NA")}, inchiKey=${inchiKey.getOrElse("None")}, " +
+      f"monoIsotopicMass=${precursorMass.getOrElse("None")}, ${if (isRetentionIndexStandard) "ISTD" else ""}, " +
+      f"quantifiedValue=${quantifiedValue.getOrElse(0.0)})"
 }
 
 /**
@@ -235,7 +243,11 @@ trait GapFilledTarget[T] extends QuantifiedTarget[T] {
     */
   lazy final override val spectra: Option[_ <: Feature with GapFilledSpectra[T]] = Some(spectraUsedForReplacement)
 
-  override def toString = s"GapFilledTarget(quantifiedValue=${quantifiedValue.get}, accurateMass=${accurateMass.get}, name=$name, ri=$retentionIndex, rt=$retentionTimeInSeconds, origin=${spectraUsedForReplacement.sampleUsedForReplacement}"
+  override def toString = s"GapFilledTarget(idx=$idx, name=${name.getOrElse("None")}, " +
+      f"retentionTimeInMinutes=$retentionTimeInMinutes, retentionIndex=$retentionIndex, " +
+      f"accurateMass=${accurateMass.getOrElse("NA")}, inchiKey=${inchiKey.getOrElse("None")}, " +
+      f"monoIsotopicMass=${precursorMass.getOrElse("None")}, ${if (isRetentionIndexStandard) "ISTD" else ""}, " +
+      f"quantifiedValue=${quantifiedValue.getOrElse(0.0)}, spectraUsedForReplacement=${spectraUsedForReplacement})"
 
 }
 

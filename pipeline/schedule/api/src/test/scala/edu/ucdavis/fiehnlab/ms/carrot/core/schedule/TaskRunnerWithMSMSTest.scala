@@ -13,7 +13,11 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.targets.dummy"))
+@ActiveProfiles(Array(
+  "test",
+  "carrot.targets.dummy",
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"))
 class TaskRunnerWithMSMSTest extends WordSpec {
   val libName = "teddy"
 
@@ -46,7 +50,7 @@ class TaskRunnerWithMSMSTest extends WordSpec {
 
       taskRunner.run(Task("test", "dpedrosa@ucdavis.edu",
         acquisitionMethod = method,
-        samples = SampleToProcess("B1_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml") +: Seq.empty,
+        samples = SampleToProcess("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml") +: Seq.empty,
         mode = "lcms",
         env = "test"
       ))

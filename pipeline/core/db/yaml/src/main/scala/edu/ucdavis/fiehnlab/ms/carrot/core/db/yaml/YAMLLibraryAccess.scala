@@ -19,8 +19,7 @@ import scala.collection.JavaConverters._
 @Profile(Array("carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationProperties) extends ReadonlyLibrary[Target] with Logging {
 
-
-  private val data = new Yaml().loadAll(getClass().getResourceAsStream(properties.resource)).asScala.collect {
+  private val data = new Yaml().loadAll(getClass.getResourceAsStream(properties.resource)).asScala.collect {
     case config: util.Map[String, java.util.List[Any]] =>
       config.asScala.collect {
         case (key: String, value: java.util.List[Any]) if key == "config" =>
@@ -38,7 +37,7 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
                 case _ => None
               }
 
-              val instrument = method.get("instrument").toString.asInstanceOf[String]
+              val instrument = method.get("instrument").toString
 
               val acquisitionMethod = AcquisitionMethod(
                 ChromatographicMethod(
@@ -50,14 +49,16 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
               )
 
               if (method.get("targets") != null) {
-                val targets = method.get("targets").asInstanceOf[java.util.List[Any]].asScala.collect {
+                val targets = method.get("targets").asInstanceOf[java.util.List[Any]].asScala.zipWithIndex.collect {
 
                   //we are at the target level
-                  case target: java.util.Map[String, Any] =>
+                  case (target: java.util.Map[String, Any], index: Int) =>
                     //annotation target
                     if (target.get("isInternalStandard") == null | target.get("isInternalStandard") == false) {
 
                       new AnnotationTarget {
+                        override val idx: Int = index
+
                         /**
                           * a name for this spectra
                           */
@@ -66,8 +67,10 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
                           * retention time in seconds of this target
                           */
                         override val retentionIndex: Double = target.get("retentionTimeUnit") match {
-                          case "minutes" => target.get("retentionTime").asInstanceOf[Double] * 60
-                          case "seconds" => target.get("retentionTime").asInstanceOf[Double]
+                          case "minutes" => BigDecimal(target.get("retentionTime").asInstanceOf[Double]).setScale(2,
+                            BigDecimal.RoundingMode.CEILING).toDouble * 60
+                          case "seconds" => BigDecimal(target.get("retentionTime").asInstanceOf[Double]).setScale(2,
+                            BigDecimal.RoundingMode.CEILING).toDouble
                         }
                         /**
                           * the unique inchi key for this spectra
@@ -76,7 +79,8 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
                         /**
                           * the mono isotopic mass of this spectra
                           */
-                        override val precursorMass: Option[Double] = Some(target.get("accurateMass").asInstanceOf[Double])
+                        override val precursorMass: Option[Double] =
+                          Some(BigDecimal(target.get("accurateMass").toString).setScale(5, BigDecimal.RoundingMode.CEILING).toDouble)
                         /**
                           * unique mass for a given target
                           */
@@ -102,16 +106,20 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
                     //correction target
                     else {
                       new CorrectionTarget {
+                        override val idx: Int = index
+
                         /**
                           * a name for this spectra
                           */
-                        override var name: Option[String] = Some(target.get("identifier").asInstanceOf[String])
+                        override var name: Option[String] = Some(target.get("identifier").toString)
                         /**
                           * retention time in seconds of this target
                           */
                         override val retentionIndex: Double = target.get("retentionTimeUnit") match {
-                          case "minutes" => target.get("retentionTime").asInstanceOf[Double] * 60
-                          case "seconds" => target.get("retentionTime").asInstanceOf[Double]
+                          case "minutes" => BigDecimal(target.get("retentionTime").asInstanceOf[Double]).setScale(2,
+                            BigDecimal.RoundingMode.CEILING).toDouble * 60
+                          case "seconds" => BigDecimal(target.get("retentionTime").asInstanceOf[Double]).setScale(2,
+                            BigDecimal.RoundingMode.CEILING).toDouble
                         }
                         /**
                           * the unique inchi key for this spectra
@@ -120,7 +128,8 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
                         /**
                           * the mono isotopic mass of this spectra
                           */
-                        override val precursorMass: Option[Double] = Some(target.get("accurateMass").asInstanceOf[Double])
+                        override val precursorMass: Option[Double] =
+                          Some(BigDecimal(target.get("accurateMass").toString).setScale(5, BigDecimal.RoundingMode.CEILING).toDouble)
                         /**
                           * unique mass for a given target
                           */
@@ -158,7 +167,7 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
     *
     * @return
     */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = this.data(acquisitionMethod).asInstanceOf[List[List[Target]]].flatten
+  override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = this.data(acquisitionMethod).flatten
 
   /**
     * returns all associated acquisition methods for this library

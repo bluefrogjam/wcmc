@@ -96,15 +96,15 @@ class LCMSCorrectionProcessProperties {
 @Component
 @Profile(Array("carrot.lcms"))
 class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: MergeLibraryAccess, stasisClient: StasisService, correctionProperties: LCMSCorrectionProcessProperties) extends CorrectionProcess(libraryAccess, stasisClient) with Logging {
-  val massAccuracySetting: Double = correctionProperties.massAccuracySetting
-  val massAccuracyPPMSetting: Double = correctionProperties.massAccuracyPPMSetting
-  val rtAccuracySetting: Double = correctionProperties.rtAccuracySetting
-  val intensityPenaltyThreshold: Float = correctionProperties.intensityPenaltyThreshold
+  var massAccuracySetting: Double = correctionProperties.massAccuracySetting
+  var massAccuracyPPMSetting: Double = correctionProperties.massAccuracyPPMSetting
+  var rtAccuracySetting: Double = correctionProperties.rtAccuracySetting
+  var intensityPenaltyThreshold: Float = correctionProperties.intensityPenaltyThreshold
   var minPeakIntensity: Float = correctionProperties.minPeakIntensity
   var minimumDefinedStandard: Int = correctionProperties.minimumDefinedStandard
   var minimumFoundStandards: Int = correctionProperties.minimumFoundStandards
-  val linearSamples: Int = correctionProperties.linearSamples
-  val polynomialOrder: Int = correctionProperties.polynomialOrder
+  var linearSamples: Int = correctionProperties.linearSamples
+  var polynomialOrder: Int = correctionProperties.polynomialOrder
   var groupCloseByRetentionIndexStandardDifference: Int = correctionProperties.groupCloseByRetentionIndexStandardDifference
 
   @PostConstruct
@@ -225,7 +225,7 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
       }.collect {
         //just a quick filter so we only return objects of type hit
         case hit: TargetAnnotation[Target, Feature] =>
-          logger.info(f"annotated: {name:${hit.target.name.getOrElse("--")}, ri:${hit.target.retentionIndex}%.2f, mass:${hit.target.accurateMass.getOrElse(0.0)}%.4f} with {rt(s):${hit.annotation.retentionTimeInSeconds}%.2f, mass:${hit.annotation.massOfDetectedFeature.get.mass}%.4f}, " +
+          logger.info(f"annotated: ${hit.target} with Annotation(rt(s):${hit.annotation.retentionTimeInSeconds}%.2f, mass:${hit.annotation.massOfDetectedFeature.get.mass}%.4f), " +
               f"massErrorDa: ${MassAccuracy.calculateMassError(hit.annotation, hit.target).get}%.6f, " +
               f"massErrorPPM: ${MassAccuracy.calculateMassErrorPPM(hit.annotation, hit.target).get}%.2f")
           hit

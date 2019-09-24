@@ -4,7 +4,6 @@ spring:
   profiles:
     active: test
     include:
-      - file.source.luna
       - file.source.eclipse
       - carrot.lcms
       - carrot.targets.mona

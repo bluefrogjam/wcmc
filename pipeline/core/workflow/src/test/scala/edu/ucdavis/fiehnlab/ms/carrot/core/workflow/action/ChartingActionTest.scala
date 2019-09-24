@@ -18,13 +18,14 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest
 @ActiveProfiles(
-  Array("carrot.report.quantify.height",
+  Array("test",
+    "carrot.lcms",
+    "file.source.eclipse",
+    "carrot.report.quantify.height",
     "carrot.processing.peakdetection",
     "carrot.processing.replacement.mzrt",
-    "file.source.luna",
-    "carrot.lcms",
-    "test",
-    "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction",
+    "carrot.targets.yaml.annotation",
+    "carrot.targets.yaml.correction",
     "charting"))
 class ChartingActionTest extends WordSpec with Matchers with Logging {
   @Autowired

@@ -35,7 +35,7 @@ public class MSDialLCMSProcessing implements MSDialProcessing {
         this.serializer = serializer;
     }
 
-    public MSDialLCMSProcessedSample process(Sample sample, MSDialProcessingProperties properties) {
+    public Sample process(Sample sample, MSDialProcessingProperties properties) {
         List<? extends Feature> spectra = TypeConverter.getJavaSpectrumList(sample);
 
         // Peak picking
@@ -54,7 +54,7 @@ public class MSDialLCMSProcessing implements MSDialProcessing {
         logger.info("Found " + deconvolutionResults.stream().filter(d -> d.peak.ms2LevelDataPointNumber < 0).count() + " MS1 spectra");
         logger.info("Found " + deconvolutionResults.stream().filter(d -> d.peak.ms2LevelDataPointNumber > 0).count() + " MS2 spectra");
 
-        MSDialLCMSProcessedSample processed = new MSDialLCMSProcessedSample(deconvolutionResults, properties.ionMode, sample.fileName());
+        Sample processed = MSDialLCMSProcessedSample.generateSample(deconvolutionResults,sample.fileName(),properties.ionMode);
 
         serializer.ifPresent(sampleSerializer -> sampleSerializer.saveFile(processed));
 

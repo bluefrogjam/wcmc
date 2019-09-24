@@ -32,7 +32,7 @@ case class Ion(mass: Double, intensity: Float) {
   * which ion mode the spectra is
   */
 @JsonDeserialize(using = classOf[IonModeDeserializer])
-class IonMode(val mode: String)
+class IonMode(val mode: String) extends Serializable
 
 case class PositiveMode() extends IonMode("positive")
 
@@ -55,7 +55,7 @@ class IonModeDeserializer extends JsonDeserializer[IonMode] {
     } else if (value.startsWith("-")) {
       NegativeMode()
     }
-    else{
+    else {
       PositiveMode()
     }
   }

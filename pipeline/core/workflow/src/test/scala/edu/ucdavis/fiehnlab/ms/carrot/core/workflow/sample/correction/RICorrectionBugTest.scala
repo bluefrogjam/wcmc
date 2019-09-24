@@ -21,7 +21,12 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"))
 class RICorrectionBugTest extends WordSpec with Matchers with Logging {
   val libName = "lcms_istds"
 
@@ -45,6 +50,10 @@ class RICorrectionBugTest extends WordSpec with Matchers with Logging {
     override val massOfDetectedFeature: Option[Ion] = Some(Ion(mz, intensity))
     override val signalNoise: Option[Double] = None
     override val uniqueMass: Option[Double] = None
+    /**
+      * Contains random metadata associated to the object we mix this into
+      */
+    override val metadata: Map[String, AnyRef] = Map()
   }
 
   def buildTarget(mz: Double, rt: Double): Target = new Target {

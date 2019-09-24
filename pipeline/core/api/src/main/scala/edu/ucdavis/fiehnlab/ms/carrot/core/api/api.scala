@@ -73,7 +73,10 @@ package object api {
       * accurate mass of this feature, if applicable
       */
     override val massOfDetectedFeature: Option[Ion] = Option(Ion(100, 100))
-
+    /**
+      * Contains random metadata associated to the object we mix this into
+      */
+    override val metadata: Map[String, AnyRef] = Map()
   }
   /**
     * test spectra with 2 ions
@@ -82,6 +85,7 @@ package object api {
     override val uniqueMass: Option[Double] = None
 
     override val signalNoise: Option[Double] = None
+    override val metadata: Map[String, AnyRef] = Map()
 
     override val sample:String = null
 
@@ -128,6 +132,7 @@ package object api {
   val testSpectraWith3Ions = new MSSpectra {
     override val signalNoise: Option[Double] = None
     override val uniqueMass: Option[Double] = None
+    override val metadata: Map[String, AnyRef] = Map()
 
     override val sample:String = null
 
@@ -175,6 +180,7 @@ package object api {
   val testSpectraWith4Ions = new MSSpectra {
     override val signalNoise: Option[Double] = None
     override val uniqueMass: Option[Double] = None
+    override val metadata: Map[String, AnyRef] = Map()
 
     override val sample:String = null
 
@@ -218,6 +224,7 @@ package object api {
 
   val testAccurateMassSpectraWith4Ions = new MSSpectra {
     override val signalNoise: Option[Double] = None
+    override val metadata: Map[String, AnyRef] = Map()
     override val uniqueMass: Option[Double] = None
 
     override val sample:String = null
@@ -260,6 +267,7 @@ package object api {
   //MSSpectraImpl(5, Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List(), 5000, massOfDetectedFeature = Option(Ion(100.3241, 50)))
   val testAccurateMassSpectraWith4Ions2 = new MSSpectra {
 
+    override val metadata: Map[String, AnyRef] = Map()
     override val signalNoise: Option[Double] = None
     override val uniqueMass: Option[Double] = None
 

@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.SpectraHelper
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.math.Regression
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{CorrectedSpectra, Feature, SpectrumProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{AccurateMassSupport, CorrectedSpectra, Feature, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSpectra, Sample, Target, _}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
@@ -43,18 +43,21 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
         //nothing found for this spectra, needs to be replaced later
         if (result.isEmpty) {
           logger.debug(s"\t=> annotation not found for ${myTarget}")
-          new QuantifiedTarget[T] {
+          new QuantifiedTarget[T] with AccurateMassSupport {
+            override val idx: Int = myTarget.idx
             override val uniqueMass: Option[Double] = myTarget.uniqueMass
             override val quantifiedValue: Option[T] = None
-            override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = None
             override var name: Option[String] = myTarget.name
-            override val retentionIndex: Double = input.regressionCurve.computeY(myTarget.retentionTimeInSeconds) // myTarget.retentionTimeInSeconds
+            override val retentionIndex: Double = myTarget.retentionIndex
             override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
+            override val retentionTimeInMinutes: Double = myTarget.retentionTimeInMinutes
             override var inchiKey: Option[String] = myTarget.inchiKey
             override val precursorMass: Option[Double] = myTarget.precursorMass
+            override val accurateMass: Option[Double] = myTarget.accurateMass
             override var confirmed: Boolean = myTarget.confirmed
             override var requiredForCorrection: Boolean = myTarget.requiredForCorrection
             override var isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
+            override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = None
             override val spectrum: Option[SpectrumProperties] = myTarget.spectrum
             override val ionMode: IonMode = myTarget.ionMode
           }
@@ -62,23 +65,26 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
         //associated with a target and quantified
         else {
           logger.debug(s"\t=> annotation found for ${myTarget.name.get}")
-          new QuantifiedTarget[T] {
+          new QuantifiedTarget[T] with AccurateMassSupport {
+            override val idx: Int = myTarget.idx
             override val uniqueMass: Option[Double] = myTarget.uniqueMass
             override val quantifiedValue: Option[T] = computeValue(myTarget, result.head)
-            lazy override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = Option(SpectraHelper.addQuantification(this, result.head))
             override var name: Option[String] = myTarget.name
-            override val retentionIndex: Double = result.head.retentionIndex
+            override val retentionIndex: Double = myTarget.retentionIndex
             override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
+            override val retentionTimeInMinutes: Double = myTarget.retentionTimeInMinutes
             override var inchiKey: Option[String] = result.head.target.inchiKey
             override val precursorMass: Option[Double] = result.head.accurateMass
+            override val accurateMass: Option[Double] = myTarget.accurateMass
             override var confirmed: Boolean = myTarget.confirmed
             override var requiredForCorrection: Boolean = myTarget.requiredForCorrection
             override var isRetentionIndexStandard: Boolean = myTarget.isRetentionIndexStandard
+            lazy override val spectra: Option[_ <: Feature with QuantifiedSpectra[T]] = Option(SpectraHelper.addQuantification(this, result.head))
             override val spectrum: Option[SpectrumProperties] = result.head.associatedScan
             override val ionMode: IonMode = result.head.ionMode.get
           }
         }
-    }.seq.toSeq.sortBy(t => (t.name.get, -t.retentionTimeInSeconds))
+    }.toSeq.sortBy(t => (t.name.get, -t.retentionTimeInSeconds))
 
     stasisClient.addTracking(TrackingData(input.name, "quantified", input.fileName))
 
@@ -101,7 +107,6 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
     * @return
     */
   protected def buildResult(input: AnnotatedSample, resultList: Seq[QuantifiedTarget[T]]): QuantifiedSample[T] = {
-
     new QuantifiedSample[T] {
       override val quantifiedTargets: Seq[QuantifiedTarget[T]] = resultList
       override val fileName: String = input.fileName

@@ -141,11 +141,11 @@ class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
             ),
             results = Array(
               Result(
-                Target(121.12, "test", "test_id", 12.2),
+                Target(121.12, "test", "test_id", 12.2, 0),
                 Annotation(121.2, 10.0, replaced = false, 12.2, 121.1)
               ),
               Result(
-                Target(123.12, "test2", "test_id2", 132.12),
+                Target(123.12, "test2", "test_id2", 132.12, 1),
                 Annotation(123.2, 103.0, replaced = true, 132.12, 123.3)
               )
             )

@@ -37,11 +37,10 @@ import scala.collection.JavaConverters._
   "carrot.processing.replacement.mzrt",
   "carrot.lcms",
   "carrot.processing.peakdetection",
-  "file.source.luna",
+  "file.source.eclipse",
   "carrot.output.storage.aws",
-  "test",
-  "carrot.targets.yaml.correction",
-  "carrot.targets.yaml.annotation"))
+  "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction",
+  "teddy"))
 class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfterEach with MockitoSugar with Logging {
   val libName = "teddy"
 
@@ -99,7 +98,7 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
   )
 
   "StasisResultStorage" should {
-    val sample = sampleLoader.loadSample("B2a_TEDDYLipids_Neg_QC006.mzml").get
+    val sample = sampleLoader.getSample("B2a_TEDDYLipids_Neg_QC006.mzml")
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
 
     val quantified = quantification.process(

@@ -15,7 +15,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest()
-@ActiveProfiles(Array("carrot.lcms", "file.source.luna", "file.source.eclipse", "test"))
+@ActiveProfiles(Array("carrot.lcms", "file.source.eclipse", "test"))
 class MSMSProcessingTest extends WordSpec with Logging with Matchers {
 
   @Autowired

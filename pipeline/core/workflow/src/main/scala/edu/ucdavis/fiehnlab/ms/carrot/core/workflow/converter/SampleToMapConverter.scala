@@ -1,11 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.converter
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, QuantifiedSpectra, QuantifiedTarget}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage.CarrotToStasisConverter
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 
 class SampleToMapConverter[T] extends SampleConverter[T, Map[String, Injection]] {
+
+  val resultConverter: CarrotToStasisConverter = new CarrotToStasisConverter()
+
   /**
     * converts a sample to an different representation
     *
@@ -13,30 +15,10 @@ class SampleToMapConverter[T] extends SampleConverter[T, Map[String, Injection]]
     * @return
     */
   override def convert(sample: QuantifiedSample[T]): Map[String, Injection] = {
-    /* Gert's version (possibly before updating my changes)
-    val results = sample.quantifiedTargets.map(feature => {
-      Result(CarrotToStasisConverter.asStasisTarget(feature),
-        Annotation(feature.retentionIndex,
-          feature.quantifiedValue.get match {
-            case x: Double => x.toDouble
-            case _ => 0.0
-          },
-          replaced = feature match {
-            case f: GapFilledSpectra[T] => true
-            case _ => false
-          },
-
-          feature.accurateMass.getOrElse(0.0),
-          nonCorrectedRt = feature.retentionTimeInSeconds,
-          massError = feature.spectra.get.massAccuracy.getOrElse(-1.0),
-          massErrorPPM = feature.spectra.get.massAccuracyPPM.getOrElse(-1.0)
-        )
-      )
-    })*/
 
     val results: Seq[Result] = sample.quantifiedTargets.collect {
       case replacedtgt: ZeroreplacedTarget =>
-        Result(CarrotToStasisConverter.asStasisTarget(replacedtgt),
+        Result(resultConverter.asStasisTarget(replacedtgt),
           Annotation(replacedtgt.spectraUsedForReplacement.retentionIndex,
             replacedtgt.spectraUsedForReplacement.quantifiedValue.get,
             replaced = true,
@@ -47,7 +29,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, Map[String, Injection]]
           )
         )
       case quanttgt: QuantifiedTarget[T] =>
-        Result(CarrotToStasisConverter.asStasisTarget(quanttgt),
+        Result(resultConverter.asStasisTarget(quanttgt),
           Annotation(quanttgt.retentionIndex,
             quanttgt.quantifiedValue.getOrElse(0.0) match {
               case x: Double => x.toDouble

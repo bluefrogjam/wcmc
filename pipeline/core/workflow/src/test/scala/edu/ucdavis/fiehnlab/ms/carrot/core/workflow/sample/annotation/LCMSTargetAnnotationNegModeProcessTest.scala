@@ -21,12 +21,14 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna",
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.mzrt",
-  "carrot.lcms",
-  "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"))
 class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with Logging {
 
   @Autowired

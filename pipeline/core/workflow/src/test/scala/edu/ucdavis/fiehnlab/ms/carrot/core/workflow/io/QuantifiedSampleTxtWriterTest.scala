@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io
 
-import java.io.{FileInputStream, FileOutputStream}
+import java.io.{File, FileInputStream, FileOutputStream}
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
@@ -20,12 +20,21 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 import scala.io.Source
+
 /**
   * Created by wohlg on 7/9/2016.
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.lcms", "carrot.lcms.correction", "carrot.processing.peakdetection", "file.source.luna", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.lcms.correction",
+  "carrot.report.quantify.height",
+  "carrot.processing.peakdetection",
+  "carrot.processing.replacement.simple",
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"))
 class QuantifiedSampleTxtWriterTest extends WordSpec with Matchers with Logging {
   val libName = "lcms_istds"
 
@@ -70,14 +79,16 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with Matchers with Logging 
 
       results.size should be > 0
 
-      val out = new FileOutputStream("target/test.txt")
+      val temp = File.createTempFile("quantify", "txt")
+      temp.deleteOnExit()
+      val out = new FileOutputStream(temp)
 
       val seperator = ","
       val writer = new QuantifiedSampleTxtWriter[Double]
 
       writer.writeHeader(out)
-      results.foreach{
-        writer.write(out,_)
+      results.foreach {
+        writer.write(out, _)
       }
       writer.writeFooter(out)
 
@@ -85,9 +96,9 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with Matchers with Logging 
       out.close()
 
 
-      val lines = Source.fromInputStream(new FileInputStream("target/test.txt")).getLines().toList
+      val lines = Source.fromInputStream(new FileInputStream(temp)).getLines().toList
 
-      lines.foreach{ line =>
+      lines.foreach { line =>
         logger.info(s"${line}")
       }
 

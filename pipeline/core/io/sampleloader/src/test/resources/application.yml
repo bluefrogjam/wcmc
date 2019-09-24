@@ -15,3 +15,10 @@ wcmc:
       msdialrest4j:
         host: phobos.fiehnlab.ucdavis.edu
         port: 8080
+
+spring:
+  cache:
+    type: redis
+  redis:
+    host: 127.0.0.1
+    port: 6379

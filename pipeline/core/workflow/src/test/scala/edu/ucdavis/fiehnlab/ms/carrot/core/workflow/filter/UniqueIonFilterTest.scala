@@ -43,6 +43,10 @@ class UniqueIonFilterTest extends WordSpec with Matchers {
       * accurate mass of this feature, if applicable
       */
     override val massOfDetectedFeature: Option[Ion] = None
+    /**
+      * Contains random metadata associated to the object we mix this into
+      */
+    override val metadata: Map[String, AnyRef] = Map()
   }
 
   val featureNoMass = new Feature {
@@ -82,6 +86,7 @@ class UniqueIonFilterTest extends WordSpec with Matchers {
       * accurate mass of this feature, if applicable
       */
     override val massOfDetectedFeature: Option[Ion] = None
+    override val metadata: Map[String, AnyRef] = Map()
   }
 
   val nominalFeature = new Feature {
@@ -121,6 +126,7 @@ class UniqueIonFilterTest extends WordSpec with Matchers {
       * accurate mass of this feature, if applicable
       */
     override val massOfDetectedFeature: Option[Ion] = None
+    override val metadata: Map[String, AnyRef] = Map()
   }
 
   val testTargetAccurate = new Target {

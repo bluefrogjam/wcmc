@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
 import java.io.{File, FileInputStream}
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.agilent.AgilentSample
@@ -10,7 +9,10 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.leco.LecoSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
+import io.github.msdk.MSDKException
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
 
 /**
   * utilizes the new resource loader api
@@ -30,9 +32,17 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     * @return
     */
   override def loadSample(name: String): Option[_ <: Sample] = {
-    logger.debug(s"looking for sample: ${name} with ${resourceLoader}")
-    val fileOption = resourceLoader.loadAsFile(name)
-    convertFileToSample(name, fileOption)
+    logger.info(s"looking for sample: ${name} with ${resourceLoader}")
+    try {
+      val fileOption = resourceLoader.loadAsFile(name)
+      convertFileToSample(name, fileOption)
+    }
+    catch {
+      case e: MSDKException =>
+        //most likely a download failure, retru
+        val fileOption = resourceLoader.loadAsFile(name)
+        convertFileToSample(name, fileOption)
+    }
   }
 
   protected def convertFileToSample(name: String, fileOption: Option[File]): Option[_ <: Sample] = {
@@ -69,6 +79,7 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
     * @param name
     * @return
     */
+  @Cacheable(value = Array("resource-exist-sample"), key = "#name")
   override def sampleExists(name: String): Boolean = {
     resourceLoader.exists(name)
   }
