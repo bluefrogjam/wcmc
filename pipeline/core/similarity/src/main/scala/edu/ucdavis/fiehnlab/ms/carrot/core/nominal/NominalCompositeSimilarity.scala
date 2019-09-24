@@ -2,9 +2,9 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.nominal
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
-import edu.ucdavis.fiehnlab.ms.carrot.core.{Similarity, SpectrumSimilarityUtilities}
+import edu.ucdavis.fiehnlab.ms.carrot.core.{NominalMassSimilarity, Similarity, SpectrumSimilarityUtilities}
 
-class NominalCompositeSimilarity extends Similarity {
+class NominalCompositeSimilarity extends NominalMassSimilarity {
 
   /**
     * computes the composite similarity of two spectra, based on:

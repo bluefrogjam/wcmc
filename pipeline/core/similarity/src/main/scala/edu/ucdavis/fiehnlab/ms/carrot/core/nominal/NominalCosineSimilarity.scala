@@ -1,10 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.nominal
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.{Similarity, SpectrumSimilarityUtilities}
+import edu.ucdavis.fiehnlab.ms.carrot.core.{NominalMassSimilarity, Similarity, SpectrumSimilarityUtilities}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion
 
-class NominalCosineSimilarity extends Similarity {
+class NominalCosineSimilarity extends NominalMassSimilarity {
 
   /**
     * computes the simple, nominal mass cosine similarity of two spectra
