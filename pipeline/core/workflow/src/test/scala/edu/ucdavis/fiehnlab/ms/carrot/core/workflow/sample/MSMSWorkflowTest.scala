@@ -103,7 +103,7 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
     }
 
     "return some positive mode MSMS spectra" in {
-      val sample = loader.loadSample("B1_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
+      val sample = loader.loadSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode())))
       val expClass = ExperimentClass(Seq(sample.get), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
