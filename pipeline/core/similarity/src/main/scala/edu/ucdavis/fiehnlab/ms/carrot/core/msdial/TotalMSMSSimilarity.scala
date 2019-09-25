@@ -26,4 +26,14 @@ class TotalMSMSSimilarity extends MSDialSimilarity {
 
     similarity
   }
+
+  /**
+    * computes full total similarity based on MS1 and MS/MS properties
+    * TODO: tie in with carrot data types
+    * @param unknown
+    * @param reference
+    * @param ms1Tolerance
+    * @param ms2Tolerance
+    */
+  def compare(unknown: Feature, reference: Feature, ms1Tolerance: Double, ms2Tolerance: Double, spectrumPenalty: Boolean, useRT: Boolean) = 0
 }
