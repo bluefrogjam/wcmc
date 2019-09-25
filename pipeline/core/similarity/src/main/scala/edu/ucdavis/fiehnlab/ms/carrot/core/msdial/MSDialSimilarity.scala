@@ -36,4 +36,13 @@ abstract class MSDialSimilarity extends Similarity {
     // return the summed intensity and the last index used
     (summedIntensity, newStartIdx)
   }
+
+
+  def getPeakPenalty(ionCount: Int): Double = ionCount match {
+    case 1 => 0.75
+    case 2 => 0.88
+    case 3 => 0.94
+    case 4 => 0.97
+    case _ => 1
+  }
 }
