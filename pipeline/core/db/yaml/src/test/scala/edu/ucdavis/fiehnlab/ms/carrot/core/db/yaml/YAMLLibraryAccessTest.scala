@@ -85,7 +85,7 @@ class YAMLLibraryConfigurationCorrectionTest extends WordSpec with Matchers {
 
 @SpringBootTest
 @ActiveProfiles(Array("test", "carrot.targets.yaml.correction", "carrot.targets.yaml.annotation"))
-class YAMLLibraryConfigurationMultipleTest extends WordSpec with Matchers {
+class YAMLLibraryConfigurationHILICTest extends WordSpec with Matchers {
 
   @Autowired
   val libraryAccess: MergeLibraryAccess = null
@@ -93,13 +93,24 @@ class YAMLLibraryConfigurationMultipleTest extends WordSpec with Matchers {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "YAMLLibraryAccess with mergedLibraryAccess" should {
-    "be able to load correction and annotation targets" in {
+    "be able to load HILIC QExactive library" in {
+      libraryAccess.libraries.filter(_.chromatographicMethod.name == "hilic_qehf") should have size 2
+      libraryAccess.libraries.filter(_.chromatographicMethod.name == "hilic_qehf").foreach(l => println(l.chromatographicMethod))
+    }
 
-      libraryAccess.libraries.filter(_.chromatographicMethod.name == "teddy") should have size 2
-      libraryAccess.libraries.foreach(l => println(l.chromatographicMethod))
+    "be able to load HILIC QTof library" in {
+      libraryAccess.libraries.filter(_.chromatographicMethod.name == "hilic_qtof") should have size 2
+      libraryAccess.libraries.filter(_.chromatographicMethod.name == "hilic_qtof").foreach(l => println(l.chromatographicMethod))
     }
   }
 }
+
+@SpringBootTest
+@ActiveProfiles(Array("test", "carrot.targets.yaml.correction", "carrot.targets.yaml.annotation"))
+class YAMLLibraryConfigurationMultipleTest extends WordSpec with Matchers {
+
+}
+
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 class YAMLLibraryAccessTestConfiguration {
