@@ -11,7 +11,7 @@ abstract class Similarity extends Logging {
     * @param reference
     * @return
     */
-  def compare(unknown: Feature, reference: Feature, tolerance: Double = 0.5): Double = {
+  def compare(unknown: Feature, reference: Feature, tolerance: Double): Double = {
     if (unknown.associatedScan.isEmpty || unknown.associatedScan.get.ions.isEmpty ||
         reference.associatedScan.isEmpty || reference.associatedScan.get.ions.isEmpty) {
       0
