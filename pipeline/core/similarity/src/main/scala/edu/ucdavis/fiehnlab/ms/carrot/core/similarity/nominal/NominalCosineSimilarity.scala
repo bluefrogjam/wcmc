@@ -1,6 +1,6 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.nominal
+package edu.ucdavis.fiehnlab.ms.carrot.core.similarity.nominal
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.{NominalMassSimilarity, Similarity, SpectrumSimilarityUtilities}
+import edu.ucdavis.fiehnlab.ms.carrot.core.similarity.{NominalMassSimilarity, Similarity, SpectrumSimilarityUtilities}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion
 

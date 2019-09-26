@@ -1,6 +1,6 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
+package edu.ucdavis.fiehnlab.ms.carrot.core.similarity.msdial
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.Similarity
+import edu.ucdavis.fiehnlab.ms.carrot.core.similarity.Similarity
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion
 
 abstract class MSDialSimilarity extends Similarity {

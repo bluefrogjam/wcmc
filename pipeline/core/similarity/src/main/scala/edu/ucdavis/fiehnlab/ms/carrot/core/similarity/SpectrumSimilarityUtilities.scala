@@ -1,4 +1,4 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core
+package edu.ucdavis.fiehnlab.ms.carrot.core.similarity
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Ion
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
