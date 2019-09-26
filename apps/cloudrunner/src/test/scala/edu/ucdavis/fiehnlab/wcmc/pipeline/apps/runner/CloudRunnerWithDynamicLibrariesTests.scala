@@ -12,7 +12,18 @@ import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "runner", "csh", "carrot.targets.dummy"))
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "csh",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
+  "carrot.processing.replacement.mzrt",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation",
+  "carrot.output.storage.aws",
+  "carrot.runner.required",
+  "carrot.targets.dummy"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",
@@ -35,7 +46,6 @@ class CloudRunnerWithDynamicLibrariesTests extends WordSpec with Matchers with L
     "have results on aws" in {
       try {
         val results = stasis_cli.getResults(sampleName.split('.').head)
-        logger.info(results.toString)
 
         results should not be null
       } catch {
