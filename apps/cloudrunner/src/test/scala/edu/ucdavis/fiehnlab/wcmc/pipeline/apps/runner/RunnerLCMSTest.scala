@@ -12,7 +12,17 @@ import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "file.source.eclipse", "runner", "carrot.scheduler.local"))
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
+  "carrot.processing.replacement.mzrt",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation",
+  "carrot.output.storage.aws",
+  "carrot.runner.required",
+  "carrot.scheduler.local"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:Biorec001_posCSH_preFlenniken001.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",

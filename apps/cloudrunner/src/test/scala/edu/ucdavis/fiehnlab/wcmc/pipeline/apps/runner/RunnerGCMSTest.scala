@@ -1,17 +1,26 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.{ActiveProfiles, TestContextManager, TestPropertySource}
+import org.springframework.test.context.{ActiveProfiles, TestPropertySource}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.binbase", "carrot.gcms", "carrot.targets.dummy", "file.source.eclipse"))
+@ActiveProfiles(Array("test",
+  "carrot.binbase",
+  "carrot.gcms",
+  "carrot.report.quantify.height",
+  "carrot.processing.replacement.mzrt",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation",
+  "carrot.output.storage.aws",
+  "carrot.runner.required",
+  "carrot.targets.dummy",
+  "file.source.eclipse"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:180501dngsa32_1.txt",
   "CARROT_METHOD:Gerstel | LECO-GC-TOF | rtx5recal | positive",
