@@ -5,7 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 
 import scala.collection.mutable.ArrayBuffer
 
-class CosineSimilarity extends MSDialSimilarity {
+class CosineSimilarity(spectumPeakPenalty: Boolean = true) extends MSDialSimilarity {
 
   /**
     * computes the cosine similarity of two spectra
@@ -92,6 +92,9 @@ class CosineSimilarity extends MSDialSimilarity {
         x.intensity / referenceBase
       }.sum
 
+      // calculate peak count penalty
+      val peakPenalty: Double = if (spectumPeakPenalty) getPeakPenalty(referenceIonCounter) else 1
+
       // calculate cosine similarity
       val cutoff = 0.01
 
@@ -106,7 +109,7 @@ class CosineSimilarity extends MSDialSimilarity {
       if (unknownScalar == 0 || referenceScalar == 0) {
         0
       } else {
-        getPeakPenalty(referenceIonCounter) * covariance * covariance / unknownScalar / referenceScalar
+        peakPenalty * covariance * covariance / unknownScalar / referenceScalar
       }
     }
   }
