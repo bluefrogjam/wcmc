@@ -16,10 +16,12 @@ abstract class MSDialSimilarity extends Similarity {
   def getMatchingIonIntensity(ions: Seq[Ion], startIdx: Int, focusedMz: Double, tolerance: Double): (Double, Int) = {
 
     // ignore previously used ions, and keep only those inside the tolerance range
-    val matchingIons: Seq[(Ion, Int)] = ions
+    val filteredIons: Seq[(Ion, Int)] = ions
       .zipWithIndex
       .drop(startIdx)
       .dropWhile { case (ion, i) => ion.mass < focusedMz - tolerance }
+
+    val matchingIons = filteredIons
       .takeWhile { case (ion, i) => focusedMz - tolerance <= ion.mass && ion.mass < focusedMz + tolerance }
 
     // sum the intensities of the matching ions
@@ -27,13 +29,15 @@ abstract class MSDialSimilarity extends Similarity {
 
     // update the start index of if necessary
     val newStartIdx =
-      if (matchingIons.last._2 + 1 < ions.length) {
+      if (matchingIons.nonEmpty && matchingIons.last._2 + 1 < ions.length) {
         matchingIons.last._2 + 1
+      } else if (filteredIons.nonEmpty) {
+        filteredIons.head._2
       } else {
         startIdx
       }
 
-    // return the summed intensity and the last index used
+    // return the summedIntensity intensity and the last index used
     (summedIntensity, newStartIdx)
   }
 
