@@ -21,8 +21,12 @@ object SpectrumSimilarityUtilities {
     * @return
     */
   def convertToNominal(spectrum: Feature): Map[Int, Ion] = {
-    spectrum.associatedScan.get.ions
-      .groupBy(x => roundMZ(x.mass))
-      .map { case(mass, ions) => (mass, Ion(mass, ions.map(_.intensity).sum)) }
+    if (spectrum.associatedScan.isDefined) {
+      spectrum.associatedScan.get.ions
+        .groupBy(x => roundMZ(x.mass))
+        .map { case (mass, ions) => (mass, Ion(mass, ions.map(_.intensity).sum)) }
+    } else {
+      Map()
+    }
   }
 }
