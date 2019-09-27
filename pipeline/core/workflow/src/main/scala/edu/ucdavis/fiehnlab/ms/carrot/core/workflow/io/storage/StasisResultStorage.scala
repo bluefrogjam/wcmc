@@ -30,6 +30,7 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
     val response = stasis_cli.addResult(data)
 
     if (response.getStatusCode == HttpStatus.OK) {
+      logger.info(s"Sample ${sample.name}'s results saved to AWS")
       stasis_cli.addTracking(TrackingData(sample.name, "exported", sample.fileName))
       response.getBody
     } else {

@@ -39,8 +39,14 @@ mona:
     server:
       host: ipa.fiehnlab.ucdavis.edu
       port: 9090
-      user: admin
-      password: admin
+
+wcmc:
+  api:
+    mona:
+      rest:
+        mona:
+          user: admin
+          password: admin
 
 ---
 spring:
@@ -55,8 +61,14 @@ mona:
     server:
       host: localhost
       port: 9090
-      user: admin
-      password: admin
+
+wcmc:
+  api:
+    mona:
+      rest:
+        mona:
+          user: admin
+          password: admin
 
 carrot:
   sample: '${CARROT_SAMPLE}'
