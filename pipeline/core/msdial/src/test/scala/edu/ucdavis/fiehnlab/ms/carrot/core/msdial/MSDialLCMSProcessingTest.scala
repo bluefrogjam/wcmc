@@ -47,6 +47,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
       //      logger.debug(s"Sample result: $outSample")
       outSample.spectra should not be null
       outSample.spectra.size should be > 0
+      outSample.spectra.forall(x => x.metadata.nonEmpty) shouldBe true
 
 
       if (serializer != null)
