@@ -4,13 +4,12 @@ import java.sql.{Connection, DriverManager}
 import java.util
 import java.util.Properties
 
-import org.apache.logging.log4j.scala.Logging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, ReadonlyLibrary}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.ReadonlyLibrary
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSCorrectionTarget
 import javax.validation.constraints.{NotBlank, NotEmpty}
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}

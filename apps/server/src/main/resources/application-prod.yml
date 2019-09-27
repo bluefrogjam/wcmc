@@ -2,7 +2,7 @@ spring:
   profiles:
     active: prod
     include:
-#      - file.source.luna
+#      - file.source.eclipse
 #      - file.source.eclipse
 #      - carrot.gcms
       - carrot.lcms

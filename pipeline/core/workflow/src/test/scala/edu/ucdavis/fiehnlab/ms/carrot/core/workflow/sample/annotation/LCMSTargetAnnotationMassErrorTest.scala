@@ -24,7 +24,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.processing.replacement.simple", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.processing.replacement.simple", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
 class LCMSTargetAnnotationMassErrorTest extends WordSpec with Matchers with Logging {
   val libName = "teddy"
 
@@ -110,15 +110,15 @@ class LCMSTargetAnnotationMassErrorTest extends WordSpec with Matchers with Logg
       logger.info(s"quantified: ${replaced.quantifiedTargets.count(_.quantifiedValue.isDefined)}")
       logger.info(s"quantified: ${replaced.spectra.size}")
 
-      val reallyQuant: Seq[QuantifiedTarget[Double]] = replaced.quantifiedTargets.filter(_.quantifiedValue.isDefined)
+      val replQuant: Seq[QuantifiedTarget[Double]] = replaced.quantifiedTargets.filter(_.quantifiedValue.isDefined)
           .filterNot(q => q.spectra.get.target.name.getOrElse("Unknown") == "Unknown")
 
-      //      reallyQuant.map(a => AnnotationReport(a.spectra.get, a.spectra.get.target))
+      //      replQuant.map(a => AnnotationReport(a.spectra.get, a.spectra.get.target))
       //          .foreach(q => {
       //            logger.info(q)
       //          })
       targetValues.foreach(t => {
-        reallyQuant.filter(_.spectra.get.target.name == t._1)
+        replQuant.filter(_.spectra.get.target.name == t._1)
             .foreach(q => {
               val expectedMass: Double = t._2.filter(_._1 == "mz").head._2
               val expectedRT: Double = t._2.filter(_._1 == "rt").head._2

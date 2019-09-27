@@ -15,7 +15,7 @@ import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest()
-@ActiveProfiles(Array("carrot.lcms", "file.source.luna", "test", "carrot.processing.peakdetection"))
+@ActiveProfiles(Array("carrot.lcms", "file.source.eclipse", "test", "carrot.processing.peakdetection"))
 class PeakDetectionTest extends WordSpec {
 
 

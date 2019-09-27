@@ -53,13 +53,13 @@ case class Correction(
 /**
   * Target used in this sample's annotation
   *
-  * @param retentionIndex
+  * @param retentionTimeInSeconds
   * @param name
   * @param id
   * @param mass
   */
 case class Target(
-                     retentionIndex: Double,
+                     retentionTimeInSeconds: Double,
                      name: String,
                      id: String,
                      mass: Double

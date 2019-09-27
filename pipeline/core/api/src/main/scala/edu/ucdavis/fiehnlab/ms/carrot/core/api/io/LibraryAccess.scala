@@ -145,7 +145,7 @@ trait ReadWriteLibrary[T <: Target] extends LibraryAccess[T] {
 }
 
 final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with Logging {
-  logger.debug("==== creating delegate library ====")
+  logger.info("==== creating delegate library ====")
 
   /**
     * loads all the spectra from the library
@@ -214,13 +214,13 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
   override def add(targets: Iterable[T], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
 
     delegates.asScala
-      .filterNot(_.isInstanceOf[ReadonlyLibrary[T]])
-      .filterNot(_.isInstanceOf[DelegateLibraryAccess[T]])
-      .foreach { lib => {
-        logger.info(s"adding target to ${lib.getClass.getSimpleName}")
-        lib.add(targets, acquisitionMethod, sample)
-      }
-      }
+        .filterNot(_.isInstanceOf[ReadonlyLibrary[T]])
+        .filterNot(_.isInstanceOf[DelegateLibraryAccess[T]])
+        .foreach { lib => {
+          logger.debug(s"adding target to ${lib.getClass.getSimpleName}")
+          lib.add(targets, acquisitionMethod, sample)
+        }
+        }
   }
 
   /**

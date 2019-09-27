@@ -17,11 +17,7 @@ import org.springframework.web.client.HttpClientErrorException
   "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",
   "CARROT_MODE:lcms",
-  "carrot.submitter:dpedrosa@ucdavis.edu",
-  "mona.rest.server.user:admin",
-  "mona.rest.server.password:admin",
-  "mona.rest.server.host:ipa.fiehnlab.ucdavis.edu",
-  "mona.rest.server.port:9090"
+  "carrot.submitter:fake@mymail.edu"
 ))
 class CloudRunnerWithDynamicLibrariesTests extends WordSpec with Matchers with Logging {
   @Value("${wcmc.workflow.lcms.sample:#{environment.CARROT_SAMPLE}}")

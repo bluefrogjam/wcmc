@@ -13,15 +13,15 @@ import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlgemuth on 6/17/16.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test", "teddy","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.lcms", "file.source.eclipse", "test", "teddy","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
 class LCMSRetentionIndexCorrectionMassErrorTest extends WordSpec with Matchers with Logging {
   val libName = "teddy"
 

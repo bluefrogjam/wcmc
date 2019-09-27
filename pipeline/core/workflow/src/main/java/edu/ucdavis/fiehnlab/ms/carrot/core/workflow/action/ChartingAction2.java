@@ -88,6 +88,8 @@ public class ChartingAction2<T> extends PostActionWrapper {
         XYSeriesCollection curves = new XYSeriesCollection();
 
         for (Target target : targets) {
+            Feature annotation;
+
             String replaced = "";
             if (target instanceof ZeroreplacedTarget ||
                   target instanceof GapFilledTarget ||
@@ -140,7 +142,7 @@ public class ChartingAction2<T> extends PostActionWrapper {
 
             // quant data EIC
             List<Point2D.Double> annotPoints = extractCloseIonsPoints(spectra, (QuantifiedTarget<T>) target);
-            XYSeries annotFeatures = new XYSeries("Annotation Features", true);
+            XYSeries annotFeatures = new XYSeries("Quantified Features", true);
             for (Point2D.Double apoint : annotPoints) {
                 if (points.size() > 0 && !apoint.equals(points.get(0))) {
                     annotFeatures.add(apoint.x, 0);
@@ -167,17 +169,15 @@ public class ChartingAction2<T> extends PostActionWrapper {
 
 
             // get replacement's intensity marker
-            if (target instanceof GapFilledTarget || target instanceof ZeroreplacedTarget || target instanceof GapFilledSpectra) {
+            if (target instanceof ZeroreplacedTarget) {
                 XYSeries replMarker = new XYSeries("Replacement Feature");
-                double rt = ((GapFilledTarget<Double>) target).spectraUsedForReplacement().retentionTimeInSeconds();
-                double rtRep = target.retentionIndex();
-                double intRep = 10;
-                if (rt > 0) {
-                    rtRep = rt;
-                    intRep = ((GapFilledTarget<Double>) target).spectraUsedForReplacement().massOfDetectedFeature().get().intensity();
-                }
+                XYSeries replMarker2 = new XYSeries("alt Replacement Feature");
+                double rtRep = ((GapFilledSpectra) ((ZeroreplacedTarget) target).spectraUsedForReplacement()).retentionIndex();
+                double intRep = ((ZeroreplacedTarget) target).spectraUsedForReplacement().massOfDetectedFeature().get().intensity();
+
                 replMarker.add(rtRep, intRep);
                 curves.addSeries(replMarker);
+                curves.addSeries(replMarker2);
             } else {
                 QuantifiedTarget<Double> tgt = (QuantifiedTarget<Double>) target;
                 XYSeries replMarker = new XYSeries("Annotation Feature");
@@ -194,7 +194,7 @@ public class ChartingAction2<T> extends PostActionWrapper {
             File png = new File(String.format("%s/%s.png", correctedFolder, tgtId));
             try {
                 JFreeChart chart = createLineChart(curves, tgtId);
-                ChartUtils.saveChartAsPNG(png, chart, 2048, 1536);
+                ChartUtils.saveChartAsPNG(png, chart, 1024, 768);
             } catch (IOException ex) {
                 System.err.println(String.format("Error saving chart %s: %s", png.getAbsolutePath(), ex.getMessage()));
             }
@@ -203,17 +203,27 @@ public class ChartingAction2<T> extends PostActionWrapper {
         System.out.println("Images saved at " + correctedFolder.getAbsolutePath());
     }
 
-    private List<Point2D.Double> extractCloseIonsPoints(List<? extends Feature> rawSpectra, QuantifiedTarget<T> target) {
+    private List<Point2D.Double> extractCloseIonsPoints(List<? extends Feature> spectra, QuantifiedTarget<T> target) {
         double start = target.retentionIndex() - halfDelta;
         double end = target.retentionIndex() + halfDelta;
 
         List<Point2D.Double> points = new ArrayList<>();
 
-        rawSpectra.forEach(it -> {
-            if (it.retentionTimeInSeconds() >= start && it.retentionTimeInSeconds() < end) {
-                Option<Ion> ion = MassAccuracy.findClosestIon(it, (Double) target.accurateMass().get(), target);
-                if (ion.isDefined()) {
-                    points.add(new Point2D.Double(it.retentionTimeInSeconds(), ion.get().intensity()));
+        spectra.forEach(it -> {
+            if (it instanceof QuantifiedSpectra) {
+                QuantifiedSpectra<T> qspec = (QuantifiedSpectra<T>) it;
+                if (qspec.retentionIndex() >= start && qspec.retentionIndex() < end) {
+                    Option<Ion> ion = MassAccuracy.findClosestIon(it, (Double) target.accurateMass().get(), target, 0.01);
+                    if (ion.isDefined()) {
+                        points.add(new Point2D.Double(qspec.retentionIndex(), ion.get().intensity()));
+                    }
+                }
+            } else {
+                if (it.retentionTimeInSeconds() >= start && it.retentionTimeInSeconds() < end) {
+                    Option<Ion> ion = MassAccuracy.findClosestIon(it, (Double) target.accurateMass().get(), target, 0.01);
+                    if (ion.isDefined()) {
+                        points.add(new Point2D.Double(it.retentionTimeInSeconds(), ion.get().intensity()));
+                    }
                 }
             }
         });
@@ -253,7 +263,9 @@ public class ChartingAction2<T> extends PostActionWrapper {
 
         //replacement marker (single dot)
         lineRenderer.setSeriesPaint(6, Color.red);                      // replaced feature
-        lineRenderer.setSeriesShape(6, ShapeUtils.createDiagonalCross(5, 5));
+        lineRenderer.setSeriesShape(6, ShapeUtils.createDiagonalCross(3, 3));
+        lineRenderer.setSeriesPaint(7, Color.orange);                      // replaced feature
+        lineRenderer.setSeriesShape(7, ShapeUtils.createRegularCross(4, 4));
 
 
         JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
@@ -271,5 +283,4 @@ public class ChartingAction2<T> extends PostActionWrapper {
         }
         return corrPoints;
     }
-
 }

@@ -15,6 +15,12 @@
 
     <dependencies>
 
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+
+        </dependency>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
             <artifactId>config</artifactId>
@@ -68,6 +74,11 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
             <artifactId>fserv4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
+            <artifactId>yaml</artifactId>
         </dependency>
 
         <dependency>
@@ -147,10 +158,6 @@
             <artifactId>jfreechart</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
-            <artifactId>yaml</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-mllib_${scala.version}</artifactId>

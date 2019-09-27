@@ -18,7 +18,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.eclipse"))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.metadata.mongo"))
 class MetadataExtractionTest extends WordSpec with Matchers with Logging {
 
   @Autowired

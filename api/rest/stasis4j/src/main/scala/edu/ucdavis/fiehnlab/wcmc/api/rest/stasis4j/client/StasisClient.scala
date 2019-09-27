@@ -3,10 +3,10 @@ package edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client
 import java.net.URI
 import java.util.Date
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api._
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import javax.annotation.PostConstruct
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
 import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod, ResponseEntity}

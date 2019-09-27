@@ -15,7 +15,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   * Created by wohlg on 7/28/2016.
   */
 @RunWith(classOf[SpringRunner])
-@ActiveProfiles(Array("file.source.eclipse", "file.source.luna"))
+@ActiveProfiles(Array("file.source.eclipse", "file.source.eclipse"))
 @SpringBootTest
 class ResourceLoaderSampleLoaderTest extends WordSpec with Matchers with Logging {
 
@@ -46,10 +46,10 @@ class ResourceLoaderSampleLoaderTest extends WordSpec with Matchers with Logging
 
     "ensure that object is now cached" in {
 
-      val sample: Option[Sample] = cacheManager.getCache("resource-get-sample").get("GLA_Ag6_Lipids_QC01.d.zip").get().asInstanceOf[Option[Sample]]
+      val sample:Sample = cacheManager.getCache("resource-get-sample").get("GLA_Ag6_Lipids_QC01.d.zip").get().asInstanceOf[Sample]
 
-      assert(sample.get.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
-      assert(sample.get.spectra != null)
+      assert(sample.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
+      assert(sample.spectra != null)
     }
 
 
