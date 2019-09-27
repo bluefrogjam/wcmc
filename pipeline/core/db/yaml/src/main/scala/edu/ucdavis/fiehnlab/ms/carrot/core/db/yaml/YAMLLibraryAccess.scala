@@ -55,52 +55,56 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
                   case (target: java.util.Map[String, Any], index: Int) =>
                     //annotation target
                     if (target.get("isInternalStandard") == null | target.get("isInternalStandard") == false) {
+                      try {
+                        new AnnotationTarget {
+                          override val idx: Int = index
 
-                      new AnnotationTarget {
-                        override val idx: Int = index
-
-                        /**
-                          * a name for this spectra
-                          */
-                        override var name: Option[String] = Some(target.get("identifier").asInstanceOf[String])
-                        /**
-                          * retention time in seconds of this target
-                          */
-                        override val retentionIndex: Double = target.get("retentionTimeUnit") match {
-                          case "minutes" => BigDecimal(target.get("retentionTime").asInstanceOf[Double]).setScale(2,
-                            BigDecimal.RoundingMode.CEILING).toDouble * 60
-                          case "seconds" => BigDecimal(target.get("retentionTime").asInstanceOf[Double]).setScale(2,
-                            BigDecimal.RoundingMode.CEILING).toDouble
+                          /**
+                            * a name for this spectra
+                            */
+                          override var name: Option[String] = Some(target.get("identifier").asInstanceOf[String])
+                          /**
+                            * retention time in seconds of this target
+                            */
+                          override val retentionIndex: Double = target.get("retentionTimeUnit") match {
+                            case "minutes" => BigDecimal(target.get("retentionTime").asInstanceOf[Double]).setScale(2,
+                              BigDecimal.RoundingMode.CEILING).toDouble * 60
+                            case "seconds" => BigDecimal(target.get("retentionTime").asInstanceOf[Double]).setScale(2,
+                              BigDecimal.RoundingMode.CEILING).toDouble
+                          }
+                          /**
+                            * the unique inchi key for this spectra
+                            */
+                          override var inchiKey: Option[String] = None
+                          /**
+                            * the mono isotopic mass of this spectra
+                            */
+                          override val precursorMass: Option[Double] =
+                            Some(BigDecimal(target.get("accurateMass").toString).setScale(5, BigDecimal.RoundingMode.CEILING).toDouble)
+                          /**
+                            * unique mass for a given target
+                            */
+                          override val uniqueMass: Option[Double] = None
+                          /**
+                            * is this a confirmed target
+                            */
+                          override var confirmed: Boolean = target.get("confirmed").asInstanceOf[Boolean]
+                          /**
+                            * is this target required for a successful retention index correction
+                            */
+                          override var requiredForCorrection: Boolean = false
+                          /**
+                            * is this a retention index correction standard
+                            */
+                          override var isRetentionIndexStandard: Boolean = false
+                          /**
+                            * associated spectrum propties if applicable
+                            */
+                          override val spectrum: Option[SpectrumProperties] = None
                         }
-                        /**
-                          * the unique inchi key for this spectra
-                          */
-                        override var inchiKey: Option[String] = None
-                        /**
-                          * the mono isotopic mass of this spectra
-                          */
-                        override val precursorMass: Option[Double] =
-                          Some(BigDecimal(target.get("accurateMass").toString).setScale(5, BigDecimal.RoundingMode.CEILING).toDouble)
-                        /**
-                          * unique mass for a given target
-                          */
-                        override val uniqueMass: Option[Double] = None
-                        /**
-                          * is this a confirmed target
-                          */
-                        override var confirmed: Boolean = target.get("confirmed").asInstanceOf[Boolean]
-                        /**
-                          * is this target required for a successful retention index correction
-                          */
-                        override var requiredForCorrection: Boolean = false
-                        /**
-                          * is this a retention index correction standard
-                          */
-                        override var isRetentionIndexStandard: Boolean = false
-                        /**
-                          * associated spectrum propties if applicable
-                          */
-                        override val spectrum: Option[SpectrumProperties] = None
+                      } catch {
+                        case ex: NumberFormatException => println(target)
+                          throw ex
                       }
                     }
                     //correction target
