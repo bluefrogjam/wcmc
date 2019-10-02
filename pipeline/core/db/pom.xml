@@ -16,6 +16,7 @@
         <module>binbase</module>
         <module>dynamo</module>
         <module>yaml</module>
+        <module>excel</module>
     </modules>
 
 </project>
