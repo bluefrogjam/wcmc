@@ -1,0 +1,12 @@
+logging:
+  level:
+    root: info
+
+carrot:
+  targets:
+    excel:
+      filename: /test-lib-pos.xlsx
+      libname: test-pos
+      instrument: test
+      column: test
+      ionMode: positive
