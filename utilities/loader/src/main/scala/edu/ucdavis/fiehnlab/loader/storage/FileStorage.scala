@@ -33,8 +33,10 @@ class FileStorage @Autowired()(properties: FileStorageProperties) extends Resour
     if (!dir.exists()) {
       dir.mkdirs()
     }
+    val out = new File(properties.directory, file.getName)
 
-    Files.copy(file.toPath, new File(properties.directory, file.getName).toPath, StandardCopyOption.REPLACE_EXISTING)
+    logger.info(s"storing ${file.getAbsolutePath} at ${out.getAbsolutePath} ")
+    Files.copy(file.toPath, out.toPath, StandardCopyOption.REPLACE_EXISTING)
   }
 
   /**
