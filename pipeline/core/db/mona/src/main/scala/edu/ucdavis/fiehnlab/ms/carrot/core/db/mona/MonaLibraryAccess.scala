@@ -188,7 +188,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
         annotations = Array(),
         score = null,
         spectrum = if (t.spectrum.isDefined) {
-          t.spectrum.get.spectraString
+          t.spectrum.get.spectraString()
         }
         else {
           logger.warn(s"has no spectra associated, using pre cursor mass as simulated spectra: ${t}")

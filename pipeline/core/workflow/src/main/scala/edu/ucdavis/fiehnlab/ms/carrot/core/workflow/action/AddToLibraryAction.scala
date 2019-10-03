@@ -151,7 +151,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
 
 
   private def target2mona(target: Target with PrecursorSupport): MonaLibraryTarget = {
-    MonaLibraryTarget(target.spectrum.get.splash,
+    MonaLibraryTarget(target.spectrum.get.splash(),
       target.spectrum.get,
       target.name,
       target.retentionIndex,
