@@ -43,9 +43,9 @@ public class SpectralDeconvolution {
      */
     private MS2DeconvolutionResult dataDependentMS2Deconvolution(List<? extends Feature> spectrumList, PeakAreaBean detectedPeak, MSDialProcessingProperties properties) {
 
+        // create deconvolution result and store raw MS1 spectrum
         MS2DeconvolutionResult ms2DeconvolutionResult = new MS2DeconvolutionResult(detectedPeak);
         ms2DeconvolutionResult.rawMS1Spectrum = TypeConverter.getJavaIonList(spectrumList.get(detectedPeak.ms1LevelDataPointNumber));
-        ms2DeconvolutionResult.rawMS2Spectrum = TypeConverter.getJavaIonList(spectrumList.get(detectedPeak.ms2LevelDataPointNumber));
 
         List<Ion> ms1Spectrum = new ArrayList<>(SpectralCentroiding.getLCMSCentroidedSpectrum(spectrumList, properties.dataType,
             detectedPeak.ms1LevelDataPointNumber, properties.centroidMS1Tolerance, properties.peakDetectionBasedCentroid));
@@ -55,6 +55,8 @@ public class SpectralDeconvolution {
             ms2DeconvolutionResult.peakListList.add(new ArrayList<>());
         } else {
             // MS2 data available
+            ms2DeconvolutionResult.rawMS2Spectrum = TypeConverter.getJavaIonList(spectrumList.get(detectedPeak.ms2LevelDataPointNumber));
+
             double startRt = detectedPeak.rtAtPeakTop - (detectedPeak.rtAtRightPeakEdge - detectedPeak.rtAtLeftPeakEdge);
             double endRt = detectedPeak.rtAtPeakTop + (detectedPeak.rtAtRightPeakEdge - detectedPeak.rtAtLeftPeakEdge);
             double precursorMz = detectedPeak.accurateMass;
