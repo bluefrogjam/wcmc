@@ -60,6 +60,10 @@ object Test {
         */
       override lazy val ions: Seq[Ion] = io
       /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = None
+      /**
         * the msLevel of this spectra
         */
       override val msLevel: Short = 1
@@ -103,6 +107,10 @@ object Test {
         * all the defined ions for this spectra
         */
       override lazy val ions: Seq[Ion] = io
+      /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = None
       /**
         * the msLevel of this spectra
         */

@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class MS2DeconvolutionResult implements Serializable {
 
+    public int ms1LevelDataPointNumber = -1;
     public int peakTopScan;
     public double peakTopRetentionTime = -1.0;
     public double ms1AccurateMass = -1.0;
@@ -21,10 +22,15 @@ public class MS2DeconvolutionResult implements Serializable {
     public double ms1IsotopicIonM1PeakHeight = -1.0;
     public double ms1IsotopicIonM2PeakHeight = -1.0;
     public List<Ion> ms1Spectrum = new ArrayList<>();
+    public List<Ion> rawMS1Spectrum = new ArrayList<>();
 
+
+    public int ms2LevelDataPointNumber = -1;
+    public double ms2LevelDataPointRetentionTime = -1.0;
     public double ms2DecPeakHeight = -1.0f;
     public double ms2DecPeakArea = -1.0;
     public List<Peak> ms2Spectrum = new ArrayList<>();
+    public List<Ion> rawMS2Spectrum = new ArrayList<>();
 
     public List<List<Ion>> peakListList = new ArrayList<>();
     public List<double[]> baseChromatogram = new ArrayList<>();
@@ -40,6 +46,9 @@ public class MS2DeconvolutionResult implements Serializable {
         this.peakTopRetentionTime = peak.rtAtPeakTop;
         this.ms1AccurateMass = peak.accurateMass;
         this.ms1PeakHeight = peak.intensityAtPeakTop;
+        this.ms1LevelDataPointNumber = peak.ms1LevelDataPointNumber;
+        this.ms2LevelDataPointNumber = peak.ms2LevelDataPointNumber;
+        this.ms2LevelDataPointRetentionTime = peak.ms2LevelDataPointRetentionTime;
         this.ms2DecPeakArea = -1.0;
         this.ms2DecPeakHeight = -1.0f;
         uniqueMs = -1.0;

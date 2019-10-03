@@ -49,6 +49,10 @@ package object api {
         */
       override val ions: Seq[Ion] = Ion(100, 100) :: List()
       /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = None
+      /**
         * the msLevel of this spectra
         */
       override val msLevel: Short = 1
@@ -98,6 +102,10 @@ package object api {
         * all the defined ions for this spectra
         */
       override val ions: Seq[Ion] = Ion(100, 100) :: Ion(120, 50) :: List()
+      /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = None
       override val msLevel: Short = 1
     })
 
@@ -145,6 +153,10 @@ package object api {
         * all the defined ions for this spectra
         */
       override val ions: Seq[Ion] = Ion(100, 10) :: Ion(120, 50) :: Ion(130, 100) :: List()
+      /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = None
       override val msLevel: Short = 1
     })
 
@@ -194,6 +206,10 @@ package object api {
         * all the defined ions for this spectra
         */
       override val ions: Seq[Ion] = Ion(100, 50) :: Ion(120, 50) :: Ion(130, 100) :: Ion(140, 10) :: List()
+      /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = None
       override val msLevel: Short = 1
     })
 
@@ -239,6 +255,10 @@ package object api {
         * all the defined ions for this spectra
         */
       override val ions: Seq[Ion] = Ion(100.3241, 50) :: Ion(120.2132, 50) :: Ion(130.1321, 100) :: Ion(140.2224, 10) :: List()
+      /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = None
       override val msLevel: Short = 1
     })
 
@@ -283,6 +303,10 @@ package object api {
         * all the defined ions for this spectra
         */
       override val ions: Seq[Ion] = Ion(100.3241, 50) :: Ion(100.3242, 50) :: Ion(100.2339, 100) :: Ion(140.2224, 10) :: List()
+      /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = None
       override val msLevel: Short = 1
     })
     /**

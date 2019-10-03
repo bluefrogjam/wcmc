@@ -196,6 +196,10 @@ case class BinBaseLibraryTarget(
       * all the defined ions for this spectra
       */
     override val ions: Seq[Ion] = masses
+    /**
+      * all unprocessed ions for this spectrum before deconvolution
+      */
+    override val rawIons: Option[Seq[Ion]] = Some(masses)
   })
 
   /**
