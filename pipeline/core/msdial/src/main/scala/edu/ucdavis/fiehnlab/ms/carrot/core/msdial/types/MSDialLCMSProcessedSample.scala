@@ -30,6 +30,7 @@ object MSDialLCMSProcessedSample {
   }
 
   def generateSpectra(ms2DecResults: java.util.List[MS2DeconvolutionResult], fileName: String, mode: IonMode) = {
+
     ms2DecResults.asScala.map { x: MS2DeconvolutionResult =>
 
       // MS-DIAL uses retention times in minutes, and so it must be converted back to seconds
@@ -107,8 +108,13 @@ object MSDialLCMSProcessedSample {
           override val ionMode: Option[IonMode] = Option(mode)
           override val purity: Option[Double] = None
           override val sample: String = _fileName
+
+          // note that the scan number and retention time refer to the values of the MS1 peak top
+          // however, the ms/ms scan is not guaranteed to correspond to the same scan
+          // its scan can be referenced by x.ms2LevelDataPointNumber and x.ms2LevelDataPointRetentionTime
           override val retentionTimeInSeconds: Double = _retentionTimeInSeconds
           override val scanNumber: Int = _scanNumber
+
           override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
           override val precursorScan: Option[SpectrumProperties] = _precursorScan
           override val associatedScan: Option[SpectrumProperties] = _associatedScan
