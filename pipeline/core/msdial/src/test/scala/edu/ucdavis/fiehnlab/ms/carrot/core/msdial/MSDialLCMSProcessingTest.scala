@@ -69,7 +69,7 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
           assert(matchingData.length == 1)
 
           // ensure that retention times are properly converted from minutes to seconds
-          assert(Math.abs(matchingData.head.retentionTimeInSeconds - spectrum.retentionTimeInSeconds) < 1)
+          assert(Math.abs(matchingData.head.retentionTimeInSeconds - spectrum.retentionTimeInSeconds) < 2)
       }
     }
 
