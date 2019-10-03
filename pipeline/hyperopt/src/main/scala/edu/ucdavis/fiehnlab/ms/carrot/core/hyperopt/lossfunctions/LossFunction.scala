@@ -1,10 +1,35 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.lossfunctions
 
+import com.typesafe.scalalogging.LazyLogging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.Feature
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotatedSample, CorrectedSample, Sample, Target}
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.RejectDueToCorrectionFailed
 
-abstract class LossFunction[T <: Sample] extends Serializable {
+
+abstract class LossFunction[T <: Sample] extends Serializable with LazyLogging {
+
+  var massAccuracy: Option[Double] = None
+  var rtAccuracy: Option[Double] = None
+  var intensityThreshold: Option[Double] = None
+  var totalTargetCount: Option[Int] = None
+
+
+  /**
+    *
+    * @param samples
+    * @param data
+    * @return
+    */
+  def calculateScalingByTargetCount(samples: List[T], data: Map[Target, List[Feature]], targetCount: Option[Int] = None): Double = {
+    val targets: Option[Int] = targetCount orElse totalTargetCount
+
+    if (targets.isDefined) {
+      data.values.map(_.size).sum.toDouble / (samples.length * targets.get)
+    } else {
+      1
+    }
+  }
+
 
   /**
     * return a list of all annotated correction features grouped by compound
@@ -12,19 +37,21 @@ abstract class LossFunction[T <: Sample] extends Serializable {
     * @param corrected
     * @return
     */
-  protected def getTargetsAndAnnotationsForCorrectedSamples(corrected: List[CorrectedSample]): Map[Target, List[(Target, Feature)]] = {
-    corrected.flatMap {
-      item: CorrectedSample =>
-        if (item.correctionFailed) {
-          throw new RejectDueToCorrectionFailed
-        }
-        else {
-          item.featuresUsedForCorrection.map {
-            annotation =>
-              (annotation.target, annotation.annotation)
+  protected def getTargetsAndAnnotationsForCorrectedSamples(corrected: List[CorrectedSample]): Map[Target, List[Feature]] = {
+    corrected
+      .flatMap {
+        item: CorrectedSample =>
+          if (item.correctionFailed) {
+            throw new RejectDueToCorrectionFailed
+          } else {
+            item.featuresUsedForCorrection.map {
+              annotation =>
+                (annotation.target, annotation.annotation)
+            }
           }
-        }
-    }.groupBy(_._1)
+      }
+      .groupBy(_._1)
+      .map { case (key, value) => (key, value.map(_._2)) }
   }
 
   /**
@@ -33,21 +60,19 @@ abstract class LossFunction[T <: Sample] extends Serializable {
     * @param corrected
     * @return
     */
-  protected def getTargetsAndAnnotationsForAnnotatedSamples(corrected: List[AnnotatedSample]): Map[Target, List[(Target, Feature)]] = {
-    corrected.flatMap {
-      item: AnnotatedSample => item.spectra.map(s => (s.target, s))
-    }.groupBy(_._1)
+  protected def getTargetsAndAnnotationsForAnnotatedSamples(corrected: List[AnnotatedSample]): Map[Target, List[Feature]] = {
+    corrected
+      .flatMap { item: AnnotatedSample => item.spectra.map(s => (s.target, s)) }
+      .groupBy(_._1)
+      .map { case (key, value) => (key, value.map(_._2)) }
   }
 
-
-  def lossFunction(samples: List[T]): Double = lossFunction(samples, None)
 
   /**
     * loss function to be implemented
     *
     * @param samples
-    * @param targetCount number of targets used in the correction or annotation step, otherwise ignored
     * @return
     */
-  def lossFunction(samples: List[T], targetCount: Option[Int]): Double
+  def lossFunction(samples: List[T]): Double
 }

@@ -127,16 +127,17 @@ trait AnnotatedSample extends CorrectedSample {
 trait QuantifiedSample[T] extends AnnotatedSample with Logging {
 
   /**
+    * quantified targets for this samples
+    */
+  val quantifiedTargets: Seq[QuantifiedTarget[T]]
+
+
+  /**
     * associated spectra, which have been quantified with the associated target
     */
   final override lazy val spectra: Seq[_ <: Feature with QuantifiedSpectra[T]] = quantifiedTargets.filter(_.spectra.isDefined).map { x =>
     x.spectra.get
   }
-
-  /**
-    * quantified targets for this samples
-    */
-  val quantifiedTargets: Seq[QuantifiedTarget[T]]
 }
 
 trait GapFilledSample[T] extends QuantifiedSample[T] {
