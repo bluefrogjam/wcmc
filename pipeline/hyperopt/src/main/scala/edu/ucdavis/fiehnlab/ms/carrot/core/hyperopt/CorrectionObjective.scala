@@ -40,21 +40,25 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
     //apply the hyper opt space settings
     applyCorrectionSettings(point, correction)
 
+    //apply parameters to loss function
+    lossFunction.massAccuracy = Some(correction.massAccuracySetting)
+    lossFunction.rtAccuracy = Some(correction.rtAccuracySetting)
+    lossFunction.intensityThreshold = Some(correction.intensityPenaltyThreshold)
+
     try {
       //deconvolute and correct them
       val corrected = samples.map((item: String) => dropSpectra(correction.process(deco.process(loader.getSample(item), method, None), method, None), loader))
 
       //compute statistics
-
       lossFunction.lossFunction(corrected)
     }
     catch {
 
       case e: NotEnoughStandardsFoundException =>
-        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and re accuracy ${correction.rtAccuracySetting}")
+        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and rt accuracy ${correction.rtAccuracySetting}")
         Double.MaxValue
       case e: RejectDueToCorrectionFailed =>
-        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and re accuracy ${correction.rtAccuracySetting}")
+        logger.warn(s"${e.getMessage}, setting where mass accuracy ${correction.massAccuracySetting} and rt accuracy ${correction.rtAccuracySetting}")
         Double.MaxValue
     }
   }
@@ -66,7 +70,6 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
     * @param context
     */
   override protected def warmCaches(context: ApplicationContext): Unit = {
-
 
     val method: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Some(PositiveMode())))
     val correction: CorrectionProcess = context.getBean(classOf[LCMSTargetRetentionIndexCorrectionProcess])
@@ -131,9 +134,7 @@ class CorrectionObjective(config: Class[_], profiles: Array[String], lossFunctio
       "massAccuracyPPMSetting" -> settings.massAccuracyPPM,
       "rtAccuracySetting" -> settings.rtAccuracy,
       "minPeakIntensitySetting" -> settings.minPeakIntensity,
-      "intensityPenaltyThresholdSetting" -> settings.intensityPenalty,
-      "rtAccuracySetting" -> settings.rtAccuracy
-
+      "intensityPenaltyThresholdSetting" -> settings.intensityPenalty
     )
   }
 }

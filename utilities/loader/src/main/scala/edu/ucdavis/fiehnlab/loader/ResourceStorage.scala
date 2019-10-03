@@ -12,6 +12,7 @@ trait ResourceStorage {
     *
     * @param file
     */
+
   def store(file: File)
 
   /**
