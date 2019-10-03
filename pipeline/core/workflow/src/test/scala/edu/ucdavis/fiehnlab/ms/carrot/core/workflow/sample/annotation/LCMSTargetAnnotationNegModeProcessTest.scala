@@ -21,12 +21,14 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna",
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.mzrt",
-  "carrot.lcms",
-  "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"))
 class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with Logging {
 
   @Autowired
@@ -113,7 +115,7 @@ class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with
       targetValues.foreach(tgt => {
         logger.info(s"target: ${
           quantified.quantifiedTargets.filter(_.name.get == tgt._1)
-            .map(f => s"${f.retentionIndex} (${f.precursorMass.get})").mkString("; ")
+              .map(f => s"${f.retentionIndex} (${f.precursorMass.get})").mkString("; ")
         }")
         quantified.quantifiedTargets.filter(_.name.get == tgt._1).head.retentionIndex shouldBe tgt._2 +- annotation.lcmsProperties.retentionIndexWindow
       })

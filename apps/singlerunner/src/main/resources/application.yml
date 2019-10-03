@@ -5,7 +5,6 @@ spring:
     active: prod
     include:
       - carrot.nostasis
-      - file.source.luna
       - file.source.eclipse
       - carrot.runner.required
 #      - carrot.processing.replacement.simple

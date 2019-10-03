@@ -2,11 +2,10 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, Target => CTarget}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.QuantifiedSample
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.converter.SampleToMapConverter
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.client.StasisClient
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Annotation, Correction, Curve, Injection, Result, ResultData, TrackingData, Target => STTarget}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{ResultData, TrackingData}
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
@@ -31,6 +30,7 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
     val response = stasis_cli.addResult(data)
 
     if (response.getStatusCode == HttpStatus.OK) {
+      logger.info(s"Sample ${sample.name}'s results saved to AWS")
       stasis_cli.addTracking(TrackingData(sample.name, "exported", sample.fileName))
       response.getBody
     } else {
@@ -51,11 +51,5 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
           save(sample)
       }
     )
-  }
-}
-
-object CarrotToStasisConverter {
-  def asStasisTarget(target: CTarget): STTarget = {
-    STTarget(target.retentionIndex, target.name.get, target.name.get, target.accurateMass.getOrElse(0.0))
   }
 }

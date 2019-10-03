@@ -6,10 +6,9 @@ import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.MSDialLCMSProcessedSample
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
@@ -25,7 +24,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.report.quantify.height", "carrot.lcms", "test","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("carrot.processing.peakdetection", "carrot.report.quantify.height", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class PPAndDTest extends WordSpec with Matchers with Logging {
   val libName = "lcms_istds"
 
@@ -50,9 +49,8 @@ class PPAndDTest extends WordSpec with Matchers with Logging {
 
       val result = peakDetection.process(sample, method, None)
       result should not be Seq.empty
-      result shouldBe a[MSDialLCMSProcessedSample]
 
-      val deconv = result.asInstanceOf[MSDialLCMSProcessedSample]
+      val deconv = result.asInstanceOf[Sample]
       deconv.spectra should not be Seq.empty
       deconv.spectra should have size 125
 

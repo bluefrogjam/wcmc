@@ -11,7 +11,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action.{AddToLibraryAction, ChartingAction2}
 import edu.ucdavis.fiehnlab.utilities.email.EmailService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
@@ -62,7 +61,7 @@ class TaskRunner extends Logging {
     * TODO this needs to be in the workflow not in the task runner
     */
   @Autowired(required = false)
-  val msmsUpload: java.util.Collection[PostAction] = new util.ArrayList[PostAction]()
+  val actions: java.util.List[PostAction] = new util.ArrayList[PostAction]()
 
   @Autowired
   val context: ApplicationContext = null
@@ -94,9 +93,8 @@ class TaskRunner extends Logging {
 
         try {
           //processes the actual sample
-          val value = sampleLoader.loadSample(x.fileName)
-          assert(value.isDefined, "please ensure that specified file name is defined!")
-          workflow.process(value.get, task.acquisitionMethod, value)
+          val value = sampleLoader.getSample(x.fileName)
+          workflow.process(value, task.acquisitionMethod, Some(value))
         }
         catch {
           case e: UnsupportedSampleException =>
@@ -125,10 +123,11 @@ class TaskRunner extends Logging {
 
 
     //send the MSMSSpectra to mona
-    msmsUpload.asScala.foreach {
+    actions.asScala.foreach {
       case action: PostAction =>
         classes.foreach { x =>
           x.samples.foreach { smp =>
+            logger.info(s"running action ${action.getClass.getSimpleName} on ${smp}, ${experiment}")
             action.run(smp, x, experiment)
           }
         }
@@ -149,9 +148,9 @@ class TaskRunner extends Logging {
         case e: AuthenticationFailedException =>
           logger.warn(s"EmailService can't send email. ${e.getMessage}")
         case e: Exception =>
-          logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}", e)
           val os = new ByteArrayOutputStream()
           val content = s"Dear user, the task '${task.name}' did not execute properly!\n\n${os.toString("UTF8")}"
+          logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}\n${content}", e)
           try {
             emailService.send(emailSender, task.email :: List(),
               content,

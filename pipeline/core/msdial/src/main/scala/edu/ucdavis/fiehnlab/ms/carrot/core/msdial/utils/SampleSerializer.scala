@@ -4,9 +4,9 @@ import java.io.{File, FileOutputStream, FileWriter}
 import java.util.zip.GZIPOutputStream
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.apache.logging.log4j.scala.Logging
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra, MetadataSupport}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, MSSpectra}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Ion, Sample}
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
@@ -51,7 +51,7 @@ class SampleSerializer() extends Logging {
     writer.clear()
 
     sample.spectra.foreach {
-      case spec: Feature with MetadataSupport =>
+      case spec: Feature =>
         gzos.write(writer.append(s"${sample.fileName},")
             .append(s"${spec.scanNumber},")
             .append(s"${spec.ionMode},")

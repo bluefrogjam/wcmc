@@ -11,14 +11,15 @@ spring:
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket
       - carrot.runner.required
+      - carrot.targets.yaml.correction
+      - carrot.targets.yaml.annotation
+#      - carrot.targets.mona
 # uncoment to enable msms spectra be sent to ipa
 #      - carrot.targets.dynamic
-# uncoment to enable targets to be loaded from mona @@ might be slow !!
-#      - carrot.targets.mona
 
 logging:
   level:
-    root: WARN
+    root: info
 
 carrot:
   sample: '${CARROT_SAMPLE}'
@@ -38,8 +39,14 @@ mona:
     server:
       host: ipa.fiehnlab.ucdavis.edu
       port: 9090
-      user: admin
-      password: admin
+
+wcmc:
+  api:
+    mona:
+      rest:
+        mona:
+          user: admin
+          password: admin
 
 ---
 spring:
@@ -54,5 +61,31 @@ mona:
     server:
       host: localhost
       port: 9090
-      user: admin
-      password: admin
+
+wcmc:
+  api:
+    mona:
+      rest:
+        mona:
+          user: admin
+          password: admin
+
+carrot:
+  sample: '${CARROT_SAMPLE}'
+  method: '${CARROT_METHOD}'
+  mode: '${CARROT_MODE}'
+
+#which email account to use
+email:
+  host: smtp.gmail.com
+  port: 25
+  username: binbase@gmail.com
+  pass: fiehnlab-2018
+
+wcmc:
+  pipeline:
+    workflow:
+      config:
+        correction:
+          peak:
+            intensity: 10000

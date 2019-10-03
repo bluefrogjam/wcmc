@@ -1,27 +1,34 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{MergeLibraryAccess, SampleLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectedSample, PositiveMode, QuantifiedSample, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlg on 7/1/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "carrot.lcms.correction", "file.source.luna", "test","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.lcms.correction",
+  "carrot.report.quantify.height",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"))
 class QuantifyByHeightProcessTest extends WordSpec with Matchers with Logging {
   val libName = "lcms_istds"
 
@@ -41,15 +48,18 @@ class QuantifyByHeightProcessTest extends WordSpec with Matchers with Logging {
   val deco: PeakDetection = null
 
   @Autowired
+  val library: MergeLibraryAccess = null
+
+  @Autowired
   val stasis_cli: StasisService = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "QuantifyByHeightProcessTest" should {
+    val samplenames: Seq[String] = Seq("B5_P20Lipids_Pos_NIST02.mzml", "B5_SA0002_P20Lipids_Pos_1FL_1006.mzml")
+    val samples: Seq[_ <: Sample] = loader.getSamples(samplenames)
 
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Option(PositiveMode())))
-
-    val samples: Seq[_ <: Sample] = loader.getSamples(Seq("B5_P20Lipids_Pos_NIST02.mzml", "B5_SA0002_P20Lipids_Pos_1FL_1006.mzml"))
 
     //compute purity values
     val purityComputed = samples //.map(purity.process)
@@ -72,14 +82,35 @@ class QuantifyByHeightProcessTest extends WordSpec with Matchers with Logging {
           }
         }
 
-        //make sure that we the same amount of annotations as spectra
+        //make sure that we have the same amount of annotations as spectra
         assert(annotationCount == sample.spectra.size)
-
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("deconvoluted")
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("corrected")
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("annotated")
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("quantified")
       }
+
+      s"have the same amount of quantified targets than the library in ${sample}" in {
+        val targets = library.load(method)
+
+        val result: QuantifiedSample[Double] = quantification.process(sample, method, None)
+
+        result.quantifiedTargets should have size targets.size
+      }
+    }
+
+    "have different annotations in 2 different samples" in {
+      val results: Seq[QuantifiedSample[Double]] = Seq(
+        quantification.process(annotated.head, method, None),
+        quantification.process(annotated.reverse.head, method, None)
+      )
+
+      results.head.spectra should not equal results.reverse.head.spectra
+    }
+
+    "have equal targets in 2 different samples" in {
+      val results: Seq[QuantifiedSample[Double]] = Seq(
+        quantification.process(annotated.head, method, None),
+        quantification.process(annotated.reverse.head, method, None)
+      )
+
+      results.head.quantifiedTargets.map(t => (t.idx, t.name, t.retentionIndex, t.accurateMass)) should equal(results.reverse.head.quantifiedTargets.map(t => (t.idx, t.name, t.retentionIndex, t.accurateMass)))
     }
   }
 }

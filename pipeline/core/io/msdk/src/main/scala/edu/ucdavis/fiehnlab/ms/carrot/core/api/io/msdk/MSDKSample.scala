@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk
 import java.io.{File, FileInputStream, FileOutputStream}
 import java.util.zip.GZIPInputStream
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{SpectrumProperties, _}
 import edu.ucdavis.fiehnlab.ms.carrot.core.exception.UnsupportedSampleException
@@ -13,6 +12,7 @@ import io.github.msdk.io.mzml.MzMLFileImportMethod
 import io.github.msdk.io.mzxml.MzXMLFileImportMethod
 import io.github.msdk.io.netcdf.NetCDFFileImportMethod
 import org.apache.commons.io.IOUtils
+import org.apache.logging.log4j.scala.Logging
 
 import scala.collection.JavaConverters._
 
@@ -39,22 +39,31 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Loggin
         if (spectra.getMsLevel == 0) {
           throw new RuntimeException("Invalid MS Level!")
         } else if (spectra.getMsLevel == 1 || spectra.getIsolations.isEmpty) {
-
           //discover which mixins we need
           precursor = spectra.getSpectrumType match {
             case MsSpectrumType.CENTROIDED => new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Centroided
+
             case MsSpectrumType.PROFILE => new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Profiled
-            case _ => {
-              logger.warn("Unrecognized spectrum type, setting to profiled")
-              new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Profiled
-            }
+
+            case _ =>
+              logger.warn("Unrecognized MS1 spectrum type, setting to centroided")
+              new MSDKMSSpectra(spectra, Some(polarity), this.fileName) with Centroided
           }
 
           precursor
         } else {
-          new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan)
-        }
+          spectra.getSpectrumType match {
+            case MsSpectrumType.CENTROIDED =>
+              new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Centroided
 
+            case MsSpectrumType.CENTROIDED =>
+              new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Profiled
+
+            case _ =>
+              logger.warn("Unrecognized MSMS spectrum type, setting to centroided")
+              new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Centroided
+          }
+        }
     }
   } finally {
     delegate.dispose()
@@ -163,7 +172,8 @@ object MSDKSample extends Logging {
   * @param spectra
   */
 class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) extends MSSpectra {
-  override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
+  override val retentionTimeInSeconds: Double = BigDecimal(spectra.getRetentionTime)
+      .setScale(2, BigDecimal.RoundingMode.CEILING).toDouble
   override val uniqueMass: Option[Double] = None
   override val signalNoise: Option[Double] = None
 
@@ -187,6 +197,7 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) 
 
     override val msLevel: Short = 1
   })
+  override val metadata: Map[String, AnyRef] = Map()
 }
 
 /**
@@ -202,8 +213,8 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String
   }
   override val uniqueMass: Option[Double] = None
   override val signalNoise: Option[Double] = None
-
-  override val retentionTimeInSeconds: Double = spectra.getRetentionTime.toDouble
+  override val retentionTimeInSeconds: Double = BigDecimal(spectra.getRetentionTime)
+      .setScale(2, BigDecimal.RoundingMode.CEILING).toDouble
   override val scanNumber: Int = spectra.getScanNumber
   override val purity: Option[Double] = None
   override val ionMode: Option[IonMode] = mode
@@ -223,4 +234,9 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String
   })
 
   override val precursorScan: Option[SpectrumProperties] = precursor
+  /**
+    * Contains random metadata associated to the object we mix this into
+    */
+  override val metadata: Map[String, AnyRef] = Map()
+
 }

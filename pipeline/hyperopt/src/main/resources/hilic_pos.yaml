@@ -1,0 +1,135 @@
+hyperopt:
+
+  ##
+  # which samples we want to investigate
+  samples:
+    - Biorec003_posHILIC_postFlenniken020.mzml
+    - Biorec001_posHILIC_preFlenniken001.mzml
+    - Biorec004_posHILIC_postFlenniken030.mzml
+    - Biorec005_posHILIC_postFlenniken040.mzml
+    - Biorec006_posHILIC_postFlenniken050.mzml
+    - Biorec007_posHILIC_postFlenniken060.mzml
+    - Biorec008_posHILIC_postFlenniken070.mzml
+    - Biorec009_posHILIC_postFlenniken080.mzml
+    - Biorec010_posHILIC_postFlenniken090.mzml
+    - Biorec011_posHILIC_postFlenniken100.mzml
+    - Biorec012_posHILIC_postFlenniken110.mzml
+    - Biorec013_posHILIC_postFlenniken120.mzml
+    - Biorec014_posHILIC_postFlenniken130.mzml
+    - Biorec015_posHILIC_postFlenniken140.mzml
+    - Biorec016_posHILIC_postFlenniken150.mzml
+    - Biorec017_posHILIC_postFlenniken160.mzml
+    - Biorec018_posHILIC_postFlenniken170.mzml
+    - Biorec019_posHILIC_postFlenniken180.mzml
+    - Biorec020_posHILIC_postFlenniken190.mzml
+    - Biorec022_posHILIC_postFlenniken210.mzml
+    - Biorec021_posHILIC_postFlenniken200.mzml
+    - Biorec023_posHILIC_postFlenniken220.mzml
+
+  ##
+  # required springboot profiles
+  # for the hyperopt process to correctly run
+  profiles:
+    - file.source.eclipse
+    - carrot.report.quantify.height
+    - carrot.processing.peakdetection
+    - carrot.lcms
+    - carrot.targets.yaml.annotation
+    - carrot.targets.yaml.correction
+
+  ##
+  # name of the method to use, in it's serialized format
+  method: csh | qexactive | test | positive
+
+  ##
+  # which stages we care about
+  stages:
+
+    ##
+    # settings for the correction stage
+    # of hyper opt
+    correction:
+
+      ##
+      # this defines all the settings you want to evaluate
+      settings:
+
+        massAccuracyPPM:
+          - 5
+          - 10
+          - 15
+          - 20
+          - 30
+        massAccuracy:
+          - 0.005
+          - 0.008
+          - 0.100
+        rtAccuracy:
+          - 0
+        minPeakIntensity:
+          - 1000
+          - 2000
+          - 4000
+          - 8000
+          - 16000
+          - 32000
+          - 64000
+
+        intensityPenalty:
+          - 10000
+          - 20000
+          - 40000
+          - 80000
+
+
+    ##
+    # settings of the annotation stage
+    # of hyper optimization
+    annotation:
+      settings:
+        recursive:
+          - true
+          - false
+        preferMassAccuracy:
+          - true
+          - false
+        preferGaussianSimilarity:
+          - true
+          - false
+        closePeakDetection:
+          - 1
+          - 2
+          - 4
+          - 8
+          - 16
+        massAccuracyPPM:
+          - 5
+          - 10
+          - 15
+          - 20
+          - 30
+        massAccuracy:
+          - 0.005
+          - 0.008
+          - 0.01
+        massIntensity:
+         - 1000
+         - 2000
+         - 4000
+         - 8000
+         - 16000
+         - 32000
+        intensityPenalty:
+         - 5000
+         - 10000
+         - 20000
+         - 40000
+         - 80000
+         - 160000
+        rtIndexWindow:
+           - 1
+           - 2
+           - 4
+           - 8
+           - 16
+

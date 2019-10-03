@@ -81,6 +81,7 @@ class FilteredProcessTest extends WordSpec {
   val testSpectraWith1Ion = new MSSpectra {
     override val uniqueMass: Option[Double] = None
     override val signalNoise: Option[Double] = None
+    override val metadata: Map[String, AnyRef] = Map()
 
     val sample:String = null
 

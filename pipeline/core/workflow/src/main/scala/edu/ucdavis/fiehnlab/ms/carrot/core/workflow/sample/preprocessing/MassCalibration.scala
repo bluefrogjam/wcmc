@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
 @Profile(Array("carrot.processing.calibration.simple"))
 class SimpleMassCalibration extends PreProcessor with Logging {
 
-  override def priortiy: Int = 100
+  override def priority: Int = 100
 
   /**
     * actually processes the item (implementations in subclasses)

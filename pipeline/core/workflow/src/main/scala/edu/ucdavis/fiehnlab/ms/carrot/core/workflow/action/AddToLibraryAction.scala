@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 
 import edu.ucdavis.fiehnlab.math.similarity.{CompositeSimilarity, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.targets.dynamic"))
-class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extends PostAction with Logging {
+class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends PostAction with Logging {
 
   /**
     * which similarity to use in the system
@@ -43,30 +43,31 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
   /**
     * mass window in PPM
     */
-  @Value("${wcmc.workflow.lcms.msms.generate.library.accurateMass.window:10}")
+  @Value("${wcmc.workflow.lcms.msms.generate.library.accurateMass.window:0.010}")
   val accurateMassWindow: Double = 0
 
   @Value("${wcmc.workflow.lcms.msms.generate.library.intensity.min: 1000}")
   val minimumRequiredIntensity: Double = 0
 
   /**
-    * executes this action
+    * actually processes the item (implementations in subclasses)
     *
     * @param sample
     * @param experimentClass
     * @param experiment
     */
-  override def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
-    val method = experiment.acquisitionMethod
+  //  override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
+  def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
     sample match {
-      case data: AnnotatedSample =>
+      case data: QuantifiedSample[Double] =>
         logger.info(s"adding ${data.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])} unannotated msms from ${sample.name} to mona")
-        data.noneAnnotated.foreach { x =>
-          addTargetToLibrary(x, data, method)
+        data.noneAnnotated.collect {
+          case spec: MSMSSpectra => spec
         }
-
-      case _ =>
-        logger.warn(s"action not applicable for this sample: $sample")
+            .foreach { x =>
+              addTargetToLibrary(x, data, experiment.acquisitionMethod)
+            }
+      case _ => logger.info(s"no MSMS spectra in sample ${sample.name}")
     }
   }
 
@@ -77,7 +78,7 @@ class AddToLibraryAction @Autowired()(val targets: LibraryAccess[Target]) extend
     * @param sample
     * @param acquisitionMethod
     */
-  def addTargetToLibrary(t: Feature with CorrectedSpectra, sample: AnnotatedSample, acquisitionMethod: AcquisitionMethod) = {
+  def addTargetToLibrary(t: Feature with CorrectedSpectra, sample: QuantifiedSample[Double], acquisitionMethod: AcquisitionMethod): Unit = {
 
     t match {
       case target: MSMSSpectra =>

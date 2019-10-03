@@ -1,18 +1,16 @@
 package edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket
 
-import com.amazonaws.auth.{AWSCredentialsProvider, AWSStaticCredentialsProvider}
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import java.io.{File, FileInputStream, InputStream}
+import java.io.{File, InputStream}
 import java.util.Date
 
-import javax.annotation.PostConstruct
-import com.amazonaws.regions.{Region, Regions}
+import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.services.s3.model.CreateBucketRequest
-import com.amazonaws.services.s3.{AmazonS3, AmazonS3Client}
-import org.apache.logging.log4j.scala.Logging
+import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
 import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
 import edu.ucdavis.fiehnlab.ms.carrot.cloud.aws.ASWConfigurationProperties
-import org.springframework.beans.factory.annotation.{Autowired, Value}
+import javax.annotation.PostConstruct
+import org.apache.logging.log4j.scala.Logging
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties}
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 import org.springframework.stereotype.Component

@@ -16,7 +16,7 @@ object MassAccuracy extends Logging {
     * @param targetMass
     * @return
     */
-  def findClosestIon(spectra: Feature, targetMass: Double, target: Target): Option[Ion] = {
+  def findClosestIon(spectra: Feature, targetMass: Double, target: Target, massAccuracy: Double = 0.01): Option[Ion] = {
     spectra match {
       case x: Feature if x.associatedScan.isDefined =>
           if(x.associatedScan.get.ions.isEmpty){
@@ -28,7 +28,7 @@ object MassAccuracy extends Logging {
             val refMass = new AccurateMassSupport {
               override def accurateMass: Option[Double] = Some(closest.mass)
             }
-            if (calculateMassError(refMass, target).get <= 0.01) {
+            if (calculateMassError(refMass, target).get <= massAccuracy) {
               Some(closest)
             } else {
               None

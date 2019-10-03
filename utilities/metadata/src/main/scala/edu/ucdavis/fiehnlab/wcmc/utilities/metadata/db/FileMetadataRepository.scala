@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.utilities.metadata.db
 
 import org.apache.logging.log4j.scala.Logging
+import org.springframework.context.annotation.Profile
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.repository.MongoRepository
@@ -9,11 +10,13 @@ import org.springframework.stereotype.{Component, Repository}
 import scala.annotation.meta.field
 import scala.xml.{Elem, NodeSeq}
 
+@Profile(Array("carrot.metadata.mongo"))
 @Repository
 trait FileMetadataRepository extends MongoRepository[FileMetadata, String] {
   def findByFilename(filename: String): FileMetadata
 }
 
+@Profile(Array("carrot.metadata.mongo"))
 @Document(collection = "metadata")
 case class FileMetadata(
                            @(Id@field)
@@ -26,6 +29,7 @@ case class FileMetadata(
                            detector: String,
                            software: String) {}
 
+@Profile(Array("carrot.metadata.mongo"))
 @Component
 class FileMetadataService() extends Logging {
   def getFileMetadata(filename: String, data: Elem): FileMetadata = {

@@ -2,10 +2,14 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSMSSpectra
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action.AddToLibraryAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
@@ -15,14 +19,21 @@ import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("carrot.report.quantify.height",
-  "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna",
-  "test", "teddy"))
+  "carrot.processing.peakdetection",
+  "carrot.processing.replacement.mzrt",
+  "carrot.targets.dynamic",
+  "carrot.targets.mona",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "test",
+  "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation"))
 class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
@@ -42,43 +53,91 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
   @Autowired
   val stasis_cli: StasisService = null
 
+  @Autowired
+  val action: AddToLibraryAction = null
+
+  @Autowired
+  val monalib: MonaLibraryAccess = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "The process" should {
-    "return some negative mode MSMS spectra" in {
-      val sample = loader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
-      val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode())))
 
-      val neg_result = quantification.process(
+    "return some negative mode MSMS spectra" in {
+      val sample: Sample = loader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
+      val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode())))
+      val expClass = ExperimentClass(Seq(sample), None)
+      val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
+
+      monalib.deleteLibrary(method)
+
+      val result = quantification.process(
         annotation.process(
           correction.process(
-            deco.process(sample.get, method, None),
-            method, sample),
+            deco.process(sample, method, None),
+            method, Some(sample)),
           method, None),
-        method, sample)
+        method, Some(sample))
 
-      val msms = neg_result.spectra.count(_.isInstanceOf[MSMSSpectra])
-      logger.info(s"# of   annotated MSMS: $msms")
-      logger.info(s"# of unannotated MSMS: ${neg_result.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])}")
-      msms should be > 0
+      val msms = result.spectra.collect {
+        case spec: MSMSSpectra => spec
+      }
+      val nonAnnotated = result.noneAnnotated.collect {
+        case spec: MSMSSpectra => spec
+      }
+
+      logger.info(s"# of   annotated MSMS: ${msms.size}")
+      logger.info(s"# of unannotated MSMS: ${nonAnnotated.size}")
+
+      msms.size should be > 0
+      nonAnnotated.size should be > 0
+
+      val before = monalib.load(method).size
+
+      action.run(result, expClass, experiment)
+
+      val after = monalib.load(method).size
+
+      after should be > before
+
     }
 
     "return some positive mode MSMS spectra" in {
-      val sample = loader.loadSample("B1_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
+      val sample = loader.getSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode())))
+      val expClass = ExperimentClass(Seq(sample), None)
+      val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
-      val pos_result = quantification.process(
+      monalib.deleteLibrary(method)
+
+      val result = quantification.process(
         annotation.process(
           correction.process(
-            deco.process(sample.get, method, None),
-            method, sample),
+            deco.process(sample, method, None),
+            method, Some(sample)),
           method, None),
-        method, sample)
+        method, Some(sample))
 
-      val msms = pos_result.spectra.count(_.isInstanceOf[MSMSSpectra])
-      logger.info(s"# of   annotated MSMS: $msms")
-      logger.info(s"# of unannotated MSMS: ${pos_result.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])}")
-      msms should be > 0
+      val msms = result.spectra.collect {
+        case spec: MSMSSpectra => spec
+      }
+      val nonAnnotated = result.noneAnnotated.collect {
+        case spec: MSMSSpectra => spec
+      }
+
+      logger.info(s"# of   annotated MSMS: ${msms.size}")
+      logger.info(s"# of unannotated MSMS: ${nonAnnotated.size}")
+
+      msms.size should be > 0
+      nonAnnotated.size should be > 0
+
+      val before = monalib.load(method).size
+
+      action.run(result, expClass, experiment)
+
+      val after = monalib.load(method).size
+
+      after should be > before
     }
   }
 }

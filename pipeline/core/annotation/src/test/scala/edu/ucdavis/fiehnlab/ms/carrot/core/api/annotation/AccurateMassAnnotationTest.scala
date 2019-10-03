@@ -44,6 +44,7 @@ object Test {
     override val uniqueMass: Option[Double] = None
     override val signalNoise: Option[Double] = None
 
+    override val metadata: Map[String, AnyRef] = Map()
 
     val sample:String = null
     /**

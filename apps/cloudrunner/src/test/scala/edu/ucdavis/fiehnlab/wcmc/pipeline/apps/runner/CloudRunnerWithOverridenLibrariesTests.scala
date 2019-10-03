@@ -1,6 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.ResultResponse
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -15,19 +16,26 @@ import org.springframework.web.client.HttpClientErrorException
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "runner", "csh", "carrot.targets.dummy"))
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
+  "carrot.processing.replacement.mzrt",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation",
+  "carrot.output.storage.aws",
+  "carrot.runner.required",
+  "carrot.targets.dummy"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:B2a_TEDDYLipids_Neg_NIST001.mzml",
-  "CARROT_METHOD:csh | 6550 | test | negative",
+  "CARROT_METHOD:teddy | 6550 | test | negative",
   "CARROT_MODE:lcms",
-  "carrot.submitter:dpedrosa@ucdavis.edu"
+  "carrot.submitter:fake@mymail.edu"
 ))
 class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with Logging {
-  @Value("${wcmc.workflow.lcms.sample:#{environment.CARROT_SAMPLE}}")
-  val sampleName = ""
-
-  @Autowired
-  val runner: Runner = null
+  @Value("#{environment.CARROT_SAMPLE}}")
+  val filename = ""
 
   @Autowired
   val stasis_cli: StasisService = null
@@ -35,13 +43,13 @@ class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a runner" should {
-
+    val sample = filename.split("\\.").head
     "have results on aws" in {
       try {
-        val results = stasis_cli.getResults(sampleName.split('.')(0))
-        logger.info(results.toString)
+        val results: ResultResponse = stasis_cli.getResults(sample)
 
         results should not be null
+        results.injections.size() should be > 0
       } catch {
         case ex: HttpClientErrorException =>
           fail(ex)

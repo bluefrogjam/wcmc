@@ -1,12 +1,10 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction
 
-import org.apache.logging.log4j.scala.Logging
-import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{Feature, SpectrumProperties}
-import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
+import edu.ucdavis.fiehnlab.ms.carrot.core.db.yaml.YAMLCorrectionLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,18 +16,20 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   * Created by diego on 4/12/2018
   **/
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("file.source.luna", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test"))
+@SpringBootTest
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.correction"))
 class Weiss66RICorrectionBugTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
   @Autowired
-  val deco: PeakDetection = null
-
-  @Autowired
-  val loader: SampleLoader = null
+  val libraryAccess: YAMLCorrectionLibraryAccess = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
@@ -39,6 +39,7 @@ class Weiss66RICorrectionBugTest extends WordSpec with Matchers with Logging {
         val wrongFeature1 = new Feature {
             override val ionMode: Option[IonMode] = None
             override val purity: Option[Double] = None
+          override val metadata: Map[String, AnyRef] = Map()
             override val sample: String = null
           override val retentionTimeInSeconds: Double = 337.61
           override val scanNumber: Int = 1
@@ -53,6 +54,7 @@ class Weiss66RICorrectionBugTest extends WordSpec with Matchers with Logging {
             override val sample: String = null
           override val retentionTimeInSeconds: Double = 307.76
           override val scanNumber: Int = 2
+          override val metadata: Map[String, AnyRef] = Map()
             override val associatedScan: Option[SpectrumProperties] = None
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8353, 4500))
             override val signalNoise: Option[Double] = None
@@ -65,6 +67,7 @@ class Weiss66RICorrectionBugTest extends WordSpec with Matchers with Logging {
           override val retentionTimeInSeconds: Double = 653.92
           override val scanNumber: Int = 3
             override val associatedScan: Option[SpectrumProperties] = None
+          override val metadata: Map[String, AnyRef] = Map()
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8311, 6500))
             override val signalNoise: Option[Double] = None
             override val uniqueMass: Option[Double] = None
@@ -73,6 +76,7 @@ class Weiss66RICorrectionBugTest extends WordSpec with Matchers with Logging {
             override val ionMode: Option[IonMode] = None
             override val purity: Option[Double] = None
             override val sample: String = null
+          override val metadata: Map[String, AnyRef] = Map()
           override val retentionTimeInSeconds: Double = 658.91
           override val scanNumber: Int = 4
             override val associatedScan: Option[SpectrumProperties] = None
@@ -86,6 +90,7 @@ class Weiss66RICorrectionBugTest extends WordSpec with Matchers with Logging {
             override val purity: Option[Double] = None
             override val sample: String = null
           override val retentionTimeInSeconds: Double = 666.88
+          override val metadata: Map[String, AnyRef] = Map()
           override val scanNumber: Int = 10
             override val associatedScan: Option[SpectrumProperties] = None
           override val massOfDetectedFeature: Option[Ion] = Some(Ion(869.8346, 13000))
@@ -117,6 +122,7 @@ class Weiss66RICorrectionBugTest extends WordSpec with Matchers with Logging {
         override val sample: String = null
         override val retentionTimeInSeconds: Double = 612.0850219726562
         override val scanNumber: Int = 1
+        override val metadata: Map[String, AnyRef] = Map()
         override val associatedScan: Option[SpectrumProperties] = None
         override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.7777, 100000))
         override val signalNoise: Option[Double] = None
@@ -124,6 +130,7 @@ class Weiss66RICorrectionBugTest extends WordSpec with Matchers with Logging {
       }
       val wrongFeature2 = new Feature {
         override val ionMode: Option[IonMode] = None
+        override val metadata: Map[String, AnyRef] = Map()
         override val purity: Option[Double] = None
         override val sample: String = null
         override val retentionTimeInSeconds: Double = 653.9290161132812
@@ -140,6 +147,7 @@ class Weiss66RICorrectionBugTest extends WordSpec with Matchers with Logging {
         override val sample: String = null
         override val retentionTimeInSeconds: Double = 667.3779907226562
         override val scanNumber: Int = 10
+        override val metadata: Map[String, AnyRef] = Map()
         override val associatedScan: Option[SpectrumProperties] = None
         override val massOfDetectedFeature: Option[Ion] = Some(Ion(874.7910, 17000))
         override val signalNoise: Option[Double] = None

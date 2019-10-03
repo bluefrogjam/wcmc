@@ -4,12 +4,12 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 
-trait Feature extends AccurateMassSupport {
+trait Feature extends AccurateMassSupport with Serializable {
 
   /**
     * the associated sample
     */
-  val sample:String
+  val sample: String
 
   /**
     * how pure this spectra is
@@ -19,12 +19,12 @@ trait Feature extends AccurateMassSupport {
   /**
     * the signal noise of this spectra
     */
-  val signalNoise:Option[Double]
+  val signalNoise: Option[Double]
 
   /**
     * the unique mass of this spectra
     */
-  val uniqueMass:Option[Double]
+  val uniqueMass: Option[Double]
 
   /**
     * the local scan number
@@ -51,7 +51,7 @@ trait Feature extends AccurateMassSupport {
   /**
     * the associated complete scan for this feature
     */
-  val associatedScan : Option[SpectrumProperties]
+  val associatedScan: Option[SpectrumProperties]
 
   /**
     * accurate mass of this feature, if applicable
@@ -78,12 +78,16 @@ trait Feature extends AccurateMassSupport {
     None
   }
 
+  /**
+    * Contains random metadata associated to the object we mix this into
+    */
+  val metadata: Map[String, AnyRef]
 }
 
 /**
   * commonly shared properties of a spectrum
   */
-trait SpectrumProperties {
+trait SpectrumProperties extends Serializable {
 
   /**
     * the msLevel of this spectra
@@ -143,7 +147,7 @@ trait SpectrumProperties {
 /**
   * defines a MS Spectra
   */
-trait MSSpectra extends Feature  {
+trait MSSpectra extends Feature {
 
   override def toString = f"MSSpectra(scanNumber=$scanNumber, retentionTime=$retentionTimeInSeconds%1.2f (s), retentionTime=$retentionTimeInMinutes%1.3f (min))"
 }
@@ -207,11 +211,4 @@ trait SimilaritySupport {
     */
   val spectrum: Option[SpectrumProperties]
 
-}
-
-trait MetadataSupport {
-  /**
-    * Contains random metadata associated to the object we mix this into
-    */
-  val metadata: Map[String,AnyRef]
 }

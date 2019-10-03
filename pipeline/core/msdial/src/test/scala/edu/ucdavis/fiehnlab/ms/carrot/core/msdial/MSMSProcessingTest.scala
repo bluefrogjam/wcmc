@@ -1,8 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSMSSpectra, MSSpectra, MetadataSupport}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, PositiveMode}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.NegativeMode
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -16,7 +15,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest()
-@ActiveProfiles(Array("carrot.lcms", "file.source.luna", "test"))
+@ActiveProfiles(Array("carrot.lcms", "file.source.eclipse", "test"))
 class MSMSProcessingTest extends WordSpec with Logging with Matchers {
 
   @Autowired

@@ -14,18 +14,24 @@ import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
   * Created by wohlg on 7/13/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height", "carrot.processing.replacement.simple", "carrot.processing.peakdetection", "carrot.lcms", "file.source.luna", "test","carrot.targets.yaml.annotation","carrot.targets.yaml.correction"))
+@ActiveProfiles(Array(
+  "test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
+  "carrot.processing.replacement.simple",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"))
 class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
-  val libName = "lcms_istds"
-
   @Autowired
   val simpleZeroReplacement: SimpleZeroReplacement = null
 
@@ -50,8 +56,10 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "SimpleZeroReplacementTest" must {
-    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
-    val rawSample = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
+    val libName = "teddy"
+    val instrument = Some("6530")
+    val method = AcquisitionMethod(ChromatographicMethod(libName, instrument, Some("test"), Some(PositiveMode())))
+    val rawSample = loader.getSample("B5_P20Lipids_Pos_QC029.mzml")
     val sample: QuantifiedSample[Double] = quantify.process(
       annotation.process(
         correction.process(
@@ -68,7 +76,6 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
         val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
 
         replaced.quantifiedTargets.foreach { x =>
-          logger.info(s"target: ${x.name.get} = ${x.quantifiedValue}")
           x.quantifiedValue.getOrElse(-1.0) should be >= 0.0
         }
 
@@ -76,12 +83,10 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
         replaced.spectra.size should be(replaced.quantifiedTargets.size)
 
         //should have GapFilledTargets
-        replaced.spectra.collect {
+        replaced.quantifiedTargets.collect {
           case s: GapFilledTarget[Double] => s
         } should not be empty
 
-        // tracking status should be updated
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("replaced")
       }
 
       "replace the null values in the file using nearest ion estimation" in {
@@ -90,20 +95,14 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
 
         // All target must be nonzero
         replaced.quantifiedTargets.foreach { x =>
-          logger.info(s"target: ${x.name.get} = ${x.quantifiedValue}")
-          x.quantifiedValue.getOrElse(-1.0) should be > 0.0
+          x.quantifiedValue.getOrElse(-1.0) should be >= 0.0
         }
 
-        //all spectra should be the same count as the targets
-        replaced.spectra.size should be(replaced.quantifiedTargets.size)
-
         //should have GapFilledTargets
-        replaced.spectra.collect {
+        replaced.quantifiedTargets.collect {
           case s: GapFilledTarget[Double] => s
         } should not be empty
 
-        // tracking status should be updated
-        stasis_cli.getTracking(sample.name).status.map(_.value) should contain("replaced")
       }
     }
   }

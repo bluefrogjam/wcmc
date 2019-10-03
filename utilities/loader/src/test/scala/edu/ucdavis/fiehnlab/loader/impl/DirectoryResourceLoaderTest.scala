@@ -3,20 +3,20 @@ package edu.ucdavis.fiehnlab.loader.impl
 import java.io.File
 import java.util.zip.ZipInputStream
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.TestConfiguration
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.test.context.TestContextManager
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit4.SpringRunner
 
 /**
   * Created by wohlg on 7/28/2016.
   */
-@RunWith(classOf[SpringJUnit4ClassRunner])
+@RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TestConfiguration]))
 class DirectoryResourceLoaderTest extends WordSpec with Logging {
 

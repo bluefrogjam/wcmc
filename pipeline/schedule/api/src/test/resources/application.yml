@@ -3,15 +3,17 @@ spring:
     active: "test"
     include:
       - carrot.lcms
-      - file.source.luna
+      - file.source.eclipse
       - carrot.lcms.correction
       - carrot.output.storage.aws
       - carrot.resource.store.bucket
       - carrot.report.quantify.height
-      - carrot.processing.replacement.simple
+      - carrot.processing.replacement.mzrt
       - carrot.processing.peakdetection
       - carrot.runner.required
       - carrot.targets.mona
+      - carrot.targets.yaml.correction
+      - carrot.targets.yaml.annotation
 
 email:
   host: smtp.gmail.com
@@ -19,10 +21,15 @@ email:
   username: binbase@gmail.com
   pass: fiehnlab-2018
 
+wcmc:
+  api:
+    mona:
+      rest:
+        server:
+          user: admin
+          password: admin
 mona:
   rest:
     server:
-      user: admin
-      password: admin
       host: localhost
       port: 9090

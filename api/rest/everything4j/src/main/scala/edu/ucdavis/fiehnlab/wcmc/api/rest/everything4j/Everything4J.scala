@@ -14,7 +14,7 @@ import org.zeroturnaround.zip.ZipUtil
 /**
   * Created by wohlgemuth on 10/10/17.
   */
-class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, enableLookup: Boolean = true) extends RemoteLoader with Logging {
+class Everything4J(host: String = "eclipse.fiehnlab.ucdavis.edu", port: Int = 80, enableLookup: Boolean = true) extends RemoteLoader with Logging {
 
   /**
     * is a server allowed to use this one for lookup
@@ -23,7 +23,7 @@ class Everything4J(host: String = "luna.fiehnlab.ucdavis.edu", port: Int = 80, e
   override def isLookupEnabled(): Boolean = enableLookup
 
   @Autowired
-  val objectMapper: ObjectMapper = null
+  val objectMapper: ObjectMapper = new ObjectMapper()
 
   /**
     * returns the related resource or none

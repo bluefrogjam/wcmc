@@ -5,25 +5,32 @@ import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager, TestPropertySource}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "carrot.lcms", "csh", "carrot.targets.dummy"))
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
+  "carrot.processing.replacement.mzrt",
+  "carrot.processing.peakdetection",
+  "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation",
+  "carrot.output.storage.aws",
+  "carrot.runner.required",
+  "carrot.targets.dummy"))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:LipidsPos_PhV1_06_160362.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",
   "CARROT_MODE:lcms",
-  "carrot.submitter:dpedrosa@ucdavis.edu"
+  "carrot.submitter:fake@mymail.edu"
 ))
 class MissingFailedTrackingTests extends WordSpec with Matchers with Logging {
   @Value("#{environment.CARROT_SAMPLE}")
-  val sample = ""
+  val filename = ""
 
   @Autowired
   val stasis_cli: StasisService = null
@@ -31,18 +38,14 @@ class MissingFailedTrackingTests extends WordSpec with Matchers with Logging {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "the sample" should {
-    "have all tracking statuses" ignore {
-      val results = stasis_cli.getTracking(sample.split(".").head)
+    val sample = filename.split("\\.").head
 
-      logger.info(results.status.mkString("\n"))
-
+    "have all tracking statuses" in {
+      val results = stasis_cli.getTracking(sample)
+      logger.info(s"Received: ${results}")
       results.status.map {
         _.value
-      } should contain("failed")
+      } should contain("exported")
     }
   }
 }
-
-@Configuration
-@EnableAutoConfiguration(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class MissingConfig

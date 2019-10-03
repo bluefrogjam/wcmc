@@ -10,8 +10,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{Target, _}
 import edu.ucdavis.fiehnlab.ms.carrot.math.SimilarityMethods
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
-import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
@@ -36,8 +36,8 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
     val filters: SequentialAnnotate = new SequentialAnnotate(
       new MassAccuracyDalton(lcmsProperties.massAccuracySetting,
         lcmsProperties.massIntensity) ::
-        new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow) ::
-        List()
+          new RetentionIndexAnnotation(lcmsProperties.retentionIndexWindow) ::
+          List()
     )
 
 
@@ -90,11 +90,11 @@ class LCMSTargetAnnotationProcess @Autowired()(val targets: MergeLibraryAccess, 
         Some(best)
       }
       else {
-        logger.info(s"utilizing close peak detection mode since we have ${resultList.size} candidates")
+        logger.debug(s"utilizing close peak detection mode since we have ${resultList.size} candidates")
 
         val closePeaks = resultList.sortBy(RetentionIndexDifference.diff(target, _))
 
-        logger.info(s"discovered close peaks after filtering: ${closePeaks}")
+        logger.debug(s"discovered close peaks after filtering: ${closePeaks}")
         if (closePeaks.nonEmpty) {
           //          if (debug) {
           //            logger.debug("close peaks:")
