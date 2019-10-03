@@ -21,10 +21,13 @@ public class MS2DeconvolutionResult implements Serializable {
     public double ms1IsotopicIonM1PeakHeight = -1.0;
     public double ms1IsotopicIonM2PeakHeight = -1.0;
     public List<Ion> ms1Spectrum = new ArrayList<>();
+    public List<Ion> rawMS1Spectrum = new ArrayList<>();
+
 
     public double ms2DecPeakHeight = -1.0f;
     public double ms2DecPeakArea = -1.0;
     public List<Peak> ms2Spectrum = new ArrayList<>();
+    public List<Ion> rawMS2Spectrum = new ArrayList<>();
 
     public List<List<Ion>> peakListList = new ArrayList<>();
     public List<double[]> baseChromatogram = new ArrayList<>();

@@ -1,8 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types
 
-import java.util
-
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.MS2DeconvolutionResult
@@ -43,6 +40,7 @@ object MSDialLCMSProcessedSample {
         override val msLevel: Short = 1
         override val modelIons: Option[List[Double]] = None
         override val ions: Seq[Ion] = x.ms1Spectrum.asScala
+        override val rawIons: Option[Seq[Ion]] = None
       })
 
       if (x.peak.ms2LevelDataPointNumber == -1) {
@@ -90,12 +88,14 @@ object MSDialLCMSProcessedSample {
           override val msLevel: Short = 1
           override val modelIons: Option[List[Double]] = None
           override val ions: Seq[Ion] = x.ms1Spectrum.asScala
+          override val rawIons: Option[Seq[Ion]] = None
         })
 
         val _associatedScan = Some(new SpectrumProperties {
           override val msLevel: Short = 2
           override val modelIons: Option[List[Double]] = None
           override val ions: Seq[Ion] = x.ms2Spectrum.asScala.map(x => Ion(x.mz, x.intensity))
+          override val rawIons: Option[Seq[Ion]] = Some(x.rawMS2Spectrum.asScala)
         })
 
         new MSMSSpectra {
