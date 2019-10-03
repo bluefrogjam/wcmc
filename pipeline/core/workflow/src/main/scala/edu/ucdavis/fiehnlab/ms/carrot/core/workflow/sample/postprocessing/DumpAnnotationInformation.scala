@@ -49,7 +49,8 @@ class DumpAnnotationInformation @Autowired()(storage: ResourceStorage, objectMap
               "splash" -> splash,
               "spectra" -> spectraString,
               "raw spectra" -> spectraRawString,
-              "raw splash" -> rawSplash
+              "raw splash" -> rawSplash,
+              "scan number" -> msms.scanNumber
             )
           )
         case _ =>
