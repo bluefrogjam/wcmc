@@ -56,7 +56,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Loggin
             case MsSpectrumType.CENTROIDED =>
               new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Centroided
 
-            case MsSpectrumType.CENTROIDED =>
+            case MsSpectrumType.PROFILE =>
               new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Profiled
 
             case _ =>
@@ -185,17 +185,25 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) 
   /**
     * associated spectrum propties if applicable
     */
-  override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
-    /**
-      * a list of model ions used during the deconvolution
-      */
-    override val modelIons: Option[List[Double]] = None
-    /**
-      * all the defined ions for this spectra
-      */
-    override lazy val ions: Seq[Ion] = MSDKSample.build(spectra)
+  override val associatedScan: Option[SpectrumProperties] = Some({
+    val spectrumIons: Seq[Ion] = MSDKSample.build(spectra)
 
-    override val msLevel: Short = 1
+    new SpectrumProperties {
+      /**
+        * a list of model ions used during the deconvolution
+        */
+      override val modelIons: Option[List[Double]] = None
+      /**
+        * all the defined ions for this spectra
+        */
+      override lazy val ions: Seq[Ion] = spectrumIons
+      /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = Some(spectrumIons)
+
+      override val msLevel: Short = 1
+    }
   })
   override val metadata: Map[String, AnyRef] = Map()
 }
@@ -227,10 +235,15 @@ class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String
     }
   }
 
-  override val associatedScan: Option[SpectrumProperties] = Some(new SpectrumProperties {
-    override val modelIons: Option[List[Double]] = None
-    override lazy val ions: Seq[Ion] = MSDKSample.build(spectra)
-    override val msLevel: Short = 2
+  override val associatedScan: Option[SpectrumProperties] = Some({
+    val spectrumIons: Seq[Ion] = MSDKSample.build(spectra)
+
+    new SpectrumProperties {
+      override val modelIons: Option[List[Double]] = None
+      override lazy val ions: Seq[Ion] = spectrumIons
+      override val rawIons: Option[Seq[Ion]] = Some(spectrumIons)
+      override val msLevel: Short = 2
+    }
   })
 
   override val precursorScan: Option[SpectrumProperties] = precursor

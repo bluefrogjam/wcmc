@@ -2,7 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.msdial
 
 import java.io.File
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.MSDKSample
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.msdk.{MSDKMSMSSpectra, MSDKSample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.MSMSSpectra
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{PositiveMode, Sample}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.utils.SampleSerializer
 import org.apache.logging.log4j.scala.Logging
@@ -52,6 +53,24 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
 
       if (serializer != null)
         serializer.saveFile(outSample)
+    }
+
+    "check that raw ms/ms data is propagated to processed sample" in {
+      val sample: MSDKSample = MSDKSample("testA.mzml", new File(getClass.getResource("/testA.mzml").getFile))
+      val outSample = msdProcessing.process(sample, properties)
+
+      outSample.spectra.collect {
+        case spectrum: MSMSSpectra =>
+          // ensure that a splash exists in the original data that matches the raw spectrum for each ms/ms spectrum
+          val splash = spectrum.associatedScan.get.splash(true)
+
+          val matchingData = sample.spectra.filter(x => x.associatedScan.isDefined && x.associatedScan.get.splash() == splash)
+
+          assert(matchingData.length == 1)
+
+          // ensure that retention times are properly converted from minutes to seconds
+          assert(Math.abs(matchingData.head.retentionTimeInSeconds - spectrum.retentionTimeInSeconds) < 1)
+      }
     }
 
     "check peakpicking in RT range (1.45 - 1.60)" ignore {

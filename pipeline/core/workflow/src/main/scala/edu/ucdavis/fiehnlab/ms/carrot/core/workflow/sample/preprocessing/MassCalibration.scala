@@ -74,6 +74,10 @@ class SimpleMassCalibration extends PreProcessor with Logging {
               */
             override val ions: Seq[Ion] = correctedIons
             /**
+              * all unprocessed ions for this spectrum before deconvolution
+              */
+            override val rawIons: Option[Seq[Ion]] = f.associatedScan.get.rawIons
+            /**
               * the msLevel of this spectra
               */
             override val msLevel: Short = f.associatedScan.get.msLevel

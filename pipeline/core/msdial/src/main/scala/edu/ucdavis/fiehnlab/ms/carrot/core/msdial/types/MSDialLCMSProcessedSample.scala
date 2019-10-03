@@ -29,17 +29,21 @@ object MSDialLCMSProcessedSample {
     }
   }
 
-  def generateSpectra(ms2DecResults: java.util.List[MS2DeconvolutionResult], fileName: String, mode: IonMode): Seq[MSSpectra] = {
+  def generateSpectra(ms2DecResults: java.util.List[MS2DeconvolutionResult], fileName: String, mode: IonMode) = {
 
     ms2DecResults.asScala.map { x: MS2DeconvolutionResult =>
+
+      // MS-DIAL uses retention times in minutes, and so it must be converted back to seconds
+      val _retentionTimeInSeconds = x.peakTopRetentionTime * 60
+
       val _fileName = fileName
-      val _scanNummer = x.peakTopScan
-      val _retentionTimeInSecods = x.peakTopRetentionTime
+      val _scanNumber = x.peakTopScan
       val _massOfDetectedFeature = Option(Ion(x.peak.accurateMass, x.peak.intensityAtPeakTop))
       val _properties = Some(new SpectrumProperties {
         override val msLevel: Short = 1
         override val modelIons: Option[List[Double]] = None
         override val ions: Seq[Ion] = x.ms1Spectrum.asScala
+        override val rawIons: Option[Seq[Ion]] = None
       })
 
       val _metadata = Map(
@@ -73,8 +77,8 @@ object MSDialLCMSProcessedSample {
           override val ionMode: Option[IonMode] = Option(mode)
           override val purity: Option[Double] = None
           override val sample: String = _fileName
-          override val retentionTimeInSeconds: Double = _retentionTimeInSecods
-          override val scanNumber: Int = scanNumber
+          override val retentionTimeInSeconds: Double = _retentionTimeInSeconds
+          override val scanNumber: Int = _scanNumber
           override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
           override val associatedScan: Option[SpectrumProperties] = _properties
           override val metadata: Map[String, AnyRef] = _metadata
@@ -88,12 +92,14 @@ object MSDialLCMSProcessedSample {
           override val msLevel: Short = 1
           override val modelIons: Option[List[Double]] = None
           override val ions: Seq[Ion] = x.ms1Spectrum.asScala
+          override val rawIons: Option[Seq[Ion]] = None
         })
 
         val _associatedScan = Some(new SpectrumProperties {
           override val msLevel: Short = 2
           override val modelIons: Option[List[Double]] = None
           override val ions: Seq[Ion] = x.ms2Spectrum.asScala.map(x => Ion(x.mz, x.intensity))
+          override val rawIons: Option[Seq[Ion]] = Some(x.rawMS2Spectrum.asScala)
         })
 
         new MSMSSpectra {
@@ -103,8 +109,13 @@ object MSDialLCMSProcessedSample {
           override val ionMode: Option[IonMode] = Option(mode)
           override val purity: Option[Double] = None
           override val sample: String = _fileName
-          override val retentionTimeInSeconds: Double = _retentionTimeInSecods
-          override val scanNumber: Int = scanNumber
+
+          // note that the scan number and retention time refer to the values of the MS1 peak top
+          // however, the ms/ms scan is not guaranteed to correspond to the same scan
+          // its scan can be referenced by x.ms2LevelDataPointNumber and x.ms2LevelDataPointRetentionTime
+          override val retentionTimeInSeconds: Double = _retentionTimeInSeconds
+          override val scanNumber: Int = _scanNumber
+
           override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
           override val precursorScan: Option[SpectrumProperties] = _precursorScan
           override val associatedScan: Option[SpectrumProperties] = _associatedScan

@@ -38,6 +38,7 @@ public class PeakAreaBean implements Serializable {
 //	public String metaboliteName;
 	public int ms1LevelDataPointNumber;
 	public int ms2LevelDataPointNumber;
+	public double ms2LevelDataPointRetentionTime;
 	public double ms1IsotopicIonM1PeakHeight;
 	public double ms1IsotopicIonM2PeakHeight;
 	public double normalizedValue;

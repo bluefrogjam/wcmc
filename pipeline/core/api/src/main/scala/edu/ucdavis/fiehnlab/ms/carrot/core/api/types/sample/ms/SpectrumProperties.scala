@@ -117,19 +117,32 @@ trait SpectrumProperties extends Serializable {
   val ions: Seq[Ion]
 
   /**
-    * the unique splash for this spectra
+    * all unprocessed ions for this spectrum before deconvolution
     */
-  final def splash: String = SplashUtil.splash(spectraString, SpectraType.MS)
+  val rawIons: Option[Seq[Ion]]
 
   /**
-    * generates a spectral string representation for us
-    *
-    * @return
+    * the unique splash for this spectra
+    * @param useRawSpectrum use raw spectrum if available instead of deconvoluted spectrum
+    * @return splash code
     */
-  final def spectraString: String = ions.sortBy(_.mass).map { ion: Ion =>
-    f"${ion.mass}%1.6f:${ion.intensity}%1.5f"
+  final def splash(useRawSpectrum: Boolean = false): String = SplashUtil.splash(spectraString(useRawSpectrum), SpectraType.MS)
 
-  }.mkString(" ")
+  /**
+    * generates a spectral string representation
+    * @param useRawSpectrum use raw spectrum if available instead of deconvoluted spectrum
+    * @return spectrum string
+    */
+  final def spectraString(useRawSpectrum: Boolean = false): String = {
+    (if (useRawSpectrum) {
+      rawIons.getOrElse(ions)
+    } else {
+      ions
+    })
+      .sortBy(_.mass).map { ion: Ion =>
+        f"${ion.mass}%1.6f:${ion.intensity}%1.5f"
+      }.mkString(" ")
+  }
 
   /**
     * provides us with a relative spectra string

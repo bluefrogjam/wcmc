@@ -1,10 +1,13 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
+import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.mona.backend.core.auth.jwt.config.JWTAuthenticationConfig
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, Ion, NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
+import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.apache.logging.log4j.scala.Logging
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
@@ -13,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 /**
@@ -44,6 +47,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     override val spectrum = Option(new SpectrumProperties {
       override val modelIons: Option[Seq[Double]] = None
       override val ions: Seq[Ion] = Seq(Ion(100.021, 123.123f), Ion(224.0837, 1231.021f))
+      override val rawIons: Option[Seq[Ion]] = None
       override val msLevel: Short = 2
     })
     override val uniqueMass: Option[Double] = None
@@ -60,7 +64,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     override val spectrum = Option(new SpectrumProperties {
       override val modelIons: Option[Seq[Double]] = None
       override val ions: Seq[Ion] = Seq(Ion(100.021, 123.123f), Ion(224.0837, 1231.021f))
-
+      override val rawIons: Option[Seq[Ion]] = None
       override val msLevel: Short = 2
 
     })
@@ -416,4 +420,10 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 @Import(Array(classOf[JWTAuthenticationConfig]))
 class MonaLibraryAccessTestConfiguration {
 
+
+  @Autowired
+  val resourceLoader: DelegatingResourceLoader = null
+
+  @Bean
+  def loader(delegatingResourceLoader: DelegatingResourceLoader): ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(delegatingResourceLoader)
 }

@@ -41,7 +41,7 @@ class LecoSampleTest extends WordSpec with Matchers with BeforeAndAfterEach with
 
           assert(spectra.associatedScan.get.modelIons.size == 1)
           assert(spectra.purity.get > 0)
-          assert(spectra.associatedScan.get.splash != null)
+          assert(spectra.associatedScan.get.splash() != null)
 
         }
       }
