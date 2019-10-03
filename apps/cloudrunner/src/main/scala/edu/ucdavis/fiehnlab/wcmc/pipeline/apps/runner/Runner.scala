@@ -32,18 +32,22 @@ class Runner extends CommandLineRunner with Logging {
 
   override def run(args: String*): Unit = {
 
-
-    if (sampleName.isEmpty || method.isEmpty || mode.isEmpty) {
-      logger.error("One or more required environment variables are not defined. Please set CARROT_SAMPLE, CARROT_METHOD and CARROT_MODE environment variables with correct values.")
-    } else {
-      this.process(Task(
-        name = s"processing ${sampleName} with ${method}",
-        email = submitter,
-        acquisitionMethod = AcquisitionMethod.deserialize(method),
-        samples = Seq(SampleToProcess(fileName = sampleName, matrix = Matrix("hp0", "human", "plasma", Seq.empty))),
-        mode = mode,
-        env = context.getEnvironment.getActiveProfiles.filter(p => Set("prod", "dev", "test").contains(p)).head
-      ))
+    try {
+      if (sampleName.isEmpty || method.isEmpty || mode.isEmpty) {
+        logger.error("One or more required environment variables are not defined. Please set CARROT_SAMPLE, CARROT_METHOD and CARROT_MODE environment variables with correct values.")
+      } else {
+        this.process(Task(
+          name = s"processing ${sampleName} with ${method}",
+          email = submitter,
+          acquisitionMethod = AcquisitionMethod.deserialize(method),
+          samples = Seq(SampleToProcess(fileName = sampleName, matrix = Matrix("hp0", "human", "plasma", Seq.empty))),
+          mode = mode,
+          env = context.getEnvironment.getActiveProfiles.filter(p => Set("prod", "dev", "test").contains(p)).head
+        ))
+      }
+    } catch {
+      case ex: Exception =>
+        logger.error(s"ERROR (${ex.getClass.getSimpleName}): ${ex.getMessage}")
     }
   }
 

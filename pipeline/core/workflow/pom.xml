@@ -15,12 +15,6 @@
 
     <dependencies>
 
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-
-        </dependency>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
             <artifactId>config</artifactId>
@@ -123,6 +117,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>gov.nist.math</groupId>
             <artifactId>jama</artifactId>
         </dependency>
@@ -156,12 +156,6 @@
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_${scala.version}</artifactId>
-            <version>2.4.2</version>
         </dependency>
 
     </dependencies>

@@ -56,7 +56,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Loggin
             case MsSpectrumType.CENTROIDED =>
               new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Centroided
 
-            case MsSpectrumType.CENTROIDED =>
+            case MsSpectrumType.PROFILE =>
               new MSDKMSMSSpectra(spectra, Some(polarity), this.fileName, precursor.associatedScan) with Profiled
 
             case _ =>
