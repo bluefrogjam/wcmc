@@ -465,6 +465,14 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
 
     val spectrum = x.spectrum
 
+    val spectrumIons: Seq[Ion] = spectrum.split(" ").collect {
+      case x: String =>
+        val values = x.split(":")
+
+        Ion(values(0).toDouble, values(1).toFloat)
+
+    }.filter(_.intensity > 0).toList
+
     val spectrumProperties = new SpectrumProperties {
       /**
         * a list of model ions used during the deconvolution
@@ -473,13 +481,11 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
       /**
         * all the defined ions for this spectra
         */
-      override val ions: Seq[Ion] = spectrum.split(" ").collect {
-        case x: String =>
-          val values = x.split(":")
-
-          Ion(values(0).toDouble, values(1).toFloat)
-
-      }.filter(_.intensity > 0).toList
+      override val ions: Seq[Ion] = spectrumIons
+      /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = Some(spectrumIons)
       /**
         * the msLevel of this spectra
         */

@@ -29,6 +29,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
 
               override val ions: Seq[Ion] = Ion(100.3241, 100) :: List()
               override val modelIons: Option[Seq[Double]] = None
+              override val rawIons: Option[Seq[Ion]] = None
               override val msLevel: Short = 1
             })
             override val retentionTimeInSeconds: Double = 0
@@ -66,6 +67,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
 
               override val ions: Seq[Ion] = Ion(100.3241, 100) :: Ion(100.3341, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None
+              override val rawIons: Option[Seq[Ion]] = None
               override val msLevel: Short = 1
             })
             override val retentionTimeInSeconds: Double = 0
@@ -104,6 +106,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
 
               override val ions: Seq[Ion] = Ion(100.3240, 100) :: Ion(100.3241, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None
+              override val rawIons: Option[Seq[Ion]] = None
               override val msLevel: Short = 1
             })
 
@@ -142,6 +145,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
 
               override val ions: Seq[Ion] = Ion(1567.6401, 100) :: Ion(100.3341, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None
+              override val rawIons: Option[Seq[Ion]] = None
               override val msLevel: Short = 1
             })
 
@@ -180,6 +184,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
 
               override val ions: Seq[Ion] = Ion(1567.5459, 100) :: Ion(100.3341, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None
+              override val rawIons: Option[Seq[Ion]] = None
               override val msLevel: Short = 1
             })
 
@@ -220,6 +225,7 @@ class MassAccuracyTest extends WordSpec with Matchers {
             override val associatedScan:Option[SpectrumProperties] = Some(new SpectrumProperties {
               override val ions: Seq[Ion] = Ion(1567.5459, 100) :: Ion(100.3341, 40) :: List()
               override val modelIons: Option[Seq[Double]] = None
+              override val rawIons: Option[Seq[Ion]] = None
               override val msLevel: Short = 1
             })
           }, new Target {

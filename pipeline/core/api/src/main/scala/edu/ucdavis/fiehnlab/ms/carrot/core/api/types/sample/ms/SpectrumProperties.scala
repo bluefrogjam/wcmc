@@ -117,6 +117,11 @@ trait SpectrumProperties extends Serializable {
   val ions: Seq[Ion]
 
   /**
+    * all unprocessed ions for this spectrum before deconvolution
+    */
+  val rawIons: Option[Seq[Ion]]
+
+  /**
     * the unique splash for this spectra
     */
   final def splash: String = SplashUtil.splash(spectraString, SpectraType.MS)

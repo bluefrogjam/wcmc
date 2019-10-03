@@ -83,19 +83,22 @@ class LecoSample(inputStream: InputStream, override val fileName: String) extend
     */
   def buildSpectra(scan: Int, map: Map[String, String]): LecoSpectrum = {
 
+    val spectrumIons: Seq[Ion] = map(spectraIdentifier).toString.split(" ").collect {
+      case x: String if x.split(":").size == 2 =>
+        val values = x.split(":")
+
+        Ion(values(0).toDouble, values(1).toFloat)
+
+    }.filter(_.intensity > 0)
+
     LecoSpectrum(
       spectrum = Some(new SpectrumProperties {
 
         override val modelIons: Option[List[Double]] = Some(map(uniquemassIdentifier).replaceAll(",", ".").toDouble :: List())
 
+        override val ions: Seq[Ion] = spectrumIons
 
-        override val ions: List[Ion] = map(spectraIdentifier).toString.split(" ").collect {
-          case x: String if x.split(":").size == 2 =>
-            val values = x.split(":")
-
-            Ion(values(0).toDouble, values(1).toFloat)
-
-        }.filter(_.intensity > 0).toList
+        override val rawIons: Option[Seq[Ion]] = Some(spectrumIons)
         /**
           * the msLevel of this spectra
           */

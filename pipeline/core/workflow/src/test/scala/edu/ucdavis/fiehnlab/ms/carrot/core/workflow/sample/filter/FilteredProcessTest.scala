@@ -119,6 +119,10 @@ class FilteredProcessTest extends WordSpec {
         */
       override val ions: Seq[Ion] = Ion(100, 100) :: List()
       /**
+        * all unprocessed ions for this spectrum before deconvolution
+        */
+      override val rawIons: Option[Seq[Ion]] = None
+      /**
         * the msLevel of this spectra
         */
       override val msLevel: Short = 1
