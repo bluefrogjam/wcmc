@@ -1,5 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
+import java.io.{ByteArrayInputStream, StringReader}
+
+import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.loader.ResourceStorage
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.PostProcessing
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
@@ -15,7 +18,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @Profile(Array("carrot.processing.dump"))
-class DumpAnnotationInformation @Autowired()(storage: ResourceStorage) extends PostProcessing[Double] with Logging {
+class DumpAnnotationInformation @Autowired()(storage: ResourceStorage, objectMapper: ObjectMapper) extends PostProcessing[Double] with Logging {
 
   /**
     * dumps all MSMS with target identification to the linked storage
@@ -24,18 +27,39 @@ class DumpAnnotationInformation @Autowired()(storage: ResourceStorage) extends P
     * @return
     */
   override def doProcess(item: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
-    item.quantifiedTargets foreach { x: QuantifiedTarget[Double] =>
 
-      x.spectra match {
+    val msmsSpectra = item.quantifiedTargets map { x: QuantifiedTarget[Double] =>
+
+      val result: Option[Map[String, Any]] = x.spectra match {
         case Some(msms: MSMSSpectra) =>
           val spectraString = msms.associatedScan.get.ions.map { x => s"${x.mass}:${x.intensity}" }.mkString(" ")
           val splash = SplashFactory.create().splashIt(SpectraUtil.convertStringToSpectrum(spectraString, SpectraType.MS))
-          logger.info(s"${x.name} - ${msms.retentionTimeInSeconds} - ${msms.retentionTimeInMinutes} - ${msms.retentionIndex} - ${msms.accurateMass} - ${msms.precursorIon} - ${splash} - ${spectraString}")
+          Some(
+            Map(
+              "name" -> x.name.get,
+              "rt (s)" -> msms.retentionTimeInSeconds,
+              "rt (m)" -> msms.retentionTimeInMinutes,
+              "ri" -> msms.retentionIndex,
+              "accurate mass" -> msms.accurateMass.getOrElse(0.0),
+              "precursor ion" -> msms.precursorIon,
+              "splash" -> splash,
+              "spectra" -> spectraString
+
+            )
+          )
         case _ =>
+          None
       }
+
+      result
 
     }
 
+
+    val result = Map("file" -> item.name, "spectra" -> msmsSpectra.filter(_.isDefined))
+    val string = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result)
+
+    storage.store(new ByteArrayInputStream(string.getBytes), s"${item.name}.msms.json")
     item
   }
 
