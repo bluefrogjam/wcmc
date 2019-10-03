@@ -33,7 +33,7 @@ class DumpAnnotationInformation @Autowired()(storage: ResourceStorage, objectMap
       val result: Option[Map[String, Any]] = x.spectra match {
         case Some(msms: MSMSSpectra) =>
           val spectraString = msms.associatedScan.get.ions.map { x => s"${x.mass}:${x.intensity}" }.mkString(" ")
-          val spectraRawString = msms.associatedScan.get.ions.map({ x => s"${x.mass}:${x.intensity}" }).mkString(" ")
+          val spectraRawString = msms.associatedScan.get.rawIons.getOrElse(Seq.empty).map({ x => s"${x.mass}:${x.intensity}" }).mkString(" ")
 
           val splash = SplashFactory.create().splashIt(SpectraUtil.convertStringToSpectrum(spectraString, SpectraType.MS))
           val rawSplash = SplashFactory.create().splashIt(SpectraUtil.convertStringToSpectrum(spectraRawString, SpectraType.MS))
