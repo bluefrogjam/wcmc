@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager, TestPropertySource}
-import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
@@ -47,12 +46,7 @@ class RunnerLCMSTest extends WordSpec with Matchers with Logging {
     }
 
     "have results on aws" in {
-      try {
-        stasis_cli.getResults(sampleName.split('.')(0)) should not be null
-      } catch {
-        case ex: HttpClientErrorException =>
-          fail(ex)
-      }
+      stasis_cli.getResults(sampleName.split('.')(0)) should not be null
     }
   }
 }
