@@ -33,7 +33,7 @@ object MSDialLCMSProcessedSample {
     ms2DecResults.asScala.map { x: MS2DeconvolutionResult =>
 
       val _fileName = fileName
-      val _scanNummer = x.peakTopScan
+      val _scanNumber = x.peakTopScan
       val _retentionTimeInSecods = x.peakTopRetentionTime
       val _massOfDetectedFeature = Option(Ion(x.peak.accurateMass, x.peak.intensityAtPeakTop))
       val _properties = Some(new SpectrumProperties {
@@ -76,7 +76,7 @@ object MSDialLCMSProcessedSample {
           override val purity: Option[Double] = None
           override val sample: String = _fileName
           override val retentionTimeInSeconds: Double = _retentionTimeInSecods
-          override val scanNumber: Int = scanNumber
+          override val scanNumber: Int = _scanNumber
           override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
           override val associatedScan: Option[SpectrumProperties] = _properties
           override val metadata: Map[String, AnyRef] = _metadata
@@ -106,7 +106,7 @@ object MSDialLCMSProcessedSample {
           override val purity: Option[Double] = None
           override val sample: String = _fileName
           override val retentionTimeInSeconds: Double = _retentionTimeInSecods
-          override val scanNumber: Int = scanNumber
+          override val scanNumber: Int = _scanNumber
           override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
           override val precursorScan: Option[SpectrumProperties] = _precursorScan
           override val associatedScan: Option[SpectrumProperties] = _associatedScan
