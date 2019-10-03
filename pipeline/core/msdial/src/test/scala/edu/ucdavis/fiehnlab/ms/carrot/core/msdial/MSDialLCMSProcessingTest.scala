@@ -63,7 +63,12 @@ class MSDialLCMSProcessingTest extends WordSpec with Matchers with Logging {
           // ensure that a splash exists in the original data that matches the raw spectrum for each ms/ms spectrum
           val splash = spectrum.associatedScan.get.splash(true)
 
-          assert(sample.spectra.exists(x => x.associatedScan.isDefined && x.associatedScan.get.splash() == splash))
+          val matchingData = sample.spectra.filter(x => x.associatedScan.isDefined && x.associatedScan.get.splash() == splash)
+
+          assert(matchingData.length == 1)
+
+          // ensure that retention times are properly converted from minutes to seconds
+          assert(Math.abs(matchingData.head.retentionTimeInSeconds - spectrum.retentionTimeInSeconds) < 1)
       }
     }
 
