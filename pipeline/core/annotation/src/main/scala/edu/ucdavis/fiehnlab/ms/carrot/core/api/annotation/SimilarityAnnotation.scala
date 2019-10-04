@@ -28,14 +28,14 @@ class SimilarityAnnotation(val simmilarityOffset: Double, val algorithm: Similar
       case x: Target =>
         correctedSpectra match {
           case y: MSMSSpectra if y.associatedScan.isDefined =>
-            val value = algorithm.compute(convertSpectra(y.associatedScan.get.spectraString), convertSpectra(x.spectrum.get.spectraString))
+            val value = algorithm.compute(convertSpectra(y.associatedScan.get.spectraString()), convertSpectra(x.spectrum.get.spectraString()))
             logger.trace(s"computed match is: ${value}")
             val result = value > simmilarityOffset
             logger.trace(s"\t=> matches: ${result}")
             result
 
           case y: MSSpectra if y.associatedScan.isDefined =>
-            val value = algorithm.compute(convertSpectra(y.associatedScan.get.spectraString), convertSpectra(x.spectrum.get.spectraString))
+            val value = algorithm.compute(convertSpectra(y.associatedScan.get.spectraString()), convertSpectra(x.spectrum.get.spectraString()))
             logger.trace(s"computed match is: ${value}, we are utilizing a MS1 similarity match!")
             val result = value > simmilarityOffset
             logger.trace(s"\t=> matches: ${result}")

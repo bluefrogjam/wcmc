@@ -19,6 +19,7 @@ class SimilarityTest extends WordSpec {
         override val msLevel: Short = 1
         override val modelIons: Option[Seq[Double]] = None
         override val ions: Seq[Ion] = spectrum
+        override val rawIons: Option[Seq[Ion]] = None
       })
       override val massOfDetectedFeature: Option[Ion] = None
       override val metadata: Map[String, AnyRef] = Map()

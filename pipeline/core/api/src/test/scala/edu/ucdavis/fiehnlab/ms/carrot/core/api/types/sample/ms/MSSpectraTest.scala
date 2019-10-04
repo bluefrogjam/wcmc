@@ -17,7 +17,7 @@ class MSSpectraTest extends WordSpec {
     }
 
     "splash" in {
-      assert(spectra.associatedScan.get.splash != null)
+      assert(spectra.associatedScan.get.splash() != null)
     }
 
   }

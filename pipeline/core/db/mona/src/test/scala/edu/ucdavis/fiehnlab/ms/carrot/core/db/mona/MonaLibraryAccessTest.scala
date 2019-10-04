@@ -47,6 +47,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     override val spectrum = Option(new SpectrumProperties {
       override val modelIons: Option[Seq[Double]] = None
       override val ions: Seq[Ion] = Seq(Ion(100.021, 123.123f), Ion(224.0837, 1231.021f))
+      override val rawIons: Option[Seq[Ion]] = None
       override val msLevel: Short = 2
     })
     override val uniqueMass: Option[Double] = None
@@ -63,7 +64,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     override val spectrum = Option(new SpectrumProperties {
       override val modelIons: Option[Seq[Double]] = None
       override val ions: Seq[Ion] = Seq(Ion(100.021, 123.123f), Ion(224.0837, 1231.021f))
-
+      override val rawIons: Option[Seq[Ion]] = None
       override val msLevel: Short = 2
 
     })

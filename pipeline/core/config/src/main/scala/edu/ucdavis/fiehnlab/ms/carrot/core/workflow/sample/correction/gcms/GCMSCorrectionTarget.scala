@@ -3,9 +3,10 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, Ion, Target}
 
-case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) extends CorrectionTarget{
+case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) extends CorrectionTarget {
 
   val config: GCMSRetentionIndexTargetConfiguration = target
+
   /**
     * a name for this spectra
     */
@@ -47,10 +48,13 @@ case class GCMSCorrectionTarget(target: GCMSRetentionIndexTargetConfiguration) e
       * all the defined ions for this spectra
       */
     override val ions: Seq[Ion] = target.spectra.split(" ").map { x =>
-
       val v = x.split(":")
       Ion(v(0).toDouble, v(1).toFloat)
     }
+    /**
+      * all unprocessed ions for this spectrum before deconvolution
+      */
+    override val rawIons: Option[Seq[Ion]] = Some(ions)
     /**
       * the msLevel of this spectra
       */
