@@ -32,7 +32,6 @@
                     <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
-
             </exclusions>
         </dependency>
         <dependency>
@@ -41,25 +40,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.eharmony</groupId>
-            <artifactId>spotz-core</artifactId>
-            <version>1.0.0</version>
-            <exclusions>
-
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-
-            </exclusions>
-
-        </dependency>
-
-        <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
-            <artifactId>aws</artifactId>
-        </dependency>
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
             <artifactId>workflow</artifactId>
@@ -80,6 +60,36 @@
         </dependency>
 
         <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
+            <artifactId>api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.eharmony</groupId>
+            <artifactId>spotz-core</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc</groupId>
+            <artifactId>aws</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
             <artifactId>config</artifactId>
             <exclusions>
@@ -91,47 +101,30 @@
         </dependency>
 
         <dependency>
-            <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
-            <artifactId>api</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
             <artifactId>yaml</artifactId>
-
             <version>1.0.16-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-
         </dependency>
 
         <dependency>
             <groupId>net.jcazevedo</groupId>
             <artifactId>moultingyaml_${scala.version}</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
 
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-mllib_${scala.version}</artifactId>
+        </dependency>
+
+    </dependencies>
 </project>

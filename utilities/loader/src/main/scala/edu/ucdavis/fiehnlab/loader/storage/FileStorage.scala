@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.loader.storage
 
 import java.io.File
-import java.nio.file.{Files, Paths, StandardCopyOption}
+import java.nio.file.{Files, StandardCopyOption}
 
 import edu.ucdavis.fiehnlab.loader.ResourceStorage
 import org.apache.logging.log4j.scala.Logging
@@ -28,12 +28,9 @@ class FileStorage @Autowired()(properties: FileStorageProperties) extends Resour
     * @param file
     */
   override def store(file: File): Unit = {
-    val dir = new File(properties.directory)
+    Files.createDirectories(new File(properties.directory).toPath)
 
-    if (!dir.exists()) {
-      dir.mkdirs()
-    }
-    val out = new File(properties.directory, file.getName)
+    val out = new File(new File(properties.directory), file.getName)
 
     logger.info(s"storing ${file.getAbsolutePath} at ${out.getAbsolutePath} ")
     Files.copy(file.toPath, out.toPath, StandardCopyOption.REPLACE_EXISTING)
