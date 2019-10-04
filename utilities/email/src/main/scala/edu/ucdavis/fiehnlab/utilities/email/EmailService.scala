@@ -14,12 +14,12 @@ class EmailServiceAutoConfiguration {
 
 }
 
-@Profile(Array("!no-email"))
+@Profile(Array("carrot.email.enable"))
 @Configuration
 class EmailEnabledConfiguration {
 
   @Bean
-  def emailSender(@Value("${email.host}") emailHost: String, @Value("${email.port}") emailPort: Integer, @Value("${email.username}") username: String, @Value("${email.pass}") password: String): JavaMailSenderImpl = {
+  def emailSender(@Value("${wcmc.email.host}") emailHost: String, @Value("${wcmc.email.port}") emailPort: Integer, @Value("${wcmc.email.username}") username: String, @Value("${wcmc.email.pass}") password: String): JavaMailSenderImpl = {
     val emailSender = new JavaMailSenderImpl
     emailSender.setHost(emailHost)
     emailSender.setPort(emailPort)
@@ -36,8 +36,9 @@ class EmailEnabledConfiguration {
   }
 }
 
+@Profile(Array("!carrot.email.enable"))
+@Configuration
 @Component
-@Profile(Array("no-email"))
 class NoEmailService extends EmailServiceable {
   override def send(from: String, recipients: Seq[String], content: String, subject: String, attachment: Option[File]): Unit = ???
 }
@@ -45,8 +46,9 @@ class NoEmailService extends EmailServiceable {
 /**
   * allows easy and convinient access to sending emails to remote users
   */
+@Profile(Array("carrot.email.enable"))
+@Configuration
 @Component
-@Profile(Array("!no-email"))
 class EmailService extends EmailServiceable {
 
   @Autowired

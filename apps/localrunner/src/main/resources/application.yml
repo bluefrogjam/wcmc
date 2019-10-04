@@ -22,12 +22,6 @@ spring:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
     - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 
-email:
-  host: smtp.gmail.com
-  port: 25
-  username: binbase@gmail.com
-  pass: fiehnlab-2018
-
 ---
 spring:
   profiles: test

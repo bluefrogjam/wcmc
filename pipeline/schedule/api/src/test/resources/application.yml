@@ -14,14 +14,15 @@ spring:
       - carrot.targets.mona
       - carrot.targets.yaml.correction
       - carrot.targets.yaml.annotation
-
-email:
-  host: smtp.gmail.com
-  port: 25
-  username: binbase@gmail.com
-  pass: fiehnlab-2018
+      - carrot.email.enable
 
 wcmc:
+  email:
+    host: smtp.gmail.com
+    port: 25
+    username: binbase@gmail.com
+    pass: fiehnlab-2018
+
   api:
     mona:
       rest:

@@ -11,17 +11,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mail.javamail.{JavaMailSender, JavaMailSenderImpl}
-import org.springframework.test.context.TestContextManager
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
 import com.icegreen.greenmail.util.GreenMail
 import com.icegreen.greenmail.util.ServerSetupTest
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
+@ActiveProfiles(Array("carrot.email.enable"))
 class EmailServiceTest extends WordSpec with BeforeAndAfter with Matchers {
 
   @Autowired
-  val emailService: EmailService = null
+  val emailService: EmailServiceable = null
 
   @Autowired
   val emailSender: JavaMailSenderImpl = null

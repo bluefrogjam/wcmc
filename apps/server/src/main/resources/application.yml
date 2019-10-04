@@ -2,11 +2,12 @@ server:
   port: 18080
 
 #which email account to use
-email:
-  host: smtp.gmail.com
-  port: 25
-  username: binbase@gmail.com
-  pass: fiehnlab-2018
+wcmc:
+  email:
+    host: smtp.gmail.com
+    port: 25
+    username: binbase@gmail.com
+    pass: fiehnlab-2018
 
 spring:
   servlet:
