@@ -49,9 +49,9 @@ trait LibraryAccess[T <: Target] extends Logging {
     * deletes the complete library
     */
   def deleteAll: Unit = {
-    logger.info(s"deleting all libraries")
+    logger.warn(s"deleting all libraries")
     libraries.foreach { x =>
-      logger.info(s"\t${x}")
+      logger.debug(s"\t${x}")
       load(x).foreach(y => delete(y, x))
     }
   }
@@ -149,11 +149,12 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
 
   /**
     * loads all the spectra from the library
-    * applicable for the given acquistion method
+    * applicable for the given acquisition method
     *
     * @return
     */
   override def load(acquisitionMethod: AcquisitionMethod): Iterable[T] = {
+    logger.debug(s"\tLoading method: ${acquisitionMethod.toString}")
     val targets = delegates.asScala.find(_.load(acquisitionMethod).nonEmpty)
 
     if (targets.isDefined) {
@@ -224,7 +225,7 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
   }
 
   /**
-    * returns all associated acuqisiton methods for this library
+    * returns all associated acquisition methods for this library
     *
     * @return
     */
@@ -235,7 +236,7 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
       delegates.asScala.flatMap(_.libraries)
     }
     finally {
-      logger.info(s"computing all libraries too ${System.currentTimeMillis() - begin} ms")
+      logger.info(s"computing all libraries took ${System.currentTimeMillis() - begin} ms")
     }
   }
 
@@ -252,6 +253,7 @@ final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[Co
     * @return
     */
   override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = {
+    logger.debug(s"Loading method: ${acquisitionMethod.toString}")
     this.correction.load(acquisitionMethod) ++ this.annotation.load(acquisitionMethod)
   }
 

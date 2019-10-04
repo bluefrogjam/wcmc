@@ -1,0 +1,30 @@
+logging:
+  level:
+    root: info
+    edu.ucdavis.fiehnlab.ms.carrot.core.db.excel.ExcelLibraryAccess: debug
+
+---
+spring:
+  profiles: positive
+
+carrot:
+  targets:
+    excel:
+      filename: /test-lib-pos.xlsx
+      libname: test-pos
+      instrument: test
+      column: test
+      ionMode: positive
+
+---
+spring:
+  profiles: negative
+
+carrot:
+  targets:
+    excel:
+      filename: /test-lib-neg.xlsx
+      libname: test-neg
+      instrument: test
+      column: test
+      ionMode: negative
