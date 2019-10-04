@@ -232,6 +232,7 @@ public class DataAccessUtility {
         peak.accurateMass = -1;
         peak.ms1LevelDataPointNumber = -1;
         peak.ms2LevelDataPointNumber = -1;
+        peak.ms2LevelDataPointRetentionTime = -1;
 //		pab.alignedRetentionTime = -1;
 //		pab.totalScore = -1;
 //		pab.metaboliteName = "";

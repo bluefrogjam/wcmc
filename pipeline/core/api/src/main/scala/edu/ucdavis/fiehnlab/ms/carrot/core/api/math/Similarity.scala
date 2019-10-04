@@ -19,7 +19,7 @@ object Similarity {
     * @return
     */
   def compute(unknown: SimilaritySupport, library: SimilaritySupport, algorithm: edu.ucdavis.fiehnlab.math.similarity.Similarity = new CompositeSimilarity): Double = {
-    algorithm.compute(convertSpectra(unknown.spectrum.get.spectraString), convertSpectra(library.spectrum.get.spectraString))
+    algorithm.compute(convertSpectra(unknown.spectrum.get.spectraString()), convertSpectra(library.spectrum.get.spectraString()))
   }
 
 

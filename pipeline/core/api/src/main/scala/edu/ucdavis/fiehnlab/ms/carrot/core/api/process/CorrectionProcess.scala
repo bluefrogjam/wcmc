@@ -160,6 +160,10 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
 
     val correctedSpectra: Seq[_ <: Feature with CorrectedSpectra] = sampleToCorrect.spectra.map(x => SpectraHelper.addCorrection(x, regression.computeY(x.retentionTimeInSeconds)))
 
+    // add corrected retention index to annotations in featuresUsedForCorrection collection
+    val correctedHits: Iterable[TargetAnnotation[Target, Feature]] = possibleHits
+      .map(x => TargetAnnotation(x.target, SpectraHelper.addCorrection(x.annotation, regression.computeY(x.annotation.retentionTimeInSeconds)).asInstanceOf[Feature]))
+
     /**
       * generates a new corrected sample object
       * and computes all it's properties
@@ -173,7 +177,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
       override val spectra: Seq[_ <: Feature with CorrectedSpectra] = correctedSpectra
 
       //the original data, this sample is based on
-      override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = possibleHits
+      override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = correctedHits
       override val regressionCurve: Regression = regression
       override val fileName: String = sampleToCorrect.fileName
 

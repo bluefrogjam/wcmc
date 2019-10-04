@@ -15,7 +15,10 @@ class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult]
   override val properties: Option[SampleProperties] = None
 
   override val spectra: Seq[_ <: Feature] = ms1DecResults.asScala.map { x: MS1DeconvolutionResult =>
-    new MSSpectra with SimilaritySupport{
+
+    val spectrumIons: Seq[Ion] = x.spectrum.asScala.map(p => Ion(p.mz, p.intensity))
+
+    new MSSpectra with SimilaritySupport {
       override val uniqueMass: Option[Double] = None
       override val signalNoise: Option[Double] = None
 
@@ -55,7 +58,9 @@ class MSDialGCMSProcessedSample(ms1DecResults: util.List[MS1DeconvolutionResult]
 
         override val modelIons: Option[List[Double]] = Option(x.modelMasses.asScala.map(_.toDouble).toList)
 
-        override val ions: Seq[Ion] = x.spectrum.asScala.map(p => Ion(p.mz, p.intensity))
+        override val ions: Seq[Ion] = spectrumIons
+
+        override val rawIons: Option[Seq[Ion]] = Some(spectrumIons)
       })
       /**
         * associated spectrum propties if applicable

@@ -156,6 +156,8 @@ public class DataDependentPeakSpotting extends PeakSpotting {
             peakAreaBean.ms2LevelDataPointNumber = LCMSDataAccessUtility.getMS2DatapointNumber(
                 (int) peakList.get(detectedPeak.scanNumAtLeftPeakEdge)[0], (int) peakList.get(detectedPeak.scanNumAtRightPeakEdge)[0],
                 (float) peakList.get(detectedPeak.scanNumAtPeakTop)[2], properties.centroidMS1Tolerance, spectrumList, properties.ionMode);
+            peakAreaBean.ms2LevelDataPointRetentionTime = peakAreaBean.ms2LevelDataPointNumber < 0 ? -1 :
+                    spectrumList.get(peakAreaBean.ms2LevelDataPointNumber).retentionTimeInMinutes();
             peakAreaBeanList.add(peakAreaBean);
         }
 

@@ -51,6 +51,20 @@ class SampleSerializer() extends Logging {
     writer.clear()
 
     sample.spectra.foreach {
+      case msspec: MSSpectra  =>
+        gzos.write(writer.append(s"${sample.fileName},")
+          .append(s"${msspec.scanNumber},")
+          .append(s"${msspec.ionMode},")
+          .append(s"${msspec.massOfDetectedFeature.getOrElse(Ion(0,0)).mass},")
+          .append(s"${msspec.massOfDetectedFeature.getOrElse(Ion(0,0)).intensity},")
+          .append(s"${msspec.purity},")
+          .append(s"${msspec.retentionTimeInSeconds},")
+          .append(s"${msspec.uniqueMass},")
+          .append(s"no metadata,")
+          .append(s"${msspec.associatedScan.get.ions.map(ion => s"${ion.mass}:${ion.intensity}").mkString(" ")}")
+          .append(s"\n").toString.getBytes)
+        writer.clear()
+
       case spec: Feature =>
         gzos.write(writer.append(s"${sample.fileName},")
             .append(s"${spec.scanNumber},")
@@ -62,19 +76,6 @@ class SampleSerializer() extends Logging {
             .append(s"${spec.uniqueMass},")
             .append(s"${spec.metadata.map(x => s"${x._1}=${x._2}").mkString(";")},")
             .append(s"${spec.associatedScan.get.ions.map(ion => s"${ion.mass}:${ion.intensity}").mkString(" ")}")
-            .append(s"\n").toString.getBytes)
-        writer.clear()
-      case msspec: MSSpectra  =>
-        gzos.write(writer.append(s"${sample.fileName},")
-            .append(s"${msspec.scanNumber},")
-            .append(s"${msspec.ionMode},")
-            .append(s"${msspec.massOfDetectedFeature.getOrElse(Ion(0,0)).mass},")
-            .append(s"${msspec.massOfDetectedFeature.getOrElse(Ion(0,0)).intensity},")
-            .append(s"${msspec.purity},")
-            .append(s"${msspec.retentionTimeInSeconds},")
-            .append(s"${msspec.uniqueMass},")
-            .append(s"no metadata,")
-            .append(s"${msspec.associatedScan.get.ions.map(ion => s"${ion.mass}:${ion.intensity}").mkString(" ")}")
             .append(s"\n").toString.getBytes)
         writer.clear()
     }
