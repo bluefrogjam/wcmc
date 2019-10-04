@@ -8,40 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
   * This defines a basic task to be submitted to the carrot system
   * for processing and calculations
   */
-case class Task(
-
-                   /**
-                   * the name of the task
-                   */
-                   name: String,
-
-                   /**
-                   * the email of the submitter
-                   */
-                   email: String,
-
-                   /**
-                   * the exact acquisition method we would like to use
-                   * with this task
-                   */
-                   acquisitionMethod: AcquisitionMethod,
-
-                   /**
-                   * defines a list of samples to process
-                   */
-                   samples: Seq[SampleToProcess],
-
-                   /**
-                   * are we in lcms, gcms, etc mode
-                   */
-                   mode: String = null,
-
-                   /**
-                   * which enviornemt we are running
-                   */
-                   env: String = null
-
-               )
+case class Task(name: String, email: Option[String], acquisitionMethod: AcquisitionMethod, samples: Seq[SampleToProcess], mode: String = null, env: String = null)
 
 
 /**

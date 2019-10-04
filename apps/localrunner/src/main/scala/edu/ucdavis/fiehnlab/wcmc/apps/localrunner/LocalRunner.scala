@@ -13,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot._
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Profile}
+import org.springframework.stereotype.Component
 
 import scala.io.Source
 
@@ -24,13 +25,9 @@ object LocalRunner extends App {
   val context = app.run(args: _*)
 }
 
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class LocalRunner extends CommandLineRunner with Logging {
-  @Autowired
-  val workflow: Workflow[Double] = null
-
-  @Autowired
-  val taskRunner: TaskRunner = null
+@Component
+@Profile(Array("!test"))
+class CommandLineParser @Autowired()(runner: Runner) extends CommandLineRunner with Logging {
 
   override def run(args: String*): Unit = {
     if (args.size != 2) {
@@ -49,25 +46,35 @@ class LocalRunner extends CommandLineRunner with Logging {
           s"${line}.mzml"
       ).toSeq
 
-      process(fileList, AcquisitionMethod.deserialize(method))
+      runner.process(fileList, AcquisitionMethod.deserialize(method))
     } catch {
       case ex: FileNotFoundException =>
         logger.error(s"File ${args(0)} not found.")
         System.exit(-1)
-      case ex: Throwable => logger.error(s"Somethig bad happened: ${ex.getMessage}")
+      case ex: Throwable => logger.error(s"Something bad happened: ${ex.getMessage}")
     }
 
     System.exit(0)
   }
+}
 
-  def process(fileList: Seq[String], method: AcquisitionMethod): Unit = {
+@Component
+class Runner() extends Logging {
+
+  @Autowired
+  val workflow: Workflow[Double] = null
+
+  @Autowired
+  val taskRunner: TaskRunner = null
+
+  def process(fileList: Seq[String], method: AcquisitionMethod,email:Option[String] = None, organ:String = "", species:String = ""): Unit = {
     fileList.foreach { sample =>
       logger.info(s"Processing sample: ${sample}")
       val task = Task(s"${sample} processing",
-        "dpedrosa@ucdavis.edu",
+        email,
         method,
         Seq(SampleToProcess(sample, "", "", sample,
-          Matrix(System.currentTimeMillis().toString, "human", "plasma", Seq.empty)
+          Matrix(System.currentTimeMillis().toString, species, organ, Seq.empty)
         )),
         mode = "lcms",
         env = "prod"
@@ -83,6 +90,11 @@ class LocalRunner extends CommandLineRunner with Logging {
       }
     }
   }
+
+}
+
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+class LocalRunner {
 }
 
 @Configuration

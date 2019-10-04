@@ -138,10 +138,15 @@ class TaskRunner extends Logging {
     storage.asScala.par.foreach { x: ResultStorage =>
       try {
         x.store(experiment, task)
-        emailService.send(emailSender, task.email :: List(),
-          s"Dear user, your result with ${task.name} is now ready for download!",
-          "carrot: your result is finished",
-          None)
+
+        task.email match {
+          case Some(email) => emailService.send(emailSender, task.email.get :: List(),
+            s"Dear user, your result with ${task.name} is now ready for download!",
+            "carrot: your result is finished",
+            None)
+          case None =>
+        }
+
       } catch {
         case e: MailException =>
           logger.warn(s"Can't send email... ${e.getMessage}")
@@ -152,10 +157,17 @@ class TaskRunner extends Logging {
           val content = s"Dear user, the task '${task.name}' did not execute properly!\n\n${os.toString("UTF8")}"
           logger.warn(s"execption observed during storing of the workflow result: ${e.getMessage}\n${content}", e)
           try {
-            emailService.send(emailSender, task.email :: List(),
-              content,
-              s"carrot: processing of ${task.name} had problems.",
-              None)
+            task.email match {
+
+              case Some(email) =>
+                emailService.send(emailSender, email :: List(),
+                  content,
+                  s"carrot: processing of ${task.name} had problems.",
+                  None)
+              case None =>
+
+            }
+
           } catch {
             case ex: MailException =>
               logger.warn(s"EmailService can't send email. ${e.getMessage}\n\nPrevious error: $content")

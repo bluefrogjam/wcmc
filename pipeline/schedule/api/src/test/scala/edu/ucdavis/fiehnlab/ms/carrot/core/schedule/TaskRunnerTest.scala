@@ -26,22 +26,12 @@ class TaskRunnerTest extends WordSpec {
     "run and throw exception since no samples are provided" in {
 
       intercept[AssertionError] {
-        taskRunner.run(Task("test", "dpedrosa@ucdavis.edu",
-          acquisitionMethod = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode()))),
-          samples = Seq.empty,
-          mode = "lcms",
-          env = "test"
-        ))
+        taskRunner.run(Task("test", None, acquisitionMethod = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode()))), samples = Seq.empty, mode = "lcms", env = "test"))
       }
     }
 
     "run successfully" in {
-      taskRunner.run(Task("test", "dpedrosa@ucdavis.edu",
-        acquisitionMethod = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode()))),
-        samples = SampleToProcess("B5_P20Lipids_Pos_NIST02.mzml") +: Seq.empty,
-        mode = "lcms",
-        env = "test"
-      ))
+      taskRunner.run(Task("test", None, acquisitionMethod = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode()))), samples = SampleToProcess("B5_P20Lipids_Pos_NIST02.mzml") +: Seq.empty, mode = "lcms", env = "test"))
     }
   }
 }

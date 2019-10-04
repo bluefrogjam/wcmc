@@ -2,18 +2,21 @@ debug: false
 
 spring:
   profiles:
-    active: prod
     include:
       - carrot.lcms
       - file.source.eclipse
-#      - carrot.resource.loader.bucket
-#      - carrot.resource.store.bucket
-#      - carrot.targets.mona
-      - carrot.targets.dynamic
       - carrot.runner.required
       - carrot.processing.replacement.rtmz
       - carrot.processing.peakdetection
+      - carrot.processing.dump
       - carrot.report.quantify.height
+      - carrot.targets.yaml.annotation
+      - carrot.targets.yaml.correction
+      - carrot.resource.store.local
+      - carrot.output.storage.local
+      - carrot.nostasis
+      - carrot.output.writer.txt
+
   autoconfigure:
     exclude:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

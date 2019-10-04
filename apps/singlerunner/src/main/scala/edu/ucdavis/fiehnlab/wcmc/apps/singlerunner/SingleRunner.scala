@@ -77,15 +77,9 @@ class SingleRunner extends CommandLineRunner with Logging {
   def process(fileList: Seq[String], method: AcquisitionMethod): Unit = {
     fileList.foreach { sample =>
       logger.info(s"Processing sample: ${sample}")
-      val task = Task(s"${sample} processing",
-        "dpedrosa@ucdavis.edu",
-        method,
-        Seq(SampleToProcess(sample, "", "", sample,
-          Matrix(System.currentTimeMillis().toString, "human", "plasma", Seq.empty)
-        )),
-        mode = "lcms",
-        env = "prod"
-      )
+      val task = Task(s"${sample} processing", "dpedrosa@ucdavis.edu", method, Seq(SampleToProcess(sample, "", "", sample,
+                Matrix(System.currentTimeMillis().toString, "human", "plasma", Seq.empty)
+              )), mode = "lcms", env = "prod")
       try {
         val start = System.currentTimeMillis()
         taskRunner.run(task)
