@@ -68,5 +68,7 @@ trait TaskScheduler {
       stasisCli.addTracking(TrackingData(name, "scheduled", sample.fileName))
     })
   }
+
+  def awaitShutdown() = {}
 }
 

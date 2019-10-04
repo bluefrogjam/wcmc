@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, Librar
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,13 +61,13 @@ class CommandLineParser @Autowired()(runner: Runner) extends CommandLineRunner w
 @Component
 class Runner() extends Logging {
 
+  /**
+    * reference to the task scheduler, which should always be a threaded one!
+    */
   @Autowired
-  val workflow: Workflow[Double] = null
+  val taskRunner: TaskScheduler = null
 
-  @Autowired
-  val taskRunner: TaskRunner = null
-
-  def process(fileList: Seq[String], method: AcquisitionMethod,email:Option[String] = None, organ:String = "", species:String = ""): Unit = {
+  def process(fileList: Seq[String], method: AcquisitionMethod, email: Option[String] = None, organ: String = "", species: String = ""): Unit = {
     fileList.foreach { sample =>
       logger.info(s"Processing sample: ${sample}")
       val task = Task(s"${sample} processing",
@@ -81,7 +81,7 @@ class Runner() extends Logging {
       )
       try {
         val start = System.currentTimeMillis()
-        taskRunner.run(task)
+        taskRunner.submit(task)
         logger.info(s"\n\tSuccessfully finished processing ${sample} in ${(System.currentTimeMillis() - start) / 1000} s\n")
 
       } catch {
@@ -89,6 +89,8 @@ class Runner() extends Logging {
           logger.error(s"\tFailed processing ${sample}.", ex)
       }
     }
+
+    taskRunner.awaitShutdown()
   }
 
 }

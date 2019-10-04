@@ -16,7 +16,7 @@ spring:
       - carrot.output.storage.local
       - carrot.nostasis
       - carrot.output.writer.txt
-
+      - carrot.scheduler.local
   autoconfigure:
     exclude:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
