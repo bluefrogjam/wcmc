@@ -22,17 +22,6 @@ spring:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
     - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 
-stasis:
-  baseurl: http://api.metabolomics.us/stasis
-
-mona:
-  rest:
-    server:
-      host: ipa.fiehnlab.ucdavis.edu
-      user: admin
-      password: admin
-      port: 9090
-
 email:
   host: smtp.gmail.com
   port: 25
@@ -42,14 +31,3 @@ email:
 ---
 spring:
   profiles: test
-
-mona:
-  rest:
-    server:
-      host: localhost
-      user: admin
-      password: admin
-      port: 9090
-
-stasis:
-  baseurl: http://test-api.metabolomics.us/stasis

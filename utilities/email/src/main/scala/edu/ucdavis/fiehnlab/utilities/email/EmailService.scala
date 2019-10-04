@@ -4,14 +4,19 @@ import java.io.File
 import java.util.Properties
 
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 import org.springframework.mail.javamail.{JavaMailSender, JavaMailSenderImpl, MimeMessageHelper}
+import org.springframework.stereotype.Component
 
 @Configuration
+@ComponentScan
 class EmailServiceAutoConfiguration {
 
-  @Bean
-  def emailService: EmailService = new EmailService
+}
+
+@Profile(Array("!no-email"))
+@Configuration
+class EmailEnabledConfiguration {
 
   @Bean
   def emailSender(@Value("${email.host}") emailHost: String, @Value("${email.port}") emailPort: Integer, @Value("${email.username}") username: String, @Value("${email.pass}") password: String): JavaMailSenderImpl = {
@@ -31,21 +36,29 @@ class EmailServiceAutoConfiguration {
   }
 }
 
+@Component
+@Profile(Array("no-email"))
+class NoEmailService extends EmailServiceable {
+  override def send(from: String, recipients: Seq[String], content: String, subject: String, attachment: Option[File]): Unit = ???
+}
+
 /**
   * allows easy and convinient access to sending emails to remote users
   */
-class EmailService {
+@Component
+@Profile(Array("!no-email"))
+class EmailService extends EmailServiceable {
 
   @Autowired
   private val sender: JavaMailSender = null
 
-  def send(from: String, recipients: Seq[String], content: String, subject: String, attachment: Option[File]) = {
+  override def send(from: String, recipients: Seq[String], content: String, subject: String, attachment: Option[File]) = {
 
     recipients.foreach { x =>
 
       val message = sender.createMimeMessage()
 
-      val helper = new MimeMessageHelper(message,true)
+      val helper = new MimeMessageHelper(message, true)
       helper.setFrom(from)
       helper.setText(content)
       helper.setSubject(subject)
