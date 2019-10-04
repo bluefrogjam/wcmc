@@ -20,7 +20,6 @@
         <module>minix</module>
         <module>metadata</module>
         <module>email</module>
-        <module>translate</module>
     </modules>
 
 
