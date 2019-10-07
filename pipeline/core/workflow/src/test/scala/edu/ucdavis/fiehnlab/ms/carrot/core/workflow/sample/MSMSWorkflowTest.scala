@@ -69,8 +69,6 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       val expClass = ExperimentClass(Seq(sample), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
-      monalib.deleteLibrary(method)
-
       val result = quantification.process(
         annotation.process(
           correction.process(
@@ -100,6 +98,7 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
 
       after should be > before
 
+      monalib.deleteLibrary(method)
     }
 
     "return some positive mode MSMS spectra" in {
@@ -108,8 +107,6 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       val expClass = ExperimentClass(Seq(sample), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
-      monalib.deleteLibrary(method)
-
       val result = quantification.process(
         annotation.process(
           correction.process(
@@ -138,6 +135,8 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       val after = monalib.load(method).size
 
       after should be > before
+
+      monalib.deleteLibrary(method)
     }
   }
 }

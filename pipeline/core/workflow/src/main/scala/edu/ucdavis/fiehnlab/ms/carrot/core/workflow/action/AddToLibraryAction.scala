@@ -98,6 +98,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
             override var isRetentionIndexStandard: Boolean = false
             override val spectrum: Option[SpectrumProperties] = target.associatedScan
             override val precursorScan: Option[SpectrumProperties] = target.precursorScan
+            override val ionMode: IonMode = target.ionMode.get
 
           }
 
