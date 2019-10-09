@@ -16,6 +16,4 @@ class SampleLoaderTestConfig {
   @Bean
   def resourceLoader: ResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
 
-  @Bean
-  def loader(delegatingResourceLoader: DelegatingResourceLoader): ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(delegatingResourceLoader)
 }

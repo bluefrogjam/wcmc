@@ -13,12 +13,16 @@ import io.github.msdk.MSDKException
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}
+import org.springframework.stereotype.Component
 
 /**
   * utilizes the new resource loader api
   * which allows us to load files remotely
   * or from other locations
   */
+@Component
+@Profile(Array("!carrot.loader.autoconvert"))
 class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) extends SampleLoader with Logging {
 
 
@@ -83,4 +87,10 @@ class ResourceLoaderSampleLoader @Autowired()(resourceLoader: ResourceLoader) ex
   override def sampleExists(name: String): Boolean = {
     resourceLoader.exists(name)
   }
+}
+
+@Configuration
+@ComponentScan
+class SampleLoaderConfiguration {
+
 }
