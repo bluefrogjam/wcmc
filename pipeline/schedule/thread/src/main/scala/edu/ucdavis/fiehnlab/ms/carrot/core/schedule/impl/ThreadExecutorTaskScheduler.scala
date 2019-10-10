@@ -31,7 +31,7 @@ class ThreadExecutorTaskScheduler extends TaskScheduler with Logging {
     */
   override protected def doSubmit(task: Task): String = {
 
-    taskExecutor.execute(new Runnable {
+    taskExecutor.submit(new Runnable {
       override def run(): Unit = {
         taskRunner.run(task)
       }

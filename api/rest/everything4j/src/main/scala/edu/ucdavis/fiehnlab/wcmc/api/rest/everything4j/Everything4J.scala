@@ -8,6 +8,7 @@ import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.RemoteLoader
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.context.annotation.Configuration
 import org.zeroturnaround.zip.ZipUtil
 
@@ -31,6 +32,7 @@ class Everything4J(host: String = "eclipse.fiehnlab.ucdavis.edu", port: Int = 80
     * @param name
     * @return
     */
+  @Cacheable(Array("everything4j"))
   override def load(name: String): Option[InputStream] = {
     val url = s"http://${host}:${port}?s=${URLEncoder.encode(name, "UTF8")}&j=1&path_column=1"
     logger.info(s"load is checking url: ${url}")

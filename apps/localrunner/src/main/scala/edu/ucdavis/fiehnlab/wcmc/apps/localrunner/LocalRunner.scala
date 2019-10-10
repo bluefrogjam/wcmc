@@ -68,6 +68,7 @@ class Runner() extends Logging {
   val taskRunner: TaskScheduler = null
 
   def process(fileList: Seq[String], method: AcquisitionMethod, email: Option[String] = None, organ: String = "", species: String = ""): Unit = {
+    val begin = System.currentTimeMillis()
     fileList.foreach { sample =>
       logger.info(s"Processing sample: ${sample}")
       val task = Task(s"${sample} processing",
@@ -90,7 +91,12 @@ class Runner() extends Logging {
       }
     }
 
+
     taskRunner.awaitShutdown()
+
+    val end = System.currentTimeMillis()
+
+    logger.warn(s"processing of data took ${(end - begin) / 1000 / 60} minutes")
   }
 
 }
