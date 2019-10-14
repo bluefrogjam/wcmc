@@ -93,7 +93,10 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
     * @return
     */
   override def load(acquistionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = {
-    monaSpectrumRestClient.list(query = if (query(acquistionMethod) != "") Option(query(acquistionMethod)) else None).map { x => generateTarget(x) }
+    monaSpectrumRestClient.list(query = if (query(acquistionMethod) != "") Option(query(acquistionMethod)) else None)
+        .map( x => {
+          generateTarget(x)
+        })
 
   }
 
@@ -243,7 +246,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
         hidden = false,
         name = "riStandard",
         score = null,
-        unit = "s",
+        unit = null,
         url = null,
         value = t.isRetentionIndexStandard
       ),
@@ -253,7 +256,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
         hidden = false,
         name = "requiredForCorrection",
         score = null,
-        unit = "s",
+        unit = null,
         url = null,
         value = t.requiredForCorrection
       ),
@@ -263,7 +266,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
         hidden = false,
         name = "confirmed",
         score = null,
-        unit = "s",
+        unit = null,
         url = null,
         value = t.confirmed
       )
@@ -274,7 +277,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
         hidden = false,
         name = "ionization mode",
         score = null,
-        unit = "s",
+        unit = null,
         url = null,
         value = if (t.ionMode.isInstanceOf[PositiveMode]) "positive" else "negative"
       )
@@ -434,8 +437,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
     * @param x
     * @return
     */
-  private def generateTarget(x: Spectrum): AnnotationTarget = {
-
+  private def generateTarget(x: Spectrum): AnnotationTarget with Idable[String] = {
     val compound = x.compound.head
     val name = compound.names.head.name
     val inchi = compound.inchiKey
@@ -628,7 +630,7 @@ class MonaLibraryAccessAutoConfiguration {
   * @param isRetentionIndexStandard
   */
 case class MonaLibraryTarget(
-                              id: String,
+                              override val id: String,
 
                               /**
                                 * associate msms spectrum

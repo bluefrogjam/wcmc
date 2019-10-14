@@ -110,8 +110,8 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     }
 
     "reset database using mona client" in {
+      println(s"deleting mona spectra using mona client")
       client.list().foreach { x =>
-        println(s"deleting: ${x.id}")
         client.delete(x.id)
       }
       client.regenerateStatistics
@@ -120,7 +120,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       }
       catch {
         case e: Exception =>
-//          logger.warn(e.getMessage, e)
+          logger.warn(e.getMessage, e)
       }
 
       eventually(timeout(10 seconds), interval(1 second)) {
@@ -173,13 +173,13 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       }
     }
 
-    "there should be 2 acquisition methods defined now" in {
+    "be 2 acquisition methods defined now" in {
       eventually(timeout(10 seconds), interval(1 second)) {
         library.libraries.size shouldBe 2
       }
     }
 
-    "able to update the name of a spectrum" in {
+    "be able to update the name of a spectrum" in {
 
       library.deleteAll
 
@@ -206,7 +206,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     }
 
 
-    "able to update the inchi key of a spectrum" in {
+    "be able to update the inchi key of a spectrum" in {
 
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
@@ -237,7 +237,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
     }
 
-    "able to update the confirmed status a spectrum to true" in {
+    "be able to update the confirmed status a spectrum to true" in {
 
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
@@ -266,7 +266,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
     }
 
-    "able to update the confirmed status a spectrum to false" in {
+    "be able to update the confirmed status a spectrum to false" in {
 
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
@@ -295,7 +295,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     }
 
 
-    "able to update the retention index status of a spectrum to false" in {
+    "be able to update the retention index status of a spectrum to false" in {
 
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
@@ -324,7 +324,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
     }
 
-    "able to update the retention index status of a spectrum to true" in {
+    "be able to update the retention index status of a spectrum to true" in {
 
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
@@ -352,7 +352,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       }
     }
 
-    "able to update the retention index requiered status of a spectrum to true" in {
+    "be able to update the retention index requiered status of a spectrum to true" in {
 
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)
@@ -381,7 +381,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
     }
 
-    "able to update the retention index required status of a spectrum to false" in {
+    "be able to update the retention index required status of a spectrum to false" in {
 
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod2)

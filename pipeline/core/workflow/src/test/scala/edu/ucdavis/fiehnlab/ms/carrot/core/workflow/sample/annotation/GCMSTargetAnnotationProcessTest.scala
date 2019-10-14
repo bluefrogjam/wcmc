@@ -16,7 +16,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase", "test"))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms", "carrot.gcms.correction", "carrot.gcms.library.binbase", "test", "carrot.report.quantify.height"))
 class GCMSTargetAnnotationProcessTest extends WordSpec with Matchers {
 
 
