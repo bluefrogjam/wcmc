@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
@@ -64,8 +65,16 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
   "The process" should {
 
     "return some negative mode MSMS spectra" in {
-      val sample: Sample = loader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode())))
+
+      try {
+        monalib.deleteLibrary(method)
+      } catch {
+        case ex: HttpClientErrorException =>
+          logger.warn(ex.getMessage)
+      }
+
+      val sample: Sample = loader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       val expClass = ExperimentClass(Seq(sample), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
@@ -97,13 +106,19 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       val after = monalib.load(method).size
 
       after should be > before
-
-      monalib.deleteLibrary(method)
     }
 
     "return some positive mode MSMS spectra" in {
-      val sample = loader.getSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode())))
+
+      try {
+        monalib.deleteLibrary(method)
+      } catch {
+        case ex: HttpClientErrorException =>
+          logger.warn(ex.getMessage)
+      }
+
+      val sample = loader.getSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
       val expClass = ExperimentClass(Seq(sample), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
@@ -135,8 +150,6 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       val after = monalib.load(method).size
 
       after should be > before
-
-      monalib.deleteLibrary(method)
     }
   }
 }

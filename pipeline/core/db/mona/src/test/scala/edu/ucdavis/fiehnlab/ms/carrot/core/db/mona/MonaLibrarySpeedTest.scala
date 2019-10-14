@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSMSSpectra, SpectrumProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.apache.logging.log4j.scala.Logging
@@ -51,51 +51,6 @@ class MonaLibrarySpeedTest extends WordSpec with Matchers with Logging with Even
 
   "MonaLibraryAccessTest" should {
 
-    //  val result = loader.getSample("Biorec002_posCSH_postFlenniken010.mzml")
-
-    //  val targets = result.spectra.collect {
-
-    //    case x: MSMSSpectra =>
-    //      new AnnotationTarget {
-    //        /**
-    //          * a name for this spectra
-    //          */
-    //        override var name: Option[String] = None
-    //        /**
-    //          * retention time in seconds of this target
-    //          */
-    //        override val retentionIndex: Double = x.retentionTimeInSeconds
-    //        /**
-    //          * the unique inchi key for this spectra
-    //          */
-    //        override var inchiKey: Option[String] = None
-    //        /**
-    //          * the mono isotopic mass of this spectra
-    //          */
-    //        override val precursorMass: Option[Double] = None
-    //        /**
-    //          * unique mass for a given target
-    //          */
-    //        override val uniqueMass: Option[Double] = None
-    //        /**
-    //          * is this a confirmed target
-    //          */
-    //        override var confirmed: Boolean = false
-    //        /**
-    //          * is this target required for a successful retention index correction
-    //          */
-    //        override var requiredForCorrection: Boolean = false
-    //        /**
-    //          * is this a retention index correction standard
-    //          */
-    //        override var isRetentionIndexStandard: Boolean = false
-    //        /**
-    //          * associated spectrum propties if applicable
-    //          */
-    //        override val spectrum: Option[SpectrumProperties] = x.associatedScan
-    //      }
-
-    //  }
     "be able to add an mzrt target" in {
       library.deleteAll
 
@@ -107,7 +62,7 @@ class MonaLibrarySpeedTest extends WordSpec with Matchers with Logging with Even
       }
 
       val begin = System.currentTimeMillis()
-      val count = 5000
+      val count = 2000
       for (i <- 1 to count) {
         library.add(mzRt, acquisitionMethod3, None)
 

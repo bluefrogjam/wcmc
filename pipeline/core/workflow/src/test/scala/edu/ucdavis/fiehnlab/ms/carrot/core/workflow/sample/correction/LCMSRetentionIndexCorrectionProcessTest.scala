@@ -26,6 +26,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.lcms",
   "file.source.eclipse",
   "carrot.processing.peakdetection",
+  "carrot.report.quantify.height",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction"))
 class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with Matchers with Logging {

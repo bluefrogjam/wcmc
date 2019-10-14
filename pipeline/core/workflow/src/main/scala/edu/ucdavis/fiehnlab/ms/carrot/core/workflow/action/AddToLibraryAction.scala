@@ -9,7 +9,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryTarget
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRangePPM, IncludeByRetentionIndexWindow, IncludeBySimilarity}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByMassRangePPM, IncludeByRetentionIndexWindow, IncludeBySimilarity}
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
@@ -60,7 +60,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
   def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
     sample match {
       case data: QuantifiedSample[Double] =>
-        logger.info(s"adding ${data.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])} unannotated msms from ${sample.name} to mona")
+        logger.debug(s"adding ${data.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])} unannotated msms from ${sample.name} to mona")
         data.noneAnnotated.collect {
           case spec: MSMSSpectra => spec
         }
@@ -127,7 +127,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
   def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, sample: Sample): Boolean = {
     val riFilter = new IncludeByRetentionIndexWindow(newTarget.retentionIndex, retentionIndexWindow)
 
-    val massFilter = new IncludeByMassRangePPM(newTarget, accurateMassWindow)
+    val massFilter = new IncludeByMassRange(newTarget, accurateMassWindow)
 
     val similarityFilter = new IncludeBySimilarity(newTarget, minimumSimilarity)
 
