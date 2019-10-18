@@ -3,10 +3,18 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.converter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, QuantifiedSpectra, QuantifiedTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
+import org.apache.logging.log4j.scala.Logging
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Component
 
-class SampleToMapConverter[T] extends SampleConverter[T, Map[String, Injection]] {
+@Component
+@Profile(Array("carrot.output.storage.converter.sample"))
+class SampleToMapConverter[T] extends SampleConverter[T, Map[String, Injection]] with Logging {
 
-  val resultConverter: CarrotToStasisConverter = new CarrotToStasisConverter()
+  @Autowired
+  val resultConverter: CarrotToStasisConverter = null
+//  val resultConverter: CarrotToStasisConverter = new CarrotToStasisConverter()
 
   /**
     * converts a sample to an different representation
@@ -15,7 +23,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, Map[String, Injection]]
     * @return
     */
   override def convert(sample: QuantifiedSample[T]): Map[String, Injection] = {
-
+    logger.info(s"converting sample ${sample.name} to Map[String, Injection]")
     val results: Seq[Result] = sample.quantifiedTargets.collect {
       case replacedtgt: ZeroreplacedTarget =>
         Result(resultConverter.asStasisTarget(replacedtgt),

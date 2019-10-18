@@ -33,14 +33,16 @@ import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.report.quantify.height",
-  "carrot.processing.replacement.mzrt",
+@ActiveProfiles(Array("test",
   "carrot.lcms",
-  "carrot.processing.peakdetection",
   "file.source.eclipse",
+  "carrot.processing.peakdetection",
+  "carrot.report.quantify.height",
+  "carrot.processing.replacement.mzrt",
   "carrot.output.storage.aws",
-  "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction",
-  "teddy"))
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.yaml.correction"
+  ))
 class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfterEach with MockitoSugar with Logging {
   val libName = "teddy"
 
