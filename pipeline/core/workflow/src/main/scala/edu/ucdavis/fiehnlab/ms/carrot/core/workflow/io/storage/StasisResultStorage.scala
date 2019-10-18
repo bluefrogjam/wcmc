@@ -21,6 +21,7 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
   @Autowired
   val stasis_cli: StasisService = null
 
+  @Autowired
   val converter = new SampleToMapConverter[T]
 
   def save(sample: QuantifiedSample[T]): ResultData = {

@@ -40,6 +40,8 @@ import scala.collection.JavaConverters._
   "carrot.report.quantify.height",
   "carrot.processing.replacement.mzrt",
   "carrot.output.storage.aws",
+  "carrot.output.storage.converter.target",
+  "carrot.output.storage.converter.sample",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction"
   ))
