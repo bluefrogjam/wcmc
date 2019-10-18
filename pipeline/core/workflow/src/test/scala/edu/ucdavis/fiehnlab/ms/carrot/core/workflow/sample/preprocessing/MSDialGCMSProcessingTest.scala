@@ -17,7 +17,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   **/
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.gcms", "file.source.eclipse", "test"))
+@ActiveProfiles(Array("carrot.gcms", "file.source.eclipse", "test", "carrot.report.quantify.height"))
 class MSDialGCMSProcessingTest extends WordSpec with Matchers with Logging {
 
   @Autowired

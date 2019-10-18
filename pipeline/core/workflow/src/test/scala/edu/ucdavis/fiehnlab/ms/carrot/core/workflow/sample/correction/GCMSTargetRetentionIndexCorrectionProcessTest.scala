@@ -17,13 +17,13 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "file.source.eclipse", "carrot.gcms", "carrot.gcms.library.binbase"))
+@ActiveProfiles(Array("test", "file.source.eclipse", "carrot.gcms", "carrot.gcms.library.binbase", "carrot.report.quantify.height"))
 class GCMSTargetRetentionIndexCorrectionProcessWithBinBaseTest extends GCMSTargetRetentionIndexCorrectionProcessTest
 
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("test", "file.source.eclipse", "carrot.gcms", "carrot.processing.peakdetection"))
+@ActiveProfiles(Array("test", "file.source.eclipse", "carrot.gcms", "carrot.processing.peakdetection", "carrot.report.quantify.height"))
 class GCMSTargetRetentionIndexCorrectionProcessWithDeconvoulutionTest extends GCMSTargetRetentionIndexCorrectionProcessTest with Matchers {
 
   @Autowired
@@ -41,7 +41,7 @@ class GCMSTargetRetentionIndexCorrectionProcessWithDeconvoulutionTest extends GC
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms" , "test"))
+@ActiveProfiles(Array("file.source.eclipse", "carrot.gcms" , "test", "carrot.report.quantify.height"))
 class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Matchers {
 
   @Autowired
