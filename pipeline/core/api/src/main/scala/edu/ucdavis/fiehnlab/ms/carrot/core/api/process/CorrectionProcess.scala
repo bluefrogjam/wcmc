@@ -30,7 +30,7 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
   override def process(input: Sample, target: Iterable[Target], method: AcquisitionMethod, rawSample: Option[Sample]): CorrectedSample = {
 
     val retentionIndexMarkers = target.filter(_.isRetentionIndexStandard)
-    var requiredTargets = retentionIndexMarkers.filter(_.requiredForCorrection)
+    val requiredTargets = retentionIndexMarkers.filter(_.requiredForCorrection)
 
     if (retentionIndexMarkers.isEmpty) {
       throw new ProcessException(s"Method ${AcquisitionMethod.serialize(method)} doesn't have retention index targets defined! please add some.")
@@ -38,25 +38,23 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
 
     val optimizedMatches = findCorrectionTargets(input, retentionIndexMarkers, method)
 
-
-    //verify that we have all our tartes
-
+    //verify that we have all our targets
     val missingButRequired = requiredTargets.collect {
-
-      case target:Target if !optimizedMatches.exists(_.target == target) =>
+      case target: Target if !optimizedMatches.exists(_.target == target) =>
         target
     }
 
-    if(missingButRequired.nonEmpty){
+    if(missingButRequired.nonEmpty) {
       logger.warn("Missing annotations for:")
 
       missingButRequired.foreach{ x =>
         logger.warn(s"\t${x}")
       }
+
       throw new RequiredStandardNotFoundException("we were missing certain targets during the correction and so it failed",missingButRequired)
     }
 
-    //do the actual correction and return the sample for further processingse
+    //do the actual correction and return the sample for further processing
     doCorrection(optimizedMatches, input, regression, input)
   }
 
@@ -71,7 +69,6 @@ abstract class CorrectionProcess @Autowired()(val libraryAccess: MergeLibraryAcc
     if (optimizedMatches.map(_.target).toSet.size != optimizedMatches.size) {
       throw new StandardAnnotatedTwice(s"one of the standards, was annotated twice in sample ${input.fileName}!")
     }
-
   }
 
   /**

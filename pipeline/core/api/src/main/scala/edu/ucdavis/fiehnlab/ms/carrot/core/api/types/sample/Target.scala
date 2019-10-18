@@ -6,6 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
   * Defines a target for a targeted based approach
   */
 trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSupport with Serializable with Indexed {
+
   val idx: Int
 
   /**
