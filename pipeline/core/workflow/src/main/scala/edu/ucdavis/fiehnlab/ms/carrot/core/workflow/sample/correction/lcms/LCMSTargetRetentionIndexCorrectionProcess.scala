@@ -67,12 +67,13 @@ class LCMSTargetRetentionIndexCorrectionProcess @Autowired()(libraryAccess: Merg
     //    TargetAnnotation(standard, spectra.minBy(x => Math.abs(x.retentionTimeInSeconds - standard.retentionIndex)))
     //if we we prefer mass difference
     //     if we prefer a combination of the two
+    //    TargetAnnotation(standard, spectra.maxBy(x =>
+    //      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracySetting, rtAccuracySetting, intensityPenaltyThreshold))
+    //    )
 
-    val best = TargetAnnotation(standard, spectra.maxBy(x =>
-      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracySetting, rtAccuracySetting, intensityPenaltyThreshold))
+    TargetAnnotation(standard, spectra.maxBy(x =>
+      SimilarityMethods.featureTargetSimilarity(x, standard, massAccuracySetting, rtAccuracySetting))
     )
-
-    best
   }
 
   /**
