@@ -8,13 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
+import scala.collection.JavaConverters._
+
 @Component
 @Profile(Array("carrot.output.storage.converter.sample"))
-class SampleToMapConverter[T] extends SampleConverter[T, Map[String, Injection]] with Logging {
+class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Logging {
 
   @Autowired
   val resultConverter: CarrotToStasisConverter = null
-//  val resultConverter: CarrotToStasisConverter = new CarrotToStasisConverter()
 
   /**
     * converts a sample to an different representation
@@ -22,8 +23,8 @@ class SampleToMapConverter[T] extends SampleConverter[T, Map[String, Injection]]
     * @param sample
     * @return
     */
-  override def convert(sample: QuantifiedSample[T]): Map[String, Injection] = {
-    logger.info(s"converting sample ${sample.name} to Map[String, Injection]")
+  override def convert(sample: QuantifiedSample[T]): ResultData = {
+    logger.info(s"converting sample ${sample.name} to ResultData")
     val results: Seq[Result] = sample.quantifiedTargets.collect {
       case replacedtgt: ZeroreplacedTarget =>
         Result(resultConverter.asStasisTarget(replacedtgt),
@@ -52,13 +53,15 @@ class SampleToMapConverter[T] extends SampleConverter[T, Map[String, Injection]]
         )
     }
 
-    Map(sample.name -> Injection(System.currentTimeMillis().toString,
-      Correction(3,
-        sample.correctedWith.name,
-        sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
-            .map(pair => Curve(pair._1, pair._2))
-      ),
-      results)
+    ResultData(sample.name, Map(sample.name ->
+        Injection(System.currentTimeMillis().toString,
+          Correction(3,
+            sample.correctedWith.name,
+            sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
+                .map(pair => Curve(pair._1, pair._2))
+          ),
+          results)
+    ).asJava
     )
   }
 

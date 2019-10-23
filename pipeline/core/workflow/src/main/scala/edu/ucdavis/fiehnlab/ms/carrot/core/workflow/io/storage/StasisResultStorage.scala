@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
-import scala.collection.JavaConverters._
-
 @Component
 @Profile(Array("carrot.output.storage.aws"))
 class StasisResultStorage[T] extends ResultStorage with Logging {
@@ -26,7 +24,7 @@ class StasisResultStorage[T] extends ResultStorage with Logging {
 
   def save(sample: QuantifiedSample[T]): ResultData = {
 
-    val data: ResultData = ResultData(sample.name, converter.convert(sample).asJava)
+    val data: ResultData = converter.convert(sample)
 
     val response = stasis_cli.addResult(data)
 

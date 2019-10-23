@@ -4,8 +4,6 @@ import java.io.{File, FileOutputStream}
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.process.CorrectionProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.PositiveMode
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
@@ -13,8 +11,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.converter.{CarrotToStasisCon
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.Injection
-import javax.annotation.PostConstruct
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -80,15 +76,6 @@ class QuantifiedSampleJsonWriterTest extends WordSpec with Matchers with Logging
           method, Some(sample)),
         method, Some(sample)),
       method, Some(sample))
-
-    val experiment = Experiment(
-      Seq(ExperimentClass(
-        Seq(quantified),
-        None
-      )),
-      Some("test"),
-      method
-    )
 
     "save the result data" in {
 

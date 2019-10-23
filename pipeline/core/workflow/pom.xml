@@ -161,16 +161,6 @@
         <dependency>
             <groupId>com.lambdaworks</groupId>
             <artifactId>jacks_2.11</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-library</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scalap</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
     </dependencies>
