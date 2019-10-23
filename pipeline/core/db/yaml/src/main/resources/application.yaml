@@ -1,0 +1,31 @@
+logging:
+  level:
+    root: info
+
+carrot:
+  targets:
+    yaml:
+      properties:
+        resource: "/libraries.yml"
+
+wcmc:
+  workflow:
+    resource:
+      store:
+        bucket:
+          name: "carrot-libraries"
+
+---
+spring:
+  profiles: "test"
+
+logging:
+  level:
+    root: info
+    edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader: debug
+
+carrot:
+  targets:
+    yaml:
+      properties:
+        resource: "libraries.yaml"
