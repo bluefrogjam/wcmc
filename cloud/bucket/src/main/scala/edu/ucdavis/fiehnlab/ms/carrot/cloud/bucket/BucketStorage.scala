@@ -78,7 +78,10 @@ class BucketLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfi
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = Option(client.getObject(properties.name, name).getObjectContent)
+  override def load(name: String): Option[InputStream] = {
+    logger.info(s"\tLoading targets from (${properties.name}, $name)")
+    Option(client.getObject(properties.name, name).getObjectContent)
+  }
 
   /**
     * does the given resource exists

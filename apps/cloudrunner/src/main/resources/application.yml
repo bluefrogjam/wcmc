@@ -69,6 +69,12 @@ wcmc:
         mona:
           user: admin
           password: admin
+  pipeline:
+    workflow:
+      config:
+        correction:
+          peak:
+            intensity: 10000
 
 carrot:
   sample: '${CARROT_SAMPLE}'
@@ -81,11 +87,3 @@ email:
   port: 25
   username: binbase@gmail.com
   pass: fiehnlab-2018
-
-wcmc:
-  pipeline:
-    workflow:
-      config:
-        correction:
-          peak:
-            intensity: 10000

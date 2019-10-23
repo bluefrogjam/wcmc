@@ -2,14 +2,14 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.yaml
 
 import java.util
 
+import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.ReadonlyLibrary
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties}
-import org.springframework.context.annotation.{ComponentScan, Configuration, Profile}
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import org.yaml.snakeyaml.Yaml
 
@@ -17,9 +17,11 @@ import scala.collection.JavaConverters._
 
 @Component
 @Profile(Array("carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
-class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationProperties) extends ReadonlyLibrary[Target] with Logging {
+class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationProperties, loader: ResourceLoader) extends ReadonlyLibrary[Target] with Logging {
 
-  private val data = new Yaml().loadAll(getClass.getResourceAsStream(properties.resource)).asScala.collect {
+  logger.info(s"Using ${loader.getClass.getSimpleName} to load targets from ${properties.resource}")
+  private val data = new Yaml().loadAll(loader.load(properties.resource).get).asScala.collect {
+    //  private val data = new Yaml().loadAll(getClass.getResourceAsStream(properties.resource)).asScala.collect {
     case config: util.Map[String, java.util.List[Any]] =>
       config.asScala.collect {
         case (key: String, value: java.util.List[Any]) if key == "config" =>
@@ -225,23 +227,4 @@ class YAMLAnnotationLibraryAccess @Autowired()(parent: YAMLLibraryAccess) extend
     * @return
     */
   override def libraries: Seq[AcquisitionMethod] = parent.libraries
-}
-
-@EnableConfigurationProperties
-@Configuration
-@ComponentScan
-@Profile(Array("carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
-class YAMLLibraryAutoConfiguration extends Logging {
-}
-
-@Component
-@ConfigurationProperties
-@Profile(Array("carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
-class YAMLLibraryConfigurationProperties {
-
-  /**
-    * which resource you would like to load
-    */
-  val resource: String = "/libraries.yml"
-
 }
