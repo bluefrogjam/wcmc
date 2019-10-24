@@ -16,7 +16,6 @@
         <module>leco</module>
         <module>msdk</module>
         <module>sampleloader</module>
-        <module>agilent</module>
     </modules>
 
 </project>

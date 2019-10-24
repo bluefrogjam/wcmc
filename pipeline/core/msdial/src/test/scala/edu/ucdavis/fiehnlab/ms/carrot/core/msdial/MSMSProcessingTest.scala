@@ -30,12 +30,18 @@ class MSMSProcessingTest extends WordSpec with Logging with Matchers {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "MSDialProcessing" should {
-    val sample = sampleLoader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
+
+    "ensure that the sample exist" in {
+      assert(sampleLoader.sampleExists("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml"))
+    }
+
     "have defined sample" in {
+      val sample = sampleLoader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       sample shouldBe defined
     }
 
     "find MSMS spectra" in {
+      val sample = sampleLoader.loadSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       properties.ionMode = NegativeMode()
 
       val deconvoluted = msdProcessing.process(sample.get, properties)
