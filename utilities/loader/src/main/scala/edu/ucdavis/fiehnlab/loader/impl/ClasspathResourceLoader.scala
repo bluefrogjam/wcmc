@@ -23,14 +23,25 @@ class ClasspathResourceLoader extends LocalLoader {
   override def load(name: String): Option[InputStream] = {
     val fixed = cleanName(name)
     val resource = getClass.getResource(s"/${fixed}")
+
+    logger.info(s"\tLoading resource: ${resource}")
+
     if (resource != null) {
-      val file = new File(resource.getFile)
-      if(resource.getFile.endsWith(".d")){
-        val zipfile = if(fixed.contains("/")) File.createTempFile("tmp",s"${fixed.substring(fixed.lastIndexOf("/")+1)}.zip") else File.createTempFile("tmp",s"${fixed}.zip")
+      // this if can probably go away since we don't use .d anymore
+      if (resource.getFile.endsWith(".d")) {
+        val file = new File(resource.getFile)
+
+        val zipfile = if (fixed.contains("/")) {
+          File.createTempFile("tmp", s"${fixed.substring(fixed.lastIndexOf("/") + 1)}.zip")
+        } else {
+          File.createTempFile("tmp", s"${fixed}.zip")
+        }
+
         ZipUtil.pack(file, zipfile)
+
         Option(new ZipInputStream(new FileInputStream(zipfile)))
       } else {
-        Option(getClass.getResourceAsStream(s"/${fixed}"))
+        Option(resource.openStream())
       }
     } else {
       None

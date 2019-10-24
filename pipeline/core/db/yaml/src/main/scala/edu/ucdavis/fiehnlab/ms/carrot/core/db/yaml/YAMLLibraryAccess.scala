@@ -20,8 +20,8 @@ import scala.collection.JavaConverters._
 class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationProperties, loader: ResourceLoader) extends ReadonlyLibrary[Target] with Logging {
 
   logger.info(s"Using ${loader.getClass.getSimpleName} to load targets from ${properties.resource}")
+
   private val data = new Yaml().loadAll(loader.load(properties.resource).get).asScala.collect {
-    //  private val data = new Yaml().loadAll(getClass.getResourceAsStream(properties.resource)).asScala.collect {
     case config: util.Map[String, java.util.List[Any]] =>
       config.asScala.collect {
         case (key: String, value: java.util.List[Any]) if key == "config" =>

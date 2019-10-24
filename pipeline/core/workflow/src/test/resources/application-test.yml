@@ -8,6 +8,10 @@ carrot:
     storage:
       local:
         folder: "./target/results"
+  targets:
+    yaml:
+      properties:
+        resource: "libraries.yml"
 
 mona:
   rest:
@@ -27,9 +31,10 @@ spring:
   cache:
     type: redis
   redis:
-    host: 127.0.0.1
+    host: localhost
     port: 6379
 
 stasis:
   baseurl: test-api.metabolomics.us
   key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
+

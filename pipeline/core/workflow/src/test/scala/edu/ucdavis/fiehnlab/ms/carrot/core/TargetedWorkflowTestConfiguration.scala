@@ -2,12 +2,12 @@ package edu.ucdavis.fiehnlab.ms.carrot.core
 
 import java.io.File
 
-import org.apache.logging.log4j.scala.Logging
-import edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
+import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -30,8 +30,7 @@ class TargetedWorkflowTestConfiguration extends Logging {
     * @return
     */
   @Bean
-  def resourceLoaderSrc: RecursiveDirectoryResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
-
+  def resourceLoaderSrc: ResourceLoader = new RecursiveDirectoryResourceLoader(new File("src"))
 
   @Bean
   def client:FServ4jClient = new FServ4jClient(

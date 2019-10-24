@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.yaml
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{LibraryAccess, MergeLibraryAccess}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.scalatest.{Matchers, WordSpec}
@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest(classes = Array(classOf[YAMLLibraryAccessTestConfiguration]))
-@ActiveProfiles(Array("test", "local",
+@ActiveProfiles(Array("test",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation"))
 class YAMLLibraryAccessTest extends WordSpec with Matchers {
@@ -33,11 +33,21 @@ class YAMLLibraryAccessTest extends WordSpec with Matchers {
     "must have libraries" in {
       library.libraries should not be empty
     }
+
+    "be able to load HILIC QExactive library" in {
+      library.libraries.filter(_.chromatographicMethod.name == "hilic_qehf") should have size 2
+      library.libraries.filter(_.chromatographicMethod.name == "hilic_qehf").foreach(l => println(l.chromatographicMethod))
+    }
+
+    "be able to load HILIC QTof library" in {
+      library.libraries.filter(_.chromatographicMethod.name == "hilic_qtof") should have size 2
+      library.libraries.filter(_.chromatographicMethod.name == "hilic_qtof").foreach(l => println(l.chromatographicMethod))
+    }
   }
 }
 
 @SpringBootTest(classes = Array(classOf[YAMLLibraryAccessTestConfiguration]))
-@ActiveProfiles(Array("test", "local",
+@ActiveProfiles(Array("test",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation"))
 class YAMLLibraryAccessAnnotationTest extends WordSpec with Matchers {
@@ -59,7 +69,7 @@ class YAMLLibraryAccessAnnotationTest extends WordSpec with Matchers {
 }
 
 @SpringBootTest(classes = Array(classOf[YAMLLibraryAccessTestConfiguration]))
-@ActiveProfiles(Array("test", "local",
+@ActiveProfiles(Array("test",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation"))
 class YAMLLibraryAccessCorrectionTest extends WordSpec with Matchers {
@@ -76,31 +86,6 @@ class YAMLLibraryAccessCorrectionTest extends WordSpec with Matchers {
       val data = libraryAccess.load(AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Some(PositiveMode()))))
 
       data should have size 25
-    }
-  }
-}
-
-
-@SpringBootTest(classes = Array(classOf[YAMLLibraryAccessTestConfiguration]))
-@ActiveProfiles(Array("test", "local",
-  "carrot.targets.yaml.correction",
-  "carrot.targets.yaml.annotation"))
-class YAMLLibraryAccessHILICTest extends WordSpec with Matchers {
-
-  @Autowired
-  val libraryAccess: MergeLibraryAccess = null
-
-  new TestContextManager(this.getClass).prepareTestInstance(this)
-
-  "YAMLLibraryAccess with mergedLibraryAccess" should {
-    "be able to load HILIC QExactive library" in {
-      libraryAccess.libraries.filter(_.chromatographicMethod.name == "hilic_qehf") should have size 2
-      libraryAccess.libraries.filter(_.chromatographicMethod.name == "hilic_qehf").foreach(l => println(l.chromatographicMethod))
-    }
-
-    "be able to load HILIC QTof library" in {
-      libraryAccess.libraries.filter(_.chromatographicMethod.name == "hilic_qtof") should have size 2
-      libraryAccess.libraries.filter(_.chromatographicMethod.name == "hilic_qtof").foreach(l => println(l.chromatographicMethod))
     }
   }
 }

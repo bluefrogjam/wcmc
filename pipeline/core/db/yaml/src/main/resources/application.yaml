@@ -2,12 +2,6 @@ logging:
   level:
     root: info
 
-carrot:
-  targets:
-    yaml:
-      properties:
-        resource: "/libraries.yml"
-
 wcmc:
   workflow:
     resource:
@@ -15,17 +9,18 @@ wcmc:
         bucket:
           name: "carrot-libraries"
 
+carrot:
+  targets:
+    yaml:
+      properties:
+          resource: "libraries.yml"
+
 ---
 spring:
-  profiles: "test"
-
-logging:
-  level:
-    root: info
-    edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader: debug
+  profiles: "carrot.resource.loader.bucket"
 
 carrot:
   targets:
     yaml:
       properties:
-        resource: "libraries.yaml"
+          resource: "libraries.yaml"
