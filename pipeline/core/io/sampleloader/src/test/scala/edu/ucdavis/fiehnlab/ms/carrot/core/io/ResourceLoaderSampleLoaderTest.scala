@@ -32,32 +32,32 @@ class ResourceLoaderSampleLoaderTest extends WordSpec with Matchers with Logging
     "clear cache" in {
       cacheManager.getCache("resource-load-sample").clear()
 
-      assert(cacheManager.getCache("resource-load-sample").get("GLA_Ag6_Lipids_QC01.d.zip") == null)
+      assert(cacheManager.getCache("resource-load-sample").get("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml") == null)
     }
 
-    "able to load d.zip sample GLA_Ag6_Lipids_QC01" in {
+    "able to load B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml" in {
 
-      val sample = loader.getSample("GLA_Ag6_Lipids_QC01.d.zip")
+      val sample = loader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
 
-      assert(sample.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
+      assert(sample.fileName == "B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       assert(sample.spectra != null)
 
     }
 
     "ensure that object is now cached" in {
 
-      val sample: Sample = cacheManager.getCache("resource-get-sample").get("GLA_Ag6_Lipids_QC01.d.zip").get().asInstanceOf[Sample]
+      val sample: Sample = cacheManager.getCache("resource-get-sample").get("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml").get().asInstanceOf[Sample]
 
-      assert(sample.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
+      assert(sample.fileName == "B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       assert(sample.spectra != null)
     }
 
 
-    "able to reload d.zip sample GLA_Ag6_Lipids_QC01, which should be cached now" in {
+    "able to reload B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml, which should be cached now" in {
 
-      val sample = loader.getSample("GLA_Ag6_Lipids_QC01.d.zip")
+      val sample = loader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
 
-      assert(sample.fileName == "GLA_Ag6_Lipids_QC01.d.zip")
+      assert(sample.fileName == "B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       assert(sample.spectra != null)
     }
     "able to load mzml sample X-blank_04" in {

@@ -131,8 +131,4 @@ class HyperoptTestConfiguration extends Logging {
   @Bean
   def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
 
-  @Bean
-  @Primary
-  def loader(resourceLoader: DelegatingResourceLoader): ResourceLoaderSampleLoader = new ResourceLoaderSampleLoader(resourceLoader)
-
 }

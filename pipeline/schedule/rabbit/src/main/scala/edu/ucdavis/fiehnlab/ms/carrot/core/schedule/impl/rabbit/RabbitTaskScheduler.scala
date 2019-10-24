@@ -51,7 +51,7 @@ class RabbitTaskRunner extends MessageListener {
   @Autowired
   val taskRunner: TaskRunner = null
 
-  val logger:Logger = LoggerFactory.getLogger(getClass.getName)
+  val logger: Logger = LoggerFactory.getLogger(getClass.getName)
 
   /**
     * converts messages for us from json to our actual content
@@ -67,8 +67,10 @@ class RabbitTaskRunner extends MessageListener {
     }
     catch {
       case e: Exception =>
-        logger.error(e.getMessage,e)
-        taskRunner.emailService.send(taskRunner.emailSender, Seq(content.email), s"processing of task ${content.name} failed", "carrot: your result failed to complete", None)
+        logger.error(e.getMessage, e)
+        if (content.email.isDefined) {
+          taskRunner.emailService.send(taskRunner.emailSender, Seq(content.email.get), s"processing of task ${content.name} failed", "carrot: your result failed to complete", None)
+        }
       //        throw e
     }
   }

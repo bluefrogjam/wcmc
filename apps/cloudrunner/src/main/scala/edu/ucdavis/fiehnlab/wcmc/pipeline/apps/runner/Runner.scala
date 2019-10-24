@@ -38,7 +38,7 @@ class Runner extends CommandLineRunner with Logging {
       } else {
         this.process(Task(
           name = s"processing ${sampleName} with ${method}",
-          email = submitter,
+          email = Some(submitter),
           acquisitionMethod = AcquisitionMethod.deserialize(method),
           samples = Seq(SampleToProcess(fileName = sampleName, matrix = Matrix("hp0", "human", "plasma", Seq.empty))),
           mode = mode,

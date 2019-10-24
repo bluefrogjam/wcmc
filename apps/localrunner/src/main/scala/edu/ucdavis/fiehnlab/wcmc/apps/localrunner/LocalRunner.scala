@@ -6,14 +6,15 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, Librar
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskRunner
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot._
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration, Profile}
+import org.springframework.stereotype.Component
 
 import scala.io.Source
 
@@ -24,13 +25,9 @@ object LocalRunner extends App {
   val context = app.run(args: _*)
 }
 
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
-class LocalRunner extends CommandLineRunner with Logging {
-  @Autowired
-  val workflow: Workflow[Double] = null
-
-  @Autowired
-  val taskRunner: TaskRunner = null
+@Component
+@Profile(Array("!test"))
+class CommandLineParser @Autowired()(runner: Runner) extends CommandLineRunner with Logging {
 
   override def run(args: String*): Unit = {
     if (args.size != 2) {
@@ -49,32 +46,43 @@ class LocalRunner extends CommandLineRunner with Logging {
           s"${line}.mzml"
       ).toSeq
 
-      process(fileList, AcquisitionMethod.deserialize(method))
+      runner.process(fileList, AcquisitionMethod.deserialize(method))
     } catch {
       case ex: FileNotFoundException =>
         logger.error(s"File ${args(0)} not found.")
         System.exit(-1)
-      case ex: Throwable => logger.error(s"Somethig bad happened: ${ex.getMessage}")
+      case ex: Throwable => logger.error(s"Something bad happened: ${ex.getMessage}")
     }
 
     System.exit(0)
   }
+}
 
-  def process(fileList: Seq[String], method: AcquisitionMethod): Unit = {
+@Component
+class Runner() extends Logging {
+
+  /**
+    * reference to the task scheduler, which should always be a threaded one!
+    */
+  @Autowired
+  val taskRunner: TaskScheduler = null
+
+  def process(fileList: Seq[String], method: AcquisitionMethod, email: Option[String] = None, organ: String = "", species: String = ""): Unit = {
+    val begin = System.currentTimeMillis()
     fileList.foreach { sample =>
       logger.info(s"Processing sample: ${sample}")
       val task = Task(s"${sample} processing",
-        "dpedrosa@ucdavis.edu",
+        email,
         method,
         Seq(SampleToProcess(sample, "", "", sample,
-          Matrix(System.currentTimeMillis().toString, "human", "plasma", Seq.empty)
+          Matrix(System.currentTimeMillis().toString, species, organ, Seq.empty)
         )),
         mode = "lcms",
         env = "prod"
       )
       try {
         val start = System.currentTimeMillis()
-        taskRunner.run(task)
+        taskRunner.submit(task)
         logger.info(s"\n\tSuccessfully finished processing ${sample} in ${(System.currentTimeMillis() - start) / 1000} s\n")
 
       } catch {
@@ -82,7 +90,19 @@ class LocalRunner extends CommandLineRunner with Logging {
           logger.error(s"\tFailed processing ${sample}.", ex)
       }
     }
+
+
+    taskRunner.awaitShutdown()
+
+    val end = System.currentTimeMillis()
+
+    logger.warn(s"processing of data took ${(end - begin) / 1000 / 60} minutes")
   }
+
+}
+
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+class LocalRunner {
 }
 
 @Configuration

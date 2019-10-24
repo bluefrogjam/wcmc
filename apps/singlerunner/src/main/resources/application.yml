@@ -15,13 +15,14 @@ spring:
       - carrot.targets.yaml.correction
       - carrot.targets.yaml.annotation
       - carrot.lcms
+      - carrot.email.enable
   autoconfigure:
     exclude:
     - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
     - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-
-email:
-  host: smtp.gmail.com
-  port: 25
-  username: binbase@gmail.com
-  pass: fiehnlab-2018
+wcmc:
+  email:
+    host: smtp.gmail.com
+    port: 25
+    username: binbase@gmail.com
+    pass: fiehnlab-2018
