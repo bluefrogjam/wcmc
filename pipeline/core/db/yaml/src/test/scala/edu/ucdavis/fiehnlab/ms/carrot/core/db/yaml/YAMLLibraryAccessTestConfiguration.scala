@@ -5,9 +5,9 @@ import edu.ucdavis.fiehnlab.loader.impl.ClasspathResourceLoader
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 
-@EnableConfigurationProperties
 @Configuration
 @ComponentScan
+@EnableConfigurationProperties
 @Profile(Array("test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class YAMLLibraryAccessTestConfiguration {
   @Bean

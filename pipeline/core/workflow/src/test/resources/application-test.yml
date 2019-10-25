@@ -1,3 +1,9 @@
+logging:
+  level:
+    edu.ucdavis.fiehnlab.loader.impl.ClasspathResourceLoader: debug
+    edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader: debug
+    root: info
+
 carrot:
   gcms:
     library:
@@ -35,6 +41,5 @@ spring:
     port: 6379
 
 stasis:
-  baseurl: test-api.metabolomics.us
+  baseurl: "https://test-api.metabolomics.us/stasis"
   key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
-

@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component
 import scala.beans.BeanProperty
 
 
-@EnableConfigurationProperties
 @Configuration
 @ComponentScan
+@EnableConfigurationProperties
 @Profile(Array("carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class YAMLLibraryAutoConfiguration extends Logging
 
