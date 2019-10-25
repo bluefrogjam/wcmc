@@ -98,14 +98,12 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.server</groupId>
             <artifactId>fserv</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline</groupId>
             <artifactId>binbase</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
         </dependency>
 
         <dependency>

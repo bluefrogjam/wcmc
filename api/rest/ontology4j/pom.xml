@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>edu.ucdavis.fiehnlab.wcmc.api</groupId>
     <artifactId>ontology4j</artifactId>
 
     <description>This is a REST based interface to the Fiehnlab ontology system</description>

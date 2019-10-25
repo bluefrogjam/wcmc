@@ -2,7 +2,6 @@ stasis:
   baseurl: "https://test-api.metabolomics.us/stasis"
   key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
 
-  key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
 loaders:
   recursive:
     basefolder: /src/test/resources
@@ -12,9 +11,7 @@ wcmc:
     rest:
       fserv4j:
         host: testfserv.fiehnlab.ucdavis.edu
-      msdialrest4j:
-        host: phobos.fiehnlab.ucdavis.edu
-        port: 8080
+
 
 spring:
   cache:
