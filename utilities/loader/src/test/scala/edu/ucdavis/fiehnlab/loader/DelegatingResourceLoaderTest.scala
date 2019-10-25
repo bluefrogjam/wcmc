@@ -37,10 +37,8 @@ class DelegatingResourceLoaderTest extends WordSpec with Matchers {
       loader.load("test.txt") shouldBe defined
     }
 
-    "load a file with '/' in front" in {
-      val data = loader.load("/test.txt").get
-      data should not be None
-      data.available() should be > 0
+    "succeed loading a file with '/' in front" in {
+      loader.load("/test.txt") shouldBe defined
     }
 
   }

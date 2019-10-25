@@ -1,9 +1,7 @@
 package edu.ucdavis.fiehnlab.loader.impl
 
 import java.io.File
-import java.util.zip.ZipInputStream
 
-import edu.ucdavis.fiehnlab.loader.TestConfiguration
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by wohlg on 7/28/2016.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[TestConfiguration]))
+@SpringBootTest(classes = Array(classOf[RecursiveDirectoryResourceLoaderTestConfiguration]))
 class RecursiveDirectoryResourceLoaderTest extends WordSpec {
 
 
@@ -49,21 +47,6 @@ class RecursiveDirectoryResourceLoaderTest extends WordSpec {
 
     "succeed checking file @ subfolder" in {
       assert(loader.exists("test3.txt"))
-    }
-
-    "return zip imput stream" ignore { // due to commit 0a2b73f250d3d158037b228bc352b77768a88941
-      val result = loader.load("testA.d")
-
-      assert(result.isDefined)
-      assert(result.get.isInstanceOf[ZipInputStream])
-      result.get.close()
-    }
-    "return zip imput stream from subfolder recursively" ignore { // due to commit 0a2b73f250d3d158037b228bc352b77768a88941
-      val result = loader.load("testB.d")
-
-      assert(result.isDefined)
-      assert(result.get.isInstanceOf[ZipInputStream])
-      result.get.close()
     }
 
     "pass when checking a file with isFile" in {

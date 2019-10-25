@@ -1,11 +1,9 @@
 package edu.ucdavis.fiehnlab.loader.impl
 
-import java.io.{File, FileInputStream, InputStream}
-import java.util.zip.ZipInputStream
+import java.io.{File, InputStream}
 
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import org.springframework.stereotype.Component
-import org.zeroturnaround.zip.ZipUtil
 
 import scala.util.{Failure, Success, Try}
 
@@ -14,6 +12,7 @@ import scala.util.{Failure, Success, Try}
   */
 @Component
 class ClasspathResourceLoader extends LocalLoader {
+  logger.info(s"Creating ClasspathResourceLoader with prioroty: ${priority}")
   /**
     * returns the related resource or none
     *
@@ -22,56 +21,38 @@ class ClasspathResourceLoader extends LocalLoader {
     */
   override def load(name: String): Option[InputStream] = {
     val fixed = cleanName(name)
-    val resource = getClass.getResource(s"/${fixed}")
+    val resource = getClass.getResourceAsStream(fixed)
 
-    logger.info(s"\tLoading resource: ${resource}")
-
-    if (resource != null) {
-      // this if can probably go away since we don't use .d anymore
-      if (resource.getFile.endsWith(".d")) {
-        val file = new File(resource.getFile)
-
-        val zipfile = if (fixed.contains("/")) {
-          File.createTempFile("tmp", s"${fixed.substring(fixed.lastIndexOf("/") + 1)}.zip")
-        } else {
-          File.createTempFile("tmp", s"${fixed}.zip")
-        }
-
-        ZipUtil.pack(file, zipfile)
-
-        Option(new ZipInputStream(new FileInputStream(zipfile)))
-      } else {
-        Option(resource.openStream())
-      }
-    } else {
-      None
-    }
+    logger.debug(s"\tLoading resource: ${resource} (fixed to: $fixed)")
+    Option(resource)
   }
 
-  private def cleanName(name: String) = {
-    if (name.startsWith("/")) { name.substring(1) } else { name }
+  private def cleanName(name: String): String = {
+    if (name.startsWith("/")) {
+      name
+    } else {
+      logger.debug(s"fixed name $name to: /$name")
+      "/".concat(name)
+    }
   }
 
   override def exists(name: String): Boolean = {
-    val file = if (name.startsWith("/")) {
-      getClass.getResource(name)
-    } else {
-      getClass.getResource(s"/$name")
-    }
+    val fixed = cleanName(name)
+    val resource = getClass.getResource(fixed)
 
     Try {
-      new File(file.getFile)
+      new File(resource.getFile)
     } match {
       case Success(f: File) => f.exists()
       case Failure(_) => false
     }
   }
 
-  override def priority: Int = super.priority + 10
+  override def priority: Int = super.priority + 20
 
   override def isDirectory(name: String): Boolean = {
     val fixed = cleanName(name)
-    val resource = getClass.getResource(s"/$fixed")
+    val resource = getClass.getResource(fixed)
     if (resource != null) {
       new File(resource.getFile).isDirectory
     } else {
@@ -81,11 +62,15 @@ class ClasspathResourceLoader extends LocalLoader {
 
   override def isFile(name: String): Boolean = {
     val fixed = cleanName(name)
-    val resource = getClass.getResource(s"/$fixed")
+    val resource = getClass.getResource(fixed)
     if (resource != null) {
       new File(resource.getFile).isFile
     } else {
       false
     }
+  }
+
+  override def toString: String = {
+    s"${this.getClass.getSimpleName} (${this.priority})"
   }
 }

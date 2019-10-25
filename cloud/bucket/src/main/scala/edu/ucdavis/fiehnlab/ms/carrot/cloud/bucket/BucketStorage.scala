@@ -90,6 +90,10 @@ class BucketLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfi
     * @return
     */
   override def exists(name: String): Boolean = client.doesObjectExist(properties.name, name)
+
+  override def toString: String = {
+    s"BucketLoader (priority: ${priority}) [properties: $properties]"
+  }
 }
 
 @Profile(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket"))

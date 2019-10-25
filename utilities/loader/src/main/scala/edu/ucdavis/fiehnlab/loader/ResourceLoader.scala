@@ -1,12 +1,10 @@
 package edu.ucdavis.fiehnlab.loader
 
 import java.io._
-import java.nio.channels.{Channels, ReadableByteChannel}
 import java.nio.file._
 
-import org.apache.logging.log4j.scala.Logging
 import javax.annotation.PostConstruct
-import org.apache.commons.io.IOUtils
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
@@ -127,13 +125,22 @@ class DelegatingResourceLoader extends ResourceLoader {
     * @return
     */
   override def load(name: String): Option[InputStream] = sortedLoader.collectFirst {
-    case loader if loader.exists(name) => {
-      logger.debug(s"loading ${name} with ${loader.getClass}")
+    case loader /*if loader.exists(name)*/ =>
+
+      try {
+        logger.debug(s"checking existence of name: $name for loader: $loader")
+        if (loader.exists(name)) {
+          logger.debug(s"name: $name exists in loader: $loader")
+        }
+      } catch {
+        case err: Exception => logger.error(s"\tcaused exception: ${err.getMessage}")
+      }
+
+      logger.debug(s"loading $name with ${loader.getClass}")
       loader.load(name)
-    }
   }.getOrElse(None)
 
-  override def toString = s"DelegatingResourceLoader($sortedLoader)"
+  override def toString = s"DelegatingResourceLoader(priority: ${this.priority}) [${sortedLoader.map(_.toString())}]"
 
   override def exists(name: String): Boolean = sortedLoader.exists { loader =>
     val result = loader.exists(name)
