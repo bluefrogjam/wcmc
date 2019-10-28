@@ -51,7 +51,7 @@ class Everything4J(host: String = "eclipse.fiehnlab.ucdavis.edu", port: Int = 80
         Option(content)
       }
     } else {
-      data = data.filter(_.name.endsWith(name))
+      data = data.filter(_.name.toLowerCase.endsWith(name.toLowerCase))
       val encoded = s"${data.head.path.replaceAll("\\\\", "/").replaceAll("\\s", "%20").replaceAll(":", "%3A")}/${URLEncoder.encode(data.head.name, "UTF8").replaceAll("\\+", "%20")}"
       val uri = s"http://${host}:${port}/${encoded}"
 

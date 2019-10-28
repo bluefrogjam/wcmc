@@ -41,6 +41,13 @@ class Everything4JTest extends WordSpec with Matchers with BeforeAndAfter with L
 
     }
 
+    "load an case insensitive file. cause windows sucks" in {
+
+      everything4J.load("B2A_TEDDYLipids_Pos_QC006.mzml").isDefined shouldBe true
+
+      val file = everything4J.loadAsFile("B2A_TEDDYLipids_Pos_QC006.mzml").get
+    }
+
     "load a file with spaces" in {
       everything4J.loadAsFile("QC6 (2013)_1.txt").get
     }
