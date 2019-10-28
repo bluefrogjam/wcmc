@@ -40,7 +40,7 @@ class EmailEnabledConfiguration {
 @Configuration
 @Component
 class NoEmailService extends EmailServiceable {
-  override def send(from: String, recipients: Seq[String], content: String, subject: String, attachment: Option[File]): Unit = ???
+  override def send(from: String, recipients: Seq[String], content: String, subject: String, attachment: Option[File]): Unit = {}
 }
 
 /**
