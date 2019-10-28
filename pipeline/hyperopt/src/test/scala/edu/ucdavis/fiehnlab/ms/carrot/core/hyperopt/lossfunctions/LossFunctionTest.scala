@@ -18,17 +18,25 @@ abstract class LossFunctionTest extends WordSpec {
 abstract class CorrectionLossFunctionTest extends LossFunctionTest {
 
   val CSH_CORRECTION_TIGHT_PARAMS = Map(
-    "massAccuracySetting" -> 0.001,
-    "massAccuracyPPMSetting" -> 1,
-    "rtAccuracySetting" -> 1,
+    "massAccuracySetting" -> 0.01,
+    "massAccuracyPPMSetting" -> 2,
+    "rtAccuracySetting" -> 2,
+    "minPeakIntensitySetting" -> 5000,
+    "intensityPenaltyThresholdSetting" -> 50000
+  )
+
+  val CSH_CORRECTION_MODERATE_PARAMS = Map(
+    "massAccuracySetting" -> 0.05,
+    "massAccuracyPPMSetting" -> 5,
+    "rtAccuracySetting" -> 5,
     "minPeakIntensitySetting" -> 5000,
     "intensityPenaltyThresholdSetting" -> 50000
   )
 
   val CSH_CORRECTION_WIDE_PARAMS = Map(
-    "massAccuracySetting" -> 0.05,
-    "massAccuracyPPMSetting" -> 5,
-    "rtAccuracySetting" -> 2,
+    "massAccuracySetting" -> 0.1,
+    "massAccuracyPPMSetting" -> 10,
+    "rtAccuracySetting" -> 10,
     "minPeakIntensitySetting" -> 1000,
     "intensityPenaltyThresholdSetting" -> 10000
   )

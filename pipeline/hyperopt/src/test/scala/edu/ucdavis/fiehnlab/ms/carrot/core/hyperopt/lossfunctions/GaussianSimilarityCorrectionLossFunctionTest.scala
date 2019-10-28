@@ -22,7 +22,7 @@ class GaussianSimilarityCorrectionLossFunctionTest extends CorrectionLossFunctio
         Seq.empty
       )
 
-      val tightResult = correctionObjective.apply(CSH_CORRECTION_TIGHT_PARAMS)
+      val tightResult = correctionObjective.apply(CSH_CORRECTION_MODERATE_PARAMS)
       val wideResult = correctionObjective.apply(CSH_CORRECTION_WIDE_PARAMS)
       assert(wideResult < tightResult)
     }
