@@ -1,9 +1,4 @@
 
-email:
-  host: smtp.gmail.com
-  port: 25
-  username: binbase@gmail.com
-  pass: fiehnlab-2018
 
 mona:
   rest:

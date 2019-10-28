@@ -10,7 +10,7 @@ class PeakHeightRSDCorrectionLossFunctionTest extends CorrectionLossFunctionTest
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "PeakHeightRSDCorrectionLossFunctionTest" should {
+  "PeakHeightRSDCorrectionLossFunctionTest" ignore {
 
     "apply-qtof-csh" in {
 

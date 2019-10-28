@@ -1,10 +1,12 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule.impl
 
+import java.util.concurrent.{ExecutorService, Executors, TimeUnit}
+
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Configuration, Profile}
-import org.springframework.core.task.TaskExecutor
 import org.springframework.stereotype.Component
 
 /**
@@ -12,10 +14,9 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Profile(Array("carrot.scheduler.local"))
-class ThreadExecutorTaskScheduler extends TaskScheduler {
+class ThreadExecutorTaskScheduler extends TaskScheduler with Logging {
 
-  @Autowired
-  val taskExecutor: TaskExecutor = null
+  val taskExecutor: ExecutorService = Executors.newFixedThreadPool(Runtime.getRuntime.availableProcessors())
 
   @Autowired
   val taskRunner: TaskRunner = null
@@ -27,7 +28,8 @@ class ThreadExecutorTaskScheduler extends TaskScheduler {
     * @return
     */
   override protected def doSubmit(task: Task): String = {
-    taskExecutor.execute(new Runnable {
+
+    taskExecutor.submit(new Runnable {
       override def run(): Unit = {
         taskRunner.run(task)
       }
@@ -35,8 +37,16 @@ class ThreadExecutorTaskScheduler extends TaskScheduler {
     )
     task.name
   }
+
+  override def awaitShutdown(): Unit = {
+    logger.info("shutting down the executor service")
+    taskExecutor.shutdown()
+    taskExecutor.awaitTermination(5000, TimeUnit.DAYS)
+  }
 }
 
 @Configuration
 @Profile(Array("carrot.scheduler.local"))
-class ThreadExecutorTaskSchedulerAutoconfiguration
+class ThreadExecutorTaskSchedulerAutoconfiguration {
+
+}

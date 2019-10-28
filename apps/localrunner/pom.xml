@@ -33,11 +33,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!--<dependency>-->
-        <!--<groupId>edu.ucdavis.fiehnlab.wcmc</groupId>-->
-        <!--<artifactId>bucket</artifactId>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
             <artifactId>workflow</artifactId>
@@ -54,5 +49,10 @@
             <artifactId>api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>edu.ucdavis.fiehnlab.wcmc.schedule</groupId>
+            <artifactId>thread</artifactId>
+            <version>1.0.16-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
-import edu.ucdavis.fiehnlab.utilities.email.EmailService
+import edu.ucdavis.fiehnlab.utilities.email.EmailServiceable
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -15,7 +15,7 @@ trait TaskScheduler {
   val emailSender: String = ""
 
   @Autowired
-  val emailService:EmailService = null
+  val emailService: EmailServiceable = null
 
   @Autowired
   val stasisCli: StasisService = null
@@ -30,7 +30,12 @@ trait TaskScheduler {
 
     updateTracking(task)
     //send notification email
-    emailService.send(emailSender,task.email :: List(),s"Dear user, your job with ${task.name} has been submitted for calculations","job scheduled",None)
+
+    task.email match {
+      case Some(email) =>
+        emailService.send(emailSender, task.email.get :: List(), s"Dear user, your job with ${task.name} has been submitted for calculations", "job scheduled", None)
+      case None =>
+    }
 
     doSubmit(task)
   }
@@ -63,5 +68,7 @@ trait TaskScheduler {
       stasisCli.addTracking(TrackingData(name, "scheduled", sample.fileName))
     })
   }
+
+  def awaitShutdown() = {}
 }
 

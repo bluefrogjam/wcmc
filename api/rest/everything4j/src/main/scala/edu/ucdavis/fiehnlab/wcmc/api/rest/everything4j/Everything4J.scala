@@ -36,7 +36,7 @@ class Everything4J(host: String = "eclipse.fiehnlab.ucdavis.edu", port: Int = 80
       val url = s"http://${host}:${port}?s=${URLEncoder.encode(name, "UTF8")}&j=1&path_column=1"
       logger.info(s"load is checking url: ${url}")
 
-      val data = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")
+      var data = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")
 
       if (data.isEmpty) {
         val folder = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "folder")
@@ -51,6 +51,7 @@ class Everything4J(host: String = "eclipse.fiehnlab.ucdavis.edu", port: Int = 80
           Option(content)
         }
       } else {
+        data = data.filter(_.name.toLowerCase.endsWith(name.toLowerCase))
         val encoded = s"${data.head.path.replaceAll("\\\\", "/").replaceAll("\\s", "%20").replaceAll(":", "%3A")}/${URLEncoder.encode(data.head.name, "UTF8").replaceAll("\\+", "%20")}"
         val uri = s"http://${host}:${port}/${encoded}"
 

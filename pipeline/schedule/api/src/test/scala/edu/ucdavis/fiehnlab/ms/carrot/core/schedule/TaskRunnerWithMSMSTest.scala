@@ -36,12 +36,7 @@ class TaskRunnerWithMSMSTest extends WordSpec {
 
       val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
 
-      taskRunner.run(Task("test", "dpedrosa@ucdavis.edu",
-        acquisitionMethod = method,
-        samples = SampleToProcess("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml") +: Seq.empty,
-        mode = "lcms",
-        env = "test"
-      ))
+      taskRunner.run(Task("test", None, acquisitionMethod = method, samples = SampleToProcess("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml") +: Seq.empty, mode = "lcms", env = "test"))
 
       mona.load(method).count(_.spectrum.get.msLevel == 2) > 0
     }
@@ -50,12 +45,7 @@ class TaskRunnerWithMSMSTest extends WordSpec {
 
       val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6530"), Some("test"), Some(PositiveMode())))
 
-      taskRunner.run(Task("test", "dpedrosa@ucdavis.edu",
-        acquisitionMethod = method,
-        samples = SampleToProcess("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml") +: Seq.empty,
-        mode = "lcms",
-        env = "test"
-      ))
+      taskRunner.run(Task("test", None, acquisitionMethod = method, samples = SampleToProcess("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml") +: Seq.empty, mode = "lcms", env = "test"))
 
       mona.load(method).count(_.spectrum.get.msLevel == 2) > 0
     }

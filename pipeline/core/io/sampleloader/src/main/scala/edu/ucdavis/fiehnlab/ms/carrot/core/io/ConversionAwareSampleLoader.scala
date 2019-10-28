@@ -6,12 +6,15 @@ import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.wcmc.api.rest.dataform4j.DataFormerClient
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.Cacheable
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Component
 
 /**
   * this sample loader supports, the automatic conversion of data
   * on demand to satisfy the usage of the local client
   */
+@Profile(Array("carrot.loader.autoconvert"))
+@Component
 class ConversionAwareSampleLoader @Autowired()(dataForm: DataFormerClient, resourceLoader: ResourceLoader) extends ResourceLoaderSampleLoader(resourceLoader) {
 
   /**

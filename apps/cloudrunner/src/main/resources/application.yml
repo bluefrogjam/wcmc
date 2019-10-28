@@ -13,6 +13,7 @@ spring:
       - carrot.runner.required
       - carrot.targets.yaml.correction
       - carrot.targets.yaml.annotation
+      - carrot.email.enable
 #      - carrot.targets.mona
 # uncoment to enable msms spectra be sent to ipa
 #      - carrot.targets.dynamic
@@ -27,13 +28,6 @@ carrot:
   mode: '${CARROT_MODE:lcms}'
 
 
-#which email account to use
-email:
-  host: smtp.gmail.com
-  port: 25
-  username: binbase@gmail.com
-  pass: fiehnlab-2018
-
 mona:
   rest:
     server:
@@ -47,6 +41,11 @@ wcmc:
         mona:
           user: admin
           password: admin
+  email:
+    host: smtp.gmail.com
+    port: 25
+    username: binbase@gmail.com
+    pass: fiehnlab-2018
 
 ---
 spring:
@@ -75,15 +74,13 @@ wcmc:
         correction:
           peak:
             intensity: 10000
+  email:
+    host: smtp.gmail.com
+    port: 25
+    username: binbase@gmail.com
+    pass: fiehnlab-2018
 
 carrot:
   sample: '${CARROT_SAMPLE}'
   method: '${CARROT_METHOD}'
   mode: '${CARROT_MODE}'
-
-#which email account to use
-email:
-  host: smtp.gmail.com
-  port: 25
-  username: binbase@gmail.com
-  pass: fiehnlab-2018
