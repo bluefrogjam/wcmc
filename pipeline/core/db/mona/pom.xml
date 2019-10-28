@@ -31,6 +31,7 @@
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core.io</groupId>
             <artifactId>sampleloader</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>

@@ -1,0 +1,11 @@
+#test directory
+wcmc:
+  server:
+    fserv:
+      directory: "./target/test/storage"
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 512MB
+      max-request-size: 512MB

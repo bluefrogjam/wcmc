@@ -16,6 +16,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @ActiveProfiles(Array(
   "test",
   "carrot.targets.dummy",
+  "carrot.output.storage.converter.target",
+  "carrot.output.storage.converter.sample",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction"))
 class TaskRunnerWithMSMSTest extends WordSpec {

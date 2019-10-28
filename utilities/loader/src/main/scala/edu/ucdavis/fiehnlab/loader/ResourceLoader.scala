@@ -1,12 +1,10 @@
 package edu.ucdavis.fiehnlab.loader
 
 import java.io._
-import java.nio.channels.{Channels, ReadableByteChannel}
 import java.nio.file._
 
-import org.apache.logging.log4j.scala.Logging
 import javax.annotation.PostConstruct
-import org.apache.commons.io.IOUtils
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
@@ -100,6 +98,10 @@ trait ResourceLoader extends Logging {
     * @return
     */
   def isFile(name: String): Boolean = ???
+
+  override def toString: String = {
+    s"${getClass.getSimpleName} (priority: $priority)"
+  }
 }
 
 /**
@@ -126,14 +128,17 @@ class DelegatingResourceLoader extends ResourceLoader {
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst {
-    case loader if loader.exists(name) => {
-      logger.debug(s"loading ${name} with ${loader.getClass}")
-      loader.load(name)
-    }
-  }.getOrElse(None)
 
-  override def toString = s"DelegatingResourceLoader($sortedLoader)"
+  // This is ugly as hell but the previous implementation failed to load a sample from remote loader
+  override def load(name: String): Option[InputStream] = sortedLoader.collect {
+    case loader =>
+      loader.load(name)
+  }.filter(_.isDefined) match {
+    case empty if empty.size < 1 => None
+    case full => full.head
+  }
+
+  override def toString: String = super.toString.concat(s"[${sortedLoader.map(_.toString())}]")
 
   override def exists(name: String): Boolean = sortedLoader.exists { loader =>
     val result = loader.exists(name)

@@ -11,18 +11,16 @@ wcmc:
         correction:
           peak:
             intensity: 10000
-
-logging:
-  level:
-    root: INFO
-
-wcmc:
   api:
     mona:
       rest:
         server:
           user: admin
           password: admin
+
+logging:
+  level:
+    root: INFO
 
 mona:
   rest:

@@ -78,7 +78,14 @@ class BucketLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfi
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = Option(client.getObject(properties.name, name).getObjectContent)
+  override def load(name: String): Option[InputStream] = {
+    if (exists(name)) {
+      logger.info(s"\tLoading targets from (${properties.name}, $name)")
+      Option(client.getObject(properties.name, name).getObjectContent)
+    } else {
+      None
+    }
+  }
 
   /**
     * does the given resource exists
@@ -87,6 +94,8 @@ class BucketLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfi
     * @return
     */
   override def exists(name: String): Boolean = client.doesObjectExist(properties.name, name)
+
+  override def toString: String = super.toString.concat(s"[properties: $properties]")
 }
 
 @Profile(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket"))

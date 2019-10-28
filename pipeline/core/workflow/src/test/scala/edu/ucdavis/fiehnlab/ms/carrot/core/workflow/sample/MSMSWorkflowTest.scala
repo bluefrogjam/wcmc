@@ -25,14 +25,14 @@ import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height",
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.mzrt",
   "carrot.targets.dynamic",
   "carrot.targets.mona",
-  "carrot.lcms",
-  "file.source.eclipse",
-  "test",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation"))
 class MSMSWorkflowTest extends WordSpec with Logging with Matchers {

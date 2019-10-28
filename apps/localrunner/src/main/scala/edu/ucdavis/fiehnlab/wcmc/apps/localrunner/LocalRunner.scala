@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, Librar
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Matrix}
-import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
+import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.TaskScheduler
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired

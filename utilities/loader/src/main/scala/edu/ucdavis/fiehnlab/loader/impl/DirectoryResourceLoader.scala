@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.loader.impl
 import java.io.{File, FileInputStream, InputStream}
 import java.util.zip.ZipInputStream
 
-import edu.ucdavis.fiehnlab.loader.{LocalLoader, ResourceLoader}
+import edu.ucdavis.fiehnlab.loader.LocalLoader
 import org.springframework.beans.factory.annotation.Autowired
 import org.zeroturnaround.zip.ZipUtil
 
@@ -18,10 +18,12 @@ class DirectoryResourceLoader @Autowired()(val directory: File) extends LocalLoa
     * @return
     */
   override def load(name: String): Option[InputStream] = {
+    logger.debug(s"loading file: $name")
     val toLoad = new File(directory, name)
 
     if (toLoad.exists()) {
       if(toLoad.isDirectory) {
+        logger.debug(s"\t$name is a folder, needs to be compressed")
         val zipFile = if(name.contains("/")) File.createTempFile("tmp",s"${cleanName(name.substring(name.lastIndexOf("/")))}.zip") else File.createTempFile("tmp",s"${cleanName(name)}.zip")
         ZipUtil.pack(toLoad, zipFile)
         Some(new ZipInputStream(new FileInputStream(zipFile)))
@@ -29,6 +31,7 @@ class DirectoryResourceLoader @Autowired()(val directory: File) extends LocalLoa
         Some(new FileInputStream(toLoad))
       }
     } else {
+      logger.warn(s"$name does not exist")
       None
     }
   }
@@ -48,4 +51,6 @@ class DirectoryResourceLoader @Autowired()(val directory: File) extends LocalLoa
   private def cleanName(name: String): String = {
     if(name.startsWith("/")) { name.substring(1) } else { name }
   }
+
+  override def toString = s"DirectoryResourceLoader(directory: ${directory.getAbsolutePath}, priority: $priority)"
 }

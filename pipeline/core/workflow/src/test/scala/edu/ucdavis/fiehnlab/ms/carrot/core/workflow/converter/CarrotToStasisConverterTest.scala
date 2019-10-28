@@ -30,7 +30,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
     "carrot.processing.replacement.mzrt",
     "carrot.report.quantify.height",
     "carrot.targets.yaml.annotation",
-    "carrot.targets.yaml.correction"
+    "carrot.targets.yaml.correction",
+    "carrot.output.storage.converter.target"
   ))
 class CarrotToStasisConverterTest extends WordSpec with Logging with Matchers {
   @Autowired
@@ -54,9 +55,10 @@ class CarrotToStasisConverterTest extends WordSpec with Logging with Matchers {
   @Autowired
   val replacementProperties: ZeroReplacementProperties = null
 
-  new TestContextManager(this.getClass).prepareTestInstance(this)
+  @Autowired
+  val converter: CarrotToStasisConverter = null
 
-  val converter: CarrotToStasisConverter = new CarrotToStasisConverter
+  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "SampleToMapConverterTest" should {
     val sampleNames = Seq("B7B_TeddyLipids_Neg_QC015.mzml", "B12A_SA11202_TeddyLipids_Neg_1RXZX_2.mzml").reverse
@@ -76,10 +78,6 @@ class CarrotToStasisConverterTest extends WordSpec with Logging with Matchers {
               method, None),
             method, None),
           method, Some(sample))
-    }
-
-    "contain a CarrotToStatisConverterSimple converter" in {
-      converter shouldBe a[CarrotToStasisConverter]
     }
 
     "convert a Quantified sample into a Stasis sample" in {

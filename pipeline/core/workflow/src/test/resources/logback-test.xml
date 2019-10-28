@@ -7,9 +7,6 @@
         </layout>
     </appender>
 
-    <logger name="StasisResultStorage" level="info"/>
-    <!--<logger name="edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.lcms.annotation.LCMSTargetAnnotationProcess" level="debug"/>-->
-
     <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>

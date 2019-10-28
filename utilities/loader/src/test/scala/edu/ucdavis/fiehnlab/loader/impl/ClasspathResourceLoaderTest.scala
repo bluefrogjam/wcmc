@@ -1,11 +1,9 @@
 package edu.ucdavis.fiehnlab.loader.impl
 
-import java.util.zip.ZipInputStream
-
 import edu.ucdavis.fiehnlab.loader.TestConfiguration
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
-import org.scalatest.{BeforeAndAfter, WordSpec}
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
@@ -16,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner
   */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TestConfiguration]))
-class ClasspathResourceLoaderTest extends WordSpec with Logging with BeforeAndAfter {
+class ClasspathResourceLoaderTest extends WordSpec with Matchers with Logging {
 
   @Autowired
   val loader: ClasspathResourceLoader = null
@@ -25,63 +23,63 @@ class ClasspathResourceLoaderTest extends WordSpec with Logging with BeforeAndAf
 
   "ClasspathResourceLoaderTest" should {
 
-    "fail loading this resource" in {
-      assert(loader.load("/test2.txt").isEmpty)
+    "fail loading a missing resource" in {
+      loader.load("/missing.txt") should not be defined
+    }
+
+    "fail loading a missing resource without slash" in {
+      loader.load("missing.txt") should not be defined
     }
 
     "succeed loading this resource" in {
-      assert(loader.load("/test.txt").isDefined)
+      loader.load("/test.txt") shouldBe defined
+    }
+
+    "succeed loading this resource from root" in {
+      loader.load("test.txt") shouldBe defined
     }
 
     "succeed loading this resource as file" in {
-      assert(loader.loadAsFile("/test.txt").isDefined)
+      loader.loadAsFile("/test.txt") shouldBe defined
     }
 
     "succeed loading this resource and going to the root" in {
-      assert(loader.load("test.txt").isDefined)
+      loader.load("test.txt") shouldBe defined
     }
 
-    "succeed finding file in subfolder" in {
-      assert(loader.exists("sub/test3.txt"))
-    }
-    "succeed finding file in subfolder from root" in {
-      assert(loader.exists("/sub/test3.txt"))
-    }
-    "fail finding file @ root" in {
-      assert(!loader.exists("/test3.txt"))
-    }
-    "fail finding file without subfolder" in {
-      assert(!loader.exists("test3.txt"))
+    "succeed file existance check" in {
+      loader.exists("test.txt") shouldBe true
     }
 
-    "return zip imput stream" in {
-      val result = loader.load("/testA.d")
-
-      assert(result.isDefined)
-      assert(result.get.isInstanceOf[ZipInputStream])
-      result.get.close()
-    }
-    "return zip imput stream from subfolder" in {
-      val result = loader.load("sub/testB.d")
-
-      assert(result.isDefined)
-      assert(result.get.isInstanceOf[ZipInputStream])
-      result.get.close()
+    "succeed missing file check" in {
+      loader.exists("missing.txt") shouldBe false
     }
 
     "pass when checking a file with isFile" in {
-      assert(loader.isFile("test.txt"))
+      loader.isFile("test.txt") shouldBe true
     }
+
     "fails when checking a file with isDirectory" in {
-      assert(!loader.isDirectory("test.txt"))
+      loader.isDirectory("test.txt") shouldBe false
     }
 
     "pass when checking a folder with isDirectory" in {
-      assert(loader.isDirectory("testA.d"))
-    }
-    "fails when checking a file with isFile" in {
-      assert(!loader.isFile("testA.d"))
+      loader.isDirectory("testA.d") shouldBe true
     }
 
+    "fails when checking a file with isFile" in {
+      loader.isFile("testA.d") shouldBe false
+    }
+
+    "load a file in other jar" in {
+      logger.info("EXISTS: ".concat(loader.exists("META-INF/NOTICE.txt").toString))
+      val data = loader.load("META-INF/NOTICE.txt").get
+      data should not be null
+      val buffer = new Array[Byte](data.available())
+      data.read(buffer)
+      val str: String = buffer.map(_.toChar).mkString("")
+      logger.info(s"DATA: ${str}")
+      str should startWith("Apache Commons IO")
+    }
   }
 }

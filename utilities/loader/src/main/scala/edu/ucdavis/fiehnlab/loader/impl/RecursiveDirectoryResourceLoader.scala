@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.loader.impl
 
 import java.io.{File, FileInputStream, InputStream}
-import java.util.zip.ZipInputStream
 
 import edu.ucdavis.fiehnlab.loader.LocalLoader
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +12,7 @@ import org.zeroturnaround.zip.ZipUtil
 class RecursiveDirectoryResourceLoader @Autowired()(directory: File, override val priority: Int = 0) extends LocalLoader {
 
   if (!directory.exists()) {
-    logger.info(s"making directory: ${directory.getAbsolutePath}")
+    logger.debug(s"making directory: ${directory.getAbsolutePath}")
     directory.mkdirs()
   }
   else {
@@ -48,8 +47,14 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File, override va
       if (file.get.isFile) {
         file
       } else if (file.get.isDirectory && file.get.getName.equals(name)) {
-        val zipFile = if (name.contains("/")) File.createTempFile("tmp", s"${cleanName(name.substring(name.lastIndexOf("/")))}.zip") else File.createTempFile("tmp", s"${cleanName(name)}.zip")
         logger.debug(s"zipping ${file.get.getName}")
+
+        val zipFile = if (name.contains("/")) {
+          File.createTempFile("tmp", s"${cleanName(name.substring(name.lastIndexOf("/")))}.zip")
+        } else {
+          File.createTempFile("tmp", s"${cleanName(name)}.zip")
+        }
+
         ZipUtil.pack(file.get, zipFile)
         Some(zipFile)
       } else {
@@ -58,11 +63,9 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File, override va
     } else {
       None
     }
-    //		val files = walkTree(directory).filter(p => p.getAbsolutePath.endsWith(name) && p.isFile)
-    //		files.headOption
   }
 
-  override def toString = s"RecursiveDirectoryResourceLoader(directory: ${directory.getAbsolutePath})"
+  override def toString = s"RecursiveDirectoryResourceLoader(directory: ${directory.getAbsolutePath}, priority: $priority)"
 
   override def exists(name: String): Boolean = walkTree(directory).exists(p => p.getAbsolutePath.endsWith(name))
 

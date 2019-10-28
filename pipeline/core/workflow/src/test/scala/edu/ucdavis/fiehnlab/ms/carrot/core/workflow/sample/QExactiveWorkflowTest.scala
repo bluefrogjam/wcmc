@@ -24,14 +24,14 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
-@ActiveProfiles(Array("carrot.report.quantify.height",
+@ActiveProfiles(Array("test",
+  "carrot.lcms",
+  "file.source.eclipse",
+  "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.mzrt",
   "carrot.targets.dynamic",
   "carrot.targets.mona",
-  "carrot.lcms",
-  "file.source.eclipse",
-  "test",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation"))
 class QExactiveWorkflowTest extends WordSpec with Logging with Matchers {
@@ -63,10 +63,10 @@ class QExactiveWorkflowTest extends WordSpec with Logging with Matchers {
 
   "The workflow" should {
 
-    "should process a qexactive file" in {
-      val sample = loader.loadSample("Biorec002_posCSH_postFlenniken010.mzml")
+    "process a qexactive file" in {
+      val sample = loader.getSample("Biorec002_posCSH_postFlenniken010.mzml")
       val method = AcquisitionMethod(ChromatographicMethod("csh", Some("6530"), Some("test"), Option(PositiveMode())))
-      val expClass = ExperimentClass(Seq(sample.get), None)
+      val expClass = ExperimentClass(Seq(sample), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
       monalib.deleteLibrary(method)
@@ -74,10 +74,10 @@ class QExactiveWorkflowTest extends WordSpec with Logging with Matchers {
       val result = quantification.process(
         annotation.process(
           correction.process(
-            deco.process(sample.get, method, None),
-            method, sample),
+            deco.process(sample, method, None),
+            method, Some(sample)),
           method, None),
-        method, sample)
+        method, Some(sample))
 
       val msms = result.spectra.collect {
         case spec: MSMSSpectra => spec

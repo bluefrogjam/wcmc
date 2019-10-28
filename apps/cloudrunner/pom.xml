@@ -41,7 +41,6 @@
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core</groupId>
             <artifactId>workflow</artifactId>
-
         </dependency>
 
         <dependency>

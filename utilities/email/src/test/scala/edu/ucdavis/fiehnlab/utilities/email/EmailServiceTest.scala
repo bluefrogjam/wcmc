@@ -1,20 +1,17 @@
 package edu.ucdavis.fiehnlab.utilities.email
 
 import java.io.{File, PrintWriter}
-import java.util.Properties
 
-import ch.qos.logback.core.util.FileUtil
+import com.icegreen.greenmail.util.{GreenMail, ServerSetupTest}
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.mail.javamail.{JavaMailSender, JavaMailSenderImpl}
-import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.test.context.junit4.SpringRunner
-import com.icegreen.greenmail.util.GreenMail
-import com.icegreen.greenmail.util.ServerSetupTest
+import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
