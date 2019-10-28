@@ -52,41 +52,46 @@ class CorrectionObjectiveTest extends WordSpec {
 
   private def evaluate(samples: List[String], method: String) = {
     val sc = new SparkContext(new SparkConf().setAppName("Correction Objective Test").setMaster("local[8]"))
-    val optimizer = new SparkGridSearch[Point, Double](sc)
 
-    val correctionObjective = new CorrectionObjective(
-      classOf[HyperoptTestConfiguration],
-      Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"),
-      new PeakHeightRSDCorrectionLossFunction(),
-      samples,
-      method,
-      Seq.empty
-    )
+    try {
+      val optimizer = new SparkGridSearch[Point, Double](sc)
 
-    correctionObjective.warmCaches()
-
-    val result = optimizer.minimize(correctionObjective, correctionObjective.getSpace(
-      Config(
-        Hyperopt(
-          samples = List.empty,
-          profiles = List.empty,
-          method = "",
-          stages = Stages(
-            correction = Some(Correction(
-              CorrectionSettings(
-                massAccuracyPPM = List(5, 10),
-                massAccuracy = List(0.05, 0.06),
-                rtAccuracy = List(1),
-                minPeakIntensity = List(1000, 2000),
-                intensityPenalty = List(10000)
-              )
-            ))
-          )
-        )
+      val correctionObjective = new CorrectionObjective(
+        classOf[HyperoptTestConfiguration],
+        Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"),
+        new PeakHeightRSDCorrectionLossFunction(),
+        samples,
+        method,
+        Seq.empty
       )
 
-    ))
-    print(result)
-    sc.stop()
+      correctionObjective.warmCaches()
+
+      val result = optimizer.minimize(correctionObjective, correctionObjective.getSpace(
+        Config(
+          Hyperopt(
+            samples = List.empty,
+            profiles = List.empty,
+            method = "",
+            stages = Stages(
+              correction = Some(Correction(
+                CorrectionSettings(
+                  massAccuracyPPM = List(5, 10),
+                  massAccuracy = List(0.05, 0.06),
+                  rtAccuracy = List(1),
+                  minPeakIntensity = List(1000, 2000),
+                  intensityPenalty = List(10000)
+                )
+              ))
+            )
+          )
+        )
+
+      ))
+      print(result)
+    }
+    finally {
+      sc.stop()
+    }
   }
 }
