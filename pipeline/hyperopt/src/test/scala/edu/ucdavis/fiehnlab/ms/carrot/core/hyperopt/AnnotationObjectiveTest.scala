@@ -62,55 +62,60 @@ class AnnotationObjectiveTest extends WordSpec {
 
   private def evaluate(samples: List[String], method: String) = {
     val sc = new SparkContext(new SparkConf().setAppName("Annotation Objective Test").setMaster("local[8]"))
-    val optimizer = new SparkGridSearch[Point, Double](sc)
 
-    val annotationObjective = new AnnotationObjective(
-      classOf[HyperoptTestConfiguration],
-      Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"),
-      new PeakHeightRSDAnnotationLossFunction(),
-      samples,
-      method,
-      Seq.empty
-    )
+    try {
+      val optimizer = new SparkGridSearch[Point, Double](sc)
 
-    annotationObjective.warmCaches()
-
-    val result = optimizer.minimize(annotationObjective, annotationObjective.getSpace(
-      Config(
-        Hyperopt(
-          samples = List.empty,
-          profiles = List.empty,
-          method = "",
-          stages = Stages(
-            correction = Some(Correction(
-              CorrectionSettings(
-                massAccuracyPPM = List(5, 10),
-                massAccuracy = List(0.05, 0.06),
-                rtAccuracy = List(1),
-                minPeakIntensity = List(1000, 2000),
-                intensityPenalty = List(10000)
-              )
-            )),
-            annotation = Some(Annotation(
-              AnnotationSettings(
-                recursive = List(true, false),
-                preferMassAccuracy = List(true, false),
-                preferGaussianSimilarity = List(true, false),
-                closePeakDetection = List(3, 5),
-                massAccuracy = List(0.05, 0.07),
-                massAccuracyPPM = List(5, 20),
-                rtIndexWindow = List(4, 7),
-                massIntensity = List(1000, 2000),
-                intensityPenalty = List(10000, 20000)
-              )
-            ))
-          )
-        )
+      val annotationObjective = new AnnotationObjective(
+        classOf[HyperoptTestConfiguration],
+        Array("file.source.eclipse", "carrot.report.quantify.height", "carrot.processing.peakdetection", "carrot.lcms", "test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"),
+        new PeakHeightRSDAnnotationLossFunction(),
+        samples,
+        method,
+        Seq.empty
       )
 
-    ))
-    print(result)
-    sc.stop()
+      annotationObjective.warmCaches()
+
+      val result = optimizer.minimize(annotationObjective, annotationObjective.getSpace(
+        Config(
+          Hyperopt(
+            samples = List.empty,
+            profiles = List.empty,
+            method = "",
+            stages = Stages(
+              correction = Some(Correction(
+                CorrectionSettings(
+                  massAccuracyPPM = List(5, 10),
+                  massAccuracy = List(0.05, 0.06),
+                  rtAccuracy = List(1),
+                  minPeakIntensity = List(1000, 2000),
+                  intensityPenalty = List(10000)
+                )
+              )),
+              annotation = Some(Annotation(
+                AnnotationSettings(
+                  recursive = List(true, false),
+                  preferMassAccuracy = List(true, false),
+                  preferGaussianSimilarity = List(true, false),
+                  closePeakDetection = List(3, 5),
+                  massAccuracy = List(0.05, 0.07),
+                  massAccuracyPPM = List(5, 20),
+                  rtIndexWindow = List(4, 7),
+                  massIntensity = List(1000, 2000),
+                  intensityPenalty = List(10000, 20000)
+                )
+              ))
+            )
+          )
+        )
+
+      ))
+      print(result)
+    }
+    finally {
+      sc.stop()
+    }
   }
 }
 
