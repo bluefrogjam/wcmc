@@ -21,7 +21,10 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
   "carrot.targets.yaml.annotation",
   "carrot.output.storage.aws",
   "carrot.runner.required",
-  "carrot.scheduler.local"))
+  "carrot.scheduler.local",
+  "carrot.output.storage.converter.target",
+  "carrot.output.storage.converter.sample"
+))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:Biorec001_posCSH_preFlenniken001.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",

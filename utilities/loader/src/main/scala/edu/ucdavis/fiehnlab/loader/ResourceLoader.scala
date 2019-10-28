@@ -98,6 +98,10 @@ trait ResourceLoader extends Logging {
     * @return
     */
   def isFile(name: String): Boolean = ???
+
+  override def toString: String = {
+    s"${getClass.getSimpleName} (priority: $priority)"
+  }
 }
 
 /**
@@ -124,23 +128,17 @@ class DelegatingResourceLoader extends ResourceLoader {
     * @param name
     * @return
     */
-  override def load(name: String): Option[InputStream] = sortedLoader.collectFirst {
-    case loader /*if loader.exists(name)*/ =>
 
-      try {
-        logger.debug(s"checking existence of name: $name for loader: $loader")
-        if (loader.exists(name)) {
-          logger.debug(s"name: $name exists in loader: $loader")
-        }
-      } catch {
-        case err: Exception => logger.error(s"\tcaused exception: ${err.getMessage}")
-      }
-
-      logger.debug(s"loading $name with ${loader.getClass}")
+  // This is ugly as hell but the previous implementation failed to load a sample from remote loader
+  override def load(name: String): Option[InputStream] = sortedLoader.collect {
+    case loader =>
       loader.load(name)
-  }.getOrElse(None)
+  }.filter(_.isDefined) match {
+    case empty if empty.size < 1 => None
+    case full => full.head
+  }
 
-  override def toString = s"DelegatingResourceLoader(priority: ${this.priority}) [${sortedLoader.map(_.toString())}]"
+  override def toString: String = super.toString.concat(s"[${sortedLoader.map(_.toString())}]")
 
   override def exists(name: String): Boolean = sortedLoader.exists { loader =>
     val result = loader.exists(name)

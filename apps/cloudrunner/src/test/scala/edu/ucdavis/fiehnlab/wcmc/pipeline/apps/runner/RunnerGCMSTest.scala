@@ -20,7 +20,10 @@ import org.springframework.test.context.{ActiveProfiles, TestPropertySource}
   "carrot.output.storage.aws",
   "carrot.runner.required",
   "carrot.targets.dummy",
-  "file.source.eclipse"))
+  "file.source.eclipse",
+  "carrot.output.storage.converter.target",
+  "carrot.output.storage.converter.sample"
+))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:180501dngsa32_1.txt",
   "CARROT_METHOD:Gerstel | LECO-GC-TOF | rtx5recal | positive",

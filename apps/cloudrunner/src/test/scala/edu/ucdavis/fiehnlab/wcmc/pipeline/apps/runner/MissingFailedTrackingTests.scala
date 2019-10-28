@@ -21,7 +21,10 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
   "carrot.targets.yaml.annotation",
   "carrot.output.storage.aws",
   "carrot.runner.required",
-  "carrot.targets.dummy"))
+  "carrot.targets.dummy",
+  "carrot.output.storage.converter.target",
+  "carrot.output.storage.converter.sample"
+))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:LipidsPos_PhV1_06_160362.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",

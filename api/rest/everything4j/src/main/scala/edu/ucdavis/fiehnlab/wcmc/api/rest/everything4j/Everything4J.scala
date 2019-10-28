@@ -4,9 +4,9 @@ import java.io._
 import java.net.{URI, URL, URLEncoder}
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.loader.RemoteLoader
 import org.apache.commons.io.IOUtils
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.zeroturnaround.zip.ZipUtil
@@ -32,36 +32,40 @@ class Everything4J(host: String = "eclipse.fiehnlab.ucdavis.edu", port: Int = 80
     * @return
     */
   override def load(name: String): Option[InputStream] = {
-    val url = s"http://${host}:${port}?s=${URLEncoder.encode(name, "UTF8")}&j=1&path_column=1"
-    logger.info(s"load is checking url: ${url}")
+    if (exists(name)) {
+      val url = s"http://${host}:${port}?s=${URLEncoder.encode(name, "UTF8")}&j=1&path_column=1"
+      logger.info(s"load is checking url: ${url}")
 
-    val data = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")
+      val data = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "file")
 
-    if (data.isEmpty) {
-      val folder = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "folder")
+      if (data.isEmpty) {
+        val folder = objectMapper.readValue(new URL(url), classOf[Search]).results.filter(_.`type`.toLowerCase() == "folder")
 
-      if (folder.isEmpty) {
-        logger.warn(s"we can't identify what type of resource '${name}' is...")
-        None
+        if (folder.isEmpty) {
+          logger.warn(s"we can't identify what type of resource '${name}' is...")
+          None
+        } else {
+          logger.debug(s"${name} is a folder, compressing now.")
+          val content = createZip(folder.head.name, folder.head.path)
+          logger.debug("returning compressed stream...")
+          Option(content)
+        }
       } else {
-        logger.debug(s"${name} is a folder, compressing now.")
-        val content = createZip(folder.head.name, folder.head.path)
-        logger.debug("returning compressed stream...")
-        Option(content)
+        val encoded = s"${data.head.path.replaceAll("\\\\", "/").replaceAll("\\s", "%20").replaceAll(":", "%3A")}/${URLEncoder.encode(data.head.name, "UTF8").replaceAll("\\+", "%20")}"
+        val uri = s"http://${host}:${port}/${encoded}"
+
+        logger.debug(s"loading file from URI: ${uri}")
+        val content = new URI(uri).toURL
+
+        try {
+          Option(content.openStream())
+        }
+        finally {
+          logger.info(s"download completed for ${name}")
+        }
       }
     } else {
-      val encoded = s"${data.head.path.replaceAll("\\\\", "/").replaceAll("\\s", "%20").replaceAll(":", "%3A")}/${URLEncoder.encode(data.head.name, "UTF8").replaceAll("\\+", "%20")}"
-      val uri = s"http://${host}:${port}/${encoded}"
-
-      logger.debug(s"loading file from URI: ${uri}")
-      val content = new URI(uri).toURL
-
-      try {
-        Option(content.openStream())
-      }
-      finally {
-        logger.info(s"download completed for ${name}")
-      }
+      None
     }
   }
 

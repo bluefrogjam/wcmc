@@ -21,7 +21,7 @@ class DelegatingResourceLoaderTest extends WordSpec with Matchers {
 
   "DelegatingResourceLoaderTest" should {
 
-    "has enough loaders defined" in{
+    "has enough loaders defined" in {
       loader.loaders.size should be >= 3
     }
 

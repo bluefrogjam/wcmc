@@ -47,12 +47,12 @@ class ClasspathResourceLoaderTest extends WordSpec with Matchers with Logging {
       loader.load("test.txt") shouldBe defined
     }
 
-    "succeed finding file in subfolder" in {
-      loader.exists("sub/test3.txt") shouldBe true
+    "succeed file existance check" in {
+      loader.exists("test.txt") shouldBe true
     }
 
-    "succeed finding file in subfolder with slash" in {
-      loader.exists("/sub/test3.txt") shouldBe true
+    "succeed missing file check" in {
+      loader.exists("missing.txt") shouldBe false
     }
 
     "pass when checking a file with isFile" in {
@@ -72,6 +72,7 @@ class ClasspathResourceLoaderTest extends WordSpec with Matchers with Logging {
     }
 
     "load a file in other jar" in {
+      logger.info("EXISTS: ".concat(loader.exists("META-INF/NOTICE.txt").toString))
       val data = loader.load("META-INF/NOTICE.txt").get
       data should not be null
       val buffer = new Array[Byte](data.available())

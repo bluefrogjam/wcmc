@@ -23,16 +23,19 @@ class ClasspathResourceLoader extends LocalLoader {
     val fixed = cleanName(name)
     val resource = getClass.getResourceAsStream(fixed)
 
-    logger.debug(s"\tLoading resource: ${resource} (fixed to: $fixed)")
-    Option(resource)
+    if (resource != null) {
+      logger.debug(s"\tLoading resource: ${resource} (fixed to: $fixed)")
+      Option(resource)
+    } else {
+      None
+    }
   }
 
   private def cleanName(name: String): String = {
     if (name.startsWith("/")) {
       name
     } else {
-      logger.debug(s"fixed name $name to: /$name")
-      "/".concat(name)
+      s"/$name"
     }
   }
 
@@ -44,11 +47,11 @@ class ClasspathResourceLoader extends LocalLoader {
       new File(resource.getFile)
     } match {
       case Success(f: File) => f.exists()
-      case Failure(_) => false
+      case Failure(_) => logger.warn(s"inexistent file $name"); false
     }
   }
 
-  override def priority: Int = super.priority + 20
+  override def priority: Int = super.priority + 10
 
   override def isDirectory(name: String): Boolean = {
     val fixed = cleanName(name)
