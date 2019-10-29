@@ -88,6 +88,7 @@
                 <artifactId>moultingyaml_${scala.version}</artifactId>
                 <version>0.4.1</version>
             </dependency>
+
             <dependency>
                 <groupId>io.spray</groupId>
                 <artifactId>spray-client_${scala.version}</artifactId>
@@ -489,6 +490,12 @@
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-mllib_${scala.version}</artifactId>
                 <version>2.4.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.lambdaworks</groupId>
+                <artifactId>jacks_2.11</artifactId>
+                <version>2.3.3</version>
             </dependency>
 
         </dependencies>

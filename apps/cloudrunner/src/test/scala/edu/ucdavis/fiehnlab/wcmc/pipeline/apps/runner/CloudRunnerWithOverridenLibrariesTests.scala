@@ -26,7 +26,10 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.targets.yaml.annotation",
   "carrot.output.storage.aws",
   "carrot.runner.required",
-  "carrot.targets.dummy"))
+  "carrot.targets.dummy",
+  "carrot.output.storage.converter.target",
+  "carrot.output.storage.converter.sample"
+))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:B2a_TEDDYLipids_Neg_NIST001.mzml",
   "CARROT_METHOD:teddy | 6550 | test | negative",

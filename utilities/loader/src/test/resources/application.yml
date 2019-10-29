@@ -1,0 +1,7 @@
+logging:
+  level:
+    edu.ucdavis.fiehnlab.loader.DelegatingResourceLoader: debug
+    edu.ucdavis.fiehnlab.loader.impl.ClasspathResourceLoader: debug
+    edu.ucdavis.fiehnlab.loader.impl.DirectoryResourceLoader: debug
+    edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader: debug
+    edu.ucdavis.fiehnlab.loader.impl.TmpResourceLoader: debug

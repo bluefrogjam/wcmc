@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
-import edu.ucdavis.fiehnlab.utilities.email.{EmailService, EmailServiceable}
+import edu.ucdavis.fiehnlab.utilities.email.EmailServiceable
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.springframework.beans.factory.annotation.{Autowired, Value}

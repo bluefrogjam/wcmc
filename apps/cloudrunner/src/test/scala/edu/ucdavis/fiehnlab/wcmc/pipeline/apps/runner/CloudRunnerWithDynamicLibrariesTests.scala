@@ -23,7 +23,10 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.targets.yaml.annotation",
   "carrot.output.storage.aws",
   "carrot.runner.required",
-  "carrot.targets.dummy"))
+  "carrot.targets.dummy",
+  "carrot.output.storage.converter.target",
+  "carrot.output.storage.converter.sample"
+))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
   "CARROT_METHOD:csh | 6530 | test | positive",

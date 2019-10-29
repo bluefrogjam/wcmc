@@ -18,10 +18,12 @@
             <groupId>edu.ucdavis.fiehnlab.wcmc.pipeline.core.io</groupId>
             <artifactId>sampleloader</artifactId>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab</groupId>
             <artifactId>sjp</artifactId>
         </dependency>
+
         <dependency>
             <groupId>edu.ucdavis.fiehnlab.wcmc.api.rest</groupId>
             <artifactId>fserv4j</artifactId>

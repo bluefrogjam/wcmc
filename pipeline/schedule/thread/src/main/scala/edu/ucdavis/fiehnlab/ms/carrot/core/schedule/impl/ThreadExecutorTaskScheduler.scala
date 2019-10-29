@@ -1,9 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule.impl
 
-import java.io.IOException
 import java.util.concurrent.{ExecutorService, Executors, TimeUnit}
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
 import edu.ucdavis.fiehnlab.ms.carrot.core.schedule.{TaskRunner, TaskScheduler}
 import org.apache.logging.log4j.scala.Logging

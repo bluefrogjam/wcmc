@@ -1,10 +1,6 @@
-msdial:
-  connectTimeoutMillis: 250
-  readTimeoutMillis: 250000
-
-spectrum:
-  minimizer:
-    basePeakRatio: 0.0001
+logging:
+  level:
+    root: info
 
 carrot:
   targets:
@@ -21,3 +17,10 @@ carrot:
     yaml:
       properties:
           resource: "libraries.yaml"
+
+wcmc:
+  workflow:
+    resource:
+      store:
+        bucket:
+          name: "carrot-libraries"

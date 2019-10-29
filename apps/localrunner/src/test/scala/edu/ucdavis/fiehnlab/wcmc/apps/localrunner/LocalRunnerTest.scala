@@ -1,13 +1,13 @@
 package edu.ucdavis.fiehnlab.wcmc.apps.localrunner
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.NegativeMode
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.{ConfigFileApplicationContextInitializer, SpringBootTest}
-import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager}
 import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.{ActiveProfiles, ContextConfiguration, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest

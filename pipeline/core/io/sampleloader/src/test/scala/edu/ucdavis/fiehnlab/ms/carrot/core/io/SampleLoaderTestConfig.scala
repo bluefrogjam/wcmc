@@ -2,8 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.io
 
 import java.io.File
 
+import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.cache.annotation.EnableCaching

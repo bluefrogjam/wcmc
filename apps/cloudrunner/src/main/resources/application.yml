@@ -28,14 +28,6 @@ carrot:
   mode: '${CARROT_MODE:lcms}'
 
 
-#which email account to use
-wcmc:
-  email:
-    host: smtp.gmail.com
-    port: 25
-    username: binbase@gmail.com
-    pass: fiehnlab-2018
-
 mona:
   rest:
     server:
@@ -49,6 +41,11 @@ wcmc:
         mona:
           user: admin
           password: admin
+  email:
+    host: smtp.gmail.com
+    port: 25
+    username: binbase@gmail.com
+    pass: fiehnlab-2018
 
 ---
 spring:
@@ -71,9 +68,12 @@ wcmc:
         mona:
           user: admin
           password: admin
-
-
-  #which email account to use
+  pipeline:
+    workflow:
+      config:
+        correction:
+          peak:
+            intensity: 10000
   email:
     host: smtp.gmail.com
     port: 25
@@ -84,11 +84,3 @@ carrot:
   sample: '${CARROT_SAMPLE}'
   method: '${CARROT_METHOD}'
   mode: '${CARROT_MODE}'
-
-wcmc:
-  pipeline:
-    workflow:
-      config:
-        correction:
-          peak:
-            intensity: 10000

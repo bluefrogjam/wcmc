@@ -10,7 +10,4 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 
-	<logger name="edu.ucdavis.fiehnlab.loader" level="debug" additivity="false">
-		<appender-ref ref="STDOUT" />
-	</logger>
 </configuration>
