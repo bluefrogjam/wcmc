@@ -10,7 +10,7 @@ class PeakHeightRSDCorrectionLossFunctionTest extends CorrectionLossFunctionTest
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
-  "PeakHeightRSDCorrectionLossFunctionTest" ignore {
+  "PeakHeightRSDCorrectionLossFunctionTest" should {
 
     "apply-qtof-csh" in {
 
@@ -23,7 +23,7 @@ class PeakHeightRSDCorrectionLossFunctionTest extends CorrectionLossFunctionTest
         Seq.empty
       )
 
-      val tightResult = correctionObjective.apply(CSH_CORRECTION_TIGHT_PARAMS)
+      val tightResult = correctionObjective.apply(CSH_CORRECTION_MODERATE_PARAMS)
       val wideResult = correctionObjective.apply(CSH_CORRECTION_WIDE_PARAMS)
 
       assert(wideResult > tightResult)

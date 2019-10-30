@@ -24,7 +24,7 @@ class STDOutlierCorrectionLossFunctionTest extends CorrectionLossFunctionTest {
       )
 
       val tightResult = correctionObjective.apply(CSH_CORRECTION_TIGHT_PARAMS)
-      val wideResult = correctionObjective.apply(CSH_CORRECTION_WIDE_PARAMS)
+      val wideResult = correctionObjective.apply(CSH_CORRECTION_MODERATE_PARAMS)
       assert(wideResult < tightResult)
     }
   }
