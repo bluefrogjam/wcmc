@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
-@Profile(Array("carrot.processing.dump"))
+@Profile(Array("carrot.processing.dump","carrot.processing.dump.spectra"))
 class DumpAnnotationInformation @Autowired()(storage: ResourceStorage, objectMapper: ObjectMapper) extends PostProcessing[Double] with Logging {
 
   /**

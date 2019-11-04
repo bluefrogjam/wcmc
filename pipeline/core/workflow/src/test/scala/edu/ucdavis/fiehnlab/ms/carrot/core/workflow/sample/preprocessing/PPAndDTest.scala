@@ -54,7 +54,7 @@ class PPAndDTest extends WordSpec with Matchers with Logging {
       deconv.spectra should not be Seq.empty
       deconv.spectra should have size 125
 
-      stasis_cli.getTracking(sample.name).status.map(_.value) should contain("deconvoluted")
+      stasis_cli.getTracking(sample.name).get.status.map(_.value) should contain("deconvoluted")
     }
   }
 }

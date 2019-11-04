@@ -90,8 +90,8 @@ class GCMSTargetRetentionIndexCorrectionProcessTest extends WordSpec with Matche
             //old correction only has 7 results
             assert(result.featuresUsedForCorrection.size >= 7)
 
-            stasis_cli.getTracking(result.name).status.map(_.value) should contain("deconvoluted")
-            stasis_cli.getTracking(result.name).status.map(_.value) should contain("corrected")
+            stasis_cli.getTracking(result.name).get.status.map(_.value) should contain("deconvoluted")
+            stasis_cli.getTracking(result.name).get.status.map(_.value) should contain("corrected")
           }
 
         }
