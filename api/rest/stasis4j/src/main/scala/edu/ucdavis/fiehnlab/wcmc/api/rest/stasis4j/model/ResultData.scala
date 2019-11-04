@@ -90,6 +90,8 @@ case class Annotation(
                          intensity: Double,
                          replaced: Boolean,
                          mass: Double,
+                         ms2: String,
+                         precursor: Option[Ion] = None,
                          nonCorrectedRt: Double = 0,
                          massError: Double = 0,
                          massErrorPPM: Double = 0,
@@ -114,3 +116,8 @@ case class ResultResponse(
                              time: Date,
                              injections: java.util.Map[String, Seq[Injection]]
                          )
+
+case class Ion(
+                  mass: Double,
+                  intensity: Float
+              )

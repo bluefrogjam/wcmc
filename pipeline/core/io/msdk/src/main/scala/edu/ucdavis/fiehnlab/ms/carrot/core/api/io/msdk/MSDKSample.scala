@@ -21,13 +21,11 @@ import scala.collection.JavaConverters._
   */
 class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Logging with RawData {
 
-  override val properties: Option[SampleProperties] = Some(SampleProperties(name, None))
-
   /**
     * a collection of spectra
     * belonging to this sample
     */
-    //TODO Watch for race conditions if reading samples in parallel
+  //TODO Watch for race conditions if reading samples in parallel
   override lazy val spectra: Seq[_ <: Feature] = try {
     var precursor: MSDKMSSpectra = null
     delegate.getScans.asScala.filter(_.getIntensityValues.nonEmpty).map {
@@ -68,7 +66,7 @@ class MSDKSample(name: String, delegate: RawDataFile) extends Sample with Loggin
   } finally {
     delegate.dispose()
   }
-
+  override val properties: Option[SampleProperties] = Some(SampleProperties(name, None))
   /**
     * the unique file name of the sample
     */
@@ -214,11 +212,15 @@ class MSDKMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String) 
   * @param spectra
   */
 class MSDKMSMSSpectra(spectra: MsScan, mode: Option[IonMode], val sample: String, val precursor: Option[SpectrumProperties]) extends MSMSSpectra {
-  override val precursorIon: Double = if (spectra.getIsolations.isEmpty) {
-    0.0 //this is just bad, but seems to be a real value in some files
+  override val precursorIon: Option[Ion] = if (spectra.getIsolations.isEmpty) {
+    None
   } else {
-    spectra.getIsolations.get(0).getPrecursorMz
+    Some(Ion(
+      mass = spectra.getIsolations.get(0).getPrecursorMz,
+      intensity = 0.0f
+    ))
   }
+
   override val uniqueMass: Option[Double] = None
   override val signalNoise: Option[Double] = None
   override val retentionTimeInSeconds: Double = BigDecimal(spectra.getRetentionTime)

@@ -30,9 +30,9 @@ class ResourceLoaderSampleLoaderTest extends WordSpec with Matchers with Logging
   "ResourceLoaderSampleLoaderTest" should {
 
     "clear cache" in {
-      cacheManager.getCache("resource-load-sample").clear()
+      cacheManager.getCache("resource-get-sample").clear()
 
-      assert(cacheManager.getCache("resource-load-sample").get("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml") == null)
+      assert(cacheManager.getCache("resource-get-sample").get("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml") == null)
     }
 
     "able to load B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml" in {

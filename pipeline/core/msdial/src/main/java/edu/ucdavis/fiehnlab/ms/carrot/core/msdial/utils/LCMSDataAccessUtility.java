@@ -72,7 +72,7 @@ public class LCMSDataAccessUtility {
 
                 double sum = 0;
 
-                if (Math.abs(precursorMz - spectrum.precursorIon()) < centroidedMS1Tolerance && !massSpectrum.isEmpty()) {
+                if (Math.abs(precursorMz - spectrum.precursorIon().get().mass()) < centroidedMS1Tolerance && !massSpectrum.isEmpty()) {
                     int startMsIndex = DataAccessUtility.getMs2StartIndex(productMz - centroidMS2Tolerance, massSpectrum);
 
                     for (int j = startMsIndex; j < massSpectrum.size(); j++) {
@@ -113,7 +113,7 @@ public class LCMSDataAccessUtility {
             if (spectrumList.get(i) instanceof MSMSSpectra && spectrumList.get(i).ionMode().get().mode().equals(ionMode.mode())) {
                 MSMSSpectra spectrum = (MSMSSpectra) spectrumList.get(i);
 
-                if (Math.abs(accurateMass - spectrum.precursorIon()) <= tolerance) {
+                if (Math.abs(accurateMass - spectrum.precursorIon().get().mass()) <= tolerance) {
                     if (maxIntensity < spectrum.associatedScan().get().basePeak().intensity()) {
                         maxIntensity = spectrum.associatedScan().get().basePeak().intensity();
                         maxID = i;

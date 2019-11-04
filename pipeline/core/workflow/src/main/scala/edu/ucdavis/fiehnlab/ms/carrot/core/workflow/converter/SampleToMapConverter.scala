@@ -1,5 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.converter
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Ion => StIon}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, QuantifiedSpectra, QuantifiedTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
@@ -27,25 +29,47 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
     logger.info(s"converting sample ${sample.name} to ResultData")
     val results: Seq[Result] = sample.quantifiedTargets.collect {
       case replacedtgt: ZeroreplacedTarget =>
+
+        val _ion: Option[StIon] = replacedtgt.spectraUsedForReplacement.massOfDetectedFeature match {
+          case Some(p) => Some(p.asInstanceOf[StIon])
+          case None => None
+        }
+
         Result(resultConverter.asStasisTarget(replacedtgt),
-          Annotation(replacedtgt.spectraUsedForReplacement.retentionIndex,
-            replacedtgt.spectraUsedForReplacement.quantifiedValue.get,
+          Annotation(retentionIndex = replacedtgt.spectraUsedForReplacement.retentionIndex,
+            intensity= replacedtgt.spectraUsedForReplacement.quantifiedValue.get,
             replaced = true,
-            replacedtgt.spectraUsedForReplacement.accurateMass.get,
-            replacedtgt.retentionTimeInSeconds,
+            mass = replacedtgt.spectraUsedForReplacement.accurateMass.get,
+            ms2 = replacedtgt.spectraUsedForReplacement.associatedScan.getOrElse(None) match {
+              case None => ""
+              case t: SpectrumProperties => t.spectraString()
+            },
+            precursor = _ion,
+            nonCorrectedRt = replacedtgt.retentionTimeInSeconds,
             massError = Math.abs(replacedtgt.precursorMass.get - replacedtgt.spectraUsedForReplacement.accurateMass.get),
             massErrorPPM = getReplMassError(replacedtgt, Some(replacedtgt.spectraUsedForReplacement), ppm = true)
           )
         )
       case quanttgt: QuantifiedTarget[T] =>
+
+        val _ion: Option[StIon] = quanttgt.spectra match {
+          case Some(p) => Some(p.massOfDetectedFeature.asInstanceOf[StIon])
+          case None => None
+        }
+
         Result(resultConverter.asStasisTarget(quanttgt),
-          Annotation(quanttgt.retentionIndex,
-            quanttgt.quantifiedValue.getOrElse(0.0) match {
+          Annotation(retentionIndex = quanttgt.retentionIndex,
+            intensity = quanttgt.quantifiedValue.getOrElse(0.0) match {
               case x: Double => x.toDouble
               case _ => 0.0
             },
             replaced = false,
-            quanttgt.precursorMass.get,
+            mass = quanttgt.precursorMass.get,
+            ms2 = quanttgt.spectrum.getOrElse(None) match {
+              case None => ""
+              case t: SpectrumProperties => t.spectraString()
+            },
+            precursor = _ion,
             nonCorrectedRt = quanttgt.retentionTimeInSeconds,
             massError = getTargetMassError(quanttgt, quanttgt.spectra),
             massErrorPPM = getTargetMassError(quanttgt, quanttgt.spectra, ppm = true)

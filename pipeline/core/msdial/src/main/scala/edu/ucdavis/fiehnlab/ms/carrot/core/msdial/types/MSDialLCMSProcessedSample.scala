@@ -5,6 +5,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.types.lcms.MS2DeconvolutionResult
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 
 object MSDialLCMSProcessedSample {
@@ -29,7 +30,7 @@ object MSDialLCMSProcessedSample {
     }
   }
 
-  def generateSpectra(ms2DecResults: java.util.List[MS2DeconvolutionResult], fileName: String, mode: IonMode) = {
+  def generateSpectra(ms2DecResults: java.util.List[MS2DeconvolutionResult], fileName: String, mode: IonMode): mutable.Buffer[MSSpectra] = {
 
     ms2DecResults.asScala.map { x: MS2DeconvolutionResult =>
 
@@ -87,6 +88,7 @@ object MSDialLCMSProcessedSample {
 
       else {
         val _accurateMass = x.ms1AccurateMass
+        val _intensity = x.ms1PeakHeight.toFloat
 
         val _precursorScan = Some(new SpectrumProperties {
           override val msLevel: Short = 1
@@ -105,7 +107,7 @@ object MSDialLCMSProcessedSample {
         new MSMSSpectra {
           override val uniqueMass: Option[Double] = None
           override val signalNoise: Option[Double] = None
-          override val precursorIon: Double = _accurateMass
+          override val precursorIon: Option[Ion] = Some(Ion(_accurateMass, _intensity))
           override val ionMode: Option[IonMode] = Option(mode)
           override val purity: Option[Double] = None
           override val sample: String = _fileName

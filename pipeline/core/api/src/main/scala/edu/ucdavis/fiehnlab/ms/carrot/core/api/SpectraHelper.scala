@@ -22,7 +22,7 @@ object SpectraHelper {
           /**
             * the observed pre cursor ion
             */
-          override val precursorIon: Double = feat.precursorIon
+          override val precursorIon: Option[Ion] = feat.precursorIon
           /**
             * how pure this spectra is
             */
@@ -153,7 +153,7 @@ object SpectraHelper {
 
         new MSMSSpectra with CorrectedSpectra {
           override val sample: String = feat.sample
-          override val precursorIon: Double = feat.precursorIon
+          override val precursorIon: Option[Ion] = feat.precursorIon
           override val purity: Option[Double] = feat.purity
           override val ionMode: Option[IonMode] = feat.ionMode
 
@@ -234,7 +234,7 @@ object SpectraHelper {
           /**
             * the observed pre cursor ion
             */
-          override val precursorIon: Double = feat.precursorIon
+          override val precursorIon: Option[Ion] = feat.precursorIon
 
           override val precursorScan: Option[SpectrumProperties] = feat.precursorScan
 
@@ -413,7 +413,7 @@ object SpectraHelper {
           /**
             * the observed pre cursor ion
             */
-          override val precursorIon: Double = feat.precursorIon
+          override val precursorIon: Option[Ion] = feat.precursorIon
 
           override val precursorScan: Option[SpectrumProperties] = feat.precursorScan
 

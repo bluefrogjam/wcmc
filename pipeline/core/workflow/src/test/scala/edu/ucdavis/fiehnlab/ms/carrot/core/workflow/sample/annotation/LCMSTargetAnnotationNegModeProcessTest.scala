@@ -88,21 +88,6 @@ class LCMSTargetAnnotationNegModeProcessTest extends WordSpec with Matchers with
 
       val result = annotation.process(correctedSample, method, Some(sample))
 
-      result.spectra.foreach { spectra => //sortBy(_.target.name.get).
-        logger.debug(f"${spectra.target.name.get}")
-        logger.debug(f"\ttarget data:")
-        logger.debug(f"\t\t mass:           ${spectra.target.precursorMass.get}%1.4f")
-        logger.debug(f"\t\t rt (s):         ${spectra.target.retentionIndex}%1.3f")
-        logger.debug(f"\tannotation data:")
-        logger.debug(f"\t\t scan:           ${spectra.scanNumber}")
-        logger.debug(f"\t\t mass:           ${spectra.accurateMass.get}%1.4f")
-        logger.debug(f"\t\t rt (s):         ${spectra.retentionTimeInSeconds}%1.3f")
-        logger.debug(f"\t\t mass accuracy:  ${spectra.massAccuracy.get}%1.5f")
-        logger.debug(f"\t\t mass accuracy:  ${spectra.massAccuracyPPM.get}%1.3f} ppm")
-        logger.debug(f"\t\t distance ri:    ${spectra.retentionIndexDistance.get}%1.3f")
-        logger.debug("")
-      }
-
       assert(result != null)
       assert(result.noneAnnotated.size != result.spectra.size)
       assert((result.noneAnnotated.size + result.spectra.size) == result.correctedWith.spectra.size)

@@ -113,21 +113,6 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with Matchers with Loggin
 
         val result = annotation.process(sample, method, None)
 
-        result.spectra.foreach { spectra => //sortBy(_.target.name.get).
-          logger.info(f"${spectra.target.name.get}")
-          logger.info(f"\ttarget data:")
-          logger.info(f"\t\t mass:           ${spectra.target.precursorMass.get}%1.4f")
-          logger.info(f"\t\t rt (s):         ${spectra.target.retentionIndex}%1.3f")
-          logger.info(f"\tannotation data:")
-          logger.info(f"\t\t scan:           ${spectra.scanNumber}")
-          logger.info(f"\t\t mass:           ${spectra.accurateMass.get}%1.4f")
-          logger.info(f"\t\t rt (s):         ${spectra.retentionTimeInSeconds}%1.3f")
-          logger.info(f"\t\t mass accuracy:  ${spectra.massAccuracy.get}%1.5f")
-          logger.info(f"\t\t mass accuracy:  ${spectra.massAccuracyPPM.get}%1.3f} ppm")
-          logger.info(f"\t\t distance ri:    ${spectra.retentionIndexDistance.get}%1.3f")
-          logger.info("")
-        }
-
         assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)
         assert((result.noneAnnotated.size + result.spectra.size) == result.correctedWith.spectra.size)
@@ -152,21 +137,6 @@ class LCMSTargetAnnotationProcessTest extends WordSpec with Matchers with Loggin
         val result = annotation.process(sample, method, None)
 
         logger.info(s"sample name: ${sample.fileName}")
-        result.spectra.sortBy(_.target.name.get).foreach { spectra =>
-          logger.info(f"${spectra.target.name.get}")
-          logger.info(f"\ttarget data:")
-          logger.info(f"\t\t mass:          ${spectra.target.precursorMass.get}%1.4f")
-          logger.info(f"\t\t rt (s):        ${spectra.target.retentionIndex}%1.3f")
-          logger.info(f"\tannotation data:")
-          logger.info(f"\t\t scan:          ${spectra.scanNumber}")
-          logger.info(f"\t\t mass:          ${spectra.accurateMass.get}%1.4f")
-          logger.info(f"\t\t ri (s):        ${spectra.retentionIndex}%1.3f")
-          logger.info(f"\t\t rt (s):        ${spectra.retentionTimeInSeconds}%1.3f")
-          logger.info(f"\t\t mass accuracy: ${spectra.massAccuracy.get}%1.5f")
-          logger.info(f"\t\t mass accuracy: ${spectra.massAccuracyPPM.get}%1.3f ppm")
-          logger.info(f"\t\t distance ri:   ${spectra.retentionIndexDistance.get}%1.3f")
-          logger.info("")
-        }
 
         assert(result != null)
         assert(result.noneAnnotated.size != result.spectra.size)

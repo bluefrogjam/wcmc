@@ -112,7 +112,7 @@ trait SpectrumProperties extends Serializable {
   val modelIons: Option[Seq[Double]]
 
   /**
-    * all the defined ions for this spectra
+    * all the defined ions for this spectra. (absolute intensity)
     */
   val ions: Seq[Ion]
 
@@ -173,7 +173,7 @@ trait MSMSSpectra extends MSSpectra with PrecursorSupport {
   /**
     * the observed pre cursor ion
     */
-  val precursorIon: Double
+  val precursorIon: Option[Ion]
 }
 
 trait PrecursorSupport {

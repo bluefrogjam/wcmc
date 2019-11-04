@@ -85,14 +85,17 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
 
         if (target.massOfDetectedFeature.isDefined) {
 
-          val newTarget = new Target with PrecursorSupport {
+          val newTarget: Target with PrecursorSupport = new Target with PrecursorSupport {
 
             override val uniqueMass: Option[Double] = t.uniqueMass
             override val retentionTimeInSeconds: Double = target.retentionTimeInSeconds
             override var inchiKey: Option[String] = None
             override val retentionIndex: Double = target.retentionIndex
             override var name: Option[String] = None
-            override val precursorMass: Option[Double] = Option(target.precursorIon)
+            override val precursorMass: Option[Double] = target.precursorIon match {
+              case Some(ion) => Some(ion.mass)
+              case None => None
+            }
             override var confirmed: Boolean = false
             override var requiredForCorrection: Boolean = false
             override var isRetentionIndexStandard: Boolean = false

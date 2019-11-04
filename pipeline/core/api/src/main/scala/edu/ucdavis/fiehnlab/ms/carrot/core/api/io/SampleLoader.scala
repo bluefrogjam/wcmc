@@ -42,7 +42,6 @@ trait SampleLoader extends Logging {
         val wrapped_spectra = x.spectra.map {
           case x: MSMSSpectra =>
 
-
             val _metadata = x.metadata
             val _precursorIon = x.precursorIon
             val _sample = x.sample
@@ -58,21 +57,9 @@ trait SampleLoader extends Logging {
               case Some(p) =>
                 Some(
                   new SpectrumProperties {
-                    /**
-                      * the msLevel of this spectra
-                      */
                     override val msLevel: Short = p.msLevel
-                    /**
-                      * a list of model ions used during the deconvolution
-                      */
                     override val modelIons: Option[Seq[Double]] = p.modelIons
-                    /**
-                      * all the defined ions for this spectra
-                      */
                     override val ions: Seq[Ion] = p.ions
-                    /**
-                      * all unprocessed ions for this spectrum before deconvolution
-                      */
                     override val rawIons: Option[Seq[Ion]] = Some(p.ions)
                   }
                 )
@@ -80,26 +67,13 @@ trait SampleLoader extends Logging {
               case None => None
             }
 
-
             val _associatedScan = x.associatedScan match {
               case Some(p) =>
                 Some(
                   new SpectrumProperties {
-                    /**
-                      * the msLevel of this spectra
-                      */
                     override val msLevel: Short = p.msLevel
-                    /**
-                      * a list of model ions used during the deconvolution
-                      */
                     override val modelIons: Option[Seq[Double]] = p.modelIons
-                    /**
-                      * all the defined ions for this spectra
-                      */
                     override val ions: Seq[Ion] = p.ions
-                    /**
-                      * all unprocessed ions for this spectrum before deconvolution
-                      */
                     override val rawIons: Option[Seq[Ion]] = Some(p.ions)
                   }
                 )
@@ -109,53 +83,17 @@ trait SampleLoader extends Logging {
 
 
             new MSMSSpectra {
-              /**
-                * the observed pre cursor ion
-                */
-              override val precursorIon: Double = _precursorIon
-              /**
-                * the precursor scan info for the current MSMS spectrum
-                */
+              override val precursorIon: Option[Ion] = _precursorIon
               override val precursorScan: Option[SpectrumProperties] = _precursorScan
-              /**
-                * the associated sample
-                */
               override val sample: String = _sample
-              /**
-                * how pure this spectra is
-                */
               override val purity: Option[Double] = _purity
-              /**
-                * the signal noise of this spectra
-                */
               override val signalNoise: Option[Double] = _signalNoise
-              /**
-                * the unique mass of this spectra
-                */
               override val uniqueMass: Option[Double] = _uniqueMass
-              /**
-                * the local scan number
-                */
               override val scanNumber: Int = x.scanNumber
-              /**
-                * the retention time of this spectra. It should be provided in seconds!
-                */
               override val retentionTimeInSeconds: Double = _retentionTimeInSeconds
-              /**
-                * specified ion mode for the given feature
-                */
               override val ionMode: Option[IonMode] = _ionMode
-              /**
-                * the associated complete scan for this feature
-                */
               override val associatedScan: Option[SpectrumProperties] = _associatedScan
-              /**
-                * accurate mass of this feature, if applicable
-                */
               override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
-              /**
-                * Contains random metadata associated to the object we mix this into
-                */
               override val metadata: Map[String, AnyRef] = _metadata
             }
 
@@ -172,21 +110,9 @@ trait SampleLoader extends Logging {
               case Some(p) =>
                 Some(
                   new SpectrumProperties {
-                    /**
-                      * the msLevel of this spectra
-                      */
                     override val msLevel: Short = p.msLevel
-                    /*e
-                      * a list of model ions used during the deconvolution
-                      */
                     override val modelIons: Option[Seq[Double]] = p.modelIons
-                    /**
-                      * all the defined ions for this spectra
-                      */
                     override val ions: Seq[Ion] = p.ions
-                    /**
-                      * all unprocessed ions for this spectrum before deconvolution
-                      */
                     override val rawIons: Option[Seq[Ion]] = Some(p.ions)
                   }
                 )

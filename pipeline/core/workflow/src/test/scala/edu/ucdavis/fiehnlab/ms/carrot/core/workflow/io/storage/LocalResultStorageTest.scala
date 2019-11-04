@@ -82,7 +82,7 @@ class LocalResultStorageTest extends WordSpec {
         name = Some("test"),
         acquisitionMethod = method,
 
-        classes = Seq(ExperimentClass(quantified, None)
+        classes = Seq(ExperimentClass(results, None)
 
         )), task = Task(name = "test", email = None, acquisitionMethod = method, samples = samples.map(x => SampleToProcess(fileName = x.fileName, className = "test"))))
     }
