@@ -4,15 +4,15 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model._
 import org.springframework.http.{HttpEntity, ResponseEntity}
 
 trait StasisService {
-  def getTracking(sample: String): TrackingResponse
+  def getTracking(sample: String): Option[TrackingResponse]
 
   def addTracking(data: TrackingData): HttpEntity[TrackingResponse]
 
-  def getResults(sample: String): ResultResponse
+  def getResults(sample: String): Option[ResultResponse]
 
   def addResult(data: ResultData): ResponseEntity[ResultData]
 
-  def getAcquisition(sample: String): SampleResponse
+  def getAcquisition(sample: String): Option[SampleResponse]
 
   def createAcquisition(data: SampleData): HttpEntity[SampleData]
 

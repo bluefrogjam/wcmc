@@ -78,8 +78,8 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with Matchers wit
         x.annotation.asInstanceOf[CorrectedSpectra].retentionIndex > 0
       ))
 
-      stasis_cli.getTracking(sample2.name).status.map(_.value) should contain("deconvoluted")
-      stasis_cli.getTracking(sample2.name).status.map(_.value) should contain("corrected")
+      stasis_cli.getTracking(sample2.name).get.status.map(_.value) should contain("deconvoluted")
+      stasis_cli.getTracking(sample2.name).get.status.map(_.value) should contain("corrected")
     }
 
   }

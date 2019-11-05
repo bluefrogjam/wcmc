@@ -154,8 +154,8 @@ class GCMSTargetAnnotationProcessTest extends WordSpec with Matchers {
 
 
           //there is no deconvolution or quantification done on this sample
-          stasis_cli.getTracking(annotationResult.name).status.map(_.value) should contain("corrected")
-          stasis_cli.getTracking(annotationResult.name).status.map(_.value) should contain("annotated")
+          stasis_cli.getTracking(annotationResult.name).get.status.map(_.value) should contain("corrected")
+          stasis_cli.getTracking(annotationResult.name).get.status.map(_.value) should contain("annotated")
         }
 
       }

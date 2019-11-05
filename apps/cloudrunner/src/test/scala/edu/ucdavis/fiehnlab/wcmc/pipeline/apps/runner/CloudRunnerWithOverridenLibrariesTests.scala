@@ -49,7 +49,7 @@ class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with
     val sample = filename.split("\\.").head
     "have results on aws" in {
       try {
-        val results: ResultResponse = stasis_cli.getResults(sample)
+        val results: ResultResponse = stasis_cli.getResults(sample).get
 
         results should not be null
         results.injections.size() should be > 0

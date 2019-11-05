@@ -143,10 +143,10 @@ class StasisResultStorageTests extends WordSpec with Matchers with BeforeAndAfte
       val injections = data.injections.asScala
       injections(sample.name) shouldBe an[Injection]
 
-      writer.stasis_cli.getTracking(sample.name).status.maxBy(_.priority).value.toLowerCase === "exported"
+      writer.stasis_cli.getTracking(sample.name).get.status.maxBy(_.priority).value.toLowerCase === "exported"
 
       var results: ResultResponse = null
-      results = stasis_cli.getResults(sample.name)
+      results = stasis_cli.getResults(sample.name).get
 
       results should have(
         'sample (sample.name),
