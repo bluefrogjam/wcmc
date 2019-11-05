@@ -128,8 +128,7 @@ class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
       client.deleteTracking(sample)
       logger.info(s"Deleted")
 
-      val thrown = the[HttpClientErrorException] thrownBy client.getTracking(sample)
-      thrown.getStatusCode should be(HttpStatus.NOT_FOUND)
+      client.getTracking(sample) shouldBe None
     }
 
     "add/get Result" in {

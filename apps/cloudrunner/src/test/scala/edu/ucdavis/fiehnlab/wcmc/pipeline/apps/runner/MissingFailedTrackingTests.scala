@@ -44,7 +44,7 @@ class MissingFailedTrackingTests extends WordSpec with Matchers with Logging {
     val sample = filename.split("\\.").head
 
     "have all tracking statuses" in {
-      val results = stasis_cli.getTracking(sample)
+      val results = stasis_cli.getTracking(sample).get
       logger.info(s"Received: ${results}")
       results.status.map {
         _.value
