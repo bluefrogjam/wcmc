@@ -44,7 +44,7 @@ class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
       res.getStatusCode === 200
 
       Thread.sleep(delay)
-      val res2 = client.getAcquisition(metadata.sample)
+      val res2 = client.getAcquisition(metadata.sample).get
 
       res2 should not be null
       res2.id should equal(metadata.sample)
@@ -67,7 +67,7 @@ class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
       res.getStatusCode === 200
 
       Thread.sleep(delay)
-      val res2 = client.getAcquisition(metadata.sample)
+      val res2 = client.getAcquisition(metadata.sample).get
 
       res2 should not be null
       res2.id should equal(metadata.sample)
@@ -118,7 +118,7 @@ class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
 
       Thread.sleep(delay)
 
-      val res2 = client.getTracking(filename)
+      val res2 = client.getTracking(filename).get
       res2.id should equal(filename)
       res2.status.map(_.value) should contain("processing")
     }
@@ -128,8 +128,7 @@ class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
       client.deleteTracking(sample)
       logger.info(s"Deleted")
 
-      val thrown = the[HttpClientErrorException] thrownBy client.getTracking(sample)
-      thrown.getStatusCode should be(HttpStatus.NOT_FOUND)
+      client.getTracking(sample) shouldBe None
     }
 
     "add/get Result" in {
@@ -160,7 +159,7 @@ class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
 
       Thread.sleep(delay)
 
-      val res2 = client.getResults(filename)
+      val res2 = client.getResults(filename).get
       logger.info(s"result response: ${res2}")
 
       res2.sample should equal(filename)

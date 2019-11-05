@@ -47,28 +47,44 @@ class StasisClient extends StasisService with Logging {
   private val resultPath = "result"
   private val acquisitionPath = "acquisition"
 
-  override def getTracking(sample: String): TrackingResponse = restTemplate.exchange(new URI(s"${baseUrl}/${trackingPath}/${sample}"), HttpMethod.GET, new HttpEntity("", headers()), classOf[TrackingResponse]).getBody()
+  override def getTracking(sample: String): Option[TrackingResponse] = {
+
+    try {
+      Some(restTemplate.exchange(new URI(s"${baseUrl}/${trackingPath}/${sample}"), HttpMethod.GET, new HttpEntity("", headers()), classOf[TrackingResponse]).getBody())
+    }
+    catch {
+      case e: Exception => None
+    }
+  }
+
 
   override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = {
     logger.info(s"Adding tracking: ${data}")
     restTemplate.postForEntity(s"${baseUrl}/${trackingPath}", new HttpEntity(data, headers()), classOf[TrackingResponse])
   }
 
-  override def getResults(sample: String): ResultResponse = {
+  override def getResults(sample: String): Option[ResultResponse] = {
     if (sample.contains('.')) {
       logger.warn("The sample name provided might contain an extension. Please provide sample name without extension!")
     }
     val result = restTemplate.exchange(s"${baseUrl}/${resultPath}/${sample}", HttpMethod.GET, new HttpEntity("", headers()), classOf[ResultResponse])
 
     if (result.getStatusCodeValue == 200)
-      result.getBody
+      Some(result.getBody)
     else
-      ResultResponse("none", "none", new Date(), Map[String, Seq[Injection]]().asJava)
+      Some(ResultResponse("none", "none", new Date(), Map[String, Seq[Injection]]().asJava))
   }
 
   override def addResult(data: ResultData): ResponseEntity[ResultData] = restTemplate.postForEntity(s"${baseUrl}/${resultPath}", new HttpEntity(data, headers()), classOf[ResultData])
 
-  override def getAcquisition(sample: String): SampleResponse = restTemplate.exchange(s"${baseUrl}/${acquisitionPath}/${sample}", HttpMethod.GET, new HttpEntity("", headers()), classOf[SampleResponse]).getBody
+  override def getAcquisition(sample: String): Option[SampleResponse] = {
+    try {
+      Some(restTemplate.exchange(s"${baseUrl}/${acquisitionPath}/${sample}", HttpMethod.GET, new HttpEntity("", headers()), classOf[SampleResponse]).getBody)
+    }
+    catch {
+      case e: Exception => None
+    }
+  }
 
   override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = restTemplate.postForEntity(s"${baseUrl}/${acquisitionPath}", new HttpEntity(data, headers()), classOf[SampleData])
 
@@ -83,15 +99,15 @@ class StasisClient extends StasisService with Logging {
 class NoOpStasisService() extends StasisService {
   val id = System.currentTimeMillis().toString
 
-  override def getTracking(sample: String): TrackingResponse = TrackingResponse(id, sample, Seq.empty)
+  override def getTracking(sample: String): Option[TrackingResponse] = None
 
   override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = ResponseEntity.ok(TrackingResponse("", "", Seq.empty))
 
-  override def getResults(sample: String): ResultResponse = ResultResponse(id, sample, new Date(), new java.util.HashMap())
+  override def getResults(sample: String): Option[ResultResponse] = None
 
   override def addResult(data: ResultData): ResponseEntity[ResultData] = ResponseEntity.ok(data)
 
-  override def getAcquisition(sample: String): SampleResponse = SampleResponse(id, new Date(), sample, Acquisition("", "", ""), Metadata("", "", ""), Userdata("", ""), Array.empty)
+  override def getAcquisition(sample: String): Option[SampleResponse] = None
 
   override def createAcquisition(data: SampleData): ResponseEntity[SampleData] = ResponseEntity.ok(data)
 
