@@ -38,6 +38,9 @@ class MissingFailedTrackingTests extends WordSpec with Matchers with Logging {
   @Autowired
   val stasis_cli: StasisService = null
 
+  @Autowired
+  val runner: Runner = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "the sample" should {

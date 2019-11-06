@@ -31,13 +31,13 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
       case replacedtgt: ZeroreplacedTarget =>
 
         val _ion: Option[StIon] = replacedtgt.spectraUsedForReplacement.massOfDetectedFeature match {
-          case Some(p) => Some(p.asInstanceOf[StIon])
+          case Some(p) => Some(StIon(mass = p.mass, intensity = p.intensity))
           case None => None
         }
 
         Result(resultConverter.asStasisTarget(replacedtgt),
           Annotation(retentionIndex = replacedtgt.spectraUsedForReplacement.retentionIndex,
-            intensity= replacedtgt.spectraUsedForReplacement.quantifiedValue.get,
+            intensity = replacedtgt.spectraUsedForReplacement.quantifiedValue.get,
             replaced = true,
             mass = replacedtgt.spectraUsedForReplacement.accurateMass.get,
             ms2 = replacedtgt.spectraUsedForReplacement.associatedScan.getOrElse(None) match {
@@ -53,7 +53,11 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
       case quanttgt: QuantifiedTarget[T] =>
 
         val _ion: Option[StIon] = quanttgt.spectra match {
-          case Some(p) => Some(p.massOfDetectedFeature.asInstanceOf[StIon])
+          case Some(p) =>
+            p.massOfDetectedFeature match {
+              case Some(f) => Some(StIon(mass = f.mass, intensity = f.intensity))
+              case None => None
+            }
           case None => None
         }
 
@@ -78,13 +82,13 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
     }
 
     ResultData(sample.name, Map(sample.name ->
-        Injection(System.currentTimeMillis().toString,
-          Correction(3,
-            sample.correctedWith.name,
-            sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
-                .map(pair => Curve(pair._1, pair._2))
-          ),
-          results)
+      Injection(System.currentTimeMillis().toString,
+        Correction(3,
+          sample.correctedWith.name,
+          sample.regressionCurve.getXCalibrationData.zip(sample.regressionCurve.getYCalibrationData)
+            .map(pair => Curve(pair._1, pair._2))
+        ),
+        results)
     ).asJava
     )
   }
