@@ -27,3 +27,7 @@ mona:
     server:
       host: localhost
       port: 9090
+
+stasis:
+  baseurl: "https://test-api.metabolomics.us/stasis"
+  key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"

@@ -21,7 +21,7 @@ class Runner extends CommandLineRunner with Logging {
   // This turns into the active profile to run the sample ['carrot.lcms','carrot.gcms']
   val mode: String = null
 
-  @Value("${wcmc.workflow.lcms.submitter:dpedrosa@ucdavis.edu}")
+  @Value("${wcmc.workflow.lcms.submitter:fake@mymail.com}")
   val submitter: String = null
 
   @Autowired
