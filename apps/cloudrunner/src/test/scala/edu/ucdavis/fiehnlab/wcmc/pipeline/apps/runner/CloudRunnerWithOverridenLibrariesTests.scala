@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.ResultStorage
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.ResultResponse
 import org.apache.logging.log4j.scala.Logging
@@ -23,6 +24,10 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.processing.replacement.mzrt",
   "carrot.processing.peakdetection",
   "carrot.targets.yaml.correction",
+  "carrot.resource.store.bucket",
+  "carrot.output.storage.aws",
+  "carrot.output.storage.generic",
+  "carrot.output.writer.json",
   "carrot.targets.yaml.annotation",
   "carrot.output.storage.aws",
   "carrot.runner.required",
@@ -43,16 +48,17 @@ class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with
   @Autowired
   val stasis_cli: StasisService = null
 
+  @Autowired
+  val resultStorage:ResultStorage = null
+
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a runner" should {
     val sample = filename.split("\\.").head
     "have results on aws" in {
       try {
-        val results: ResultResponse = stasis_cli.getResults(sample).get
 
-        results should not be null
-        results.injections.size() should be > 0
+          fail()
       } catch {
         case ex: HttpClientErrorException =>
           fail(ex)

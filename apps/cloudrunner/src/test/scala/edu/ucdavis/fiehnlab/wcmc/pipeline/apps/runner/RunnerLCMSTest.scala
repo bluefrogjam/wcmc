@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.ResultStorage
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -16,10 +16,14 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
   "file.source.eclipse",
   "carrot.report.quantify.height",
   "carrot.processing.replacement.mzrt",
+  "carrot.output.storage.aws",
   "carrot.processing.peakdetection",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation",
   "carrot.output.storage.aws",
+  "carrot.resource.store.bucket",
+  "carrot.output.writer.json",
+  "carrot.output.storage.generic",
   "carrot.runner.required",
   "carrot.scheduler.local",
   "carrot.output.storage.converter.target",
@@ -39,17 +43,14 @@ class RunnerLCMSTest extends WordSpec with Matchers with Logging {
   val runner: Runner = null
 
   @Autowired
-  val stasis_cli: StasisService = null
+  val resultStorage: ResultStorage = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a runner" should {
-    "have a stasis client" in {
-      stasis_cli should not be null
-    }
 
     "have results on aws" in {
-      stasis_cli.getResults(sampleName.split('.')(0)) should not be null
+      fail()
     }
   }
 }

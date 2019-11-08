@@ -131,44 +131,6 @@ class Stasis4jTest extends WordSpec with Matchers with Logging with Eventually {
       client.getTracking(sample) shouldBe None
     }
 
-    "add/get Result" in {
-      val data = ResultData(filename,
-        Map[String, Injection](
-          "test_1" -> Injection("R2D2",
-            Correction(5, "test",
-              curve = Array(Curve(121.12, 121.2), Curve(123.12, 123.2))
-            ),
-            results = Array(
-              Result(
-                Target(121.12, "test", "test_id", 12.2, 0),
-                Annotation(121.2, 10.0, replaced = false, 12.2, "121.2:100 130.0:1", Some(Ion(222.2, 1010)), 121.1)
-              ),
-              Result(
-                Target(123.12, "test2", "test_id2", 132.12, 1),
-                Annotation(123.2, 103.0, replaced = true, 132.12, "123.2:100 151.1:1", None, 123.3)
-              )
-            )
-          )
-        ).asJava
-      )
-
-      val res = client.addResult(data)
-      res.getStatusCode === 200
-
-      logger.debug(s"result response: ${res.getBody.toString}")
-
-      Thread.sleep(delay)
-
-      val res2 = client.getResults(filename).get
-      logger.info(s"result response: ${res2}")
-
-      res2.sample should equal(filename)
-      res2.injections.size() should be >= 1
-      res2.injections.get("test_1").head.results.head.annotation.ms2 should not be empty
-      res2.injections.get("test_1").head.results.head.annotation.precursor shouldBe defined
-      res2.injections.get("test_1").head.results.head.annotation.precursor.get should equal(Ion(222.2, 1010))
-    }
-
     "schedule a sample" in {
       val res2 = client.schedule("B5_P20Lipid_Pos_NIST001.mzml", "lcms_istds | test | test | positive", "carrot.lcms", "test")
       logger.info(s"RESPONSE: ${res2}")

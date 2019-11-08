@@ -13,11 +13,8 @@ import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
-@Profile(Array("carrot.output.storage.local"))
-class LocalResultStorage(resourceStorage: ResourceStorage) extends ResultStorage with Logging {
-
-  @Autowired
-  val writer: Writer[Sample] = null
+@Profile(Array("carrot.output.storage.generic"))
+class LocalResultStorage @Autowired()(resourceStorage: ResourceStorage, writer: Writer[Sample]) extends ResultStorage with Logging {
 
   override def store(experiment: Experiment, task: Task): Unit = {
 

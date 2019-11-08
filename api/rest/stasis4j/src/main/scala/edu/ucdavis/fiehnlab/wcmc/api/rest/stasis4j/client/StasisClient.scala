@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate
 
 import scala.collection.JavaConverters._
 
+import java.lang.instrument.Instrumentation
 @Profile(Array("!carrot.nostasis"))
 @Component
 class StasisClient extends StasisService with Logging {
@@ -63,20 +64,6 @@ class StasisClient extends StasisService with Logging {
     restTemplate.postForEntity(s"${baseUrl}/${trackingPath}", new HttpEntity(data, headers()), classOf[TrackingResponse])
   }
 
-  override def getResults(sample: String): Option[ResultResponse] = {
-    if (sample.contains('.')) {
-      logger.warn("The sample name provided might contain an extension. Please provide sample name without extension!")
-    }
-    val result = restTemplate.exchange(s"${baseUrl}/${resultPath}/${sample}", HttpMethod.GET, new HttpEntity("", headers()), classOf[ResultResponse])
-
-    if (result.getStatusCodeValue == 200)
-      Some(result.getBody)
-    else
-      Some(ResultResponse("none", "none", new Date(), Map[String, Seq[Injection]]().asJava))
-  }
-
-  override def addResult(data: ResultData): ResponseEntity[ResultData] = restTemplate.postForEntity(s"${baseUrl}/${resultPath}", new HttpEntity(data, headers()), classOf[ResultData])
-
   override def getAcquisition(sample: String): Option[SampleResponse] = {
     try {
       Some(restTemplate.exchange(s"${baseUrl}/${acquisitionPath}/${sample}", HttpMethod.GET, new HttpEntity("", headers()), classOf[SampleResponse]).getBody)
@@ -102,10 +89,6 @@ class NoOpStasisService() extends StasisService {
   override def getTracking(sample: String): Option[TrackingResponse] = None
 
   override def addTracking(data: TrackingData): ResponseEntity[TrackingResponse] = ResponseEntity.ok(TrackingResponse("", "", Seq.empty))
-
-  override def getResults(sample: String): Option[ResultResponse] = None
-
-  override def addResult(data: ResultData): ResponseEntity[ResultData] = ResponseEntity.ok(data)
 
   override def getAcquisition(sample: String): Option[SampleResponse] = None
 

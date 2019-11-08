@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
   * using the FServ technologie
   */
 @Component
-@Profile(Array("carrot.store.result.fserv4j"))
+@Profile(Array("carrot.output.storage.fserv"))
 class FServ4jFileStorage extends ResultStorage with Logging {
 
   @Autowired

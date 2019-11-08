@@ -8,10 +8,6 @@ trait StasisService {
 
   def addTracking(data: TrackingData): HttpEntity[TrackingResponse]
 
-  def getResults(sample: String): Option[ResultResponse]
-
-  def addResult(data: ResultData): ResponseEntity[ResultData]
-
   def getAcquisition(sample: String): Option[SampleResponse]
 
   def createAcquisition(data: SampleData): HttpEntity[SampleData]

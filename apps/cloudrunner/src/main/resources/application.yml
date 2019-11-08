@@ -8,6 +8,8 @@ spring:
       - carrot.processing.replacement.mzrt
       - carrot.processing.peakdetection
       - carrot.output.storage.aws
+      - carrot.resource.store.bucket
+      - carrot.output.storage.aws
       - carrot.resource.loader.bucket
       - carrot.resource.store.bucket
       - carrot.runner.required

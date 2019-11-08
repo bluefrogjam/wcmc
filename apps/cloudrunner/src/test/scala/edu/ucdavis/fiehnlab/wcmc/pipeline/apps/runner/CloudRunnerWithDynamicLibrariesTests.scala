@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.ResultStorage
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
@@ -22,10 +23,13 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation",
   "carrot.output.storage.aws",
+  "carrot.output.writer.json",
+  "carrot.output.storage.generic",
   "carrot.runner.required",
   "carrot.targets.dummy",
   "carrot.output.storage.converter.target",
-  "carrot.output.storage.converter.sample"
+  "carrot.output.storage.converter.sample",
+  "carrot.resource.store.bucket"
 ))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
@@ -41,16 +45,14 @@ class CloudRunnerWithDynamicLibrariesTests extends WordSpec with Matchers with L
   val runner: Runner = null
 
   @Autowired
-  val stasis_cli: StasisService = null
+  val storage: ResultStorage = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a runner" should {
     "have results on aws" in {
       try {
-        val results = stasis_cli.getResults(sampleName.split('.').head)
-
-        results should not be null
+        fail()
       } catch {
         case ex: HttpClientErrorException =>
           fail(ex)
