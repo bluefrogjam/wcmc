@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -30,7 +30,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.processing.replacement.simple",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction",
-  "carrot.output.storage.local",
+  "carrot.output.storage.generic",
   "carrot.resource.store.local",
   "carrot.output.writer.txt"
 ))
@@ -56,35 +56,31 @@ class LocalResultStorageTest extends WordSpec {
   val sampleLoader: SampleLoader = null
 
   @Autowired
-  val localResultStorage: LocalResultStorage = null
+  val localResultStorage: ResultStorage = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
   "LocalResultStorageTest" should {
 
 
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
-
     val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
 
-    val deconvoluted = samples.map((item: Sample) => deconv.process(item, method, Some(item)))
+    val quantified = samples.map((item: Sample) => quantification.process(
+      annotation.process(
+        correction.process(
+          deconv.process(item, method, None),
+          method, None),
+        method, None),
+      method, Some(item)))
 
-    //correct the data
-    val correctedSample = deconvoluted.map((item: Sample) => correction.process(item, method, Some(item)))
-
-    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method, Some(item)))
-
-    val quantified = annotated.map((item: AnnotatedSample) => quantification.process(item, method, Some(item)))
-
-    val results = quantified.map((item: QuantifiedSample[Double]) => replacement.process(item, method, Some(item)))
     "store" in {
 
       localResultStorage.store(Experiment(
         name = Some("test"),
         acquisitionMethod = method,
-
-        classes = Seq(ExperimentClass(results, None)
-
-        )), task = Task(name = "test", email = None, acquisitionMethod = method, samples = samples.map(x => SampleToProcess(fileName = x.fileName, className = "test"))))
+        classes = Seq(ExperimentClass(quantified, None)
+        )),
+        task = Task(name = "test", email = None, acquisitionMethod = method, samples = samples.map(x => SampleToProcess(fileName = x.fileName, className = "test"))))
     }
 
   }

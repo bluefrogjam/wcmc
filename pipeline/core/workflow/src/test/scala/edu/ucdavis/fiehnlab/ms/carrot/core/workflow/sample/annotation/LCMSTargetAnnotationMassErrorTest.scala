@@ -94,36 +94,21 @@ class LCMSTargetAnnotationMassErrorTest extends WordSpec with Matchers with Logg
 
       assert(result != null)
 
-      //      result.spectra.filterNot(a => a.target.name.get == "Unknown")
-      //          .map(a => AnnotationReport(a, a.target))
-      //          .sortBy(_.featureMassErrorPPM)
-      //          .foreach(a => logger.info(a))
+      logger.info("----------")
+
+      val quant = quantify.process(result, method, Some(sample))
+      logger.debug(s"quantified: ${quant.quantifiedTargets.count(_.quantifiedValue.isDefined)}")
+      logger.debug(s"quantified: ${quant.spectra.size}")
 
       logger.info("----------")
 
-      val quant = quantify.process(result, method, None)
-      logger.info(s"quantified: ${quant.quantifiedTargets.count(_.quantifiedValue.isDefined)}")
-      logger.info(s"quantified: ${quant.spectra.size}")
+//      val replaced = simpleZeroReplacement.process(quant, method, Some(sample))
+      logger.debug(s"quantified: ${quant.quantifiedTargets.count(_.quantifiedValue.isDefined)}")
+      logger.debug(s"quantified: ${quant.spectra.size}")
 
-      //      quant.quantifiedTargets.filter(_.quantifiedValue.isDefined)
-      //          .filterNot(q => q.spectra.get.target.name.getOrElse("Unknown") == "Unknown")
-      //          .map(a => AnnotationReport(a.spectra.get, a.spectra.get.target))
-      //          .sortBy(_.featureMassErrorPPM)
-      //          .foreach(q => logger.info(q))
-
-      logger.info("----------")
-
-      val replaced = simpleZeroReplacement.process(quant, method, Some(sample))
-      logger.info(s"quantified: ${replaced.quantifiedTargets.count(_.quantifiedValue.isDefined)}")
-      logger.info(s"quantified: ${replaced.spectra.size}")
-
-      val replQuant: Seq[QuantifiedTarget[Double]] = replaced.quantifiedTargets.filter(_.quantifiedValue.isDefined)
+      val replQuant: Seq[QuantifiedTarget[Double]] = quant.quantifiedTargets.filter(_.quantifiedValue.isDefined)
           .filterNot(q => q.spectra.get.target.name.getOrElse("Unknown") == "Unknown")
 
-      //      replQuant.map(a => AnnotationReport(a.spectra.get, a.spectra.get.target))
-      //          .foreach(q => {
-      //            logger.info(q)
-      //          })
       targetValues.foreach(t => {
         replQuant.filter(_.spectra.get.target.name == t._1)
             .foreach(q => {

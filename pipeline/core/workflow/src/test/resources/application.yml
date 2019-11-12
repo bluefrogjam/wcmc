@@ -43,3 +43,14 @@ spring:
 stasis:
   baseurl: "https://test-api.metabolomics.us/stasis"
   key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
+
+---
+spring:
+  profiles: test_bucket
+
+wcmc:
+  workflow:
+    resource:
+      store:
+        bucket:
+          name: "datatest-carrot"

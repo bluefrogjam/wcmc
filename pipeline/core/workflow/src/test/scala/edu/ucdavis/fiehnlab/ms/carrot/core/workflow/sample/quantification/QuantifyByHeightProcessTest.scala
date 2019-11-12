@@ -64,10 +64,12 @@ class QuantifyByHeightProcessTest extends WordSpec with Matchers with Logging {
     //compute purity values
     val purityComputed = samples //.map(purity.process)
 
-    //correct the data
-    val correctedSample = purityComputed.map((item: Sample) => correction.process(deco.process(item, method, None), method, None))
-
-    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method, None))
+    val annotated = purityComputed.map((item: Sample) =>
+      annotation.process(
+        correction.process(
+          deco.process(item, method, None),
+          method, None),
+        method, None))
 
     annotated.foreach { sample =>
 

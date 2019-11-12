@@ -7,18 +7,16 @@ spring:
       - carrot.report.quantify.height
       - carrot.processing.replacement.mzrt
       - carrot.processing.peakdetection
-      - carrot.output.storage.aws
       - carrot.resource.store.bucket
-      - carrot.output.storage.aws
       - carrot.resource.loader.bucket
-      - carrot.resource.store.bucket
+      - carrot.output.writer.json
+      - carrot.output.storage.aws
+      - carrot.output.storage.converter.target
+      - carrot.output.storage.converter.sample
       - carrot.runner.required
       - carrot.targets.yaml.correction
       - carrot.targets.yaml.annotation
       - carrot.email.enable
-#      - carrot.targets.mona
-# uncoment to enable msms spectra be sent to ipa
-#      - carrot.targets.dynamic
 
 logging:
   level:
@@ -28,7 +26,6 @@ carrot:
   sample: '${CARROT_SAMPLE}'
   method: '${CARROT_METHOD}'
   mode: '${CARROT_MODE:lcms}'
-
 
 mona:
   rest:
@@ -48,41 +45,3 @@ wcmc:
     port: 25
     username: binbase@gmail.com
     pass: fiehnlab-2018
-
----
-spring:
-  profiles: test
-
-logging:
-  level:
-    root: info
-
-mona:
-  rest:
-    server:
-      host: localhost
-      port: 9090
-
-wcmc:
-  api:
-    mona:
-      rest:
-        mona:
-          user: admin
-          password: admin
-  pipeline:
-    workflow:
-      config:
-        correction:
-          peak:
-            intensity: 10000
-  email:
-    host: smtp.gmail.com
-    port: 25
-    username: binbase@gmail.com
-    pass: fiehnlab-2018
-
-carrot:
-  sample: '${CARROT_SAMPLE}'
-  method: '${CARROT_METHOD}'
-  mode: '${CARROT_MODE}'

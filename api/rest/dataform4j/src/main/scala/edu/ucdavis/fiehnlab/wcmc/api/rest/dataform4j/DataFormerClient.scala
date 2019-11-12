@@ -116,7 +116,7 @@ class DataFormerClient(fserv4j:ResourceLoader) extends Logging {
             throw new IOException(uex.getMessage, uex)
           case dex: DownloadException =>
             throw new IOException(dex.getMessage, dex)
-          case ex =>
+          case ex: Throwable =>
             logger.error(s"Error ${ex.getMessage}")
             throw ex
         }

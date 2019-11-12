@@ -72,15 +72,16 @@ class QuantifiedSampleJsonWriterTest extends WordSpec with Matchers with Logging
     val quantified = quantification.process(
       annotation.process(
         correction.process(
-          deconv.process(sample, method, Some(sample)),
-          method, Some(sample)),
-        method, Some(sample)),
+          deconv.process(sample, method, None),
+          method, None),
+        method, None),
       method, Some(sample))
 
     "save the result data" in {
 
       val temp = new File(s"local_storage/${sample.name}.json")
-//      temp.deleteOnExit()
+      temp.deleteOnExit()
+
       val out = new FileOutputStream(temp)
 
       jsonWriter.write(out, quantified)

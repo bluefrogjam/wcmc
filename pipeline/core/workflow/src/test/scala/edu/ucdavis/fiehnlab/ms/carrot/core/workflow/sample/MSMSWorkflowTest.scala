@@ -82,7 +82,7 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
         annotation.process(
           correction.process(
             deco.process(sample, method, None),
-            method, Some(sample)),
+            method, None),
           method, None),
         method, Some(sample))
 
@@ -126,7 +126,7 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
         annotation.process(
           correction.process(
             deco.process(sample, method, None),
-            method, Some(sample)),
+            method, None),
           method, None),
         method, Some(sample))
 

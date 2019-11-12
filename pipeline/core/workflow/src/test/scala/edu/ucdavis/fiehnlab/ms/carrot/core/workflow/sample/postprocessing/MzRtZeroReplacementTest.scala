@@ -69,8 +69,8 @@ class MzRtZeroReplacementTest extends WordSpec with Logging with Matchers with B
         correction.process(
           deco.process(
             rawSample, method, None),
-          method, Some(rawSample)),
-        method, Some(rawSample)),
+          method, None),
+        method, None),
       method, Some(rawSample))
 
     "replace the null values in the file" in {

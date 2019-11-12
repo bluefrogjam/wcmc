@@ -5,8 +5,9 @@ import com.eharmony.spotz.Preamble.Point
 import com.eharmony.spotz.objective.Objective
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.{Config, Hyperopt, Stages}
 import org.scalatest.WordSpec
+import org.scalatest.concurrent.Eventually
 
-class SQSCallbackHandlerTest extends WordSpec {
+class SQSCallbackHandlerTest extends WordSpec with Eventually {
 
   "SQSCallbackHandlerTest" should {
     val client = AmazonSQSAsyncClientBuilder.defaultClient()
@@ -30,7 +31,9 @@ class SQSCallbackHandlerTest extends WordSpec {
 
     "must be able to receive a message afterwards" in {
 
-      assert(client.receiveMessage(callback.url).getMessages.size() > 0)
+      eventually {
+        assert(client.receiveMessage(callback.url).getMessages.size() > 0)
+      }
     }
 
   }

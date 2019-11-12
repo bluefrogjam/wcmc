@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.ResultStorage
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
+import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
+import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.{BucketLoader, BucketStorage}
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -15,21 +15,20 @@ import org.springframework.web.client.HttpClientErrorException
 @SpringBootTest
 @ActiveProfiles(Array("test",
   "carrot.lcms",
-  "csh",
   "file.source.eclipse",
   "carrot.report.quantify.height",
   "carrot.processing.replacement.mzrt",
   "carrot.processing.peakdetection",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation",
+  "carrot.targets.dummy",
+  "carrot.runner.required",
+  "carrot.resource.loader.bucket",
+  "carrot.resource.store.bucket",
   "carrot.output.storage.aws",
   "carrot.output.writer.json",
-  "carrot.output.storage.generic",
-  "carrot.runner.required",
-  "carrot.targets.dummy",
   "carrot.output.storage.converter.target",
-  "carrot.output.storage.converter.sample",
-  "carrot.resource.store.bucket"
+  "carrot.output.storage.converter.sample"
 ))
 @TestPropertySource(properties = Array(
   "CARROT_SAMPLE:BioRec_LipidsPos_PhIV_001a.mzml",
@@ -38,24 +37,31 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.submitter:fake@mymail.edu"
 ))
 class CloudRunnerWithDynamicLibrariesTests extends WordSpec with Matchers with Logging {
-  @Value("${wcmc.workflow.lcms.sample:#{environment.CARROT_SAMPLE}}")
-  val sampleName = ""
+  @Value("#{environment.CARROT_SAMPLE}")
+  val filename = ""
 
   @Autowired
-  val runner: Runner = null
+  val loader: BucketLoader = null
 
   @Autowired
-  val storage: ResultStorage = null
+  val storage: BucketStorage = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a runner" should {
     "have results on aws" in {
       try {
-        fail()
+        loader.exists(filename.split('.').head) should be(true)
+
+        val data = loader.loadAsFile(filename.split('.').head)
+        logger.info(s"DATA: ${data}")
+        data.size should be > 0
+
       } catch {
         case ex: HttpClientErrorException =>
           fail(ex)
+      } finally {
+//        storage.delete(filename.split('.').head)
       }
     }
   }

@@ -78,7 +78,7 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) ext
   }
 
   protected def generateConnection(column: String): Connection = {
-    classOf[org.postgresql.Driver]
+//    classOf[org.postgresql.Driver]
     val url = s"jdbc:postgresql://${config.host}/${config.database}"
     val props = new Properties
     props.setProperty("user", column)
@@ -191,7 +191,7 @@ case class BinBaseLibraryTarget(
     /**
       * a list of model ions used during the deconvolution
       */
-    override val modelIons: Option[Seq[Double]] = modelIons
+    override val modelIons: Option[Seq[Double]] = Some(apexMasses)
     /**
       * all the defined ions for this spectra
       */

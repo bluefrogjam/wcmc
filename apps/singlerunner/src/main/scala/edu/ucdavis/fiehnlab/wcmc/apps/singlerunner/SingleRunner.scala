@@ -77,7 +77,7 @@ class SingleRunner extends CommandLineRunner with Logging {
   def process(fileList: Seq[String], method: AcquisitionMethod): Unit = {
     fileList.foreach { sample =>
       logger.info(s"Processing sample: ${sample}")
-      val task = Task(s"${sample} processing", Some("dpedrosa@ucdavis.edu"), method, Seq(SampleToProcess(sample, "", "", sample,
+      val task = Task(s"${sample} processing", None, method, Seq(SampleToProcess(sample, "", "", sample,
         Matrix(System.currentTimeMillis().toString, "human", "plasma", Seq.empty)
       )), mode = "lcms", env = "prod")
       try {
@@ -94,32 +94,4 @@ class SingleRunner extends CommandLineRunner with Logging {
 
   }
 
-}
-
-@Configuration
-class SingleRunnerConfiguration extends Logging {
-  @Bean
-  def workflow: Workflow[Double] = new Workflow[Double]()
-
-  @Bean
-  def annotationLibrary(@Autowired(required = false) targets: java.util.List[LibraryAccess[AnnotationTarget]]): DelegateLibraryAccess[AnnotationTarget] = {
-    if (targets == null) {
-      logger.warn("no library provided, annotations will be empty!")
-      new DelegateLibraryAccess[AnnotationTarget](new java.util.ArrayList())
-    }
-    else {
-      new DelegateLibraryAccess[AnnotationTarget](targets)
-    }
-  }
-
-  @Bean
-  def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
-
-  @Bean
-  def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = {
-    val lib = new MergeLibraryAccess(correction, annotation)
-
-    logger.info(s"libray has method: ${lib.libraries}")
-    return lib
-  }
 }

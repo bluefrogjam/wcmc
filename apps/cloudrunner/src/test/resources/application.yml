@@ -3,7 +3,6 @@ carrot:
   method: '${CARROT_METHOD}'
   mode: '${CARROT_MODE}'
 
-
 wcmc:
   pipeline:
     workflow:
@@ -17,6 +16,12 @@ wcmc:
         server:
           user: admin
           password: admin
+
+  workflow:
+    resource:
+      store:
+        bucket:
+          name: "datatest-carrot"
 
 logging:
   level:

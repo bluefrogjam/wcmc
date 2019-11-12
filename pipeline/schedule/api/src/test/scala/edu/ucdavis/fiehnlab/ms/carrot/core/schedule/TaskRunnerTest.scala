@@ -13,9 +13,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
 @ActiveProfiles(Array("test",
-  "carrot.targets.dummy",
-  "carrot.output.storage.converter.target",
-  "carrot.output.storage.converter.sample"
+  "carrot.targets.dummy"
 ))
 class TaskRunnerTest extends WordSpec {
   val libName = "lcms_istds"

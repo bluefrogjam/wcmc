@@ -1,8 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.ResultStorage
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
-import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.ResultResponse
+import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.{BucketLoader, BucketStorage}
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -24,14 +22,13 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.processing.replacement.mzrt",
   "carrot.processing.peakdetection",
   "carrot.targets.yaml.correction",
+  "carrot.targets.yaml.annotation",
+  "carrot.targets.dummy",
+  "carrot.runner.required",
+  "carrot.resource.loader.bucket",
   "carrot.resource.store.bucket",
   "carrot.output.storage.aws",
-  "carrot.output.storage.generic",
   "carrot.output.writer.json",
-  "carrot.targets.yaml.annotation",
-  "carrot.output.storage.aws",
-  "carrot.runner.required",
-  "carrot.targets.dummy",
   "carrot.output.storage.converter.target",
   "carrot.output.storage.converter.sample"
 ))
@@ -46,22 +43,27 @@ class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with
   val filename = ""
 
   @Autowired
-  val stasis_cli: StasisService = null
+  val loader: BucketLoader = null
 
   @Autowired
-  val resultStorage:ResultStorage = null
+  val storage: BucketStorage = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a runner" should {
-    val sample = filename.split("\\.").head
     "have results on aws" in {
       try {
+        loader.exists(filename.split('.').head) should be(true)
 
-          fail()
+        val data = loader.loadAsFile(filename.split('.').head)
+        logger.info(s"DATA: ${data}")
+        data.size should be > 0
+
       } catch {
         case ex: HttpClientErrorException =>
           fail(ex)
+      } finally {
+        storage.delete(filename.split('.').head)
       }
     }
   }

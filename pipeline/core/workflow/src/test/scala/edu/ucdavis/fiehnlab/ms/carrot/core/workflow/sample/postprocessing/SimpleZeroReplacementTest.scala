@@ -65,8 +65,8 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
         correction.process(
           deco.process(
             rawSample, method, None),
-          method, Some(rawSample)),
-        method, Some(rawSample)),
+          method, None),
+        method, None),
       method, Some(rawSample))
 
     "replaceValue" should {

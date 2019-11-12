@@ -73,11 +73,9 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with Matchers with Logging 
 
     val quantified = annotated.map((item: AnnotatedSample) => quantification.process(item, method, Some(item)))
 
-    val results = quantified.map((item: QuantifiedSample[Double]) => replacement.process(item, method, Some(item)))
-
     "write" in {
 
-      results.size should be > 0
+      quantified.size should be > 0
 
       val temp = File.createTempFile("quantify", "txt")
       temp.deleteOnExit()
@@ -87,7 +85,7 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with Matchers with Logging 
       val writer = new QuantifiedSampleTxtWriter[Double]
 
       writer.writeHeader(out)
-      results.foreach {
+      quantified.foreach {
         writer.write(out, _)
       }
       writer.writeFooter(out)
@@ -106,9 +104,9 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with Matchers with Logging 
       // total lines = number of samples + header lines
       lines.size shouldBe samples.size + 5
 
-      lines(0).split(seperator)(0) == "file"
-      lines(4).split(seperator)(0) == results(0).fileName
-      lines(5).split(seperator)(0) == results(1).fileName
+      lines.head.split(seperator)(0) should equal("target")
+      lines(5).split(seperator)(0) should equal(quantified.head.fileName)
+      lines(6).split(seperator)(0) should equal(quantified(1).fileName)
 
     }
   }
