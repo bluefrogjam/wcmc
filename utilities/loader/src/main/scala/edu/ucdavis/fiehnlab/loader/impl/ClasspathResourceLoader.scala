@@ -51,7 +51,7 @@ class ClasspathResourceLoader extends LocalLoader {
     }
   }
 
-  override def priority: Int = super.priority + 10
+  override def priority: Int = super.priority - 10
 
   override def isDirectory(name: String): Boolean = {
     val fixed = cleanName(name)
