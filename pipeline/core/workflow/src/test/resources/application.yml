@@ -54,3 +54,4 @@ wcmc:
       store:
         bucket:
           name: "datatest-carrot"
+          result: "wcmc-data-stasis-result-test"

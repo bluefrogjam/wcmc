@@ -1,7 +1,7 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
 
 import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
-import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.BucketLoader
+import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.{BucketLoader, BucketResultStorage}
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, SampleToProcess, Task}
@@ -31,8 +31,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction",
   "carrot.output.storage.aws",
-  "carrot.resource.store.bucket",
-  "carrot.resource.loader.bucket",
+  "carrot.resource.store.bucket.result",
+  "carrot.resource.loader.bucket.result",
   "carrot.output.storage.converter.target",
   "carrot.output.storage.converter.sample",
   "carrot.output.writer.json"
@@ -60,6 +60,10 @@ class AwsResultStorageTest extends WordSpec with Matchers with Logging {
     val sample: Sample = sampleLoader.getSample("B5_P20Lipids_Pos_QC000.mzml")
     val method = AcquisitionMethod(ChromatographicMethod("lcms_istds", Some("test"), Some("test"), Some(PositiveMode())))
     val results = workflow.process(sample, method, Some(sample))
+
+    "use results bucket" in {
+      output.asInstanceOf[BucketResultStorage].getBucketName should equal("wcmc-data-stasis-result-test")
+    }
 
     "send to aws" in {
       output.delete(sample.name)

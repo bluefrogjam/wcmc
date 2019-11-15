@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
 import edu.ucdavis.fiehnlab.ms.carrot.cloud.aws.ASWConfigurationProperties
 import javax.annotation.PostConstruct
 import org.apache.logging.log4j.scala.Logging
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties}
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 import org.springframework.stereotype.Component
@@ -41,7 +41,7 @@ class BucketStorage @Autowired()(client: AmazonS3, properties: BucketStorageConf
     *
     * @param file
     */
-  override def store(file: File) = if (properties.timeOfLife == 0) {
+  override def store(file: File): Unit = if (properties.timeOfLife == 0) {
     client.putObject(properties.name, file.getName, file)
   } else {
     client.putObject(properties.name, file.getName, file).setExpirationTime(new Date(System.currentTimeMillis() + properties.timeOfLife))
@@ -52,9 +52,41 @@ class BucketStorage @Autowired()(client: AmazonS3, properties: BucketStorageConf
     *
     * @param name
     */
-  override def delete(name: String): Unit = {
-    client.deleteObject(properties.name, name)
+  override def delete(name: String): Unit = client.deleteObject(properties.name, name)
+
+  override def toString: String = super.toString.concat(s"[properties: $properties]")
+
+  def getBucketName: String = properties.name
+}
+
+@Component
+@Profile(Array("carrot.resource.store.bucket.result"))
+class BucketResultStorage @Autowired()(client: AmazonS3, properties: BucketStorageConfigurationProperties, awsProperties: ASWConfigurationProperties) extends BucketStorage(client, properties, awsProperties) {
+
+  @PostConstruct
+  override def init(): Any = {
+    if (!client.doesBucketExist(properties.result)) {
+      logger.info(s"creating new bucket with name: ${properties.result}")
+      client.createBucket(new CreateBucketRequest(properties.result, awsProperties.region))
+    }
+    else {
+      logger.info(s"bucket with name ${properties.name} already exists in region ${awsProperties.region}")
+    }
   }
+
+  override def store(file: File): Unit = if (properties.timeOfLife == 0) {
+    client.putObject(properties.result, file.getName, file)
+  } else {
+    client.putObject(properties.result, file.getName, file).setExpirationTime(new Date(System.currentTimeMillis() + properties.timeOfLife))
+  }
+
+  override def delete(name: String): Unit = {
+    client.deleteObject(properties.result, name)
+  }
+
+  override def toString: String = super.toString.concat(s"[properties: $properties]")
+
+  override def getBucketName: String = properties.result
 }
 
 @Component
@@ -62,7 +94,7 @@ class BucketStorage @Autowired()(client: AmazonS3, properties: BucketStorageConf
 class BucketLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfigurationProperties, awsProperties: ASWConfigurationProperties) extends ResourceLoader {
 
   @PostConstruct
-  def init() = {
+  def init(): Any = {
     if (!client.doesBucketExist(properties.name)) {
       logger.info(s"creating new bucket with name: ${properties.name}")
       client.createBucket(new CreateBucketRequest(properties.name, awsProperties.region))
@@ -96,9 +128,55 @@ class BucketLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfi
   override def exists(name: String): Boolean = client.doesObjectExist(properties.name, name)
 
   override def toString: String = super.toString.concat(s"[properties: $properties]")
+
+  def getBucketName: String = properties.name
 }
 
-@Profile(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket"))
+@Component
+@Profile(Array("carrot.resource.loader.bucket.result"))
+class BucketResultLoader @Autowired()(client: AmazonS3, properties: BucketStorageConfigurationProperties, awsProperties: ASWConfigurationProperties) extends BucketLoader(client, properties, awsProperties) {
+
+  @PostConstruct
+  override def init(): Any = {
+    if (!client.doesBucketExist(properties.result)) {
+      logger.info(s"creating new bucket with name: ${properties.result}")
+      client.createBucket(new CreateBucketRequest(properties.result, awsProperties.region))
+    }
+    else {
+      logger.info(s"bucket with name ${properties.result} already exists")
+    }
+  }
+
+  /**
+   * returns the related resource or none
+   *
+   * @param name
+   * @return
+   */
+  override def load(name: String): Option[InputStream] = {
+    if (exists(name)) {
+      logger.info(s"\tLoading targets from (${properties.result}, $name)")
+      Option(client.getObject(properties.result, name).getObjectContent)
+    } else {
+      None
+    }
+  }
+
+  /**
+   * does the given resource exists
+   *
+   * @param name
+   * @return
+   */
+  override def exists(name: String): Boolean = client.doesObjectExist(properties.result, name)
+
+  override def toString: String = super.toString.concat(s"[properties: $properties]")
+
+  override def getBucketName: String = properties.result
+}
+
+@Profile(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket",
+  "carrot.resource.store.bucket.result", "carrot.resource.loader.bucket.result"))
 @ConfigurationProperties(prefix = "wcmc.workflow.resource.store.bucket")
 @Component
 class BucketStorageConfigurationProperties {
@@ -108,12 +186,18 @@ class BucketStorageConfigurationProperties {
 
   @BeanProperty
   val timeOfLife: Long = 0
+
+  @BeanProperty
+  var result: String = "wcmc-data-stasis-result-prod"
+
+  override def toString: String = s"data: ${name}, results: ${result}, TTL: ${timeOfLife}"
 }
 
 @EnableConfigurationProperties
 @Configuration
 @ComponentScan
-@Profile(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket"))
+@Profile(Array("carrot.resource.store.bucket", "carrot.resource.loader.bucket",
+  "carrot.resource.store.bucket.result", "carrot.resource.loader.bucket.result"))
 class BucketStorageConfiguration {
 
   @Bean

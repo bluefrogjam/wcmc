@@ -1,0 +1,11 @@
+wcmc:
+  workflow:
+    resource:
+      store:
+        bucket:
+          name: "datatest-carrot"
+          result: "wcmc-data-stasis-result-test"
+
+logger:
+  level:
+    root: info

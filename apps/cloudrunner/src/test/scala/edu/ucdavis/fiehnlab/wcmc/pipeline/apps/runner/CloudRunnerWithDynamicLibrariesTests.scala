@@ -25,6 +25,8 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.runner.required",
   "carrot.resource.loader.bucket",
   "carrot.resource.store.bucket",
+  "carrot.resource.loader.bucket.result",
+  "carrot.resource.store.bucket.result",
   "carrot.output.storage.aws",
   "carrot.output.writer.json",
   "carrot.output.storage.converter.target",
