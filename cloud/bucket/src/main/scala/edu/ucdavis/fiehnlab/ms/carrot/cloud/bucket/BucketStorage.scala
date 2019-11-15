@@ -6,7 +6,7 @@ import java.util.Date
 import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.services.s3.model.CreateBucketRequest
 import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
-import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
+import edu.ucdavis.fiehnlab.loader.{InputStorage, OutputStorage, ResourceLoader, ResourceStorage}
 import edu.ucdavis.fiehnlab.ms.carrot.cloud.aws.ASWConfigurationProperties
 import javax.annotation.PostConstruct
 import org.apache.logging.log4j.scala.Logging
@@ -58,6 +58,9 @@ class BucketStorage @Autowired()(client: AmazonS3, properties: BucketStorageConf
 
   def getBucketName: String = properties.name
 }
+
+class OutputBucket extends BucketStorage with OutputStorage
+class InputBucket extends BucketStorage with InputStorage
 
 @Component
 @Profile(Array("carrot.resource.store.bucket.result"))
@@ -202,4 +205,28 @@ class BucketStorageConfiguration {
 
   @Bean
   def client(amazonAWSCredentials: AWSCredentialsProvider, properties: BucketStorageConfigurationProperties, awsProperties: ASWConfigurationProperties): AmazonS3 = AmazonS3ClientBuilder.standard.withRegion(awsProperties.region).withCredentials(amazonAWSCredentials).build
+}
+
+
+class Config{
+
+  @Profile(Array("tada"))
+  @Bean(name=Array("input"))
+  def inputStorage(): ResourceStorage = {
+    new BucketStorage()
+  }
+
+  @Profile(Array("tada"))
+  @Bean(name=Array("ouput"))
+  def outputStorage(): ResourceStorage = {
+    new BucketStorage()
+  }
+
+  @Profile(Array("tada2"))
+  @Bean(name=Array("input"))
+  def inputStorage2()
+
+  @Profile(Array("tada2"))
+  @Bean(name=Array("ouput"))
+  def outputStorage2()
 }

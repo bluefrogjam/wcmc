@@ -39,3 +39,7 @@ trait ResourceStorage {
     */
   def delete(name: String)
 }
+
+trait OutputStorage extends ResourceStorage
+
+trait InputStorage extends ResourceStorage

@@ -14,7 +14,7 @@ import org.springframework.web.client._
   * a local or remote network
   * Created by wohlgemuth on 7/9/17.
   */
-class FServ4jClient(host:String = "127.0.0.1",port:Int = 80, enableLookup:Boolean = false,root:String="rest/file") extends RemoteLoader {
+class FServ4jClient(host: String = "127.0.0.1", port: Int = 80, enableLookup: Boolean = false, root: String = "rest/file") extends RemoteLoader {
 
   /**
     * is a server allowed to use this one for lookup
@@ -84,6 +84,13 @@ class FServ4jClient(host:String = "127.0.0.1",port:Int = 80, enableLookup:Boolea
       response.getStatusCode == HttpStatus.OK
     }
     catch {
+      case x: HttpServerErrorException =>
+        if (x.getStatusCode == HttpStatus.SERVICE_UNAVAILABLE) {
+          false
+        }
+        else {
+          throw x
+        }
       case x: HttpClientErrorException =>
         if (x.getStatusCode == HttpStatus.NOT_FOUND) {
           false
@@ -112,11 +119,15 @@ class FServ4jClient(host:String = "127.0.0.1",port:Int = 80, enableLookup:Boolea
     * @param file
     * @return
     */
-  def upload(file: File,name:Option[String] = None) = {
+  def upload(file: File, name: Option[String] = None) = {
     if (file.exists()) {
       val map = new LinkedMultiValueMap[String, AnyRef]
       map.add("file", new FileSystemResource(file))
-      map.add("name", if(name.isDefined){name.get} else{file.getName})
+      map.add("name", if (name.isDefined) {
+        name.get
+      } else {
+        file.getName
+      })
 
       val headers = new HttpHeaders
       headers.setContentType(MediaType.MULTIPART_FORM_DATA)

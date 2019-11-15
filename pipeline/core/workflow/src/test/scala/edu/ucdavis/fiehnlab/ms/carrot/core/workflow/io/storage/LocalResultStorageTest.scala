@@ -30,11 +30,10 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.processing.replacement.simple",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction",
-  "carrot.output.storage.generic",
   "carrot.resource.store.local",
   "carrot.output.writer.txt"
 ))
-class LocalResultStorageTest extends WordSpec {
+class ResultStorageTest extends WordSpec {
   val libName = "lcms_istds"
 
   @Autowired
@@ -56,7 +55,7 @@ class LocalResultStorageTest extends WordSpec {
   val sampleLoader: SampleLoader = null
 
   @Autowired
-  val localResultStorage: ResultStorage = null
+  val resultStorage: ResultStorage = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
   "LocalResultStorageTest" should {
@@ -75,7 +74,7 @@ class LocalResultStorageTest extends WordSpec {
 
     "store" in {
 
-      localResultStorage.store(Experiment(
+      resultStorage.store(Experiment(
         name = Some("test"),
         acquisitionMethod = method,
         classes = Seq(ExperimentClass(quantified, None)
@@ -85,3 +84,4 @@ class LocalResultStorageTest extends WordSpec {
 
   }
 }
+
