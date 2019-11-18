@@ -1,5 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.correction
 
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.GCMSTestsConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms.GCMSCorrectionLibraryProperties
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -9,8 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
-@ActiveProfiles(Array("carrot.gcms", "test"))
-@SpringBootTest
+@ActiveProfiles(Array("test", "carrot.gcms"))
+@SpringBootTest(classes = Array(classOf[GCMSTestsConfiguration]))
 class GCMSConfigurationTest extends WordSpec with Matchers {
 
   @Autowired
