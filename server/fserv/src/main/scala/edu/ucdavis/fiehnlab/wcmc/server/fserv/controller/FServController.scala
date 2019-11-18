@@ -1,12 +1,12 @@
 package edu.ucdavis.fiehnlab.wcmc.server.fserv.controller
 
 import java.io._
+
+import edu.ucdavis.fiehnlab.loader.{LocalLoader, RemoteLoader, ResourceLoader}
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletResponse
-
-import org.apache.logging.log4j.scala.Logging
-import edu.ucdavis.fiehnlab.loader.{LocalLoader, RemoteLoader, ResourceLoader}
 import org.apache.commons.io.IOUtils
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.{HttpHeaders, MediaType, ResponseEntity}
@@ -106,7 +106,7 @@ class FServController extends Logging {
     val response = resourceLoader.asScala.sortBy(_.priority).reverse.collectFirst {
 
       //loader is disabled
-      case x: RemoteLoader if x.isLookupEnabled() && x.load(param).isDefined =>
+      case x: RemoteLoader if x.isLookupEnabled && x.load(param).isDefined =>
         val headers = new HttpHeaders
 
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
@@ -144,7 +144,7 @@ class FServController extends Logging {
   def exists(@PathVariable("file") param: String, responseBody: HttpServletResponse): java.util.Map[String, _ <: Any] = {
     logger.info(s"checking if file exists: ${param}")
     val exists = resourceLoader.asScala.sortBy(_.priority).reverse.collectFirst {
-      case loader: RemoteLoader if loader.isLookupEnabled() && loader.exists(param) =>
+      case loader: RemoteLoader if loader.isLookupEnabled && loader.exists(param) =>
         Map("exist" -> true, "file" -> param).asJava
       case loader: LocalLoader if loader.exists(param) =>
         Map("exist" -> true, "file" -> param).asJava
