@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.gcms.annotation
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.CorrectionTarget
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.GCMSTestsConfiguration
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.GCMSTestsConfig
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.gcms.GCMSAnnotationProperties
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -13,7 +13,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @ActiveProfiles(Array("carrot.gcms", "test"))
-@SpringBootTest(classes = Array(classOf[GCMSTestsConfiguration]))
+@SpringBootTest(classes = Array(classOf[GCMSTestsConfig]))
 class GCMSAnnotationPropertiesTest extends WordSpec with Matchers{
 
   @Autowired
