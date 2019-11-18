@@ -3,7 +3,9 @@ package edu.ucdavis.fiehnlab.ms.carrot.core
 import java.io.File
 
 import edu.ucdavis.fiehnlab.loader.impl.RecursiveDirectoryResourceLoader
-import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader}
+import edu.ucdavis.fiehnlab.loader.storage.{FileStorage, FileStorageProperties}
+import edu.ucdavis.fiehnlab.loader.{DelegatingResourceLoader, ResourceLoader, ResourceStorage}
+import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.BucketStorageConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
@@ -11,17 +13,21 @@ import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation._
 
 /**
   * Test configuration of a LCMS target workflow
   */
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration], classOf[BucketStorageConfiguration]))
+@EnableConfigurationProperties
 class TargetedWorkflowTestConfiguration extends Logging {
 
   @Autowired
   val resourceLoader: DelegatingResourceLoader = null
 
+  @Bean(name = Array("localStorage"))
+  def localStorage: ResourceStorage = new FileStorage(new FileStorageProperties())
 
   /**
     * below there will be all different directory loaders from the different workstations we are working on

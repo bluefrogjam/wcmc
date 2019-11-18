@@ -1,8 +1,8 @@
-package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.io.storage
+package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{ResultStorage, SampleToProcess, Task}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
@@ -10,7 +10,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, Chromat
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroReplacement
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
 import org.junit.runner.RunWith
 import org.scalatest.WordSpec
@@ -30,8 +29,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.processing.replacement.simple",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction",
-  "carrot.resource.store.local",
-  "carrot.output.writer.txt"
+  "carrot.output.writer.txt",
+  "carrot.runner.required"
 ))
 class ResultStorageTest extends WordSpec {
   val libName = "lcms_istds"

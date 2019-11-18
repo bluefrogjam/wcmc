@@ -21,8 +21,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
     "carrot.targets.yaml.annotation",
     "carrot.targets.yaml.correction",
     "carrot.processing.dump.spectra",
-    "carrot.nostasis",
-    "carrot.resource.store.local"
+    "carrot.nostasis"
 
   ))
 class DumpAnnotationInformationTest extends WordSpec {

@@ -11,11 +11,13 @@ import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.TrackingData
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 /**
- * stores experimental data at the provides location, utilizes the defined writer
+ * stores experimental data at the provided location, utilizes the defined writer
  */
+@Profile(Array("carrot.runner.required"))
 @Component
 class ResultStorage @Autowired()(resourceStorage: ResourceStorage, writer: Writer[Sample], stasisService: StasisService) extends Logging {
 

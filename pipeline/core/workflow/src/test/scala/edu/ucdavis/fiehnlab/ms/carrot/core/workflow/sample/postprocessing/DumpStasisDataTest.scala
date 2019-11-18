@@ -1,8 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{NegativeMode, Sample}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.Workflow
 import org.scalatest.WordSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,8 +20,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
     "carrot.targets.yaml.annotation",
     "carrot.targets.yaml.correction",
     "carrot.processing.dump.stasis",
-    "carrot.stasis",
-    "carrot.resource.store.local"
+    "carrot.stasis"
 
   ))
 class DumpStasisDataTest extends WordSpec {
