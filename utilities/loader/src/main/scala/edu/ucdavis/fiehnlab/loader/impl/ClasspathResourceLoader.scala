@@ -76,4 +76,9 @@ class ClasspathResourceLoader extends LocalLoader {
   override def toString: String = {
     s"${this.getClass.getSimpleName} (${this.priority})"
   }
+
+  /**
+   * internal storage source path
+   */
+  override def getSource: String = "./"
 }

@@ -2,7 +2,6 @@ package edu.ucdavis.fiehnlab.loader.storage
 
 import java.io.{File, FileWriter}
 
-import edu.ucdavis.fiehnlab.loader.TestConfiguration
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -12,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[TestConfiguration]))
+@SpringBootTest
 @ActiveProfiles(Array("carrot.resource.store.local"))
 class FileStorageTest extends WordSpec with Matchers with Logging {
 
@@ -61,7 +60,5 @@ class FileStorageTest extends WordSpec with Matchers with Logging {
 
       }
     }
-
-
   }
 }

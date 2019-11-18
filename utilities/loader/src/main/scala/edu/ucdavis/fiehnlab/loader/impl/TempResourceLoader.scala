@@ -3,7 +3,6 @@ package edu.ucdavis.fiehnlab.loader.impl
 import java.io.{File, FileInputStream, InputStream}
 
 import edu.ucdavis.fiehnlab.loader.LocalLoader
-import org.springframework.stereotype.Component
 
 /**
   * Created by diego on 7/13/2017.
@@ -16,8 +15,7 @@ class TempResourceLoader extends LocalLoader {
     * @return
     */
   override def load(name: String): Option[InputStream] = {
-    val dir = new File(System.getProperty("java.io.tmpdir"))
-    val file = new File(dir, name)
+    val file = new File(getTempFolder, name)
 
     if (exists(file.getAbsolutePath)) {
 	    logger.debug(s"\tResource found in temp ${file.getAbsolutePath}")
@@ -26,6 +24,10 @@ class TempResourceLoader extends LocalLoader {
       logger.debug(s"\tResource not found in temp: ${file.getAbsolutePath}")
       None
     }
+  }
+
+  private def getTempFolder = {
+    new File(System.getProperty("java.io.tmpdir"))
   }
 
   /**
@@ -37,8 +39,7 @@ class TempResourceLoader extends LocalLoader {
     * @return
     */
   override def loadAsFile(name: String): Option[File] = {
-    val dir = new File(System.getProperty("java.io.tmpdir"))
-    val file = new File(dir, name)
+    val file = new File(getTempFolder, name)
 
     if (file.exists()) Some(file)
     else None
@@ -55,4 +56,9 @@ class TempResourceLoader extends LocalLoader {
   }
 
   override def priority: Int = -100
+
+  /**
+   * internal storage source path
+   */
+  override def getSource: String = System.getProperty("java.io.tmpdir")
 }

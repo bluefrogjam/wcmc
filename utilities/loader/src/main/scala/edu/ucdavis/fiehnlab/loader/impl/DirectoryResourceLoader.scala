@@ -53,4 +53,9 @@ class DirectoryResourceLoader @Autowired()(val directory: File) extends LocalLoa
   }
 
   override def toString = s"DirectoryResourceLoader(directory: ${directory.getAbsolutePath}, priority: $priority)"
+
+  /**
+   * internal storage source path
+   */
+  override def getSource: String = directory.getName
 }

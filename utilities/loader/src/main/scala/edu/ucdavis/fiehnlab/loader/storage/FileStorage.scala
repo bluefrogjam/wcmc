@@ -44,4 +44,16 @@ class FileStorage @Autowired()(properties: FileStorageProperties) extends Resour
   override def delete(name: String): Unit = {
     Files.delete(new File(properties.directory, name).toPath)
   }
+
+  /**
+   * checks if a file exists
+   */
+  override def exists(filename: String): Boolean = {
+    new File(properties.directory).exists()
+  }
+
+  /**
+   * returns the storage destination
+   */
+  override def getDestination: String = properties.directory
 }

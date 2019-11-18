@@ -66,7 +66,13 @@ trait ResourceLoader extends Logging {
       logger.debug(s"File ${name} not found")
       None
     }
+
   }
+
+  /**
+   * internal storage source path
+   */
+  def getSource: String
 
   /**
     * priority of the loader
@@ -120,7 +126,7 @@ class DelegatingResourceLoader extends ResourceLoader {
   /**
     * sorted by priority
     */
-  lazy val sortedLoader: Seq[ResourceLoader] = loaders.asScala.sortBy(_.priority).reverse
+  lazy val sortedLoaders: Seq[ResourceLoader] = loaders.asScala.sortBy(_.priority).reverse
 
   /**
     * tries to find the resource in any of the defined loaders or null
@@ -130,7 +136,7 @@ class DelegatingResourceLoader extends ResourceLoader {
     */
 
   // This is ugly as hell but the previous implementation failed to load a sample from remote loader
-  override def load(name: String): Option[InputStream] = sortedLoader.collect {
+  override def load(name: String): Option[InputStream] = sortedLoaders.collect {
     case loader =>
       loader.load(name)
   }.filter(_.isDefined) match {
@@ -138,9 +144,9 @@ class DelegatingResourceLoader extends ResourceLoader {
     case full => full.head
   }
 
-  override def toString: String = super.toString.concat(s"[${sortedLoader.map(_.toString())}]")
+  override def toString: String = super.toString.concat(s"[${sortedLoaders.map(_.toString())}]")
 
-  override def exists(name: String): Boolean = sortedLoader.exists { loader =>
+  override def exists(name: String): Boolean = sortedLoaders.exists { loader =>
     val result = loader.exists(name)
     logger.debug(s"evaluation of ${loader} for ${name} is ${result}")
     result
@@ -148,8 +154,15 @@ class DelegatingResourceLoader extends ResourceLoader {
 
   @PostConstruct
   def init(): Unit = {
-    logger.info(s"configured with the following (${sortedLoader.size}) resource loaders: ${sortedLoader}")
+    logger.info(s"configured with the following (${sortedLoaders.size}) resource loaders: ${sortedLoaders}")
   }
+
+  /**
+   * internal storage source path
+   */
+  override def getSource: String = sortedLoaders.map { loader =>
+    loader.getSource
+  }.mkString(" | ")
 }
 
 /**
@@ -166,5 +179,5 @@ trait RemoteLoader extends ResourceLoader {
     * is a server allowed to use this one for lookup
     * functionality
     */
-  def isLookupEnabled(): Boolean
+  def isLookupEnabled: Boolean
 }

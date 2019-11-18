@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.loader.impl
 
-import edu.ucdavis.fiehnlab.loader.TestConfiguration
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -13,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner
   * Created by wohlg on 7/28/2016.
   */
 @RunWith(classOf[SpringRunner])
-@SpringBootTest(classes = Array(classOf[TestConfiguration]))
+@SpringBootTest
 class ClasspathResourceLoaderTest extends WordSpec with Matchers with Logging {
 
   @Autowired

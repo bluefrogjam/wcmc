@@ -38,6 +38,16 @@ trait ResourceStorage {
     * @param name
     */
   def delete(name: String)
+
+  /**
+   * checks if a file exists
+   */
+  def exists(filename: String): Boolean
+
+  /**
+   * returns the storage destination
+   */
+  def getDestination: String
 }
 
 trait OutputStorage extends ResourceStorage

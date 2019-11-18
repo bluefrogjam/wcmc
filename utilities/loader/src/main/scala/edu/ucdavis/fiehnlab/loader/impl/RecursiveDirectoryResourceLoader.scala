@@ -106,4 +106,6 @@ class RecursiveDirectoryResourceLoader @Autowired()(directory: File, override va
   }
 
   private def cleanName(name: String): String = name.replace("/", "")
+
+  override def getSource: String = directory.getAbsolutePath
 }
