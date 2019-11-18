@@ -1,6 +1,5 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.ApiConfig
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
@@ -8,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @SpringBootTest
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration], classOf[ApiConfig]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 @ActiveProfiles(Array("test"))
 class BigDecimalConversionTests extends WordSpec with Matchers {
 
