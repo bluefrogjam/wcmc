@@ -2,13 +2,6 @@ logging:
   level:
     root: info
 
-carrot:
-  targets:
-    yaml:
-      properties:
-          resource: "libraries.yml"
-
----
 spring:
   profiles: "carrot.resource.loader.bucket.data"
 
@@ -16,7 +9,7 @@ carrot:
   targets:
     yaml:
       properties:
-          resource: "libraries.yaml"
+        resource: "libraries.yaml"
 
 wcmc:
   workflow:

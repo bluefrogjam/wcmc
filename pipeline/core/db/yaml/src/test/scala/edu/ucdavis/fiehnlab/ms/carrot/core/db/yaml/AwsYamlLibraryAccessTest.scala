@@ -2,7 +2,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.yaml
 
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.cloud.aws.AWSConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.{BucketLoader, BucketStorageConfiguration}
+import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.{BucketLoader, BucketStorageConfiguration, BucketStorageConfigurationProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
@@ -15,12 +15,13 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @SpringBootTest(classes = Array(
   classOf[YAMLLibraryAccessTestConfiguration],
   classOf[BucketStorageConfiguration],
-  classOf[AWSConfiguration]
+  classOf[AWSConfiguration],
+  classOf[BucketStorageConfigurationProperties]
 ))
 @ActiveProfiles(Array("test",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation",
-  "carrot.resource.loader.bucket"
+  "carrot.resource.loader.bucket.data"
 ))
 class AwsYamlLibraryAccessTest extends WordSpec with Matchers with Logging {
 

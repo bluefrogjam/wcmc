@@ -19,7 +19,7 @@ import scala.collection.JavaConverters._
 @Profile(Array("carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationProperties, loader: ResourceLoader) extends ReadonlyLibrary[Target] with Logging {
 
-  logger.info(s"Using ${loader.getClass.getSimpleName} to load targets from ${properties.resource}")
+  logger.info(s"Using ${loader} to load targets from ${properties.resource}")
 
   private val data = new Yaml().loadAll(loader.load(properties.resource).get).asScala.collect {
     case config: util.Map[String, java.util.List[Any]] =>

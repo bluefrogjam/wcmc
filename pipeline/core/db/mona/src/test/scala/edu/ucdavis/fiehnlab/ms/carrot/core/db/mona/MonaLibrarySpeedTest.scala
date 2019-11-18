@@ -56,7 +56,6 @@ class MonaLibrarySpeedTest extends WordSpec with Matchers with Logging with Even
 
       eventually(timeout(10 seconds), interval(1 second)) {
         val initargets = library.load(acquisitionMethod3)
-        logger.info(s"initial targets: ${initargets.map(_.name).mkString("; ")}")
 
         initargets shouldBe empty
       }
@@ -78,7 +77,6 @@ class MonaLibrarySpeedTest extends WordSpec with Matchers with Logging with Even
 
       eventually(timeout(10 seconds), interval(1 second)) {
         val targets = library.load(acquisitionMethod3)
-        logger.info(s"after targets: ${targets.map(_.name).mkString("; ")}")
 
         targets.size shouldBe count
       }

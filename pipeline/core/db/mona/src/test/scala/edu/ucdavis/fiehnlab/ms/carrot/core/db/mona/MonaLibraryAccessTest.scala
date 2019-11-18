@@ -7,7 +7,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumPropertie
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, Ion, NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import edu.ucdavis.fiehnlab.ms.carrot.core.io.ResourceLoaderSampleLoader
-import edu.ucdavis.fiehnlab.wcmc.api.rest.fserv4j.FServ4jClient
 import org.apache.logging.log4j.scala.Logging
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar._
@@ -93,7 +92,6 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       eventually(timeout(10 seconds), interval(1 second)) {
         val initargets = library.load(acquisitionMethod3)
-        logger.info(s"initial targets: ${initargets.map(_.name).mkString("; ")}")
 
         initargets shouldBe empty
       }
@@ -101,7 +99,6 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.add(mzRt, acquisitionMethod3, None)
       eventually(timeout(10 seconds), interval(1 second)) {
         val targets = library.load(acquisitionMethod3)
-        logger.info(s"after targets: ${targets.map(_.name).mkString("; ")}")
 
         targets.size shouldBe 1
       }
