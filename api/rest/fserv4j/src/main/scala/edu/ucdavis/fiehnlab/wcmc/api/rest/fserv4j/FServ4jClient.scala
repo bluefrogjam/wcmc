@@ -145,4 +145,9 @@ class FServ4jClient(host: String = "127.0.0.1", port: Int = 80, enableLookup: Bo
       throw new FileNotFoundException(s"file was not found locally: ${file.getAbsolutePath}")
     }
   }
+
+  /**
+   * internal storage source path
+   */
+  override def getSource: String = root
 }

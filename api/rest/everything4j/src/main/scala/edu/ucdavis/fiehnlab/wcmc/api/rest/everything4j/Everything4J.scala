@@ -169,6 +169,11 @@ class Everything4J(host: String = "eclipse.fiehnlab.ucdavis.edu", port: Int = 80
 
     result
   }
+
+  /**
+   * internal storage source path
+   */
+  override def getSource: String = "/"
 }
 
 @Configuration
