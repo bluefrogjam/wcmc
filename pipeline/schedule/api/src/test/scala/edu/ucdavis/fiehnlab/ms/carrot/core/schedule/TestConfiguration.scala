@@ -1,5 +1,8 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.schedule
 
+import edu.ucdavis.fiehnlab.loader.ResourceStorage
+import edu.ucdavis.fiehnlab.loader.storage.{FileStorage, FileStorageProperties}
+import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.BucketStorageConfiguration
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
 import org.apache.logging.log4j.scala.Logging
@@ -8,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.context.annotation.Bean
 
-@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration], classOf[BucketStorageConfiguration]))
 class TestConfiguration extends Logging {
   @Bean
   def annotationLibrary(@Autowired(required = false) targets: java.util.List[LibraryAccess[AnnotationTarget]]): DelegateLibraryAccess[AnnotationTarget] = {
@@ -23,4 +26,7 @@ class TestConfiguration extends Logging {
 
   @Bean
   def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
+
+  @Bean
+  def storage: ResourceStorage = new FileStorage(new FileStorageProperties())
 }

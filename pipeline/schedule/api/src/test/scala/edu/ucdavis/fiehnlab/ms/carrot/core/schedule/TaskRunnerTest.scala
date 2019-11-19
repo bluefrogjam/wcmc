@@ -13,6 +13,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
 @ActiveProfiles(Array("test",
+  "carrot.output.store.local",
   "carrot.targets.dummy"
 ))
 class TaskRunnerTest extends WordSpec {
