@@ -1,7 +1,7 @@
 carrot:
   sample: '${CARROT_SAMPLE}'
   method: '${CARROT_METHOD}'
-  mode: '${CARROT_MODE}'
+  mode: '${CARROT_MODE:lcms}'
 
 wcmc:
   pipeline:
@@ -16,7 +16,6 @@ wcmc:
         server:
           user: admin
           password: admin
-
   workflow:
     resource:
       store:

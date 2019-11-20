@@ -27,6 +27,6 @@ class TestConfiguration extends Logging {
   @Bean
   def correctionLibrary(targets: java.util.List[LibraryAccess[CorrectionTarget]]): DelegateLibraryAccess[CorrectionTarget] = new DelegateLibraryAccess[CorrectionTarget](targets)
 
-  @Bean
+  @Bean(name = Array("outputStorage"))
   def storage: ResourceStorage = new FileStorage(new FileStorageProperties())
 }

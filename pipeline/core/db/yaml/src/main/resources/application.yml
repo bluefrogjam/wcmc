@@ -17,10 +17,3 @@ carrot:
     yaml:
       properties:
           resource: "libraries.yaml"
-
-wcmc:
-  workflow:
-    resource:
-      store:
-        bucket:
-          name: "carrot-libraries"

@@ -2,6 +2,8 @@ package edu.ucdavis.fiehnlab.wcmc.apps.localrunner
 
 import java.io.FileNotFoundException
 
+import edu.ucdavis.fiehnlab.loader.ResourceStorage
+import edu.ucdavis.fiehnlab.loader.storage.{FileStorage, FileStorageProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, MergeLibraryAccess}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, CorrectionTarget}
@@ -127,5 +129,7 @@ class LocalRunnerConfiguration extends Logging {
   @Bean
   def mergedLibrary(correction: DelegateLibraryAccess[CorrectionTarget], annotation: DelegateLibraryAccess[AnnotationTarget]): MergeLibraryAccess = new MergeLibraryAccess(correction, annotation)
 
+  @Bean(name = Array("localStorage", "outputStorage"))
+  def localStorage: ResourceStorage = new FileStorage(new FileStorageProperties())
 }
 

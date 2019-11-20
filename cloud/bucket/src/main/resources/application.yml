@@ -1,0 +1,23 @@
+logger:
+  level:
+    root: info
+
+wcmc:
+  workflow:
+    resource:
+      store:
+        bucket:
+          name: "data-carrot"
+          result: "wcmc-data-stasis-result-prod"
+
+---
+spring:
+  profiles: "test"
+
+wcmc:
+  workflow:
+    resource:
+      store:
+        bucket:
+          name: "datatest-carrot"
+          result: "wcmc-data-stasis-result-test"

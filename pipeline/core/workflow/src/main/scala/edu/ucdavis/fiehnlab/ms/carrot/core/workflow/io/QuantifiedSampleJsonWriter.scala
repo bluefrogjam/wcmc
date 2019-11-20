@@ -35,7 +35,6 @@ class QuantifiedSampleJsonWriter[T] @Autowired()(converter: SampleConverter[Doub
     * @param sample
     */
   override def write(outputStream: OutputStream, sample: Sample): Unit = {
-
     sample match {
 
       case quantified: QuantifiedSample[Double] =>

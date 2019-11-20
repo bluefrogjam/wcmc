@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, S
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{SampleResponse, TrackingResponse}
 import org.apache.logging.log4j.scala.Logging
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @Profile(Array("carrot.processing.dump.stasis"))
-class DumpStasisData @Autowired()(storage: ResourceStorage, objectMapper: ObjectMapper, stasis: StasisService) extends PostProcessing[Double] with Logging {
+class DumpStasisData @Autowired()(@Qualifier("outputStorage") storage: ResourceStorage, objectMapper: ObjectMapper, stasis: StasisService) extends PostProcessing[Double] with Logging {
   /**
     * actually processes the item (implementations in subclasses)
     *

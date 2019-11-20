@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.{Bean, Import}
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.resource.store.bucket.data", "carrot.resource.loader.bucket.data"))
+@ActiveProfiles(Array("test", "carrot.resource.store.bucket.data", "carrot.resource.loader.bucket.data"))
 class BucketStorageTest extends WordSpec with Matchers {
 
   @Autowired
@@ -61,11 +61,11 @@ class BucketStorageTest extends WordSpec with Matchers {
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array("carrot.resource.store.bucket.result", "carrot.resource.loader.bucket.result"))
+@ActiveProfiles(Array("test", "carrot.resource.store.bucket.result", "carrot.resource.loader.bucket.result"))
 class BucketResultStorageTest extends WordSpec with Matchers {
 
   @Autowired
-  @Qualifier("resultStorage")
+  @Qualifier("outputStorage")
   val storage: ResourceStorage = null
 
   @Autowired
@@ -105,7 +105,7 @@ class BucketResultStorageTest extends WordSpec with Matchers {
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest
-@ActiveProfiles(Array(
+@ActiveProfiles(Array("test",
   "carrot.resource.store.bucket.data", "carrot.resource.loader.bucket.data",
   "carrot.resource.store.bucket.result", "carrot.resource.loader.bucket.result",
   "carrot.resource.store.local", "carrot.resouce.loader.local"
@@ -161,6 +161,7 @@ class MultipleBucketProfilesTest extends WordSpec with Matchers with Logging {
 
 
 @SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
+@Import(Array(classOf[BucketStorageConfiguration]))
 class BucketTestConfiguration() {
   @Autowired
   val fileStorageProperties: FileStorageProperties = null

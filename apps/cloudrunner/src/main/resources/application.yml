@@ -7,8 +7,8 @@ spring:
       - carrot.report.quantify.height
       - carrot.processing.replacement.mzrt
       - carrot.processing.peakdetection
-      - carrot.resource.store.bucket
-      - carrot.resource.loader.bucket
+      - carrot.resource.loader.bucket.data
+      - carrot.resource.store.bucket.result
       - carrot.output.writer.json
       - carrot.output.storage.aws
       - carrot.output.storage.converter.target
@@ -45,3 +45,15 @@ wcmc:
     port: 25
     username: binbase@gmail.com
     pass: fiehnlab-2018
+
+---
+spring:
+  profiles: "test"
+
+wcmc:
+  workflow:
+    resource:
+      store:
+        bucket:
+          name: "datatest-carrot"
+          result: "wcmc-data-stasis-result-test"

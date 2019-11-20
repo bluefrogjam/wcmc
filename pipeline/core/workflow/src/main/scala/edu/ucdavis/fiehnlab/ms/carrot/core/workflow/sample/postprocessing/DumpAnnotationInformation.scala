@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing
 
-import java.io.{ByteArrayInputStream, StringReader}
+import java.io.ByteArrayInputStream
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import edu.ucdavis.fiehnlab.loader.ResourceStorage
@@ -12,13 +12,13 @@ import edu.ucdavis.fiehnlab.spectra.hash.core.SplashFactory
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SpectraUtil
 import org.apache.logging.log4j.scala.Logging
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
 @Profile(Array("carrot.processing.dump","carrot.processing.dump.spectra"))
-class DumpAnnotationInformation @Autowired()(storage: ResourceStorage, objectMapper: ObjectMapper) extends PostProcessing[Double] with Logging {
+class DumpAnnotationInformation @Autowired()(@Qualifier("outputStorage") storage: ResourceStorage, objectMapper: ObjectMapper) extends PostProcessing[Double] with Logging {
 
   /**
     * dumps all MSMS with target identification to the linked storage

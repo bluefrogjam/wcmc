@@ -136,6 +136,7 @@ class TaskRunner extends Logging {
     }
 
     //send the processed result to the storage engine.
+    logger.info(s"Storing results with ${storage.asScala.map(_.getClass.getSimpleName).mkString("; ")}")
     storage.asScala.par.foreach { x: ResultStorage =>
       try {
         x.store(experiment, task)

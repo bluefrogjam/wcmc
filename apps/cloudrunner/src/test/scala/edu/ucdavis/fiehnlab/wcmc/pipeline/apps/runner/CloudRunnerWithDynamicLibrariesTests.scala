@@ -1,7 +1,6 @@
 package edu.ucdavis.fiehnlab.wcmc.pipeline.apps.runner
 
-import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
-import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.{BucketLoader, BucketStorage}
+import edu.ucdavis.fiehnlab.loader.ResourceStorage
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
@@ -23,9 +22,7 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.targets.yaml.annotation",
   "carrot.targets.dummy",
   "carrot.runner.required",
-  "carrot.resource.loader.bucket",
-  "carrot.resource.store.bucket",
-  "carrot.resource.loader.bucket.result",
+  "carrot.resource.loader.bucket.data",
   "carrot.resource.store.bucket.result",
   "carrot.output.storage.aws",
   "carrot.output.writer.json",
@@ -43,27 +40,29 @@ class CloudRunnerWithDynamicLibrariesTests extends WordSpec with Matchers with L
   val filename = ""
 
   @Autowired
-  val loader: BucketLoader = null
-
-  @Autowired
-  val storage: BucketStorage = null
+  val storage: ResourceStorage = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "a runner" should {
+    "use correct destination" in {
+      storage.getDestination should equal("wcmc-data-stasis-result-test")
+    }
+
     "have results on aws" in {
+      val outputFile = filename.replace(".mzml", ".json")
       try {
-        loader.exists(filename.split('.').head) should be(true)
-
-        val data = loader.loadAsFile(filename.split('.').head)
-        logger.info(s"DATA: ${data}")
-        data.size should be > 0
-
+        storage.exists(outputFile) should be(true)
       } catch {
         case ex: HttpClientErrorException =>
           fail(ex)
       } finally {
-//        storage.delete(filename.split('.').head)
+        try {
+          storage.delete(outputFile)
+        } catch {
+          case ex2: Exception =>
+            logger.error(s"Can't delete file $outputFile. ${ex2.getMessage}")
+        }
       }
     }
   }

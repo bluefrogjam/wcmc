@@ -26,7 +26,7 @@ class TargetedWorkflowTestConfiguration extends Logging {
   @Autowired
   val resourceLoader: DelegatingResourceLoader = null
 
-  @Bean(name = Array("localStorage"))
+  @Bean(name = Array("localStorage", "outputStorage"))
   def localStorage: ResourceStorage = new FileStorage(new FileStorageProperties())
 
   /**

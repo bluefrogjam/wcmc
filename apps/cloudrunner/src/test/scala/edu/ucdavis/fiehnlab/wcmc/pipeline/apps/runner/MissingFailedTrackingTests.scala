@@ -21,7 +21,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager, Tes
   "carrot.targets.yaml.annotation",
   "carrot.targets.dummy",
   "carrot.runner.required",
-  "carrot.resource.store.bucket",
+  "carrot.resource.loader.bucket.data",
+  "carrot.resource.store.bucket.result",
   "carrot.output.storage.aws",
   "carrot.output.writer.json",
   "carrot.output.storage.converter.target",
@@ -46,8 +47,8 @@ class MissingFailedTrackingTests extends WordSpec with Matchers with Logging {
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "the sample" should {
-    val sample = filename.split("\\.").head
-
+    val sample = filename.split('.').head
+    logger.info(s"checking status for sample ${sample}")
     "have all tracking statuses" in {
       val results = stasis_cli.getTracking(sample).get
       logger.info(s"Received: ${results}")

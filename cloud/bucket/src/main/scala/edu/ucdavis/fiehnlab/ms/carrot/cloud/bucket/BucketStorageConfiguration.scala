@@ -4,7 +4,7 @@ import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
 import edu.ucdavis.fiehnlab.loader.{ResourceLoader, ResourceStorage}
 import edu.ucdavis.fiehnlab.ms.carrot.cloud.aws.ASWConfigurationProperties
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.boot.context.properties.{ConfigurationProperties, EnableConfigurationProperties}
 import org.springframework.context.annotation.{Bean, Configuration, Profile}
 import org.springframework.stereotype.Component
@@ -17,14 +17,14 @@ import scala.beans.BeanProperty
 @Component
 class BucketStorageConfigurationProperties {
 
-  @BeanProperty
-  var name: String = "data-carrot"
+  @Value("${wcmc.workflow.resource.store.bucket.name:data-carrot}")
+  var name: String = _
 
   @BeanProperty
   val timeOfLife: Long = 0
 
-  @BeanProperty
-  var result: String = "wcmc-data-stasis-result-prod"
+  @Value("${wcmc.workflow.resource.store.bucket.result:wcmc-data-stasis-result-prod}")
+  var result: String = _
 
   override def toString: String = s"name: $name, results: $result, TTL: $timeOfLife"
 }
@@ -46,15 +46,11 @@ class BucketStorageConfiguration {
 
   @Profile(Array("carrot.resource.store.bucket.data"))
   @Bean(name = Array("dataStorage"))
-  def dataStorage(): ResourceStorage = {
-    new InputBucketStorage(client, properties, awsProperties)
-  }
+  def dataStorage: ResourceStorage = new InputBucketStorage(client, properties, awsProperties)
 
   @Profile(Array("carrot.resource.store.bucket.result"))
-  @Bean(name = Array("resultStorage"))
-  def resultStorage(): ResourceStorage = {
-    new OutputBucketStorage(client, properties, awsProperties)
-  }
+  @Bean(name = Array("outputStorage"))
+  def outputStorage: ResourceStorage = new OutputBucketStorage(client, properties, awsProperties)
 
   @Profile(Array("carrot.resource.loader.bucket.data"))
   @Bean(name = Array("dataLoader"))
@@ -63,13 +59,4 @@ class BucketStorageConfiguration {
   @Profile(Array("carrot.resource.loader.bucket.result"))
   @Bean(name = Array("resultLoader"))
   def resultLoader: ResourceLoader = new OutputBucketLoader(client, properties, awsProperties)
-
-  val bucketLibraryProperties = new BucketStorageConfigurationProperties()
-  bucketLibraryProperties.name = "carrot-libraries"
-
-  @Profile(Array("carrot.resource.loader.bucket.library"))
-  @Bean(name = Array("libraryLoader"))
-  def libraryLoader: ResourceLoader = new InputBucketLoader(client,
-    bucketLibraryProperties,
-    awsProperties)
 }
