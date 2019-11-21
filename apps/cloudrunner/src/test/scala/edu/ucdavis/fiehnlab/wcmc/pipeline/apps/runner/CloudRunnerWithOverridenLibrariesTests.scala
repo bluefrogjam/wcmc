@@ -39,7 +39,7 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.submitter:fake@mymail.edu"
 ))
 class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with Logging {
-  @Value("#{environment.CARROT_SAMPLE}}")
+  @Value("#{environment.CARROT_SAMPLE}")
   val filename = ""
 
   @Autowired
@@ -49,11 +49,12 @@ class CloudRunnerWithOverridenLibrariesTests extends WordSpec with Matchers with
 
   "a runner" should {
     "use correct destination" in {
-      storage.getDestination should equal("wcmc-data-stasis-test")
+      storage.getDestination should equal("wcmc-data-stasis-result-test")
     }
 
     "have results on aws" in {
       val outputFile = filename.replace(".mzml", ".json")
+      logger.info(outputFile)
       try {
         storage.exists(outputFile) should be(true)
       } catch {
