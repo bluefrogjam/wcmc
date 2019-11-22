@@ -3,13 +3,13 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.yaml
 import edu.ucdavis.fiehnlab.loader.ResourceLoader
 import edu.ucdavis.fiehnlab.loader.impl.ClasspathResourceLoader
 import edu.ucdavis.fiehnlab.ms.carrot.cloud.bucket.BucketStorageConfigurationProperties
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
+import org.springframework.context.annotation.{Bean, Profile}
 
-@Configuration
-@ComponentScan
+@SpringBootApplication(exclude = Array(classOf[DataSourceAutoConfiguration]))
 @EnableConfigurationProperties
-@Profile(Array("test", "carrot.targets.yaml.annotation", "carrot.targets.yaml.correction"))
 class YAMLLibraryAccessTestConfiguration {
   @Bean
   @Profile(Array("!carrot.resource.loader.bucket.data"))

@@ -31,6 +31,8 @@ class BucketStorageConfigurationProperties {
 
 @EnableConfigurationProperties
 @Configuration
+@Profile(Array("carrot.resource.store.bucket.data",
+  "carrot.resource.store.bucket.result"))
 class BucketStorageConfiguration {
   @Autowired
   val awsProperties: ASWConfigurationProperties = null
