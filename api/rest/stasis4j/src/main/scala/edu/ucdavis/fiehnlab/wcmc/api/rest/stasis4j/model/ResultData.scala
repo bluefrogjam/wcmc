@@ -86,16 +86,16 @@ case class Target(
   * @param mass
   */
 case class Annotation(
-                         retentionIndex: Double,
-                         intensity: Double,
-                         replaced: Boolean,
-                         mass: Double,
-                         ms2: String,
-                         precursor: Option[Ion] = None,
-                         nonCorrectedRt: Double = 0,
-                         massError: Double = 0,
-                         massErrorPPM: Double = 0,
-                         other: Option[Map[String, Any]] = None
+                       retentionIndex: Double,
+                       intensity: Double,
+                       replaced: Boolean,
+                       mass: Double,
+                       msms: String,
+                       precursor: Option[Ion] = None,
+                       nonCorrectedRt: Double = 0,
+                       massError: Double = 0,
+                       massErrorPPM: Double = 0,
+                       other: Option[Map[String, Any]] = None
                      ) {
   def rtDistance: Double = Math.abs(nonCorrectedRt - retentionIndex)
 }

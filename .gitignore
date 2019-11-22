@@ -4,6 +4,7 @@ target/
 .idea
 .serverless
 node_modules
+**/local_storage
 
 #data files
 !**/msdialrest4j/src/test/resources/*.abf

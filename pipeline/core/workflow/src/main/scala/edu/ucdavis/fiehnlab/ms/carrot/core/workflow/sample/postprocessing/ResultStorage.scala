@@ -35,15 +35,15 @@ class ResultStorage @Autowired()(@Qualifier("outputStorage") resourceStorage: Re
         val bais = new ByteArrayInputStream(out.toByteArray)
         try {
           val finalName = s"${s.name}.${writer.extension}"
-          logger.info(s"saving results for sample ${s.name} in ${resourceStorage.getDestination}")
+          logger.info(s"saving result file $finalName in ${resourceStorage.getDestination}")
           resourceStorage.store(bais, finalName)
-          stasisService.addTracking(TrackingData(s.name, "exported", s.fileName))
-          bais.close()
+          stasisService.addTracking(TrackingData(s.name, "exported", finalName))
         } catch {
           case e: Exception =>
             logger.error(s"Exception saving result in ${resourceStorage.getDestination}: ${e.getMessage}")
             stasisService.addTracking(TrackingData(s.name, "failed", s.fileName, e.getMessage))
-            bais.close()
+        } finally {
+          bais.close()
         }
       }
     }
