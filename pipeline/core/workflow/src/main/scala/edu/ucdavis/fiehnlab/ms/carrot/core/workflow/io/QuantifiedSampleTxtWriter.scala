@@ -37,7 +37,7 @@ class QuantifiedSampleTxtWriter[T] extends Writer[Sample] with Logging {
     * @param outputStream
     * @param sample
     */
-  override def write(outputStream: OutputStream, sample: Sample): Unit = {
+  override def write(outputStream: OutputStream, sample: Sample, extra: Option[Map[String, Object]] = None): Unit = {
     logger.debug(s"writing sample: ${sample}")
 
     sample match {

@@ -1,8 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.api.io
 
-import java.io.{BufferedOutputStream, BufferedWriter, OutputStream, OutputStreamWriter}
-
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{QuantifiedSample, Sample}
+import java.io.OutputStream
 
 /**
   * Created by wohlg_000 on 4/21/2016.
@@ -22,7 +20,7 @@ abstract class Writer[T] {
     * @param outputStream
     * @param data
     */
-  def write(outputStream: OutputStream, data: T)
+  def write(outputStream: OutputStream, data: T, extra: Option[Map[String, Object]])
 
   /**
     * writes the footer, if supported

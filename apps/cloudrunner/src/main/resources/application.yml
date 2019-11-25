@@ -37,7 +37,7 @@ wcmc:
   api:
     mona:
       rest:
-        mona:
+        server:
           user: admin
           password: admin
   email:

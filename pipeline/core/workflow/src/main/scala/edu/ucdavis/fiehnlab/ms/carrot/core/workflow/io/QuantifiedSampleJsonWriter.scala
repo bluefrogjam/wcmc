@@ -34,12 +34,20 @@ class QuantifiedSampleJsonWriter[T] @Autowired()(converter: SampleConverter[Doub
     * @param outputStream
     * @param sample
     */
-  override def write(outputStream: OutputStream, sample: Sample): Unit = {
+  override def write(outputStream: OutputStream, sample: Sample, extra: Option[Map[String, Object]] = None): Unit = {
     sample match {
 
       case quantified: QuantifiedSample[Double] =>
         logger.info(s"writing sample: ${sample.name}")
-        JacksMapper.writeValue(outputStream, converter.convert(quantified))
+        val converted = converter.convert(quantified)
+
+        val merged = new ResultData(
+          sample = converted.sample,
+          injections = converted.injections,
+          metadata = extra.getOrElse(Map.empty)
+        )
+
+        JacksMapper.writeValue(outputStream, merged)
     }
 
   }

@@ -25,6 +25,11 @@ trait Sample extends Serializable{
   val properties: Option[SampleProperties]
 
   /**
+   * sample metadata
+   */
+  var metadata: Map[String, Object] = Map.empty
+
+  /**
     * provides us with the given extension of the file name
     */
   val extension: String = {

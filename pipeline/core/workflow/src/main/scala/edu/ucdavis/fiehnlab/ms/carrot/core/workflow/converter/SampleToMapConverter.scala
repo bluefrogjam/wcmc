@@ -16,7 +16,7 @@ import scala.collection.JavaConverters._
 class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Logging {
 
   @Autowired
-  val resultConverter: CarrotToStasisConverter = null
+  val targetConverter: CarrotToStasisConverter = null
 
   /**
     * converts a sample to an different representation
@@ -34,7 +34,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
           case None => None
         }
 
-        Result(resultConverter.asStasisTarget(replacedtgt),
+        Result(targetConverter.asStasisTarget(replacedtgt),
           Annotation(retentionIndex = replacedtgt.spectraUsedForReplacement.retentionIndex,
             intensity = replacedtgt.spectraUsedForReplacement.quantifiedValue.get,
             replaced = true,
@@ -60,7 +60,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
           case None => None
         }
 
-        Result(resultConverter.asStasisTarget(quanttgt),
+        Result(targetConverter.asStasisTarget(quanttgt),
           Annotation(retentionIndex = quanttgt.retentionIndex,
             intensity = quanttgt.quantifiedValue.getOrElse(0.0) match {
               case x: Double => x.toDouble
@@ -88,7 +88,8 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
             .map(pair => Curve(pair._1, pair._2))
         ),
         results)
-    ).asJava
+    ).asJava,
+      Map.empty
     )
   }
 

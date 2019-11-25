@@ -5,6 +5,7 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import edu.ucdavis.fiehnlab.loader.ResourceStorage
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.Writer
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.Task
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.Matrix
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.Sample
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
@@ -25,12 +26,23 @@ class ResultStorage @Autowired()(@Qualifier("outputStorage") resourceStorage: Re
 
   def store(experiment: Experiment, task: Task): Unit = {
 
-    val out = new ByteArrayOutputStream()
-    writer.writeHeader(out)
-
     experiment.classes.foreach { c =>
+      val md = c.matrix.collect {
+        case matrix: Matrix =>
+          Map("identifier" -> matrix.identifier,
+            "organ" -> matrix.organ,
+            "species" -> matrix.species,
+            "treatments" -> Seq.empty,
+            "class" -> "missing")
+      }.getOrElse(Map.empty)
+
       c.samples.foreach { s =>
-        writer.write(out, s)
+        val out = new ByteArrayOutputStream()
+
+        //TODO: fix this nice hack to make it immutable
+        s.metadata = md
+
+        writer.write(out, s, Some(md))
         out.flush()
         val bais = new ByteArrayInputStream(out.toByteArray)
         try {
@@ -45,11 +57,9 @@ class ResultStorage @Autowired()(@Qualifier("outputStorage") resourceStorage: Re
         } finally {
           bais.close()
         }
+        out.close()
       }
     }
-    writer.writeFooter(out)
-    out.flush()
-    out.close()
   }
 
 }

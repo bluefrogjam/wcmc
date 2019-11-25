@@ -6,7 +6,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.storage.{SampleToProcess, Task}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
@@ -29,7 +29,9 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.processing.replacement.simple",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction",
-  "carrot.output.writer.txt",
+  "carrot.output.writer.json",
+  "carrot.output.storage.converter.sample",
+  "carrot.output.storage.converter.target",
   "carrot.runner.required"
 ))
 class ResultStorageTest extends WordSpec {
@@ -57,8 +59,8 @@ class ResultStorageTest extends WordSpec {
   val resultStorage: ResultStorage = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
-  "LocalResultStorageTest" should {
 
+  "ResultStorageTest" should {
 
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
     val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
@@ -71,14 +73,17 @@ class ResultStorageTest extends WordSpec {
         method, None),
       method, Some(item)))
 
-    "store" in {
+    "store results" in {
 
       resultStorage.store(Experiment(
         name = Some("test"),
         acquisitionMethod = method,
-        classes = Seq(ExperimentClass(quantified, None)
+        classes = Seq(
+          ExperimentClass(quantified, Some(Matrix("matrix1", "human", "plasma", Seq.empty)))
         )),
         task = Task(name = "test", email = None, acquisitionMethod = method, samples = samples.map(x => SampleToProcess(fileName = x.fileName, className = "test"))))
+
+
     }
 
   }
