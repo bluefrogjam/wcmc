@@ -9,40 +9,40 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryTarget
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByMassRangePPM, IncludeByRetentionIndexWindow, IncludeBySimilarity}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow, IncludeBySimilarity}
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 /**
-  * Created by wohlgemuth on 7/12/17.
-  */
+ * Created by wohlgemuth on 7/12/17.
+ */
 @Component
 @Profile(Array("carrot.targets.dynamic"))
 class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends PostAction with Logging {
-
+  logger.info(s"Creating instance with libraries: ${targets.libraries.mkString(", ")}")
   /**
-    * which similarity to use in the system
-    */
+   * which similarity to use in the system
+   */
   @Autowired(required = false)
   val similarity: Similarity = new CompositeSimilarity
 
   /**
-    * minimum required similarity
-    */
+   * minimum required similarity
+   */
   @Value("${wcmc.workflow.lcms.msms.generate.library.similarity.min:0.7}")
   val minimumSimilarity: Double = 0
 
   /**
-    * library inclusion time window in seconds
-    */
+   * library inclusion time window in seconds
+   */
   @Value("${wcmc.workflow.lcms.msms.generate.library.retentionIndex.window:6}")
   val retentionIndexWindow: Double = 0
 
   /**
-    * mass window in PPM
-    */
+   * mass window in PPM
+   */
   @Value("${wcmc.workflow.lcms.msms.generate.library.accurateMass.window:0.010}")
   val accurateMassWindow: Double = 0
 
@@ -50,34 +50,40 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
   val minimumRequiredIntensity: Double = 0
 
   /**
-    * actually processes the item (implementations in subclasses)
-    *
-    * @param sample
-    * @param experimentClass
-    * @param experiment
-    */
+   * actually processes the item (implementations in subclasses)
+   *
+   * @param sample
+   * @param experimentClass
+   * @param experiment
+   */
   //  override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
   def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
+    logger.info(s"adding unknowns to mona")
     sample match {
       case data: QuantifiedSample[Double] =>
         logger.debug(s"adding ${data.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])} unannotated msms from ${sample.name} to mona")
         data.noneAnnotated.collect {
           case spec: MSMSSpectra => spec
         }
-            .foreach { x =>
+          .foreach { x =>
+            try {
               addTargetToLibrary(x, data, experiment.acquisitionMethod)
+            } catch {
+              case nfe: NumberFormatException =>
+                logger.error(s"Can't add feature ${x} (${data.name}. ERROR is: ${nfe.getMessage}")
             }
+          }
       case _ => logger.info(s"no MSMS spectra in sample ${sample.name}")
     }
   }
 
   /**
-    * add this feature to the library, if certain criteria are met.
-    *
-    * @param t
-    * @param sample
-    * @param acquisitionMethod
-    */
+   * add this feature to the library, if certain criteria are met.
+   *
+   * @param t
+   * @param sample
+   * @param acquisitionMethod
+   */
   def addTargetToLibrary(t: Feature with CorrectedSpectra, sample: QuantifiedSample[Double], acquisitionMethod: AcquisitionMethod): Unit = {
 
     t match {
@@ -109,7 +115,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
             targets.add(target2mona(newTarget), acquisitionMethod, Some(sample))
           }
           else {
-            logger.warn(s"the target you attempted to generate already exists! ${newTarget}")
+            logger.warn(s"the feature you attempted to generate already exists! ${newTarget}")
           }
         }
         else {
@@ -122,11 +128,11 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
   }
 
   /**
-    * does this target already exist in the remote system
-    *
-    * @param newTarget
-    * @return
-    */
+   * does this target already exist in the remote system
+   *
+   * @param newTarget
+   * @return
+   */
   def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, sample: Sample): Boolean = {
     val riFilter = new IncludeByRetentionIndexWindow(newTarget.retentionIndex, retentionIndexWindow)
 
