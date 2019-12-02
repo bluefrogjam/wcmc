@@ -117,8 +117,8 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
         SpectraHelper.addAnnotation(hit._2, MassAccuracy.calculateMassErrorPPM(hit._2, hit._1), MassAccuracy.calculateMassError(hit._2, hit._1), hit._1)
     }
 
-    //find the none annotated spectra
-    val noneAnnotatedSpectra: Seq[_ <: Feature with CorrectedSpectra] = input.spectra.filterNot { original =>
+    //find the non-annotated spectra
+    val nonAnnotatedSpectra: Seq[_ <: Feature with CorrectedSpectra] = input.spectra.filterNot { original =>
       annotatedSpectra.exists(annotated =>
         annotated.scanNumber == original.scanNumber
             &&
@@ -127,7 +127,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
 
     logger.debug(s"spectra count in sample ${input.spectra.size}")
     logger.debug(s"annotated spectra count: ${annotatedSpectra.size}")
-    logger.debug(s"none annotated spectra count: ${noneAnnotatedSpectra.size}")
+    logger.debug(s"none annotated spectra count: ${nonAnnotatedSpectra.size}")
 
     val annotatedSample = new AnnotatedSample {
 
@@ -136,7 +136,7 @@ abstract class AnnotateSampleProcess @Autowired()(val libraryAccess: MergeLibrar
       override val featuresUsedForCorrection: Iterable[TargetAnnotation[Target, Feature]] = input.featuresUsedForCorrection
       override val regressionCurve: Regression = input.regressionCurve
       override val fileName: String = input.fileName
-      override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = noneAnnotatedSpectra
+      override val noneAnnotated: Seq[_ <: Feature with CorrectedSpectra] = nonAnnotatedSpectra
       /**
         * associated properties
         */

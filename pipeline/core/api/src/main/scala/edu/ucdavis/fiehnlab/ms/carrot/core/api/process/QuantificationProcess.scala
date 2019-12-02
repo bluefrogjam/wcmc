@@ -42,7 +42,7 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
 
         //nothing found for this spectra, needs to be replaced later
         if (result.isEmpty) {
-          logger.debug(s"\t=> annotation not found for ${myTarget}")
+          logger.debug(s"\t=> annotation not found for $myTarget")
           new QuantifiedTarget[T] with AccurateMassSupport {
             override val idx: Int = myTarget.idx
             override val uniqueMass: Option[Double] = myTarget.uniqueMass
@@ -51,7 +51,7 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
             override val retentionIndex: Double = myTarget.retentionIndex
             override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
             override val retentionTimeInMinutes: Double = myTarget.retentionTimeInMinutes
-            override var inchiKey: Option[String] = myTarget.inchiKey
+            override var inchiKey: Option[String] = myTarget.getInchiKey
             override val precursorMass: Option[Double] = myTarget.precursorMass
             override val accurateMass: Option[Double] = myTarget.accurateMass
             override var confirmed: Boolean = myTarget.confirmed
@@ -73,7 +73,7 @@ abstract class QuantificationProcess[T](libraryAccess: MergeLibraryAccess, stasi
             override val retentionIndex: Double = myTarget.retentionIndex
             override val retentionTimeInSeconds: Double = myTarget.retentionTimeInSeconds
             override val retentionTimeInMinutes: Double = myTarget.retentionTimeInMinutes
-            override var inchiKey: Option[String] = result.head.target.inchiKey
+            override var inchiKey: Option[String] = result.head.target.getInchiKey
             override val precursorMass: Option[Double] = result.head.accurateMass
             override val accurateMass: Option[Double] = myTarget.accurateMass
             override var confirmed: Boolean = myTarget.confirmed
