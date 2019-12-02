@@ -2,6 +2,8 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample
 
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 
+import scala.util.matching.Regex
+
 /**
   * Defines a target for a targeted based approach
   */
@@ -37,6 +39,13 @@ trait Target extends CorrectedSpectra with SimilaritySupport with AccurateMassSu
     * the unique inchi key for this spectra
     */
   var inchiKey: Option[String]
+
+  def getInchiKey: Option[String] = inchiKey match {
+    case Some(a) => Some(a)
+    case _ =>
+      val ik = new Regex("[A-Z]{14}-[A-Z]{10}-[A-Z]")
+      ik findFirstIn name.get
+  }
 
   /**
     * the mono isotopic mass of this spectra

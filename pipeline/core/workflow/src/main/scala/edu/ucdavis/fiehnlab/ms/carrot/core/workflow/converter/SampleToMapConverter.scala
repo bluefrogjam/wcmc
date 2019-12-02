@@ -1,6 +1,6 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.converter
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MSMSSpectra, MSSpectra, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{GapFilledSpectra, QuantifiedSample, QuantifiedSpectra, QuantifiedTarget}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.ZeroreplacedTarget
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.model.{Ion => StIon, _}
@@ -34,15 +34,22 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
           case None => None
         }
 
+        val gmsms = replacedtgt.spectraUsedForReplacement.associatedScan.getOrElse(None) match {
+          case t: SpectrumProperties =>
+            t.msLevel match {
+              case 1 =>
+                ""
+              case 2 =>
+                t.spectraString()
+            }
+        }
+
         Result(resultConverter.asStasisTarget(replacedtgt),
           Annotation(retentionIndex = replacedtgt.spectraUsedForReplacement.retentionIndex,
             intensity = replacedtgt.spectraUsedForReplacement.quantifiedValue.get,
             replaced = true,
             mass = replacedtgt.spectraUsedForReplacement.accurateMass.get,
-            msms = replacedtgt.spectraUsedForReplacement.associatedScan.getOrElse(None) match {
-              case None => ""
-              case t: SpectrumProperties => t.spectraString()
-            },
+            msms = gmsms,
             precursor = _ion,
             nonCorrectedRt = replacedtgt.retentionTimeInSeconds,
             massError = Math.abs(replacedtgt.precursorMass.get - replacedtgt.spectraUsedForReplacement.accurateMass.get),
@@ -60,6 +67,16 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
           case None => None
         }
 
+        val gmsms = quanttgt.spectrum.getOrElse(None) match {
+          case t: SpectrumProperties =>
+            t.msLevel match {
+              case 1 =>
+                ""
+              case 2 =>
+                t.spectraString()
+            }
+        }
+
         Result(resultConverter.asStasisTarget(quanttgt),
           Annotation(retentionIndex = quanttgt.retentionIndex,
             intensity = quanttgt.quantifiedValue.getOrElse(0.0) match {
@@ -68,10 +85,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
             },
             replaced = false,
             mass = quanttgt.precursorMass.get,
-            msms = quanttgt.spectrum.getOrElse(None) match {
-              case None => ""
-              case t: SpectrumProperties => t.spectraString()
-            },
+            msms = gmsms,
             precursor = _ion,
             nonCorrectedRt = quanttgt.retentionTimeInSeconds,
             massError = getTargetMassError(quanttgt, quanttgt.spectra),

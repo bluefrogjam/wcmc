@@ -26,10 +26,12 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.lcms.correction",
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
-  "carrot.processing.replacement.simple",
+  "carrot.processing.replacement.mzrt",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction",
-  "carrot.output.writer.txt",
+  "carrot.output.writer.json",
+  "carrot.output.storage.converter.sample",
+  "carrot.output.storage.converter.target",
   "carrot.runner.required"
 ))
 class ResultStorageTest extends WordSpec {
@@ -61,17 +63,17 @@ class ResultStorageTest extends WordSpec {
 
 
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
-    val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
 
-    val quantified = samples.map((item: Sample) => quantification.process(
-      annotation.process(
-        correction.process(
-          deconv.process(item, method, None),
+    "store without msms" in {
+      val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
+
+      val quantified = samples.map((item: Sample) => quantification.process(
+        annotation.process(
+          correction.process(
+            deconv.process(item, method, None),
+            method, None),
           method, None),
-        method, None),
-      method, Some(item)))
-
-    "store" in {
+        method, Some(item)))
 
       resultStorage.store(Experiment(
         name = Some("test"),
@@ -79,6 +81,26 @@ class ResultStorageTest extends WordSpec {
         classes = Seq(ExperimentClass(quantified, None)
         )),
         task = Task(name = "test", email = None, acquisitionMethod = method, samples = samples.map(x => SampleToProcess(fileName = x.fileName, className = "test"))))
+    }
+
+    "store with msms" in {
+      val sample: Sample = sampleLoader.getSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
+
+      val quantified = quantification.process(
+        annotation.process(
+          correction.process(
+            deconv.process(sample, method, None),
+            method, None),
+          method, None),
+        method, Some(sample))
+
+      resultStorage.store(Experiment(
+        name = Some("test"),
+        acquisitionMethod = method,
+        classes = Seq(ExperimentClass(Seq(quantified), None)
+        )),
+        task = Task(name = "test", email = None, acquisitionMethod = method,
+          samples = Seq(SampleToProcess(fileName = sample.fileName, className = "test"))))
     }
 
   }
