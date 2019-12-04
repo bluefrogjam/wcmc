@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, NegativeMode, PositiveMode}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, Ion, NegativeMode, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.apache.logging.log4j.scala.Logging
 import org.scalatest.concurrent.Eventually
@@ -41,7 +41,12 @@ class MonaLibrarySpeedTest extends WordSpec with Matchers with Logging with Even
     override var confirmed: Boolean = true
     override var requiredForCorrection: Boolean = false
     override var isRetentionIndexStandard: Boolean = true
-    override val spectrum: Option[SpectrumProperties] = None
+    override val spectrum: Option[SpectrumProperties] = Some(new SpectrumProperties {
+      override val msLevel: Short = 1
+      override val modelIons: Option[Seq[Double]] = None
+      override val ions: Seq[Ion] = Seq(Ion(403.3066, 100))
+      override val rawIons: Option[Seq[Ion]] = None
+    })
   }
 
   val acquisitionMethod1: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, Some(PositiveMode())))

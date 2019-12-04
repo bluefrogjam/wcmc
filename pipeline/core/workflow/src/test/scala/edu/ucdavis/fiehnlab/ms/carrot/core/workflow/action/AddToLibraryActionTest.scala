@@ -36,7 +36,7 @@ import scala.collection.JavaConverters._
   "carrot.targets.yaml.correction",
   "carrot.targets.dynamic",
   "carrot.targets.mona",
-  "carrot.output.store.local",
+  "carrot.resource.store.local",
   "carrot.output.writer.json",
   "carrot.output.storage.converter.sample",
   "carrot.output.storage.converter.target",
@@ -74,20 +74,21 @@ class AddToLibraryActionTest extends WordSpec {
   "AddToLibraryAction" should {
 
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(NegativeMode())))
-    val sample: Sample = sampleLoader.getSample("lgvty_cells_pilot_2_NEG_500K_01.mzml")
-
-    val quantified = quantification.process(
-      annotation.process(
-        correction.process(
-          deconv.process(sample, method, None),
-          method, None),
-        method, None),
-      method, Some(sample))
-
-    val classes = Seq(ExperimentClass(Seq(quantified), Some(Matrix("matrix1", "human", "plasma", Seq.empty))))
-    val experiment = Experiment(classes, Some("test"), method)
 
     "add unknowns to mona" in {
+      val sample: Sample = sampleLoader.getSample("lgvty_cells_pilot_2_NEG_500K_01.mzml")
+
+      val quantified = quantification.process(
+        annotation.process(
+          correction.process(
+            deconv.process(sample, method, None),
+            method, None),
+          method, None),
+        method, Some(sample))
+
+      val classes = Seq(ExperimentClass(Seq(quantified), Some(Matrix("matrix1", "human", "plasma", Seq.empty))))
+      val experiment = Experiment(classes, Some("test"), method)
+
       actions.asScala.collect {
         case add: AddToLibraryAction =>
           add.run(quantified, classes.head, experiment)

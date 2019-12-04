@@ -65,17 +65,15 @@ class ResultStorageTest extends WordSpec {
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
     "store without msms" in {
-      val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
+      lazy val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
 
-      val quantified = samples.map((item: Sample) => quantification.process(
+      lazy val quantified = samples.map((item: Sample) => quantification.process(
         annotation.process(
           correction.process(
             deconv.process(item, method, None),
             method, None),
           method, None),
         method, Some(item)))
-
-    "store results" in {
 
       resultStorage.store(Experiment(
         name = Some("test"),
@@ -88,9 +86,9 @@ class ResultStorageTest extends WordSpec {
     }
 
     "store with msms" in {
-      val sample: Sample = sampleLoader.getSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
+      lazy val sample: Sample = sampleLoader.getSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
 
-      val quantified = quantification.process(
+      lazy val quantified = quantification.process(
         annotation.process(
           correction.process(
             deconv.process(sample, method, None),

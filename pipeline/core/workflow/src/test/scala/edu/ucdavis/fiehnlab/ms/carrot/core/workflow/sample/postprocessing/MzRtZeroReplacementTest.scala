@@ -63,17 +63,18 @@ class MzRtZeroReplacementTest extends WordSpec with Logging with Matchers with B
 
   "MzRtZeroReplacementTest" should {
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("6550"), Some("test"), Some(NegativeMode())))
-    val rawSample = loader.getSample("B2a_TEDDYLipids_Neg_QC006.mzml")
-    val sample: QuantifiedSample[Double] = quantify.process(
-      annotation.process(
-        correction.process(
-          deco.process(
-            rawSample, method, None),
-          method, None),
-        method, None),
-      method, Some(rawSample))
 
     "replace the null values in the file" in {
+      lazy val rawSample = loader.getSample("B2a_TEDDYLipids_Neg_QC006.mzml")
+      lazy val sample: QuantifiedSample[Double] = quantify.process(
+        annotation.process(
+          correction.process(
+            deco.process(
+              rawSample, method, None),
+            method, None),
+          method, None),
+        method, Some(rawSample))
+
       zeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = false
       val replaced: QuantifiedSample[Double] = zeroReplacement.process(sample, method, Some(rawSample))
 
@@ -95,6 +96,16 @@ class MzRtZeroReplacementTest extends WordSpec with Logging with Matchers with B
     }
 
     "replace the null values in the file using nearest ion estimation" in {
+      lazy val rawSample = loader.getSample("B2a_TEDDYLipids_Neg_QC006.mzml")
+      lazy val sample: QuantifiedSample[Double] = quantify.process(
+        annotation.process(
+          correction.process(
+            deco.process(
+              rawSample, method, None),
+            method, None),
+          method, None),
+        method, Some(rawSample))
+
       zeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = true
       val replaced: QuantifiedSample[Double] = zeroReplacement.process(sample, method, Some(rawSample))
 

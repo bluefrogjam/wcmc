@@ -62,13 +62,12 @@ class CarrotToStasisConverterTest extends WordSpec with Logging with Matchers {
 
   "SampleToMapConverterTest" should {
     val sampleNames = Seq("B7B_TeddyLipids_Neg_QC015.mzml", "B12A_SA11202_TeddyLipids_Neg_1RXZX_2.mzml").reverse
-    val samples = loader.getSamples(sampleNames)
     val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Some(NegativeMode())))
+
+    "convert a Quantified sample into a Stasis sample" in {
+    val samples = loader.getSamples(sampleNames)
     val library = Seq(targets.correctionLibraries(method), targets.annotationLibraries(method)).flatten
 
-
-    val expClass = ExperimentClass(samples, None)
-    val experiment = Experiment(Seq(expClass), None, method)
     val qsample = samples.collect {
       case sample: Sample =>
         quantification.process(
@@ -79,8 +78,6 @@ class CarrotToStasisConverterTest extends WordSpec with Logging with Matchers {
             method, None),
           method, Some(sample))
     }
-
-    "convert a Quantified sample into a Stasis sample" in {
       val stasisTargets: Seq[STTarget] = qsample.head.quantifiedTargets.collect {
         case target: CTarget => converter.asStasisTarget(target)
       }.sortBy(t => t.index)

@@ -44,7 +44,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
             }
         }
 
-        Result(resultConverter.asStasisTarget(replacedtgt),
+        Result(targetConverter.asStasisTarget(replacedtgt),
           Annotation(retentionIndex = replacedtgt.spectraUsedForReplacement.retentionIndex,
             intensity = replacedtgt.spectraUsedForReplacement.quantifiedValue.get,
             replaced = true,
@@ -67,7 +67,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
           case None => None
         }
 
-        val gmsms = quanttgt.spectrum.getOrElse(None) match {
+        val gmsms = quanttgt.spectrum.getOrElse("") match {
           case t: SpectrumProperties =>
             t.msLevel match {
               case 1 =>
@@ -75,6 +75,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
               case 2 =>
                 t.spectraString()
             }
+          case tt: String => ""
         }
 
         Result(targetConverter.asStasisTarget(quanttgt),

@@ -13,7 +13,6 @@ spring:
       - carrot.targets.yaml.annotation
       - carrot.targets.yaml.correction
       - carrot.resource.store.local
-      - carrot.output.storage.local
       - carrot.output.writer.txt
       - carrot.nostasis
       - carrot.scheduler.local

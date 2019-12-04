@@ -22,8 +22,8 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
 import scala.io.Source
 
 /**
-  * Created by wohlg on 7/9/2016.
-  */
+ * Created by wohlg on 7/9/2016.
+ */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
 @ActiveProfiles(Array("test",
@@ -62,18 +62,18 @@ class QuantifiedSampleTxtWriterTest extends WordSpec with Matchers with Logging 
 
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
-    val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
-
-    val deconvoluted = samples.map((item: Sample) => deconv.process(item, method, Some(item)))
-
-    //correct the data
-    val correctedSample = deconvoluted.map((item: Sample) => correction.process(item, method, Some(item)))
-
-    val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method, Some(item)))
-
-    val quantified = annotated.map((item: AnnotatedSample) => quantification.process(item, method, Some(item)))
-
     "write" in {
+
+      val samples: Seq[_ <: Sample] = sampleLoader.getSamples(Seq("B5_P20Lipids_Pos_QC000.mzml", "B5_P20Lipids_Pos_NIST02.mzml"))
+
+      val deconvoluted = samples.map((item: Sample) => deconv.process(item, method, Some(item)))
+
+      //correct the data
+      val correctedSample = deconvoluted.map((item: Sample) => correction.process(item, method, Some(item)))
+
+      val annotated = correctedSample.map((item: CorrectedSample) => annotation.process(item, method, Some(item)))
+
+      val quantified = annotated.map((item: AnnotatedSample) => quantification.process(item, method, Some(item)))
 
       quantified.size should be > 0
 

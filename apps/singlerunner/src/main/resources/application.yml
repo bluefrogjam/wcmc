@@ -11,7 +11,7 @@ spring:
 #      - carrot.processing.replacement.simple
       - carrot.processing.peakdetection
       - carrot.report.quantify.height
-      - carrot.output.storage.local
+      - carrot.resource.store.local
       - carrot.output.writer.txt
       - carrot.targets.yaml.correction
       - carrot.targets.yaml.annotation

@@ -49,11 +49,10 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with Matchers wit
 
   "LCMSRetentionIndexCorrectionTest" should {
 
-    val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.mzml")
-    val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
 
-    s"should fail, because we don't have enough standards in ${sample3}" in {
+    s"should fail, because we don't have enough standards in B5_P20Lipids_Pos_QC000.mzml" in {
+      val sample3 = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
 
       correction.asInstanceOf[LCMSTargetRetentionIndexCorrectionProcess].minimumFoundStandards = 20
       val error = intercept[NotEnoughStandardsFoundException] {
@@ -63,7 +62,8 @@ class LCMSRetentionIndexCorrectionProcessTest extends WordSpec with Matchers wit
       assert(error != null)
     }
 
-    s"should pass, because we have enough standards for us to continue ${sample2}" in {
+    s"should pass, because we have enough standards for us to continue B5_P20Lipids_Pos_NIST02.mzml" in {
+      val sample2 = loader.getSample("B5_P20Lipids_Pos_NIST02.mzml")
       correction.asInstanceOf[LCMSTargetRetentionIndexCorrectionProcess].minimumFoundStandards = 10
 
       val corrected = correction.process(deco.process(sample2, method, None), method, None)

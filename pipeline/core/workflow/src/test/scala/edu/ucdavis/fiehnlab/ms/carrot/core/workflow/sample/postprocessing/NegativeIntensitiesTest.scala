@@ -51,18 +51,18 @@ class NegativeIntensitiesTest extends WordSpec with Logging with Matchers {
 
   "ZeroReplacement" should {
     val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
-    val rawSample = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
-
-    val sample: QuantifiedSample[Double] = quantify.process(
-      annotation.process(
-        correction.process(
-          deco.process(rawSample,
-            method, None),
-          method, None),
-        method, None),
-      method, Some(rawSample))
 
     "replace the with 0 intensitiy or leave positive values" in {
+      lazy val rawSample = loader.getSample("B5_P20Lipids_Pos_QC000.mzml")
+
+      lazy val sample: QuantifiedSample[Double] = quantify.process(
+        annotation.process(
+          correction.process(
+            deco.process(rawSample,
+              method, None),
+            method, None),
+          method, None),
+        method, Some(rawSample))
 
       sample.quantifiedTargets.foreach { x =>
         logger.info(s"target: ${x.name.get} = ${x.quantifiedValue}")

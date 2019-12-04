@@ -59,19 +59,19 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
     val libName = "teddy"
     val instrument = Some("6530")
     val method = AcquisitionMethod(ChromatographicMethod(libName, instrument, Some("test"), Some(PositiveMode())))
-    val rawSample = loader.getSample("B5_P20Lipids_Pos_QC029.mzml")
-    val sample: QuantifiedSample[Double] = quantify.process(
-      annotation.process(
-        correction.process(
-          deco.process(
-            rawSample, method, None),
-          method, None),
-        method, None),
-      method, Some(rawSample))
-
     "replaceValue" should {
 
       "replace the null values in the file" in {
+        lazy val rawSample = loader.getSample("B5_P20Lipids_Pos_QC029.mzml")
+        lazy val sample: QuantifiedSample[Double] = quantify.process(
+          annotation.process(
+            correction.process(
+              deco.process(
+                rawSample, method, None),
+              method, None),
+            method, None),
+          method, Some(rawSample))
+
         simpleZeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = false
         val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
 
@@ -90,6 +90,16 @@ class SimpleZeroReplacementTest extends WordSpec with Logging with Matchers {
       }
 
       "replace the null values in the file using nearest ion estimation" in {
+        lazy val rawSample = loader.getSample("B5_P20Lipids_Pos_QC029.mzml")
+        lazy val sample: QuantifiedSample[Double] = quantify.process(
+          annotation.process(
+            correction.process(
+              deco.process(
+                rawSample, method, None),
+              method, None),
+            method, None),
+          method, Some(rawSample))
+
         simpleZeroReplacement.zeroReplacementProperties.estimateByNearestFourIons = true
         val replaced: QuantifiedSample[Double] = simpleZeroReplacement.process(sample, method, Some(rawSample))
 

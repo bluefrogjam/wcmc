@@ -38,10 +38,11 @@ class QuantifiedSampleJsonWriter[T] @Autowired()(converter: SampleConverter[Doub
     sample match {
 
       case quantified: QuantifiedSample[Double] =>
-        logger.info(s"writing sample: ${sample.name}")
+        logger.info(s"making serializable sample: ${sample.name}")
         val converted = converter.convert(quantified)
+        logger.info(s"writing sample: ${sample.name}.$extension")
 
-        val merged = new ResultData(
+        val merged = ResultData(
           sample = converted.sample,
           injections = converted.injections,
           metadata = extra.getOrElse(Map.empty)
