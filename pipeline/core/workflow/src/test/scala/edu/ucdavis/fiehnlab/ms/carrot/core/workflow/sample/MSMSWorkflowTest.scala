@@ -67,8 +67,7 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode())))
 
       logger.info(s"mona size before: ${monalib.load(method).size}")
-      monalib.deleteAll
-//      clean_lib(method)
+      clean_lib(method)
       logger.info(s"mona size after: ${monalib.load(method).size}")
 
       val before = monalib.load(method).size
@@ -101,7 +100,7 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       action.run(result, expClass, experiment)
 
       val after = monalib.load(method).size
-      monalib.deleteLibrary(method)
+      clean_lib(method)
 
       after should be > before
     }
@@ -143,6 +142,7 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       action.run(result, expClass, experiment)
 
       val after = monalib.load(method).size
+      clean_lib(method)
 
       after should be > before
     }
