@@ -13,12 +13,12 @@ import scala.collection.JavaConverters._
 trait LibraryAccess[T <: Target] extends Logging {
 
   /**
-    * loads all the spectra from the library
-    * applicable for the given acquistion method
-    *
-    * @return
-    */
-  def load(acquisitionMethod: AcquisitionMethod): Iterable[T]
+   * loads all the spectra from the library
+   * applicable for the given acquistion method
+   *
+   * @return
+   */
+  def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean] = Some(true)): Iterable[T]
 
   /**
     * adds a new target to the internal list of targets for the selected method
@@ -71,11 +71,11 @@ trait LibraryAccess[T <: Target] extends Logging {
   def libraries: Seq[AcquisitionMethod]
 
   /**
-    * deletes the specified acquisition method from the list
-    *
-    * @param acquisitionMethod
-    */
-  def deleteLibrary(acquisitionMethod: AcquisitionMethod)
+   * deletes the specified acquisition method from the list
+   *
+   * @param acquisitionMethod
+   */
+  def deleteLibrary(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean])
 
   override def toString = s"${getClass.getName}(\n\n${libraries.mkString("\n\t")}\n)"
 }
@@ -103,7 +103,7 @@ trait ReadonlyLibrary[T <: Target] extends LibraryAccess[T] {
     */
   override def delete(target: T, acquisitionMethod: AcquisitionMethod): Unit = {}
 
-  override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {}
+  override def deleteLibrary(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean] = None): Unit = {}
 
   /**
     * adds a list of targets
@@ -145,20 +145,20 @@ trait ReadWriteLibrary[T <: Target] extends LibraryAccess[T] {
 }
 
 final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util.List[LibraryAccess[T]]) extends LibraryAccess[T] with Logging {
-  logger.info("==== creating delegate library ====")
+  logger.debug("==== creating delegate library ====")
 
   /**
-    * loads all the spectra from the library
-    * applicable for the given acquisition method
-    *
-    * @return
-    */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[T] = {
+   * loads all the spectra from the library
+   * applicable for the given acquisition method
+   *
+   * @return
+   */
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[T] = {
     logger.debug(s"\tLoading method: ${acquisitionMethod.toString}")
     val targets = delegates.asScala.find(_.load(acquisitionMethod).nonEmpty)
 
     if (targets.isDefined) {
-      targets.get.load(acquisitionMethod)
+      targets.get.load(acquisitionMethod, confirmed)
     }
     else {
       Seq.empty
@@ -194,16 +194,13 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
     if (targets.isDefined) {
       targets.get.delete(target, acquisitionMethod)
     }
-    else {
-      false
-    }
 
   }
 
-  def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
+  def deleteLibrary(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Unit = {
     libraries.filter(_.chromatographicMethod == acquisitionMethod.chromatographicMethod).foreach(am =>
       if (!am.isInstanceOf[ReadonlyLibrary[T]])
-        deleteLibrary(am)
+        deleteLibrary(am, confirmed)
     )
   }
 
@@ -247,14 +244,14 @@ final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[Co
   logger.info(s"creating merged library, based on ${correction} for correction and ${annotation} for annotation")
 
   /**
-    * loads all the spectra from the library
-    * applicable for the given acquistion method
-    *
-    * @return
-    */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = {
+   * loads all the spectra from the library
+   * applicable for the given acquistion method
+   *
+   * @return
+   */
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[Target] = {
     logger.debug(s"Loading method: ${acquisitionMethod.toString}")
-    this.correction.load(acquisitionMethod) ++ this.annotation.load(acquisitionMethod)
+    this.correction.load(acquisitionMethod, confirmed) ++ this.annotation.load(acquisitionMethod, confirmed)
   }
 
   /**
@@ -302,14 +299,14 @@ final class MergeLibraryAccess @Autowired()(correction: DelegateLibraryAccess[Co
   override def toString = s"MergeLibraryAccess(\n\tannotation: ${annotation.toString}\n\tcorrection:${correction.toString})"
 
   /**
-    * deletes the specified acquisition method from the list
-    *
-    * @param acquisitionMethod
-    */
-  override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
+   * deletes the specified acquisition method from the list
+   *
+   * @param acquisitionMethod
+   */
+  override def deleteLibrary(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Unit = {
     libraries.filter(_.chromatographicMethod == acquisitionMethod.chromatographicMethod).foreach(am =>
       if (!am.isInstanceOf[ReadonlyLibrary[AnnotationTarget]])
-        deleteLibrary(am)
+        deleteLibrary(am, confirmed)
     )
   }
 }

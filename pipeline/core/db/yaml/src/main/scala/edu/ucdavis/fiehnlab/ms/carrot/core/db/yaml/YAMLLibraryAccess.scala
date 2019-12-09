@@ -168,12 +168,12 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
   }.flatten.asInstanceOf[List[(AcquisitionMethod, List[Target])]].groupBy(_._1).mapValues(_.map(_._2))
 
   /**
-    * loads all the spectra from the library
-    * applicable for the given acquistion method
-    *
-    * @return
-    */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = this.data(acquisitionMethod).flatten
+   * loads all the spectra from the library
+   * applicable for the given acquistion method
+   *
+   * @return
+   */
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[Target] = this.data(acquisitionMethod).flatten.filter(_.confirmed == confirmed.getOrElse(true))
 
   /**
     * returns all associated acquisition methods for this library
@@ -189,14 +189,15 @@ class YAMLLibraryAccess @Autowired()(properties: YAMLLibraryConfigurationPropert
 class YAMLCorrectionLibraryAccess @Autowired()(parent: YAMLLibraryAccess) extends ReadonlyLibrary[CorrectionTarget] {
 
   /**
-    * loads all the spectra from the library
-    * applicable for the given acquistion method
-    *
-    * @return
-    */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[CorrectionTarget] = parent.load(acquisitionMethod).collect {
-    case x: CorrectionTarget => x
-  }
+   * loads all the spectra from the library
+   * applicable for the given acquistion method
+   *
+   * @return
+   */
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[CorrectionTarget] =
+    parent.load(acquisitionMethod, confirmed).collect {
+      case x: CorrectionTarget => x
+    }
 
   /**
     * returns all associated acquisition methods for this library
@@ -212,14 +213,15 @@ class YAMLCorrectionLibraryAccess @Autowired()(parent: YAMLLibraryAccess) extend
 class YAMLAnnotationLibraryAccess @Autowired()(parent: YAMLLibraryAccess) extends ReadonlyLibrary[AnnotationTarget] {
 
   /**
-    * loads all the spectra from the library
-    * applicable for the given acquistion method
-    *
-    * @return
-    */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = parent.load(acquisitionMethod).collect {
-    case x: AnnotationTarget => x
-  }
+   * loads all the spectra from the library
+   * applicable for the given acquistion method
+   *
+   * @return
+   */
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[AnnotationTarget] =
+    parent.load(acquisitionMethod, confirmed).collect {
+      case x: AnnotationTarget => x
+    }
 
   /**
     * returns all associated acquisition methods for this library

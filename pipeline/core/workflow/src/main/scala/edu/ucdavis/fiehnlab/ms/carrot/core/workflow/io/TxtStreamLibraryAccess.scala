@@ -25,11 +25,11 @@ class TxtStreamLibraryAccess[T <: Target](file: File, val seperator: String = "\
   override def libraries: Seq[AcquisitionMethod] = Seq.empty
 
   /**
-    * loads all the spectra from the library
-    *
-    * @return
-    */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[T] = {
+   * loads all the spectra from the library
+   *
+   * @return
+   */
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[T] = {
     if (file.getName.split("\\.").head.equals(acquisitionMethod.chromatographicMethod.name)) {
       val result = Source.fromFile(file).getLines().collect {
 

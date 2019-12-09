@@ -1,9 +1,9 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.gcms
 
-import org.apache.logging.log4j.scala.Logging
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.{DelegateLibraryAccess, LibraryAccess, ReadonlyLibrary}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{CorrectionTarget, PositiveMode, Target}
+import org.apache.logging.log4j.scala.Logging
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration, Profile}
 
@@ -37,9 +37,9 @@ class GCMSCorrectionTargetConfiguration extends Logging{
 
       new ReadonlyLibrary[GCMSCorrectionTarget] {
 
-        override def load(acquisitionMethod: AcquisitionMethod): Iterable[GCMSCorrectionTarget] = {
+        override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[GCMSCorrectionTarget] = {
           if (acquisitionMethod == x) {
-            return methods(x)
+            methods(x)
           }
           else {
             Seq.empty

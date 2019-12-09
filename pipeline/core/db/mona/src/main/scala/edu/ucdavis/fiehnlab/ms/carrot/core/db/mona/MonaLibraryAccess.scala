@@ -80,23 +80,23 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
   }
 
   /**
-    * based on the given method this will evaluate to a query against the system to provide us with valid targets
-    * for annotation and identification
-    */
+   * based on the given method this will evaluate to a query against the system to provide us with valid targets
+   * for annotation and identification
+   */
 
-  def query(acquistionMethod: AcquisitionMethod): String =
-    s"""(tags.text=="${generateLibraryIdentifier(acquistionMethod)}")"""
+  def query(acquistionMethod: AcquisitionMethod, confirmed: Boolean): String =
+    s"""(tags.text=="${generateLibraryIdentifier(acquistionMethod)}") and (metaData=q='name=="confirmed" and value=="${confirmed}"')"""
 
   /**
-    * loads all the spectra from the library
-    *
-    * @return
-    */
-  override def load(acquistionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = {
-    monaSpectrumRestClient.list(query = if (query(acquistionMethod) != "") Option(query(acquistionMethod)) else None)
-        .map( x => {
-          generateTarget(x)
-        })
+   * loads all the spectra from the library
+   *
+   * @return
+   */
+  override def load(acquistionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[AnnotationTarget] = {
+    monaSpectrumRestClient.list(query = if (query(acquistionMethod, confirmed.getOrElse(true)) != "") Option(query(acquistionMethod, confirmed.getOrElse(true))) else None)
+      .map(x => {
+        generateTarget(x)
+      })
 
   }
 
@@ -597,10 +597,10 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
   }
 
   @CacheEvict(value = Array("monacache"), allEntries = true)
-  override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = {
-    logger.info(s"about to delete library ${acquisitionMethod}")
+  override def deleteLibrary(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean] = None): Unit = {
+    logger.info(s"about to delete ${confirmed} targets from library ${acquisitionMethod}")
 
-    load(acquisitionMethod).foreach(t => delete(t, acquisitionMethod))
+    load(acquisitionMethod, confirmed).foreach(t => delete(t, acquisitionMethod))
   }
 }
 

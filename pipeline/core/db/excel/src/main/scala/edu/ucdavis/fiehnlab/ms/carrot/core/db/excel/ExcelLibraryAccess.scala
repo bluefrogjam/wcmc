@@ -51,7 +51,7 @@ class ExcelLibraryAccess @Autowired()(properties: ExcelLibraryConfigurationPrope
               override val precursorMass: Option[Double] = Some(BigDecimal(row.getCell(1)
                   .getNumericCellValue).setScale(5, BigDecimal.RoundingMode.CEILING).toDouble)
               override val uniqueMass: Option[Double] = None
-              override var confirmed: Boolean = false
+              override var confirmed: Boolean = true
               override var requiredForCorrection: Boolean = false
               override var isRetentionIndexStandard: Boolean = false
               override val spectrum: Option[SpectrumProperties] = None
@@ -63,14 +63,18 @@ class ExcelLibraryAccess @Autowired()(properties: ExcelLibraryConfigurationPrope
   }
 
   /**
-    * loads all the spectra from the library
-    * applicable for the given acquisition method
-    *
-    * @return
-    */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[Target] = {
+   * loads all the spectra from the library
+   * applicable for the given acquisition method
+   *
+   * @return
+   */
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[Target] = {
     if (acquisitionMethod == method) {
-      data
+      confirmed match {
+        case Some(x) =>
+          data.filter(_.confirmed == x)
+        case _ => Seq.empty
+      }
     } else {
       Seq.empty
     }
@@ -91,9 +95,10 @@ class ExcelLibraryAccess @Autowired()(properties: ExcelLibraryConfigurationPrope
 @Profile(Array("carrot.targets.excel.correction"))
 class ExcelCorrectionLibraryAccess @Autowired()(parent: ExcelLibraryAccess) extends ReadonlyLibrary[CorrectionTarget] {
 
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[CorrectionTarget] = parent.load(acquisitionMethod).collect {
-    case x: CorrectionTarget => x
-  }
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[CorrectionTarget] =
+    parent.load(acquisitionMethod, confirmed).collect {
+      case x: CorrectionTarget => x
+    }
 
   override def libraries: Seq[AcquisitionMethod] = parent.libraries
 }
@@ -103,9 +108,10 @@ class ExcelCorrectionLibraryAccess @Autowired()(parent: ExcelLibraryAccess) exte
 @Profile(Array("carrot.targets.excel.annotation"))
 class ExcelAnnotationLibraryAccess @Autowired()(parent: ExcelLibraryAccess) extends ReadonlyLibrary[AnnotationTarget] {
 
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = parent.load(acquisitionMethod).collect {
-    case x: AnnotationTarget => x
-  }
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[AnnotationTarget] =
+    parent.load(acquisitionMethod, confirmed).collect {
+      case x: AnnotationTarget => x
+    }
 
   override def libraries: Seq[AcquisitionMethod] = parent.libraries
 }

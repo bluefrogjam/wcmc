@@ -7,6 +7,6 @@ wcmc:
           password: admin
 mona:
   rest:
-      server:
-          host: localhost
-          port: 9090
+    server:
+      host: localhost
+      port: 9090

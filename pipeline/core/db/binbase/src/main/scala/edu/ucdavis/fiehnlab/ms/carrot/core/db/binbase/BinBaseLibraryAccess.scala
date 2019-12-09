@@ -38,12 +38,12 @@ class BinBaseLibraryAccess @Autowired()(config: BinBaseConnectionProperties) ext
   var binQuery: String = "select * from bin where bin_id not in (select bin_id from standard)"
 
   /**
-    * loads all the spectra from the library
-    * applicable for the given acquistion method
-    *
-    * @return
-    */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = {
+   * loads all the spectra from the library
+   * applicable for the given acquistion method
+   *
+   * @return
+   */
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[AnnotationTarget] = {
     acquisitionMethod.chromatographicMethod.column match {
       case Some(column) =>
 

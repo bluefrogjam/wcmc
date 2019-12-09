@@ -58,7 +58,7 @@ class MonaLibrarySpeedTest extends WordSpec with Matchers with Logging with Even
 
     "be able to add an mzrt target" in {
       library.deleteAll
-
+      logger.info("adding a gazillion targets...")
       eventually(timeout(10 seconds), interval(1 second)) {
         val initargets = library.load(acquisitionMethod3)
 
@@ -85,7 +85,6 @@ class MonaLibrarySpeedTest extends WordSpec with Matchers with Logging with Even
 
         targets.size shouldBe count
       }
-
 
       library.deleteLibrary(acquisitionMethod3)
     }

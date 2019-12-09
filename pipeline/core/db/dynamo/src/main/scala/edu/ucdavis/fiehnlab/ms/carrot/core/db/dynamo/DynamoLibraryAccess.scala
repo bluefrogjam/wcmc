@@ -1,25 +1,25 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.db.dynamo
 
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.ReadonlyLibrary
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import org.springframework.context.annotation._
 
-class DynamoLibraryAccess extends LibraryAccess[AnnotationTarget] {
+class DynamoLibraryAccess extends ReadonlyLibrary[AnnotationTarget] {
   /**
-    * loads all the spectra from the library
-    * applicable for the given acquistion method
-    *
-    * @return
-    */
-  override def load(acquisitionMethod: AcquisitionMethod): Iterable[AnnotationTarget] = ???
+   * loads all the spectra from the library
+   * applicable for the given acquistion method
+   *
+   * @return
+   */
+  override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[AnnotationTarget] = ???
 
   /**
-    * this will update the existing target with the provided values in the selected method
-    *
-    * @param target
-    * @param acquisitionMethod
-    */
+   * this will update the existing target with the provided values in the selected method
+   *
+   * @param target
+   * @param acquisitionMethod
+   */
   override def update(target: AnnotationTarget, acquisitionMethod: AcquisitionMethod): Boolean = ???
 
   /**
@@ -29,13 +29,6 @@ class DynamoLibraryAccess extends LibraryAccess[AnnotationTarget] {
     * @param acquisitionMethod
     */
   override def delete(target: AnnotationTarget, acquisitionMethod: AcquisitionMethod): Unit = ???
-
-  /**
-    * adds a list of targets
-    *
-    * @param targets
-    */
-  override def add(targets: Iterable[AnnotationTarget], acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = ???
 
   /**
     * returns all associated acquisition methods for this library

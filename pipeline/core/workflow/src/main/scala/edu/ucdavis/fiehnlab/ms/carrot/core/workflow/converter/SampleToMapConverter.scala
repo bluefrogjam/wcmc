@@ -34,7 +34,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
           case None => None
         }
 
-        val gmsms = replacedtgt.spectraUsedForReplacement.associatedScan.getOrElse(None) match {
+        val gmsms = replacedtgt.spectraUsedForReplacement.associatedScan.getOrElse("") match {
           case t: SpectrumProperties =>
             t.msLevel match {
               case 1 =>
@@ -42,6 +42,7 @@ class SampleToMapConverter[T] extends SampleConverter[T, ResultData] with Loggin
               case 2 =>
                 t.spectraString()
             }
+          case _ => ""
         }
 
         Result(targetConverter.asStasisTarget(replacedtgt),
