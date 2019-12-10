@@ -116,7 +116,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
         initargets shouldBe empty
       }
 
-      library.add(mzRt, acquisitionMethod3, None)
+      library.add(Seq(mzRt), acquisitionMethod3, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         val targets = library.load(acquisitionMethod3)
 
@@ -150,12 +150,12 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
     "be possible to add and load targets" in {
       val confirmed = Some(false)
 
-      library.add(testTarget, acquisitionMethod1, None)
+      library.add(Seq(testTarget), acquisitionMethod1, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1, confirmed).size shouldBe 1
       }
 
-      library.add(testTarget2, acquisitionMethod1, None)
+      library.add(Seq(testTarget2), acquisitionMethod1, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1, confirmed).size shouldBe 2
       }
@@ -167,12 +167,12 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1, confirmed)
       library.deleteLibrary(acquisitionMethod2, confirmed)
 
-      library.add(testTarget, acquisitionMethod1, None)
+      library.add(Seq(testTarget), acquisitionMethod1, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1, Some(false)).size shouldBe 1
       }
 
-      library.add(testTarget2, acquisitionMethod2, None)
+      library.add(Seq(testTarget2), acquisitionMethod2, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod2, confirmed).size shouldBe 1
       }
@@ -192,8 +192,8 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1, Some(false))
       library.deleteLibrary(acquisitionMethod2, Some(false))
 
-      library.add(testTarget, acquisitionMethod1, None)
-      library.add(testTarget, acquisitionMethod2, None)
+      library.add(Seq(testTarget), acquisitionMethod1, None)
+      library.add(Seq(testTarget), acquisitionMethod2, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.libraries.size shouldBe 2
       }
@@ -207,7 +207,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.deleteLibrary(acquisitionMethod1, confirmed)
 
-      library.add(testTarget, acquisitionMethod1, None)
+      library.add(Seq(testTarget), acquisitionMethod1, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1, confirmed).size shouldBe 1
       }
@@ -228,7 +228,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.deleteLibrary(acquisitionMethod1, confirmed)
 
-      library.add(testTarget, acquisitionMethod1, None)
+      library.add(Seq(testTarget), acquisitionMethod1, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1, confirmed).size shouldBe 1
       }
@@ -252,7 +252,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod1, confirmed)
 
-      library.add(testTarget, acquisitionMethod1, None)
+      library.add(Seq(testTarget), acquisitionMethod1, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1, confirmed).size shouldBe 1
       }
@@ -276,7 +276,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
       library.deleteLibrary(acquisitionMethod1)
       library.deleteLibrary(acquisitionMethod1, confirmed)
 
-      library.add(mzRt, acquisitionMethod1, None)
+      library.add(Seq(mzRt), acquisitionMethod1, None)
 
       eventually(timeout(value = 5 seconds), interval(1 second)) {
         val target = library.load(acquisitionMethod1)
@@ -300,7 +300,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.deleteLibrary(acquisitionMethod1)
 
-      library.add(mzRt, acquisitionMethod1, None)
+      library.add(Seq(mzRt), acquisitionMethod1, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
       }
@@ -320,7 +320,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.deleteLibrary(acquisitionMethod1)
 
-      library.add(mzRt, acquisitionMethod1, None)
+      library.add(Seq(mzRt), acquisitionMethod1, None)
 
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1).size shouldBe 1
@@ -341,7 +341,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.deleteLibrary(acquisitionMethod1, confirmed)
 
-      library.add(testTarget, acquisitionMethod1, None)
+      library.add(Seq(testTarget), acquisitionMethod1, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1, confirmed).size shouldBe 1
       }
@@ -362,7 +362,7 @@ class MonaLibraryAccessTest extends WordSpec with Matchers with Logging with Eve
 
       library.deleteLibrary(acquisitionMethod1, confirmed)
 
-      library.add(testTarget, acquisitionMethod1, None)
+      library.add(Seq(testTarget), acquisitionMethod1, None)
       eventually(timeout(5 seconds), interval(1 second)) {
         library.load(acquisitionMethod1, confirmed).size shouldBe 1
       }

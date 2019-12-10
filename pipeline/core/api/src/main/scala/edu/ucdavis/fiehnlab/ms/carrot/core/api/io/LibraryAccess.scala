@@ -21,15 +21,6 @@ trait LibraryAccess[T <: Target] extends Logging {
   def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean] = Some(true)): Iterable[T]
 
   /**
-    * adds a new target to the internal list of targets for the selected method
-    *
-    * @param target
-    */
-  def add(target: T, acquisitionMethod: AcquisitionMethod, sample: Option[Sample]): Unit = {
-    add(Seq(target), acquisitionMethod, sample)
-  }
-
-  /**
     * this will update the existing target with the provided values in the selected method
     *
     * @param target

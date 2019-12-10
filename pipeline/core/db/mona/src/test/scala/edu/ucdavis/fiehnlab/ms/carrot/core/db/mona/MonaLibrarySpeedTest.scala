@@ -3,7 +3,7 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.db.mona
 import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.api.MonaSpectrumRestClient
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, Ion, NegativeMode, PositiveMode}
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.{AnnotationTarget, Ion, PositiveMode}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod}
 import org.apache.logging.log4j.scala.Logging
 import org.scalatest.concurrent.Eventually
@@ -49,15 +49,13 @@ class MonaLibrarySpeedTest extends WordSpec with Matchers with Logging with Even
     })
   }
 
-  val acquisitionMethod1: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, Some(PositiveMode())))
-  val acquisitionMethod2: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("test", None, None, Some(NegativeMode())))
-  val acquisitionMethod3: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("keim", Some("6550"), Some("test"), Some(PositiveMode())))
+  val acquisitionMethod3: AcquisitionMethod = AcquisitionMethod(ChromatographicMethod("speedtest", Some("6550"), Some("test"), Some(PositiveMode())))
 
 
   "MonaLibraryAccessTest" should {
 
     "be able to add an mzrt target" in {
-      library.deleteAll
+      library.deleteLibrary(acquisitionMethod3, Some(mzRt.confirmed))
       logger.info("adding a gazillion targets...")
       eventually(timeout(10 seconds), interval(1 second)) {
         val initargets = library.load(acquisitionMethod3)
@@ -68,7 +66,7 @@ class MonaLibrarySpeedTest extends WordSpec with Matchers with Logging with Even
       val begin = System.currentTimeMillis()
       val count = 2000
       for (i <- 1 to count) {
-        library.add(mzRt, acquisitionMethod3, None)
+        library.add(Seq(mzRt), acquisitionMethod3, None)
 
       }
 
