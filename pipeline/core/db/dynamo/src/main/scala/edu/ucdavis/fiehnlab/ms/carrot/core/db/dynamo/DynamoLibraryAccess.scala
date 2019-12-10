@@ -38,11 +38,11 @@ class DynamoLibraryAccess extends ReadonlyLibrary[AnnotationTarget] {
   override def libraries: Seq[AcquisitionMethod] = ???
 
   /**
-    * deletes the specified acquisition method from the list
-    *
-    * @param acquisitionMethod
-    */
-  override def deleteLibrary(acquisitionMethod: AcquisitionMethod): Unit = ???
+   * deletes the specified acquisition method from the list
+   *
+   * @param acquisitionMethod
+   */
+  override def deleteLibrary(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Unit = ???
 }
 
 /**
