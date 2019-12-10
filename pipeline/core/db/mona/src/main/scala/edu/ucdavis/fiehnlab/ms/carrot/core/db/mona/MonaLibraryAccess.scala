@@ -541,7 +541,11 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
 
         if (spectrum.isDefined) {
           val spec = spectrum.get
-          monaSpectrumRestClient.add(spec)
+          try {
+            monaSpectrumRestClient.add(spec)
+          } catch {
+            case error: HttpClientErrorException => logger.error(s"${error.getMessage}\n${error.getResponseBodyAsString}\n${error.getResponseHeaders}")
+          }
         }
         else {
           throw new TargetGenerationNotSupportedException(s"not possible to generate a target here, due to lack of metadata. Please ensure that you provide all required information", t)

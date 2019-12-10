@@ -145,8 +145,8 @@ final class DelegateLibraryAccess[T <: Target] @Autowired()(delegates: java.util
    * @return
    */
   override def load(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[T] = {
-    logger.debug(s"\tLoading method: ${acquisitionMethod.toString}")
-    val targets = delegates.asScala.find(_.load(acquisitionMethod).nonEmpty)
+    logger.debug(s"\tLoading targets of method: ${acquisitionMethod.toString}")
+    val targets = delegates.asScala.find(_.load(acquisitionMethod, confirmed).nonEmpty)
 
     if (targets.isDefined) {
       targets.get.load(acquisitionMethod, confirmed)

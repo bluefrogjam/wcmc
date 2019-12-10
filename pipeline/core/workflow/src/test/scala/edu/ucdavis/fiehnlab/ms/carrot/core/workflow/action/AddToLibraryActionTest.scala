@@ -1,27 +1,25 @@
 package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 
-import java.util
-
 import edu.ucdavis.fiehnlab.ms.carrot.core.TargetedWorkflowTestConfiguration
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.SampleLoader
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Matrix}
+import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.msdial.PeakDetection
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.annotation.LCMSTargetAnnotationProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.correction.lcms.LCMSTargetRetentionIndexCorrectionProcess
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.{ResultStorage, ZeroReplacement}
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.QuantifyByHeightProcess
+import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
-import org.scalatest.WordSpec
+import org.scalatest.concurrent.Eventually
+import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
-
-import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
@@ -42,9 +40,7 @@ import scala.collection.JavaConverters._
   "carrot.output.storage.converter.target",
   "carrot.runner.required"
 ))
-class AddToLibraryActionTest extends WordSpec {
-  val libName = "lcms_istds"
-
+class AddToLibraryActionTest extends WordSpec with Matchers with Logging with Eventually {
   @Autowired
   val deconv: PeakDetection = null
 
@@ -67,15 +63,20 @@ class AddToLibraryActionTest extends WordSpec {
   val resultStorage: ResultStorage = null
 
   @Autowired
-  val actions: java.util.List[PostAction] = new util.ArrayList[PostAction]()
+  val action: AddToLibraryAction = null
+
+  @Autowired
+  val mona: MonaLibraryAccess = null
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "AddToLibraryAction" should {
 
-    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(NegativeMode())))
+    val method = AcquisitionMethod(ChromatographicMethod("csh", Some("6550"), Some("test"), Some(NegativeMode())))
 
     "add unknowns to mona" in {
+      //      mona.deleteLibrary(method, Some(false))
+
       val sample: Sample = sampleLoader.getSample("lgvty_cells_pilot_2_NEG_500K_01.mzml")
 
       val quantified = quantification.process(
@@ -89,12 +90,8 @@ class AddToLibraryActionTest extends WordSpec {
       val classes = Seq(ExperimentClass(Seq(quantified), Some(Matrix("matrix1", "human", "plasma", Seq.empty))))
       val experiment = Experiment(classes, Some("test"), method)
 
-      actions.asScala.collect {
-        case add: AddToLibraryAction =>
-          add.run(quantified, classes.head, experiment)
-      }
+      action.run(quantified, classes.head, experiment)
     }
-
   }
 }
 

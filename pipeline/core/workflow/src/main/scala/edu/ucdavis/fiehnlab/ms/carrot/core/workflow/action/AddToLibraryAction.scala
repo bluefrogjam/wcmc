@@ -8,7 +8,6 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
-import edu.ucdavis.fiehnlab.ms.carrot.core.db.mona.MonaLibraryTarget
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow, IncludeBySimilarity}
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
@@ -56,74 +55,39 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
    * @param experimentClass
    * @param experiment
    */
-  //  override def doProcess(sample: QuantifiedSample[Double], method: AcquisitionMethod, rawSample: Option[Sample]): QuantifiedSample[Double] = {
   def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
-    logger.info(s"adding unknowns to mona")
+    logger.info(s"running AddToLibrary Action")
     sample match {
       case data: QuantifiedSample[Double] =>
+
         logger.debug(s"adding ${data.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])} unannotated msms from ${sample.name} to mona")
-        data.noneAnnotated.collect {
-          case spec: MSMSSpectra => spec
-        }
-          .foreach { x =>
-            try {
-              addTargetToLibrary(x, data, experiment.acquisitionMethod)
-            } catch {
-              case nfe: NumberFormatException =>
-                logger.error(s"Can't add feature ${x} (${data.name}. ERROR is: ${nfe.getMessage}")
+        val unconfirmed: Iterable[Target] = targets.load(experiment.acquisitionMethod, Some(false))
+
+        val newTargets: Seq[AnnotationTarget] = data.noneAnnotated.collect {
+          case spec: CorrectedSpectra with MSMSSpectra =>
+            new AnnotationTarget() with PrecursorSupport {
+              override var name: Option[String] = None
+              override val retentionIndex: Double = spec.retentionIndex
+              override var inchiKey: Option[String] = None
+              override val precursorMass: Option[Double] = Some(spec.precursorIon.get.mass)
+              override val uniqueMass: Option[Double] = spec.uniqueMass
+              override var confirmed: Boolean = false
+              override var requiredForCorrection: Boolean = false
+              override var isRetentionIndexStandard: Boolean = false
+              override val spectrum: Option[SpectrumProperties] = spec.associatedScan
+              override val precursorScan: Option[SpectrumProperties] = spec.precursorScan
+              override val retentionTimeInMinutes: Double = spec.retentionTimeInMinutes
+              override val accurateMass: Option[Double] = spec.accurateMass
             }
-          }
+        }.filter {
+          _.spectrum.isDefined
+        }
+          .filter { tgt => !targetAlreadyExists(tgt, experiment.acquisitionMethod, unconfirmed) }
+
+        logger.info(s"adding ${newTargets.size} unknowns to ???")
+        targets.add(newTargets, experiment.acquisitionMethod, Some(sample))
+
       case _ => logger.info(s"no MSMS spectra in sample ${sample.name}")
-    }
-  }
-
-  /**
-   * add this feature to the library, if certain criteria are met.
-   *
-   * @param t
-   * @param sample
-   * @param acquisitionMethod
-   */
-  def addTargetToLibrary(t: Feature with CorrectedSpectra, sample: QuantifiedSample[Double], acquisitionMethod: AcquisitionMethod): Unit = {
-
-    t match {
-      case target: MSMSSpectra =>
-
-        if (target.massOfDetectedFeature.isDefined) {
-
-          val newTarget: Target with PrecursorSupport = new Target with PrecursorSupport {
-
-            override val uniqueMass: Option[Double] = t.uniqueMass
-            override val retentionTimeInSeconds: Double = target.retentionTimeInSeconds
-            override var inchiKey: Option[String] = None
-            override val retentionIndex: Double = target.retentionIndex
-            override var name: Option[String] = None
-            override val precursorMass: Option[Double] = target.precursorIon match {
-              case Some(ion) => Some(ion.mass)
-              case None => None
-            }
-            override var confirmed: Boolean = false
-            override var requiredForCorrection: Boolean = false
-            override var isRetentionIndexStandard: Boolean = false
-            override val spectrum: Option[SpectrumProperties] = target.associatedScan
-            override val precursorScan: Option[SpectrumProperties] = target.precursorScan
-            override val ionMode: IonMode = target.ionMode.get
-
-          }
-
-          if (!targetAlreadyExists(newTarget, acquisitionMethod, sample)) {
-            targets.add(target2mona(newTarget), acquisitionMethod, Some(sample))
-          }
-          else {
-            logger.warn(s"the feature you attempted to generate already exists! ${newTarget}")
-          }
-        }
-        else {
-          logger.warn(s"target has no mass associated, so it's not valid: ${target}")
-        }
-
-      case _ =>
-        logger.debug(s"${t} is not an MSMS spectra and so can't be considered to become a new target!")
     }
   }
 
@@ -133,46 +97,24 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
    * @param newTarget
    * @return
    */
-  def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, sample: Sample): Boolean = {
+  def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, unconfirmed: Iterable[Target]): Boolean = {
     val riFilter = new IncludeByRetentionIndexWindow(newTarget.retentionIndex, retentionIndexWindow)
 
     val massFilter = new IncludeByMassRange(newTarget, accurateMassWindow)
 
     val similarityFilter = new IncludeBySimilarity(newTarget, minimumSimilarity)
 
-    //we only accept MS2 and higher for this
-    val toMatch = targets.load(acquisitionMethod).filter(_.spectrum.isDefined)
-
-
     //MS1+ spectra filter
-    val msmsSpectra = toMatch.filter(_.spectrum.get.msLevel > 1)
+    val msmsSpectra = unconfirmed.filter(_.spectrum.get.msLevel > 1)
     val filteredByRi = msmsSpectra.filter(riFilter.include(_, applicationContext))
     val filtedByMass = filteredByRi.filter(massFilter.include(_, applicationContext))
     val filteredBySimilarity = filtedByMass.filter(similarityFilter.include(_, applicationContext))
 
-    logger.debug(s"existing targets: ${toMatch.size}")
+    logger.debug(s"existing targets: ${unconfirmed.size}")
     logger.debug(s"after MS level filter: ${msmsSpectra.size} targets are left")
     logger.debug(s"after ri filter: ${filteredByRi.size} targets are left")
     logger.debug(s"after mass filter: ${filtedByMass.size} targets are left")
     logger.debug(s"after similarity filter: ${filteredBySimilarity.size} targets are left")
-
     filteredBySimilarity.nonEmpty
-  }
-
-
-  private def target2mona(target: Target with PrecursorSupport): MonaLibraryTarget = {
-    MonaLibraryTarget(target.spectrum.get.splash(),
-      target.spectrum.get,
-      target.name,
-      target.retentionIndex,
-      target.retentionTimeInSeconds,
-      target.inchiKey,
-      target.precursorMass,
-      confirmed = false,
-      requiredForCorrection = false,
-      isRetentionIndexStandard = false,
-      target.ionMode,
-      target.uniqueMass
-    )
   }
 }
