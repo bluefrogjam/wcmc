@@ -17,8 +17,9 @@ import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.annotation._
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.{HttpClientErrorException, RestTemplate}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -575,7 +576,16 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
     t match {
       case target: Target with Idable[String] =>
         val spectrum: Option[Spectrum] = generateSpectrum(target, acquisitionMethod, None)
-        this.monaSpectrumRestClient.delete(spectrum.get.id)
+        try {
+          this.monaSpectrumRestClient.delete(spectrum.get.id)
+        } catch {
+          case err: HttpClientErrorException =>
+            if (err.getStatusCode == HttpStatus.NOT_FOUND) {
+              logger.warn("no targets to delete")
+            } else {
+              throw err
+            }
+        }
 
         updateLibraries
       case _ =>
@@ -598,7 +608,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
 
   @CacheEvict(value = Array("monacache"), allEntries = true)
   override def deleteLibrary(acquisitionMethod: AcquisitionMethod, confirmed: Option[Boolean] = None): Unit = {
-    logger.info(s"about to delete ${confirmed} targets from library ${acquisitionMethod}")
+    logger.info(s"about to delete ${confirmed.getOrElse(true)} targets from library ${acquisitionMethod}")
 
     load(acquisitionMethod, confirmed).foreach(t => delete(t, acquisitionMethod))
   }
