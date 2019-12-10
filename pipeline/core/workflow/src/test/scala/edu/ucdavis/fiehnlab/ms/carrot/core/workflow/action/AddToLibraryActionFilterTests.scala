@@ -23,6 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.simple",
+  "carrot.filters.include.peakcount",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation",
   "carrot.targets.dynamic",
@@ -60,7 +61,7 @@ class AddToLibraryActionFilterTests extends WordSpec with Matchers with Logging 
         new SpectrumProperties {
           override val msLevel: Short = 2
           override val modelIons: Option[Seq[Double]] = None
-          override val ions: Seq[Ion] = Seq(Ion(94.978691, 13306.002930f))
+          override val ions: Seq[Ion] = Seq(Ion(94.978691, 13306.002930f), Ion(104.978691, 1330.00f), Ion(124.978691, 306.03f))
           override val rawIons: Option[Seq[Ion]] = None
         })
     }
@@ -77,9 +78,13 @@ class AddToLibraryActionFilterTests extends WordSpec with Matchers with Logging 
         new SpectrumProperties {
           override val msLevel: Short = 2
           override val modelIons: Option[Seq[Double]] = None
-          override val ions: Seq[Ion] = Seq(Ion(94.978691, 13306.002930f), Ion(123.32172, 3000000))
+          override val ions: Seq[Ion] = Seq(Ion(94.978691, 13306.002930f), Ion(123.32172, 3000000), Ion(133.1234, 324.0f))
           override val rawIons: Option[Seq[Ion]] = None
         })
+    }
+
+    "have minIonCount matching config file" in {
+      action.minIonCount shouldBe 3
     }
 
     "return true checking for duplicated target" in {

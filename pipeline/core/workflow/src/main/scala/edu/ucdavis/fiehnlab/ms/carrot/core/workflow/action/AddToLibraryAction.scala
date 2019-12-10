@@ -8,7 +8,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow, IncludeBySimilarity}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByIonCount, IncludeByMassRange, IncludeByRetentionIndexWindow, IncludeBySimilarity}
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
@@ -26,6 +26,9 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
    */
   @Autowired(required = false)
   val similarity: Similarity = new CompositeSimilarity
+
+  @Value("${carrot.filters.minIonCount:3}")
+  val minIonCount: Int = 0
 
   /**
    * minimum required similarity
@@ -81,8 +84,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
             }
         }.filter {
           _.spectrum.isDefined
-        }
-          .filter { tgt => !targetAlreadyExists(tgt, experiment.acquisitionMethod, unconfirmed) }
+        }.filter { tgt => !targetAlreadyExists(tgt, experiment.acquisitionMethod, unconfirmed) }
 
         logger.info(s"adding ${newTargets.size} unknowns to ???")
         targets.add(newTargets, experiment.acquisitionMethod, Some(sample))
@@ -104,17 +106,22 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
 
     val similarityFilter = new IncludeBySimilarity(newTarget, minimumSimilarity)
 
+    val ionCountFilter = new IncludeByIonCount(minIonCount)
+
     //MS1+ spectra filter
     val msmsSpectra = unconfirmed.filter(_.spectrum.get.msLevel > 1)
     val filteredByRi = msmsSpectra.filter(riFilter.include(_, applicationContext))
-    val filtedByMass = filteredByRi.filter(massFilter.include(_, applicationContext))
+    val enoughIons = filteredByRi.filter(ionCountFilter.include(_, applicationContext))
+    val filtedByMass = enoughIons.filter(massFilter.include(_, applicationContext))
     val filteredBySimilarity = filtedByMass.filter(similarityFilter.include(_, applicationContext))
 
     logger.debug(s"existing targets: ${unconfirmed.size}")
     logger.debug(s"after MS level filter: ${msmsSpectra.size} targets are left")
     logger.debug(s"after ri filter: ${filteredByRi.size} targets are left")
+    logger.debug(s"after ion count filter: ${enoughIons.size} targets are left")
     logger.debug(s"after mass filter: ${filtedByMass.size} targets are left")
     logger.debug(s"after similarity filter: ${filteredBySimilarity.size} targets are left")
+
     filteredBySimilarity.nonEmpty
   }
 }

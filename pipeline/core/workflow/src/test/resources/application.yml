@@ -55,3 +55,16 @@ wcmc:
         bucket:
           name: "datatest-carrot"
           result: "wcmc-data-stasis-result-test"
+---
+spring:
+  profiles: alter-filter
+
+carrot:
+  filters:
+    minIonCount: 5
+---
+spring:
+  profile: carrot.targets.dinamyc
+
+logging:
+  level: debug
