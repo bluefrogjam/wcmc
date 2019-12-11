@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.TestContextManager
 
-class IncludeByPeakCountTest extends WordSpec with Matchers with Logging {
+class IncludeByIonCountTest extends WordSpec with Matchers with Logging {
 
   val icFilter: IncludeByIonCount = new IncludeByIonCount(3)
 

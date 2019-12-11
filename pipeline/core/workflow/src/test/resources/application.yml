@@ -64,7 +64,10 @@ carrot:
     minIonCount: 5
 ---
 spring:
-  profile: carrot.targets.dinamyc
+  profiles: carrot.targets.dynamic
 
 logging:
-  level: debug
+  level:
+    edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action.AddToLibraryAction: info
+    edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.postprocessing.SimpleZeroReplacement: error
+    root: info

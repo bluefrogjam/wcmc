@@ -2,13 +2,14 @@ package edu.ucdavis.fiehnlab.ms.carrot.core.workflow.action
 
 import edu.ucdavis.fiehnlab.math.similarity.{CompositeSimilarity, Similarity}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.action.PostAction
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.filter.Filter
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.MergeLibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.AcquisitionMethod
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.clazz.ExperimentClass
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
-import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByIonCount, IncludeByMassRange, IncludeByRetentionIndexWindow, IncludeBySimilarity}
+import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow, IncludeBySimilarity}
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
@@ -20,15 +21,19 @@ import org.springframework.stereotype.Component
 @Component
 @Profile(Array("carrot.targets.dynamic"))
 class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends PostAction with Logging {
-  logger.info(s"Creating instance with libraries: ${targets.libraries.mkString(", ")}")
+  logger.info(s"Creating Action instance with libraries: ${targets.libraries.mkString(", ")}")
+
+  @Value("${carrot.filters.minIonCount:3}")
+  val minIonCount: Int = 0
+
   /**
    * which similarity to use in the system
    */
   @Autowired(required = false)
   val similarity: Similarity = new CompositeSimilarity
 
-  @Value("${carrot.filters.minIonCount:3}")
-  val minIonCount: Int = 0
+  @Autowired
+  val ionCountFilter: Filter[Target] = null
 
   /**
    * minimum required similarity
@@ -63,8 +68,10 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
     sample match {
       case data: QuantifiedSample[Double] =>
 
-        logger.debug(s"adding ${data.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])} unannotated msms from ${sample.name} to mona")
-        val unconfirmed: Iterable[Target] = targets.load(experiment.acquisitionMethod, Some(false))
+        logger.debug(s"adding ${data.noneAnnotated.count(_.isInstanceOf[MSMSSpectra])} unannotated msms from ${sample.name}")
+        val libraryTgts: Iterable[Target] = targets.load(experiment.acquisitionMethod, Some(false)).filter(_.spectrum.isDefined) ++ targets.load(experiment.acquisitionMethod).filter(_.spectrum.isDefined)
+
+        logger.debug(s"library targets => confirmed: ${libraryTgts.count(_.confirmed)}\tunconfirmed: ${libraryTgts.count(!_.confirmed)}")
 
         val newTargets: Seq[AnnotationTarget] = data.noneAnnotated.collect {
           case spec: CorrectedSpectra with MSMSSpectra =>
@@ -82,12 +89,17 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
               override val retentionTimeInMinutes: Double = spec.retentionTimeInMinutes
               override val accurateMass: Option[Double] = spec.accurateMass
             }
-        }.filter {
-          _.spectrum.isDefined
-        }.filter { tgt => !targetAlreadyExists(tgt, experiment.acquisitionMethod, unconfirmed) }
+        }
 
-        logger.info(s"adding ${newTargets.size} unknowns to ???")
-        targets.add(newTargets, experiment.acquisitionMethod, Some(sample))
+        logger.debug(s"${newTargets.size} unfiltered unknowns")
+
+        val filteredTgts = newTargets.filter(t => t.spectrum.isDefined && t.spectrum.nonEmpty)
+          .filter(ionCountFilter.include(_, applicationContext)) // include targets with the minIonCount number of ions
+          .filterNot { tgt => targetAlreadyExists(tgt, experiment.acquisitionMethod, libraryTgts) }
+
+        logger.info(s"${filteredTgts.size} filtered unknowns to add")
+
+        targets.add(filteredTgts, experiment.acquisitionMethod, Some(sample))
 
       case _ => logger.info(s"no MSMS spectra in sample ${sample.name}")
     }
@@ -100,25 +112,17 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
    * @return
    */
   def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, unconfirmed: Iterable[Target]): Boolean = {
+
     val riFilter = new IncludeByRetentionIndexWindow(newTarget.retentionIndex, retentionIndexWindow)
-
     val massFilter = new IncludeByMassRange(newTarget, accurateMassWindow)
-
     val similarityFilter = new IncludeBySimilarity(newTarget, minimumSimilarity)
 
-    val ionCountFilter = new IncludeByIonCount(minIonCount)
-
-    //MS1+ spectra filter
-    val msmsSpectra = unconfirmed.filter(_.spectrum.get.msLevel > 1)
-    val filteredByRi = msmsSpectra.filter(riFilter.include(_, applicationContext))
-    val enoughIons = filteredByRi.filter(ionCountFilter.include(_, applicationContext))
-    val filtedByMass = enoughIons.filter(massFilter.include(_, applicationContext))
+    val filteredByRi = unconfirmed.filter(riFilter.include(_, applicationContext))
+    val filtedByMass = filteredByRi.filter(massFilter.include(_, applicationContext))
     val filteredBySimilarity = filtedByMass.filter(similarityFilter.include(_, applicationContext))
 
     logger.debug(s"existing targets: ${unconfirmed.size}")
-    logger.debug(s"after MS level filter: ${msmsSpectra.size} targets are left")
     logger.debug(s"after ri filter: ${filteredByRi.size} targets are left")
-    logger.debug(s"after ion count filter: ${enoughIons.size} targets are left")
     logger.debug(s"after mass filter: ${filtedByMass.size} targets are left")
     logger.debug(s"after similarity filter: ${filteredBySimilarity.size} targets are left")
 

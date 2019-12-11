@@ -15,6 +15,7 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
 import org.scalatest.concurrent.Eventually
+import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -30,6 +31,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.simple",
+  "carrot.filters.ioncount",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction",
   "carrot.targets.dynamic",
@@ -75,8 +77,6 @@ class AddToLibraryActionTest extends WordSpec with Matchers with Logging with Ev
     val method = AcquisitionMethod(ChromatographicMethod("csh", Some("6550"), Some("test"), Some(NegativeMode())))
 
     "add unknowns to mona" in {
-      //      mona.deleteLibrary(method, Some(false))
-
       val sample: Sample = sampleLoader.getSample("lgvty_cells_pilot_2_NEG_500K_01.mzml")
 
       val quantified = quantification.process(
@@ -87,10 +87,24 @@ class AddToLibraryActionTest extends WordSpec with Matchers with Logging with Ev
           method, None),
         method, Some(sample))
 
+      eventually(timeout(value = 10 seconds), interval(value = 1 second)) {
+        mona.deleteLibrary(method, Some(false))
+        mona.load(method, Some(false)) should have size 0
+      }
+
       val classes = Seq(ExperimentClass(Seq(quantified), Some(Matrix("matrix1", "human", "plasma", Seq.empty))))
       val experiment = Experiment(classes, Some("test"), method)
 
       action.run(quantified, classes.head, experiment)
+
+      eventually(timeout(value = 5 seconds), interval(value = 1 second)) {
+        mona.load(experiment.acquisitionMethod, Some(false)) should have size 145
+      }
+
+      action.run(quantified, classes.head, experiment)
+      Thread.sleep(2000)
+
+      mona.load(experiment.acquisitionMethod, Some(false)) should have size 145
     }
   }
 }
