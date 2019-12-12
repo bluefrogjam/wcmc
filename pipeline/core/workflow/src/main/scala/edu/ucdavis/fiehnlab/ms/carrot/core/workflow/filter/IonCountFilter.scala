@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component
 
 @Profile(Array("carrot.filters.ioncount"))
 @Component
-class IncludeByIonCount @Autowired()(@Value("${carrot.filters.minIonCount:3}") val minIonCount: Int) extends Filter[Target] with Logging {
-  logger.info(s"\tminimum ion count: ${minIonCount}")
+class IonCountFilter @Autowired()(@Value("${carrot.filters.minIonCount:3}") val minIonCount: Int = 0) extends Filter[Target] with Logging {
+  logger.info(s"Creating filter ${this.getClass.getSimpleName} with minimum ion count: ${minIonCount}")
 
   protected override def doInclude(target: Target, applicationContext: ApplicationContext): Boolean = {
     target.spectrum match {

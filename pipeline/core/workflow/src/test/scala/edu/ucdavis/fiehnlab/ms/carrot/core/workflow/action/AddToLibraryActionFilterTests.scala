@@ -24,6 +24,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.simple",
   "carrot.filters.ioncount",
+  "carrot.filters.intensity",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation",
   "carrot.targets.dynamic",
@@ -83,6 +84,10 @@ class AddToLibraryActionFilterTests extends WordSpec with Matchers with Logging 
         })
     }
 
+    "have 2 filters defined" in {
+      action.targetFilters should have length 2
+    }
+
     "have minIonCount matching config file" in {
       action.minIonCount shouldBe 3
     }
@@ -106,5 +111,7 @@ class AddToLibraryActionFilterTests extends WordSpec with Matchers with Logging 
 
       action.targetAlreadyExists(target2, testMethod, mona.load(testMethod, Some(false))) shouldBe false
     }
+
+    // TODO: add tests for different combinations of similarities, like RI or Spectrum or mass between test target and library targets
   }
 }

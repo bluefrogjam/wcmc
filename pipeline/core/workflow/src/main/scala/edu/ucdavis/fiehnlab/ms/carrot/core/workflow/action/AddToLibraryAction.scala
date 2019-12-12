@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 @Profile(Array("carrot.targets.dynamic"))
-class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends PostAction with Logging {
+class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess, val targetFilters: Array[Filter[Target]] = null) extends PostAction with Logging {
   logger.info(s"Creating Action instance with libraries: ${targets.libraries.mkString(", ")}")
 
   @Value("${carrot.filters.minIonCount:3}")
@@ -31,9 +31,6 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
    */
   @Autowired(required = false)
   val similarity: Similarity = new CompositeSimilarity
-
-  @Autowired
-  val ionCountFilter: Filter[Target] = null
 
   /**
    * minimum required similarity
@@ -94,7 +91,10 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess) extends P
         logger.debug(s"${newTargets.size} unfiltered unknowns")
 
         val filteredTgts = newTargets.filter(t => t.spectrum.isDefined && t.spectrum.nonEmpty)
-          .filter(ionCountFilter.include(_, applicationContext)) // include targets with the minIonCount number of ions
+          // each new MSMS target candidate has to pass ALL the filters defined in targetFilters (autowired)
+          // currently IonCount and IonHeight filters are applied
+          .filter(tgt => targetFilters.forall(_.include(tgt, applicationContext)))
+
           .filterNot { tgt => targetAlreadyExists(tgt, experiment.acquisitionMethod, libraryTgts) }
 
         logger.info(s"${filteredTgts.size} filtered unknowns to add")

@@ -32,6 +32,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.simple",
   "carrot.filters.ioncount",
+  "carrot.filters.intensity",
   "carrot.targets.yaml.annotation",
   "carrot.targets.yaml.correction",
   "carrot.targets.dynamic",
@@ -75,6 +76,10 @@ class AddToLibraryActionTest extends WordSpec with Matchers with Logging with Ev
   "AddToLibraryAction" should {
 
     val method = AcquisitionMethod(ChromatographicMethod("csh", Some("6550"), Some("test"), Some(NegativeMode())))
+
+    "have more than 1 target filter" in {
+      action.targetFilters should have length 2
+    }
 
     "add unknowns to mona" in {
       val sample: Sample = sampleLoader.getSample("lgvty_cells_pilot_2_NEG_500K_01.mzml")
