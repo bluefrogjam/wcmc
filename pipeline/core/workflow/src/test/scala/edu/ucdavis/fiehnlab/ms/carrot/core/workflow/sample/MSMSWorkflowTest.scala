@@ -16,6 +16,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
+import org.scalatest.concurrent.Eventually
+import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -30,11 +32,12 @@ import org.springframework.web.client.HttpClientErrorException
   "file.source.eclipse",
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
+  "carrot.filters.ioncount",
   "carrot.targets.dynamic",
   "carrot.targets.mona",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation"))
-class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
+class MSMSWorkflowTest extends WordSpec with Matchers with Eventually with Logging {
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
@@ -66,11 +69,7 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
     "return some negative mode MSMS spectra" in {
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6550"), Some("test"), Option(NegativeMode())))
 
-      logger.info(s"mona size before: ${monalib.load(method).size}")
       clean_lib(method)
-      logger.info(s"mona size after: ${monalib.load(method).size}")
-
-      val before = monalib.load(method).size
 
       val sample: Sample = loader.getSample("B2b_SA1594_TEDDYLipids_Neg_MSMS_1U2WN.mzml")
       val expClass = ExperimentClass(Seq(sample), None)
@@ -99,18 +98,15 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
 
       action.run(result, expClass, experiment)
 
-      val after = monalib.load(method).size
-      clean_lib(method)
-
-      after should be > before
+      eventually(timeout(value = 5 seconds), interval(value = 1 second)) {
+        monalib.load(method, Some(false)).size should be > 0
+      }
     }
 
     "return some positive mode MSMS spectra" in {
       val method = AcquisitionMethod(ChromatographicMethod("teddy", Some("6530"), Some("test"), Option(PositiveMode())))
 
-      logger.info(s"mona size before: ${monalib.load(method).size}")
       clean_lib(method)
-      logger.info(s"mona size after: ${monalib.load(method).size}")
 
       val sample = loader.getSample("B1A_SA0001_TEDDYLipids_Pos_1RAR7_MSMS.mzml")
       val expClass = ExperimentClass(Seq(sample), None)
@@ -137,21 +133,21 @@ class MSMSWorkflowTest extends WordSpec with Logging with Matchers {
       msms.size should be > 0
       nonAnnotated.size should be > 0
 
-      val before = monalib.load(method).size
-
       action.run(result, expClass, experiment)
 
-      val after = monalib.load(method).size
-      clean_lib(method)
-
-      after should be > before
+      eventually(timeout(value = 5 seconds), interval(value = 1 second)) {
+        monalib.load(method, Some(false)).size should be > 1
+      }
     }
   }
 
 
   def clean_lib(method: AcquisitionMethod): Unit = {
     try {
-      monalib.deleteLibrary(method)
+      eventually(timeout(value = 10 seconds), interval(value = 1 second)) {
+        monalib.deleteLibrary(method, Some(false))
+        monalib.load(method, Some(false)) should have size 0
+      }
     } catch {
       case ex: HttpClientErrorException =>
         logger.warn(ex.getMessage)

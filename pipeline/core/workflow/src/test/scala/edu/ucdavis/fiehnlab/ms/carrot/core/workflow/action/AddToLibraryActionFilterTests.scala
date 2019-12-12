@@ -23,7 +23,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.simple",
-  "carrot.filters.include.peakcount",
+  "carrot.filters.ioncount",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation",
   "carrot.targets.dynamic",

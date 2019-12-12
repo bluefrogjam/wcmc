@@ -16,6 +16,8 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.sample.quantification.Quanti
 import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
 import org.junit.runner.RunWith
+import org.scalatest.concurrent.Eventually
+import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpec}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -30,11 +32,12 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.mzrt",
+  "carrot.filters.ioncount",
   "carrot.targets.dynamic",
   "carrot.targets.mona",
   "carrot.targets.yaml.correction",
   "carrot.targets.yaml.annotation"))
-class QExactiveWorkflowTest extends WordSpec with Logging with Matchers {
+class QExactiveWorkflowTest extends WordSpec with Logging with Matchers with Eventually {
   @Autowired
   val correction: LCMSTargetRetentionIndexCorrectionProcess = null
 
@@ -69,7 +72,10 @@ class QExactiveWorkflowTest extends WordSpec with Logging with Matchers {
       val expClass = ExperimentClass(Seq(sample), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
-      monalib.deleteLibrary(method)
+      eventually(timeout(value = 10 seconds), interval(value = 1 second)) {
+        monalib.deleteLibrary(method, Some(false))
+        monalib.load(method, Some(false)) should have size 0
+      }
 
       val result = quantification.process(
         annotation.process(
@@ -92,14 +98,11 @@ class QExactiveWorkflowTest extends WordSpec with Logging with Matchers {
       msms.size should be > 0
       nonAnnotated.size should be > 0
 
-      val before = monalib.load(method).size
-
       action.run(result, expClass, experiment)
 
-      val after = monalib.load(method).size
-
-      after should be > before
-
+      eventually(timeout(value = 10 seconds), interval(value = 1 second)) {
+        monalib.load(method, Some(false)).size should be > 0
+      }
     }
   }
 }
