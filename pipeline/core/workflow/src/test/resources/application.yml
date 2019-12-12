@@ -62,6 +62,7 @@ spring:
 carrot:
   filters:
     minIonCount: 5
+    minIntensity: 5000
 ---
 spring:
   profiles: carrot.targets.dynamic
