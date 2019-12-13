@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.context.{ActiveProfiles, TestContextManager}
+import org.springframework.web.client.HttpClientErrorException
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[TargetedWorkflowTestConfiguration]))
@@ -33,6 +34,7 @@ import org.springframework.test.context.{ActiveProfiles, TestContextManager}
   "carrot.processing.peakdetection",
   "carrot.processing.replacement.mzrt",
   "carrot.filters.ioncount",
+  "carrot.filters.intensity",
   "carrot.targets.dynamic",
   "carrot.targets.mona",
   "carrot.targets.yaml.correction",
@@ -72,10 +74,7 @@ class QExactiveWorkflowTest extends WordSpec with Logging with Matchers with Eve
       val expClass = ExperimentClass(Seq(sample), None)
       val experiment = Experiment(Seq(expClass), Some("test MSMS bin generation"), method)
 
-      eventually(timeout(value = 10 seconds), interval(value = 1 second)) {
-        monalib.deleteLibrary(method, Some(false))
-        monalib.load(method, Some(false)) should have size 0
-      }
+      clean_lib(method)
 
       val result = quantification.process(
         annotation.process(
@@ -103,6 +102,18 @@ class QExactiveWorkflowTest extends WordSpec with Logging with Matchers with Eve
       eventually(timeout(value = 10 seconds), interval(value = 1 second)) {
         monalib.load(method, Some(false)).size should be > 0
       }
+    }
+  }
+
+  def clean_lib(method: AcquisitionMethod): Unit = {
+    try {
+      eventually(timeout(value = 25 seconds), interval(value = 1 second)) {
+        monalib.deleteLibrary(method, Some(false))
+        monalib.load(method, Some(false)) should have size 0
+      }
+    } catch {
+      case ex: HttpClientErrorException =>
+        logger.warn(ex.getMessage)
     }
   }
 }

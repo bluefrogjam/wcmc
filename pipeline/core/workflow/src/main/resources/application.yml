@@ -10,7 +10,19 @@ carrot:
   targets:
     yaml:
       properties:
-          resource: "libraries.yml"
+        resource: "libraries.yml"
+spring:
+  cache:
+    type: none
+
+---
+spring:
+  profiles: redis-cache
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
 
 ---
 spring:
@@ -20,4 +32,4 @@ carrot:
   targets:
     yaml:
       properties:
-          resource: "libraries.yaml"
+        resource: "libraries.yaml"

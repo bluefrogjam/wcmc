@@ -33,16 +33,22 @@ wcmc:
           user: admin
           password: admin
 
+stasis:
+  baseurl: "https://test-api.metabolomics.us/stasis"
+  key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
+
 spring:
+  cache:
+    type: none
+
+---
+spring:
+  profiles: redis-cache
   cache:
     type: redis
   redis:
     host: localhost
     port: 6379
-
-stasis:
-  baseurl: "https://test-api.metabolomics.us/stasis"
-  key: "GUec9mh1jc6VFbudSzxfz8aIqdRiadqw6wWBzRCB"
 
 ---
 spring:

@@ -18,6 +18,7 @@ spring:
       - carrot.targets.yaml.annotation
       - carrot.email.enable
       - carrot.filters.ioncount
+      - carrot.filters.intensity
 
 logging:
   level:

@@ -1,4 +1,3 @@
-
 email:
   host: smtp.gmail.com
   port: 25
@@ -13,13 +12,19 @@ mona:
       host: localhost
       port: 9090
 
+logging:
+  register-shutdown-hook: false
+
 spring:
+  cache:
+    type: none
+
+---
+spring:
+  profiles: redis-cache
   cache:
     type: redis
   redis:
-    host: 127.0.0.1
+    host: localhost
     port: 6379
-
-logging:
-  register-shutdown-hook: false
 

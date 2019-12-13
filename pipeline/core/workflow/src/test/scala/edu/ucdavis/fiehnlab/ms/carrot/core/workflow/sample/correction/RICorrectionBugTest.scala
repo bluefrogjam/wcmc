@@ -40,6 +40,8 @@ class RICorrectionBugTest extends WordSpec with Matchers with Logging {
   @Autowired
   val loader: SampleLoader = null
 
+  new TestContextManager(this.getClass).prepareTestInstance(this)
+
 
   def buildFeature(mz: Double, rt: Double, intensity: Float = 100): Feature = new Feature {
     override val ionMode: Option[IonMode] = Some(PositiveMode())
@@ -73,8 +75,6 @@ class RICorrectionBugTest extends WordSpec with Matchers with Logging {
     SimilarityMethods.featureTargetSimilarity(feature, target, correction.massAccuracySetting, correction.rtAccuracySetting, correction.intensityPenaltyThreshold)
   }
 
-
-  new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "Retention Index Correction Process" should {
     "test Weiss005_posHILIC_40298234_039.mzML" must {

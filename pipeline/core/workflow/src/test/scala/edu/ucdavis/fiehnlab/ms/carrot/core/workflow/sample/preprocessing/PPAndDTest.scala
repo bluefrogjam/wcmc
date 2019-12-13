@@ -34,11 +34,11 @@ class PPAndDTest extends WordSpec with Matchers with Logging {
   @Autowired
   val stasis_cli: StasisService = null
 
-  val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
-
   new TestContextManager(this.getClass).prepareTestInstance(this)
 
   "PeakDetection" should {
+    val method = AcquisitionMethod(ChromatographicMethod(libName, Some("test"), Some("test"), Some(PositiveMode())))
+
     "process mzml sample" in {
 
       logger.info(new File("../msdial/src/test/resources/testSmall0.mzml").getAbsolutePath)

@@ -33,6 +33,7 @@ import org.springframework.web.client.HttpClientErrorException
   "carrot.report.quantify.height",
   "carrot.processing.peakdetection",
   "carrot.filters.ioncount",
+  "carrot.filters.intensity",
   "carrot.targets.dynamic",
   "carrot.targets.mona",
   "carrot.targets.yaml.correction",
