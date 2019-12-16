@@ -6,6 +6,7 @@ import com.eharmony.spotz.objective.Objective
 import edu.ucdavis.fiehnlab.ms.carrot.core.hyperopt.{Config, Hyperopt, Stages}
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
+import org.scalatest.time.SpanSugar._
 
 class SQSCallbackHandlerTest extends WordSpec with Eventually {
 
@@ -31,7 +32,7 @@ class SQSCallbackHandlerTest extends WordSpec with Eventually {
 
     "must be able to receive a message afterwards" in {
 
-      eventually {
+      eventually(timeout(value = 10 seconds), interval(value = 1 second) ) {
         assert(client.receiveMessage(callback.url).getMessages.size() > 0)
       }
     }
