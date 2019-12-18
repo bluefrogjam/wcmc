@@ -10,14 +10,15 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.experiment.Experiment
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms._
 import edu.ucdavis.fiehnlab.ms.carrot.core.workflow.filter.{IncludeByMassRange, IncludeByRetentionIndexWindow, IncludeBySimilarity}
+import edu.ucdavis.fiehnlab.wcmc.api.rest.stasis4j.api.StasisService
 import org.apache.logging.log4j.scala.Logging
 import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 /**
- * Created by wohlgemuth on 7/12/17.
- */
+  * Created by wohlgemuth on 7/12/17.
+  */
 @Component
 @Profile(Array("carrot.targets.dynamic"))
 class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess, val targetFilters: Array[Filter[Target]] = null) extends PostAction with Logging {
@@ -27,41 +28,62 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess, val targe
   val minIonCount: Int = 0
 
   /**
-   * which similarity to use in the system
-   */
+    * which similarity to use in the system
+    */
   @Autowired(required = false)
   val similarity: Similarity = new CompositeSimilarity
 
   /**
-   * minimum required similarity
-   */
+    * minimum required similarity
+    */
   @Value("${wcmc.workflow.lcms.msms.generate.library.similarity.min:0.7}")
   val minimumSimilarity: Double = 0
 
   /**
-   * library inclusion time window in seconds
-   */
+    * library inclusion time window in seconds
+    */
   @Value("${wcmc.workflow.lcms.msms.generate.library.retentionIndex.window:6}")
   val retentionIndexWindow: Double = 0
 
   /**
-   * mass window in PPM
-   */
+    * mass window in PPM
+    */
   @Value("${wcmc.workflow.lcms.msms.generate.library.accurateMass.window:0.010}")
   val accurateMassWindow: Double = 0
 
   @Value("${wcmc.workflow.lcms.msms.generate.library.intensity.min: 1000}")
   val minimumRequiredIntensity: Double = 0
 
+  @Autowired
+  val stasis: StasisService = null
+
   /**
-   * actually processes the item (implementations in subclasses)
-   *
-   * @param sample
-   * @param experimentClass
-   * @param experiment
-   */
+    * actually processes the item (implementations in subclasses)
+    *
+    * @param sample
+    * @param experimentClass
+    * @param experiment
+    */
   def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
     logger.info(s"running AddToLibrary Action")
+
+    val metaData: Map[String, AnyRef] = stasis.getAcquisition(sample.getFileName()) match {
+      case Some(x) =>
+        Map(
+          "instrument" -> x.acquisition.instrument,
+          "ionisation" -> x.acquisition.ionisation,
+          "method" -> x.acquisition.method,
+          "organ" -> x.metadata.organ,
+          "species" -> x.metadata.species,
+          "label" -> x.userdata.label,
+          "comment" -> x.userdata.comment
+
+
+        )
+      case None => Map.empty
+    }
+
+
     sample match {
       case data: QuantifiedSample[Double] =>
 
@@ -72,7 +94,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess, val targe
 
         val newTargets: Seq[AnnotationTarget] = data.noneAnnotated.collect {
           case spec: CorrectedSpectra with MSMSSpectra =>
-            new AnnotationTarget() with PrecursorSupport {
+            new AnnotationTarget() with PrecursorSupport with MetaDataSupport {
               override var name: Option[String] = None
               override val retentionIndex: Double = spec.retentionIndex
               override var inchiKey: Option[String] = None
@@ -85,6 +107,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess, val targe
               override val precursorScan: Option[SpectrumProperties] = spec.precursorScan
               override val retentionTimeInMinutes: Double = spec.retentionTimeInMinutes
               override val accurateMass: Option[Double] = spec.accurateMass
+              override val metadata: Map[String, AnyRef] = spec.metadata ++ metaData
             }
         }
 
@@ -106,11 +129,11 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess, val targe
   }
 
   /**
-   * does this target already exist in the remote system
-   *
-   * @param newTarget
-   * @return
-   */
+    * does this target already exist in the remote system
+    *
+    * @param newTarget
+    * @return
+    */
   def targetAlreadyExists(newTarget: Target, acquisitionMethod: AcquisitionMethod, unconfirmed: Iterable[Target]): Boolean = {
 
     val riFilter = new IncludeByRetentionIndexWindow(newTarget.retentionIndex, retentionIndexWindow)

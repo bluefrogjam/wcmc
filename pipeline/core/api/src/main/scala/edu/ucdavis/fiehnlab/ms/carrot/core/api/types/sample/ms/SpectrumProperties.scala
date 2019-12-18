@@ -4,7 +4,15 @@ import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
 import edu.ucdavis.fiehnlab.spectra.hash.core.types.SpectraType
 import edu.ucdavis.fiehnlab.spectra.hash.core.util.SplashUtil
 
-trait Feature extends AccurateMassSupport with Serializable {
+trait MetaDataSupport {
+
+  /**
+    * Contains random metadata associated to the object we mix this into
+    */
+  val metadata: Map[String, AnyRef]
+}
+
+trait Feature extends AccurateMassSupport with Serializable with MetaDataSupport {
 
   /**
     * the associated sample
@@ -78,10 +86,6 @@ trait Feature extends AccurateMassSupport with Serializable {
     None
   }
 
-  /**
-    * Contains random metadata associated to the object we mix this into
-    */
-  val metadata: Map[String, AnyRef]
 }
 
 /**
@@ -123,6 +127,7 @@ trait SpectrumProperties extends Serializable {
 
   /**
     * the unique splash for this spectra
+    *
     * @param useRawSpectrum use raw spectrum if available instead of deconvoluted spectrum
     * @return splash code
     */
@@ -130,6 +135,7 @@ trait SpectrumProperties extends Serializable {
 
   /**
     * generates a spectral string representation
+    *
     * @param useRawSpectrum use raw spectrum if available instead of deconvoluted spectrum
     * @return spectrum string
     */
@@ -140,8 +146,8 @@ trait SpectrumProperties extends Serializable {
       ions
     })
       .sortBy(_.mass).map { ion: Ion =>
-        f"${ion.mass}%1.6f:${ion.intensity}%1.5f"
-      }.mkString(" ")
+      f"${ion.mass}%1.6f:${ion.intensity}%1.5f"
+    }.mkString(" ")
   }
 
   /**

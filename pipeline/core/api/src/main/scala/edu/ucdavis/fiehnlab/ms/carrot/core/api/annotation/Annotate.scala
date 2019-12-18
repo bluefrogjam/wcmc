@@ -23,6 +23,7 @@ abstract class Annotate {
 
 
   protected def doMatch(unknown: Feature, target: Target): Boolean
+
 }
 
 /**
