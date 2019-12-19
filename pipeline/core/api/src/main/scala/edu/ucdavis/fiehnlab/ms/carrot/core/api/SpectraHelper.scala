@@ -59,7 +59,7 @@ object SpectraHelper {
           /**
             * Contains random metadata associated to the object we mix this into
             */
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
         }
       case feat: MSSpectra =>
         new MSSpectra {
@@ -67,7 +67,7 @@ object SpectraHelper {
           /**
             * how pure this spectra is
             */
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
           override val purity: Option[Double] = feat.purity
           /**
             * specified ion mode for the given feature
@@ -131,7 +131,7 @@ object SpectraHelper {
             * the unique mass of this spectra
             */
           override val uniqueMass: Option[Double] = feature.uniqueMass
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
         }
 
     }
@@ -169,7 +169,7 @@ object SpectraHelper {
           override val precursorScan: Option[SpectrumProperties] = feat.precursorScan
           override val signalNoise: Option[Double] = feat.signalNoise
           override val uniqueMass: Option[Double] = feat.uniqueMass
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
         }
       case feat: MSSpectra =>
         new MSSpectra with CorrectedSpectra {
@@ -185,7 +185,7 @@ object SpectraHelper {
 
           override val signalNoise: Option[Double] = feat.signalNoise
           override val uniqueMass: Option[Double] = feat.uniqueMass
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
         }
       case feat: Feature =>
 
@@ -202,7 +202,7 @@ object SpectraHelper {
           override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
           override val signalNoise: Option[Double] = feat.signalNoise
           override val uniqueMass: Option[Double] = feat.uniqueMass
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
         }
 
     }
@@ -238,7 +238,7 @@ object SpectraHelper {
 
           override val precursorScan: Option[SpectrumProperties] = feat.precursorScan
 
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
           /**
             * how pure this spectra is
             */
@@ -296,7 +296,7 @@ object SpectraHelper {
           override val signalNoise: Option[Double] = feat.signalNoise
           override val sample: String = feature.sample
 
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
           override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
           /**
             * the local scan number
@@ -349,7 +349,7 @@ object SpectraHelper {
             * the signal noise of this spectra
             */
           override val signalNoise: Option[Double] = feat.signalNoise
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
           override val sample: String = feature.sample
           /**
             * the retention time of this spectra. It should be provided in seconds!
@@ -417,7 +417,7 @@ object SpectraHelper {
 
           override val precursorScan: Option[SpectrumProperties] = feat.precursorScan
 
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
           /**
             * how pure this spectra is
             */
@@ -479,7 +479,7 @@ object SpectraHelper {
             * how pure this spectra is
             */
           override val purity: Option[Double] = feat.purity
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
 
           override val associatedScan: Option[SpectrumProperties] = feat.associatedScan
           /**
@@ -539,7 +539,7 @@ object SpectraHelper {
             * how pure this spectra is
             */
           override val purity: Option[Double] = feat.purity
-          override val metadata: Map[String, AnyRef] = feat.metadata
+          override val metadata: Map[String, Any] = feat.metadata
 
           /**
             * the local scan number

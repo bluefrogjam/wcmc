@@ -399,7 +399,7 @@ class ZeroreplacedTarget(value: Feature with CorrectedSpectra, noiseCorrectedVal
     /**
       * Contains random metadata associated to the object we mix this into
       */
-    override val metadata: Map[String, AnyRef] = value.metadata
+    override val metadata: Map[String, Any] = value.metadata
   }
 
   /**

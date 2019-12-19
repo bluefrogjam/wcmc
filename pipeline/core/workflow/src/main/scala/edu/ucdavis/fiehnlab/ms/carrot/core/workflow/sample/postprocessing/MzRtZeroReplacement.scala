@@ -169,7 +169,7 @@ class MzRtZeroReplacement extends ZeroReplacement {
           override val scanNumber: Int = filtered.scanNumber
           override val associatedScan: Option[SpectrumProperties] = filtered.associatedScan
           override val massOfDetectedFeature: Option[Ion] = filtered.massOfDetectedFeature
-          override val metadata: Map[String, AnyRef] = filtered.metadata
+          override val metadata: Map[String, Any] = filtered.metadata
           override val retentionIndex: Double = filtered.retentionIndex
         }
 

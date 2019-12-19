@@ -94,7 +94,7 @@ trait SampleLoader extends Logging {
               override val ionMode: Option[IonMode] = _ionMode
               override val associatedScan: Option[SpectrumProperties] = _associatedScan
               override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
-              override val metadata: Map[String, AnyRef] = _metadata
+              override val metadata: Map[String, Any] = _metadata
             }
 
           case x: MSSpectra =>
@@ -162,7 +162,7 @@ trait SampleLoader extends Logging {
                 */
               override val massOfDetectedFeature: Option[Ion] = _massOfDetectedFeature
 
-              override val metadata: Map[String, AnyRef] = _metadata
+              override val metadata: Map[String, Any] = _metadata
             }
         }
 
