@@ -94,7 +94,9 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
     * @return
     */
   override def load(acquistionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[AnnotationTarget] = {
-    monaSpectrumRestClient.list(query = if (query(acquistionMethod, confirmed.getOrElse(true)) != "") Option(query(acquistionMethod, confirmed.getOrElse(true))) else None)
+    val q:Option[String] = if (query(acquistionMethod, confirmed.getOrElse(true)) != "") Option(query(acquistionMethod, confirmed.getOrElse(true))) else None
+
+    monaSpectrumRestClient.list(query = q)
       .map(x => {
         generateTarget(x)
       })
@@ -172,7 +174,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
       score = null
     )
 
-    val metaData: Array[MetaData] = generateAcquisitonInfo(generateDefaultMetaData(t, sample), acquistionMethod)
+    val metaData: Array[MetaData] = generateAcquisitonInfo(generateDefaultMetaData(t, sample).toArray, acquistionMethod)
 
     //attach the acquisition method metadata now
     Some(
@@ -322,23 +324,39 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
 
     val data: Option[Set[MetaData]] = t match {
       case t: MetaDataSupport =>
-        Some(t.metadata.keySet.collect {
-          case key: String =>
+        Some(t.metadata.collect {
+          case (k, v) if k != "peak" =>
             MetaData(
-              category = "origin",
+              category = "acquisition",
               computed = false,
               hidden = false,
-              name = key,
+              name = k,
               score = null,
               url = null,
-              value = t.metadata.get(key),
+              value = v match {
+                case Some(x) => x
+                  x match {
+                    case y: mutable.Buffer[Any] if y.isEmpty =>
+                      None
+                    case _ => x
+                  }
+                case None => None
+                case _ => v
+              },
               unit = null
             )
-        })
+        }.filter(_.value != None).toSet)
       case _ => None
     }
-    (metaData ++ data.getOrElse(Set.empty)).toArray
 
+    val new_data = data.getOrElse(Set.empty)
+    val result = metaData.collect {
+      case x: MetaData if !new_data.exists(_.name == x.name) =>
+        x
+    } ++ new_data
+
+
+    result.filter(_.value != null)
   }
 
   /**

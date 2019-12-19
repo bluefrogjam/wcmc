@@ -102,7 +102,7 @@ class AddToLibraryActionTest extends WordSpec with Matchers with Logging with Ev
 
       action.run(quantified, classes.head, experiment)
 
-      eventually(timeout(value = 5 seconds), interval(value = 1 second)) {
+      eventually(timeout(value = 20 seconds), interval(value = 1 second)) {
         mona.load(experiment.acquisitionMethod, Some(false)) should have size 145
       }
 

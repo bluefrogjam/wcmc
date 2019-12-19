@@ -104,7 +104,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess, val targe
               override val precursorScan: Option[SpectrumProperties] = spec.precursorScan
               override val retentionTimeInMinutes: Double = spec.retentionTimeInMinutes
               override val accurateMass: Option[Double] = spec.accurateMass
-              override val metadata: Map[String, Any] = spec.metadata ++ metaData ++ Map("precursorIntensity" -> spec.precursorIon.getOrElse(Ion(0, 0).intensity))
+              override val metadata: Map[String, Any] = spec.metadata ++ metaData ++ Map("precursorIntensity" -> spec.precursorIon.getOrElse(Ion(0, 0)).intensity)
             }
         }
 
