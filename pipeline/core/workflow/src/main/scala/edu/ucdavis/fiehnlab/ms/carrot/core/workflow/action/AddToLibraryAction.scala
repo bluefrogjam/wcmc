@@ -67,17 +67,14 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess, val targe
   def run(sample: Sample, experimentClass: ExperimentClass, experiment: Experiment): Unit = {
     logger.info(s"running AddToLibrary Action")
 
-    val metaData: Map[String, AnyRef] = stasis.getAcquisition(sample.getFileName()) match {
+    val metaData: Map[String, Any] = stasis.getAcquisition(sample.name) match {
       case Some(x) =>
         Map(
           "instrument" -> x.acquisition.instrument,
           "ionisation" -> x.acquisition.ionisation,
           "method" -> x.acquisition.method,
           "organ" -> x.metadata.organ,
-          "species" -> x.metadata.species,
-          "label" -> x.userdata.label,
-          "comment" -> x.userdata.comment
-
+          "species" -> x.metadata.species
 
         )
       case None => Map.empty
@@ -107,7 +104,7 @@ class AddToLibraryAction @Autowired()(val targets: MergeLibraryAccess, val targe
               override val precursorScan: Option[SpectrumProperties] = spec.precursorScan
               override val retentionTimeInMinutes: Double = spec.retentionTimeInMinutes
               override val accurateMass: Option[Double] = spec.accurateMass
-              override val metadata: Map[String, AnyRef] = spec.metadata ++ metaData
+              override val metadata: Map[String, Any] = spec.metadata ++ metaData ++ Map("precursorIntensity" -> spec.precursorIon.getOrElse(Ion(0, 0).intensity))
             }
         }
 

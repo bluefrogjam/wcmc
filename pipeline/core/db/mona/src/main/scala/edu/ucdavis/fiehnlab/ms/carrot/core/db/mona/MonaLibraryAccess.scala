@@ -10,7 +10,7 @@ import edu.ucdavis.fiehnlab.mona.backend.core.persistence.rest.client.config.Res
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.exception.{InvalidIonModeDefinedException, IonModeNotDefinedException, TargetGenerationNotSupportedException}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.io.LibraryAccess
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample._
-import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.SpectrumProperties
+import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.sample.ms.{MetaDataSupport, SpectrumProperties}
 import edu.ucdavis.fiehnlab.ms.carrot.core.api.types.{AcquisitionMethod, ChromatographicMethod, Idable}
 import javax.annotation.PostConstruct
 import org.apache.logging.log4j.scala.Logging
@@ -81,18 +81,18 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
   }
 
   /**
-   * based on the given method this will evaluate to a query against the system to provide us with valid targets
-   * for annotation and identification
-   */
+    * based on the given method this will evaluate to a query against the system to provide us with valid targets
+    * for annotation and identification
+    */
 
   def query(acquistionMethod: AcquisitionMethod, confirmed: Boolean): String =
     s"""(tags.text=="${generateLibraryIdentifier(acquistionMethod)}") and (metaData=q='name=="confirmed" and value=="${confirmed}"')"""
 
   /**
-   * loads all the spectra from the library
-   *
-   * @return
-   */
+    * loads all the spectra from the library
+    *
+    * @return
+    */
   override def load(acquistionMethod: AcquisitionMethod, confirmed: Option[Boolean]): Iterable[AnnotationTarget] = {
     monaSpectrumRestClient.list(query = if (query(acquistionMethod, confirmed.getOrElse(true)) != "") Option(query(acquistionMethod, confirmed.getOrElse(true))) else None)
       .map(x => {
@@ -209,7 +209,7 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
   }
 
   private def generateDefaultMetaData(t: Target, sample: Option[Sample]) = {
-    val metaData = Array(
+    val metaData: Set[MetaData] = Set(
       MetaData(
         category = "none",
         computed = false,
@@ -319,7 +319,26 @@ class MonaLibraryAccess extends LibraryAccess[AnnotationTarget] with Logging {
 
 
     )
-    metaData
+
+    val data: Option[Set[MetaData]] = t match {
+      case t: MetaDataSupport =>
+        Some(t.metadata.keySet.collect {
+          case key: String =>
+            MetaData(
+              category = "origin",
+              computed = false,
+              hidden = false,
+              name = key,
+              score = null,
+              url = null,
+              value = t.metadata.get(key),
+              unit = null
+            )
+        })
+      case _ => None
+    }
+    (metaData ++ data.getOrElse(Set.empty)).toArray
+
   }
 
   /**
@@ -696,7 +715,7 @@ case class MonaLibraryTarget(
                               override val uniqueMass: Option[Double]
 
                             )
-    extends AnnotationTarget with Idable[String] {
+  extends AnnotationTarget with Idable[String] {
 
   /**
     * required since targets expects a spectrum, while its being optional on the carrot level

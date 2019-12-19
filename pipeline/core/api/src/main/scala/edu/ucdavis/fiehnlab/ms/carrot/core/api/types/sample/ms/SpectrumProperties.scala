@@ -9,7 +9,7 @@ trait MetaDataSupport {
   /**
     * Contains random metadata associated to the object we mix this into
     */
-  val metadata: Map[String, AnyRef]
+  val metadata: Map[String, Any]
 }
 
 trait Feature extends AccurateMassSupport with Serializable with MetaDataSupport {
